@@ -144,7 +144,7 @@
 				android:singleLine="false"
 				android:textAppearance="@style/m3_body_medium"
 				android:textColor="?android:textColorSecondary"
-				android:textSize="11sp"
+				android:textSize="10sp"
 				tools:text="123 456" />
 
 		</RelativeLayout>
@@ -155,7 +155,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginLeft="16dp"
-		android:layout_marginTop="16dp"
+		android:layout_marginTop="8dp"
 		android:layout_marginRight="16dp"
 		android:layout_marginBottom="8dp"
 		android:gravity="center_vertical"
