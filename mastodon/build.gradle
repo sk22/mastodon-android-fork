@@ -4,8 +4,18 @@ plugins {
 }
 
 android {
+	def getGitHash = { ->
+		def stdout = new ByteArrayOutputStream()
+		exec {
+			commandLine 'git', 'rev-parse', '--short', 'HEAD'
+			standardOutput = stdout
+		}
+		return stdout.toString().trim()
+	}
+
 	compileSdk 33
 	defaultConfig {
+		archivesBaseName = "upstream-${getGitHash()}"
 		applicationId "org.joinmastodon.android"
 		minSdk 23
 		targetSdk 33
