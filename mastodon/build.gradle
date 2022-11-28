@@ -7,7 +7,7 @@ android {
 	def getGitHash = { ->
 		def stdout = new ByteArrayOutputStream()
 		exec {
-			commandLine 'git', 'rev-parse', '--short', 'HEAD'
+			commandLine 'git', 'rev-parse', '--short', 'main'
 			standardOutput = stdout
 		}
 		return stdout.toString().trim()
@@ -16,11 +16,11 @@ android {
 	compileSdk 33
 	defaultConfig {
 		archivesBaseName = "upstream-${getGitHash()}"
-		applicationId "org.joinmastodon.android"
+		applicationId "org.joinmastodon.android.git"
 		minSdk 23
 		targetSdk 33
 		versionCode 43
-		versionName "1.1.4"
+		versionName "1.1.4+${getGitHash()}"
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 		resConfigs "en", "ar-rSA", "bs-rBA", "ca-rES", "cs-rCZ", "de-rDE", "el-rGR", "es-rES",
 				"eu-rES", "fi-rFI", "fr-rFR", "gl-rES", "hr-rHR", "hy-rAM", "it-rIT", "iw-rIL",
