@@ -5,4 +5,5 @@
 
 	<style name="Theme.Mastodon.AutoLightDark.Original" parent="Theme.Mastodon.Dark.Original"/>
 	<style name="Theme.Mastodon.AutoLightDark.TrueBlack.Original" parent="Theme.Mastodon.Dark.TrueBlack.Original"/>
+
 </resources>

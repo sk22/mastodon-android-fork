@@ -17,12 +17,15 @@ import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.LinearInterpolator;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,6 +57,7 @@ import java.util.function.Consumer;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
+import androidx.annotation.StyleRes;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import me.grishka.appkit.api.Callback;
@@ -78,6 +82,7 @@ public class SettingsFragment extends MastodonToolbarFragment{
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
+
 		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N)
 			setRetainInstance(true);
 		setTitle(R.string.settings);
@@ -101,6 +106,7 @@ public class SettingsFragment extends MastodonToolbarFragment{
 		}));
 		items.add(new SwitchItem(R.string.enable_mastodon_original_colors, R.drawable.bg_button_green, GlobalUserPreferences.originalColors, this::onOriginalColorChanged));
 
+		items.add(new SpinnerItem(R.string.settings_themes, R.drawable.bg_button_green));
 
 		items.add(new HeaderItem(R.string.settings_behavior));
 		items.add(new SwitchItem(R.string.settings_gif, R.drawable.ic_fluent_gif_24_regular, GlobalUserPreferences.playGifs, i->{
@@ -434,6 +440,23 @@ public class SettingsFragment extends MastodonToolbarFragment{
 		}
 	}
 
+	private class SpinnerItem extends Item{
+		private String text;
+		private int icon;
+//		private Spinner spinner;
+
+		public SpinnerItem(@StringRes int text, @DrawableRes int icon){
+			this.text=getString(text);
+			this.icon=icon;
+//			this.spinner=spinner;
+
+		}
+		@Override
+		public int getViewType(){
+			return 8;
+		}
+	}
+
 	private static class ThemeItem extends Item{
 
 		@Override
@@ -518,6 +541,7 @@ public class SettingsFragment extends MastodonToolbarFragment{
 				case 5 -> new HeaderViewHolder(true);
 				case 6 -> new FooterViewHolder();
 				case 7 -> new UpdateViewHolder();
+				case 8 -> new SpinnerViewHolder();
 				default -> throw new IllegalStateException("Unexpected value: "+viewType);
 			};
 		}
@@ -551,6 +575,40 @@ public class SettingsFragment extends MastodonToolbarFragment{
 		public void onBind(HeaderItem item){
 			text.setText(item.text);
 		}
+	}
+
+	private class SpinnerViewHolder extends BindableViewHolder<SpinnerItem> implements AdapterView.OnItemSelectedListener {
+		private final TextView text;
+		private final ImageView icon;
+		private final Switch checkbox;
+		private final Spinner spinner;
+
+		public SpinnerViewHolder(){
+			super(getActivity(), R.layout.item_settings_theme_picker_spinner, list);
+			text=findViewById(R.id.text);
+			icon=findViewById(R.id.icon);
+			checkbox=findViewById(R.id.checkbox);
+			spinner=findViewById(R.id.theme_picker_spinner);
+		}
+		@Override
+		public void onBind(SpinnerItem spinnerItem){
+			text.setText(item.text);
+			icon.setImageResource(item.icon);
+			ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(MastodonApp.context, R.array.theme_options_array, android.R.layout.simple_spinner_item);
+			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			spinner.setAdapter(adapter);
+		}
+
+		public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+			// An item was selected. You can retrieve the selected item using
+			// parent.getItemAtPosition(pos)
+		}
+
+		@Override
+		public void onNothingSelected(AdapterView<?> adapterView) {
+
+		}
+
 	}
 
 	private class SwitchViewHolder extends BindableViewHolder<SwitchItem> implements UsableRecyclerView.DisableableClickable{

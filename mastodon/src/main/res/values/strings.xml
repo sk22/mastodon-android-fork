@@ -429,4 +429,12 @@
 	<string name="disable_marquee">Disable scrolling text in title bars</string>
 	<string name="enable_mastodon_original_colors">Enable mastodon original colors</string>
 	<string name="settings_contribute_fork">Contribute to Megalodon</string>
+	<string name="settings_themes">Themes</string>
+
+	<string-array name="theme_options_array">
+		<item>Original</item>
+		<item>Pinkish</item>
+	</string-array>
+
+
 </resources>

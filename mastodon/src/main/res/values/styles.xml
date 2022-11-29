@@ -211,6 +211,7 @@
 		<item name="android:textColor">@color/button_text_secondary_dark_on_light</item>
 	</style>
 
+
 	<style name="Widget.Mastodon.Button.Large.Primary_LightOnDark">
 		<item name="android:background">@drawable/bg_button_primary_light_on_dark</item>
 		<item name="android:textColor">@color/button_text_primary_light_on_dark</item>

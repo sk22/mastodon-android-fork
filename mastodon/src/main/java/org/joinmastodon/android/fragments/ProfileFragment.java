@@ -6,6 +6,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.ClipData;
@@ -530,6 +531,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		return false;
 	}
 
+	@SuppressLint("StringFormatInvalid")
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
 		if(isOwnProfile && isInEditMode){
