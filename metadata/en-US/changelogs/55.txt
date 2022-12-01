@@ -1,4 +1,0 @@
-- Fix broken rendering of HTML tags and enable rendering Markdown formatting
-- Initialize <a href="https://translate.codeberg.org/projects/megalodon">Weblate translation project</a>
-- Add toggle for the Federated timeline
-- Versions 52-54 were small adjustments for a release on Google Play
