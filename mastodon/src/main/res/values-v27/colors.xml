@@ -3,6 +3,6 @@
 	<color name="navigation_bar_bg">@color/gray_50</color>
 	<color name="green_navigation_bar_bg">@color/green_gray_50</color>
 	<color name="blue_navigation_bar_bg">@color/blue_gray_50</color>
-	<color name="orange_navigation_bar_bg">@color/orange_gray_50</color>
+	<color name="brown_navigation_bar_bg">@color/brown_gray_50</color>
 	<color name="yellow_navigation_bar_bg">@color/yellow_gray_50</color>
 </resources>

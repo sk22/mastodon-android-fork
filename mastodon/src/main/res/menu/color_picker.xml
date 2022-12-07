@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/pink_color" android:title="@string/pink_color"/>
-    <item android:id="@+id/purple_color" android:title="@string/purple_color"/>
-    <item android:id="@+id/green_color" android:title="@string/green_color"/>
-    <item android:id="@+id/blue_color" android:title="@string/blue_color"/>
-    <item android:id="@+id/orange_color" android:title="@string/orange_color"/>
-    <item android:id="@+id/yellow_color" android:title="@string/yellow_color"/>
+    <item android:id="@+id/pink_color" android:title="@string/sk_color_theme_pink"/>
+    <item android:id="@+id/purple_color" android:title="@string/sk_color_theme_purple"/>
+    <item android:id="@+id/green_color" android:title="@string/sk_color_theme_green"/>
+    <item android:id="@+id/blue_color" android:title="@string/sk_color_theme_blue"/>
+    <item android:id="@+id/brown_color" android:title="@string/sk_color_theme_brown"/>
+    <item android:id="@+id/yellow_color" android:title="@string/sk_color_theme_yellow"/>
 </menu>

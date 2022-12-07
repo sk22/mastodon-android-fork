@@ -1,0 +1,6 @@
+- Buat pembukaan kiriman asli memungkinkan saat membalas (dengan mengetuk baris “Membalas ke…”)
+- Gabungkan perubahan upstream dan perbaikan kutu
+- Hapus kode “Pusat Aplikasi” yang tidak digunakan
+- Tambahkan rilis tanpa lini masa Federasi untuk Play Store
+- Tambahkan URI arahan kuston untuk pemasukan yang lebih mudah
+- Ubah tautan kontribusi

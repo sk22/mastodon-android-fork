@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sk_app_name">Megalodon</string>
+    <string name="sk_delete_and_redraft">ဖျက်ပြီး ပြန်ရေးမည်</string>
+    <string name="sk_pin_post">ပရိုဖိုင်းတွင် ပင်တွဲမည်</string>
+    <string name="sk_pinning">ပင်တွဲနေသည်…</string>
+    <string name="sk_unpin_post">ပရိုဖိုင်းတွင် ပင်မတွဲတော့ပါ</string>
+    <string name="sk_confirm_unpin_post_title">ပရိုဖိုင်းတွင် ပင်မတွဲတော့ခြင်း</string>
+    <string name="sk_unpinning">ပင်ဖြုတ်နေသည်…</string>
+    <string name="sk_image_description">ပုံတွင်ပါဝင်သော အကြောင်းအရာ</string>
+    <string name="sk_visibility_unlisted">စာရင်းမလုပ်</string>
+    <string name="sk_settings_show_boosts">Boost များကို ပြသမည်</string>
+    <string name="sk_settings_app_version">Megalodon - ဗားရှင်း %1$s (%2$d)</string>
+    <string name="sk_mark_media_as_sensitive">ပုံ/ဗီဒီယိုအား ထိရှလွယ်သည်အဖြစ် မှတ်သားသည်</string>
+    <string name="sk_user_post_notifications_off">%s အတွက် ပို့စ်နိုတီများကို ပိတ်လိုက်သည်</string>
+    <string name="sk_federated_timeline">ဖက်ဒရေးရှင်း</string>
+    <string name="sk_update_available">Megalodon %s ကို ဒေါင်းလုဒ်ဆွဲလို့ရပါပြီ။</string>
+    <string name="sk_update_ready">Megalodon %s ကို ဒေါင်းလုဒ်ဆွဲပြီးပြီမလို့ အင်စတောလုပ်နိုင်ပါပြီ။</string>
+    <string name="sk_no_update_available">မည်သည့်အပ်ဒိတ်မျှ မရှိသေးပါ</string>
+    <string name="sk_follow_requests">ဖောလိုဝါအဖြစ် တောင်းဆိုမှုများ</string>
+    <string name="sk_accept_follow_request">ဖောလိုဝါအဖြစ်တောင်းဆိုမှုကို လက်ခံမည်</string>
+    <string name="sk_reject_follow_request">ဖောလိုဝါအဖြစ်တောင်းဆိုမှုကို ငြင်းပယ်မည်</string>
+    <string name="sk_confirm_pin_post_title">ပို့စ်အား ပရိုဖိုင်းတွင် ပင်တွဲခြင်း</string>
+    <string name="sk_confirm_delete_and_redraft_title">ပို့စ်အား ဖျက်ပြီးပြန်ရေးခြင်း</string>
+    <string name="sk_confirm_delete_and_redraft">ဖျက်ပြီးပြန်ရေးမှာ သေချာပြီလား\?</string>
+    <string name="sk_confirm_pin_post">ပရိုဖိုင်းမှာ ပင်တွဲမှာ သေချာပြီလား\?</string>
+    <string name="sk_confirm_unpin_post">ပို့စ်ကို ပင်မတွဲတော့ဘူးဆိုတာ သေချာပြီလား\?</string>
+    <string name="sk_settings_show_replies">ရီပလိုင်းများကို ပြသမည်</string>
+    <string name="sk_settings_load_new_posts">ပို့စ်အသစ်များကို အလိုအလျောက်ရယူမည်</string>
+    <string name="sk_user_post_notifications_on">%s အတွက် ပို့စ်နိုတီများကို ဖွင့်လိုက်သည်</string>
+    <string name="sk_federated_timeline_info_banner">သင့်ဖက်ဒရေးရှင်းကလူတွေရဲ့ လတ်တလောပို့စ်တွေ ဖြစ်ပါတယ်။</string>
+    <string name="sk_check_for_update">အပ်ဒိတ်ရှိလားစစ်ဆေးမည်</string>
+    <string name="sk_disable_marquee">ခေါင်းစီးဘားများတွင် စာများရွေ့လျားမှု ပိတ်မည်</string>
+</resources>

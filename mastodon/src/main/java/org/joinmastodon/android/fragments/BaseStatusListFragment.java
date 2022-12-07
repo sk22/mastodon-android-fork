@@ -400,10 +400,12 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 	public void onPollOptionClick(PollOptionStatusDisplayItem.Holder holder){
 		Poll poll=holder.getItem().poll;
 		Poll.Option option=holder.getItem().option;
-		if(poll.multiple){
+		if(poll.multiple || GlobalUserPreferences.voteButtonForSingleChoice){
 			if(poll.selectedOptions==null)
 				poll.selectedOptions=new ArrayList<>();
-			if(poll.selectedOptions.contains(option)){
+			boolean optionContained=poll.selectedOptions.contains(option);
+			if(!poll.multiple) poll.selectedOptions.clear();
+			if(optionContained){
 				poll.selectedOptions.remove(option);
 				holder.itemView.setSelected(false);
 			}else{
@@ -412,6 +414,9 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 			}
 			for(int i=0;i<list.getChildCount();i++){
 				RecyclerView.ViewHolder vh=list.getChildViewHolder(list.getChildAt(i));
+				if(!poll.multiple && vh instanceof PollOptionStatusDisplayItem.Holder item){
+					if (item != holder) item.itemView.setSelected(false);
+				}
 				if(vh instanceof PollFooterStatusDisplayItem.Holder footer){
 					if(footer.getItemID().equals(holder.getItemID())){
 						footer.rebind();

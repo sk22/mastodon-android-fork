@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="sk_app_name">Megalodon</string>
+  <string name="sk_pinned_posts">Angeheftet</string>
+  <string name="sk_delete_and_redraft">Löschen und neu erstellen</string>
+  <string name="sk_confirm_delete_and_redraft_title">Beitrag löschen und neu erstellen</string>
+  <string name="sk_confirm_delete_and_redraft">Bist du dir sicher, dass du diesen Beitrag löschen und neu erstellen möchtest?</string>
+  <string name="sk_pin_post">An Profil anheften</string>
+	<string name="sk_confirm_pin_post_title">Beitrag an Profil anheften</string>
+	<string name="sk_confirm_pin_post">Möchtest du den Beitrag an dein Profil anheften?</string>
+	<string name="sk_pinning">Wird angeheftet…</string>
+	<string name="sk_unpin_post">Von Profil lösen</string>
+	<string name="sk_confirm_unpin_post_title">Angehefteten Beitrag von Profil lösen</string>
+	<string name="sk_confirm_unpin_post">Bist du dir sicher, dass du den angehefteten Beitrag von deinem Profil lösen möchtest?</string>
+	<string name="sk_unpinning">Wird vom Profil gelöst…</string>
+  <string name="sk_image_description">Bildbeschreibung</string>
+	<string name="sk_visibility_unlisted">Nicht gelistet</string>
+	<string name="sk_settings_show_replies">Antworten anzeigen</string>
+	<string name="sk_settings_show_boosts">Geteilte Beiträge anzeigen</string>
+	<string name="sk_settings_load_new_posts">Automatisch neue Beiträge laden</string>
+	<string name="sk_settings_show_interaction_counts">Interaktions-Anzahlen anzeigen</string>
+	<string name="sk_settings_app_version">Megalodon v%1$s (%2$d)</string>
+	<string name="sk_mark_media_as_sensitive">Medien als sensibel markieren</string>
+	<string name="sk_user_post_notifications_on">Benachrichtigungen über Beiträge von %s aktiviert</string>
+	<string name="sk_user_post_notifications_off">Benachrichtigungen über Beiträge von %s deaktiviert</string>
+	<string name="sk_federated_timeline">Föderation</string>
+	<string name="sk_federated_timeline_info_banner">Das sind die neuesten Beiträge von Personen, die in der Föderation deines Servers sind.</string>
+	<string name="sk_update_available">Megalodon %s ist zum Herunterladen bereit.</string>
+	<string name="sk_update_ready">Megalodon %s wurde heruntergeladen und kann jetzt installiert werden.</string>
+	<string name="sk_check_for_update">Auf Update prüfen</string>
+	<string name="sk_no_update_available">Kein Update verfügbar</string>
+	<string name="sk_list_timelines">Listen</string>
+	<string name="sk_follow_requests">Folgeanfragen</string>
+	<string name="sk_accept_follow_request">Folgeanfrage akzeptieren</string>
+	<string name="sk_reject_follow_request">Folgeanfrage ablehnen</string>
+	<string name="sk_lists_with_user">Listen mit %s</string>
+	<string name="sk_settings_always_reveal_content_warnings">Inhaltswarnungen immer ausklappen</string>
+	<string name="sk_disable_marquee">Laufschrift in Titelleisten deaktivieren</string>
+	<string name="sk_settings_contribute">Zu Megalodon beitragen</string>
+	<string name="sk_settings_show_federated_timeline">Föderierte Timeline anzeigen</string>
+</resources>

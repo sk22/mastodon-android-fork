@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.joinmastodon.android.BuildConfig;
+import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.fragments.ScrollableToTop;
 import org.joinmastodon.android.fragments.ListTimelinesFragment;
@@ -61,7 +62,7 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 	private String accountID;
 	private Runnable searchDebouncer=this::onSearchChangedDebounced;
 
-	private static final boolean noFederated = BuildConfig.BUILD_TYPE.equals("noFederatedRelease");
+	private final boolean noFederated = !GlobalUserPreferences.showFederatedTimeline;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -163,12 +164,12 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 				if (noFederated && position > 0) position++;
 				tab.setText(switch(position){
 					case 0 -> R.string.local_timeline;
-					case 1 -> R.string.federated_timeline;
+					case 1 -> R.string.sk_federated_timeline;
 					case 2 -> R.string.hashtags;
 					case 3 -> R.string.posts;
 					case 4 -> R.string.news;
 					case 5 -> R.string.for_you;
-					case 6 -> R.string.list_timelines;
+					case 6 -> R.string.sk_list_timelines;
 					default -> throw new IllegalStateException("Unexpected value: "+position);
 				});
 				tab.view.textView.setAllCaps(true);

@@ -45,7 +45,7 @@ public class ImageDescriptionSheet extends BottomSheet{
 		}
 
 		TextView heading=new TextView(activity);
-		heading.setText(R.string.image_description);
+		heading.setText(R.string.sk_image_description);
 		heading.setAllCaps(true);
 		heading.setTypeface(null, Typeface.BOLD);
 		heading.setPadding(0, V.dp(24), 0, V.dp(8));

@@ -1,6 +1,6 @@
-* Make it possible to open the original post while replying (by clicking the “In reply to…” line)
-* Merge upstream changes and bugfixes
-* Remove unused “App Center” code
-* Add release without Federated timeline for Play Store
-* Add custom redirect URI for easier login
-* Change contribution link
+- Make it possible to open the original post while replying (by clicking the “In reply to…” line)
+- Merge upstream changes and bugfixes
+- Remove unused “App Center” code
+- Add release without Federated timeline for Play Store
+- Add custom redirect URI for easier login
+- Change contribution link

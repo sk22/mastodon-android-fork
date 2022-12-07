@@ -1,0 +1,6 @@
+- Gör det möjligt att öppna originalinlägget när du svarar (genom att klicka på "I svar till.." linjen)
+- Slå ihop uppströmsändringar och buggfixar
+- Ta bort oanvänd "App Center" kod
+- Lägg till release utan Federerad tidslinje för Play Store
+- Lägg till anpassad omdirigerad URI för lättare inloggning
+- Ändra länk för bidragning

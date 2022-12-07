@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sk_delete_and_redraft">Usuń i zmodyfikuj</string>
+    <string name="sk_pin_post">Przypomnij do profilu</string>
+    <string name="sk_confirm_pin_post_title">Przypomnij post na profilu</string>
+    <string name="sk_confirm_pin_post">Czy chcesz przypiąć ten post na swoim profilu\?</string>
+    <string name="sk_pinning">Przypinanie postu…</string>
+    <string name="sk_unpin_post">Odepnij post z profilu</string>
+    <string name="sk_confirm_unpin_post_title">Odepnij post z profilu</string>
+    <string name="sk_unpinning">Odpinanie postu…</string>
+    <string name="sk_settings_show_replies">Pokaż odpowiedzi</string>
+    <string name="sk_settings_show_boosts">Pokaż podbicia</string>
+    <string name="sk_settings_load_new_posts">Automatycznie wczytuj nowe posty</string>
+    <string name="sk_settings_show_interaction_counts">Pokaż dane ilości interakcji</string>
+    <string name="sk_mark_media_as_sensitive">Oznacz jako wrażliwe</string>
+    <string name="sk_user_post_notifications_on">Włączono powiadomienia dla postu %s</string>
+    <string name="sk_user_post_notifications_off">Wyłączono powiadomienia dla postu %s</string>
+    <string name="sk_federated_timeline">Znana sieć fediverse</string>
+    <string name="sk_federated_timeline_info_banner">To są najnowsze post ze znanej sieci fediverse dla twojego serwera.</string>
+    <string name="sk_update_available">Megalodon %s jest dostępny do pobrania.</string>
+    <string name="sk_update_ready">Megalodon %s został pobrany i jest gotowy do instalacji.</string>
+    <string name="sk_check_for_update">Szukaj uaktualnień</string>
+    <string name="sk_no_update_available">Brak dostępnych uaktualnień</string>
+    <string name="sk_app_name">Megalodon</string>
+    <string name="sk_pinned_posts">Przypięte</string>
+    <string name="sk_confirm_delete_and_redraft">Jesteś pewnien, że chcesz usunąć zmodyfikowany post\?</string>
+    <string name="sk_confirm_unpin_post">Jesteś pewien, że chcesz odpiąć ten post\?</string>
+    <string name="sk_image_description">Opis obrazka</string>
+    <string name="sk_confirm_delete_and_redraft_title">Usuń i zmodyfikuj post</string>
+    <string name="sk_list_timelines">Listy</string>
+    <string name="sk_follow_requests">Prośby o obserwowanie</string>
+    <string name="sk_accept_follow_request">Zaakceptuj prośby o obserwowanie</string>
+    <string name="sk_reject_follow_request">Odrzuć prośby o obserwowanie</string>
+    <string name="sk_lists_with_user">Listy z %s</string>
+    <string name="sk_settings_always_reveal_content_warnings">Zawsze odkrywaj ostrzeżenia o zawartości</string>
+    <string name="sk_disable_marquee">Wyłącz tekst przewijany w paskach tytułowych</string>
+    <string name="sk_settings_contribute">Wspomóż Megalodon</string>
+    <string name="sk_settings_show_federated_timeline">Pokaż oś czasu znanej sieci Fediverse</string>
+    <string name="sk_settings_app_version">Megalodon v%1$s (%2$d)</string>
+    <string name="sk_visibility_unlisted">Nienotowany</string>
+</resources>

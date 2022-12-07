@@ -1,0 +1,6 @@
+- Possibilita a abertura da postagem original durante a resposta (clicando na linha “Em resposta a…”)
+- Mescla alterações upstream e correções de bugs
+- Remove o código “App Center” não utilizado
+- Adiciona lançamento sem linha do tempo federada para Play Store
+- Adicionar URI de redirecionamento personalizado para facilitar o login
+- Alteração do link de contribuição

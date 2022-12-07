@@ -187,7 +187,7 @@
 					android:layout_weight="1"
 					android:textSize="16sp"
 					android:singleLine="true"
-					android:text="@string/mark_media_as_sensitive" />
+					android:text="@string/sk_mark_media_as_sensitive" />
 			</LinearLayout>
 		</LinearLayout>
 	</ScrollView>

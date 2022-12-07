@@ -12,7 +12,8 @@
 	<LinearLayout
 		android:id="@+id/button"
 		android:layout_width="match_parent"
-		android:layout_height="48dp"
+		android:layout_height="wrap_content"
+		android:paddingVertical="12dp"
 		android:outlineProvider="background"
 		android:elevation="2dp"
 		android:background="@drawable/bg_poll_option_clickable"
@@ -48,9 +49,7 @@
 			android:layout_marginLeft="16dp"
 			android:layout_marginRight="16dp"
 			android:textAppearance="@style/m3_title_medium"
-			android:singleLine="true"
-			android:ellipsize="end"
-			tools:text="scream into void"/>
+			tools:text="scream into void. like this: aaaaaaaaaaaaaaaaaaaa"/>
 
 	</LinearLayout>
 

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sk_app_name">Megalodon</string>
+    <string name="sk_pinned_posts">Fixado</string>
+</resources>

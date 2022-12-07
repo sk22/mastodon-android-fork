@@ -1,0 +1,4 @@
+- Préparation des fichiers pour publication sur F-Droid
+- Correction de la mise à jour automatique
+- Ajout d'icônes monochromes dans les icônes du lanceur
+- Remplacement de la mauvaise icône non répertoriée dans le pied de page étendu

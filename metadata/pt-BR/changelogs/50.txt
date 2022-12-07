@@ -1,0 +1,4 @@
+- Preparar arquivos para lançamento no F-Droid
+- Corrigir o atualizador automático
+- Acrescentar ícones monocromáticos de volta aos ícones do lançador
+- Substituir o ícone errado não listado no rodapé estendido

@@ -1,4 +1,4 @@
-* Prepare files for release on F-Droid
-* Fix automatic updater
-* Add monochromatic icons back into launcher icons
-* Replace wrong unlisted icon in extended footer
+- Prepare files for release on F-Droid
+- Fix automatic updater
+- Add monochromatic icons back into launcher icons
+- Replace wrong unlisted icon in extended footer

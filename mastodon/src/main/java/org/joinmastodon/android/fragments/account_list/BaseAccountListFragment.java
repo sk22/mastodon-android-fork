@@ -286,13 +286,16 @@ public abstract class BaseAccountListFragment extends BaseRecyclerFragment<BaseA
 			menu.findItem(R.id.mute).setTitle(getString(relationship.muting ? R.string.unmute_user : R.string.mute_user, account.getDisplayUsername()));
 			menu.findItem(R.id.block).setTitle(getString(relationship.blocking ? R.string.unblock_user : R.string.block_user, account.getDisplayUsername()));
 			menu.findItem(R.id.report).setTitle(getString(R.string.report_user, account.getDisplayUsername()));
-			menu.findItem(R.id.manage_user_lists).setTitle(getString(R.string.lists_with_user, account.getDisplayUsername()));
 			MenuItem hideBoosts=menu.findItem(R.id.hide_boosts);
+			MenuItem manageUserLists=menu.findItem(R.id.manage_user_lists);
 			if(relationship.following){
 				hideBoosts.setTitle(getString(relationship.showingReblogs ? R.string.hide_boosts_from_user : R.string.show_boosts_from_user, account.getDisplayUsername()));
 				hideBoosts.setVisible(true);
+				manageUserLists.setTitle(getString(R.string.sk_lists_with_user, account.getDisplayUsername()));
+				manageUserLists.setVisible(true);
 			}else{
 				hideBoosts.setVisible(false);
+				manageUserLists.setVisible(true);
 			}
 			MenuItem blockDomain=menu.findItem(R.id.block_domain);
 			if(!account.isLocal()){

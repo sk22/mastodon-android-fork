@@ -3,9 +3,7 @@
 	<string name="get_started">Iniziamo</string>
 	<string name="log_in">Accedi</string>
 	<string name="next">Avanti</string>
-	<string name="loading_instance">Recupero informazioni istanza…</string>
 	<string name="error">Errore</string>
-	<string name="not_a_mastodon_instance">%s non sembra essere un\'istanza Mastodon.</string>
 	<string name="ok">OK</string>
 	<string name="preparing_auth">Preparazione all\'autenticazione…</string>
 	<string name="finishing_auth">Completamento autenticazione…</string>
@@ -382,4 +380,9 @@
 	<string name="i_agree">Accetto</string>
 	<string name="empty_list">Questo elenco è vuoto</string>
 	<string name="instance_signup_closed">Questo server non accetta nuove registrazioni.</string>
+	<string name="text_copied">Copiato negli appunti</string>
+	<string name="add_bookmark">Segnalibro</string>
+	<string name="remove_bookmark">Rimuovi segnalibro</string>
+	<string name="bookmarks">Segnalibri</string>
+	<string name="your_favorites">I Tuoi Preferiti</string>
 </resources>

@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.model.Poll;
@@ -44,7 +45,7 @@ public class PollFooterStatusDisplayItem extends StatusDisplayItem{
 				text+=" · "+item.parentFragment.getString(R.string.poll_closed);
 			}
 			this.text.setText(text);
-			button.setVisibility(item.poll.isExpired() || item.poll.voted || !item.poll.multiple ? View.GONE : View.VISIBLE);
+			button.setVisibility(item.poll.isExpired() || item.poll.voted || (!item.poll.multiple && !GlobalUserPreferences.voteButtonForSingleChoice) ? View.GONE : View.VISIBLE);
 			button.setEnabled(item.poll.selectedOptions!=null && !item.poll.selectedOptions.isEmpty());
 		}
 	}

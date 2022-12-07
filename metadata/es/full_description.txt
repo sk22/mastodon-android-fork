@@ -1,0 +1,17 @@
+Megalodon es una versión modificada de la <a href="https://github.com/mastodon/mastodon-android">aplicación oficial de Mastodon para Android</a> que ha añadido opciones importantes que no tiene la versión oficial , como la línea de tiempo federada, la publicación sin listar, marcadores y un visor de la descripción de las imágenes.
+
+<b>Funcionalidades clave</b>
+
+— <b>Publicación sin listar</b>: Escribe de forma pública sin que la publicación se muestre en las tendencias, etiquetas o líneas de tiempo públicas.
+— <b>Línea de tiempo federada</b>: Visualiza todas las publicaciones de personas del resto de barrios del Fedivers a los que está conectada tu instancia.
+— <b>Visor de la descripción de las imágenes.</b>: Comprueba rápidamente si una imagen o un vídeo tiene un texto alternativo adjunto.
+— <b>Fijar publicaciones</b>: Fija tus publicaciones más importantes en tu perfil y mira qué han fijado otras personas en la pestaña Fijado.
+— <b>Marcadores</b>: Guarda rápidamente publicaciones y búscalas más tarde en la lista de marcadores.
+— <b>Seguimiento de etiquetas</b>: Visualiza nuevas publicaciones de etiquetas específicas directamente en la línea de tiempo, siguiendo estas etiquetas.
+— <b>Responder las solicitudes de seguimiento</b>: Acepta o rechaza solicitudes de seguimiento desde las notificaciones o en la lista de solicitudes de seguimiento dedicada.
+— <b>Eliminar y volver a escribir</b>: La característica tan querida que hizo posible la edición sin una función de edición real.
+
+<b>Funcionalidades oficiales no lanzadas, disponibles por adelantado</b>
+
+— Edición de publicaciones
+- Actualizador integrado para los lanzamientos de GitHub

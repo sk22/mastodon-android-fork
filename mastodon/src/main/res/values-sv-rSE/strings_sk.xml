@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sk_pinned_posts">Nåla fast</string>
+    <string name="sk_delete_and_redraft">Ta bort och skriv om</string>
+    <string name="sk_pin_post">Nåla fast på profil</string>
+    <string name="sk_pinning">Nålar fast inlägg…</string>
+    <string name="sk_unpin_post">Ta bort från profil</string>
+    <string name="sk_confirm_unpin_post_title">Ta bort inlägg från profil</string>
+    <string name="sk_unpinning">Tar bort inlägg…</string>
+    <string name="sk_image_description">Bildbeskrivning</string>
+    <string name="sk_visibility_unlisted">Olistad</string>
+    <string name="sk_settings_show_replies">Visa svar</string>
+    <string name="sk_settings_show_boosts">Visa puffar</string>
+    <string name="sk_settings_load_new_posts">Ladda automatiskt nya inlägg</string>
+    <string name="sk_settings_show_interaction_counts">Visa antal interaktioner</string>
+    <string name="sk_settings_app_version">Megalodon v%1$s (%2$d)</string>
+    <string name="sk_mark_media_as_sensitive">Markera media som känsligt</string>
+    <string name="sk_user_post_notifications_off">Slå av inläggsnotifieringar för %s</string>
+    <string name="sk_federated_timeline">Federation</string>
+    <string name="sk_federated_timeline_info_banner">Dessa är de senaste inläggen av folk i din federation.</string>
+    <string name="sk_update_available">Megalodon %s är redo att ladda ner.</string>
+    <string name="sk_check_for_update">Kolla efter uppdateringar</string>
+    <string name="sk_no_update_available">Inga uppdateringar tillgängliga</string>
+    <string name="sk_list_timelines">Listor</string>
+    <string name="sk_follow_requests">Följarbegäranden</string>
+    <string name="sk_accept_follow_request">Acceptera följarbegäran</string>
+    <string name="sk_reject_follow_request">Avslå följarbegäran</string>
+    <string name="sk_lists_with_user">Listor med %s</string>
+    <string name="sk_settings_always_reveal_content_warnings">Visa alltid innehållsvarningar</string>
+    <string name="sk_disable_marquee">Slå av skrollande text i titelrader</string>
+    <string name="sk_settings_contribute">Bidra till Megalodon</string>
+    <string name="sk_settings_show_federated_timeline">Visa federerad tidslinje</string>
+    <string name="sk_app_name">Megalodon</string>
+    <string name="sk_confirm_delete_and_redraft_title">Ta bort och skriv om inlägg</string>
+    <string name="sk_confirm_delete_and_redraft">Är du säker på att du vill ta bort och skriva om detta inlägg\?</string>
+    <string name="sk_confirm_pin_post_title">Nåla fast inlägg på profil</string>
+    <string name="sk_confirm_pin_post">Vill du nåla fast detta inlägg på din profil\?</string>
+    <string name="sk_confirm_unpin_post">Är du säker på att du vill ta bort detta inlägg\?</string>
+    <string name="sk_user_post_notifications_on">Slå på inläggsnotifieringar för %s</string>
+    <string name="sk_update_ready">Megalodon %s är nerladdad och redo att installeras.</string>
+</resources>

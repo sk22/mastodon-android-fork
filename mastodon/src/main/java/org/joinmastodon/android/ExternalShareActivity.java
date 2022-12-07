@@ -51,7 +51,10 @@ public class ExternalShareActivity extends FragmentStackActivity{
 		getWindow().setBackgroundDrawable(null);
 
 		Intent intent=getIntent();
-		String text=intent.getStringExtra(Intent.EXTRA_TEXT);
+		StringBuilder builder=new StringBuilder();
+		if (intent.hasExtra(Intent.EXTRA_SUBJECT)) builder.append(intent.getStringExtra(Intent.EXTRA_SUBJECT)).append("\n");
+		if (intent.hasExtra(Intent.EXTRA_TEXT)) builder.append(intent.getStringExtra(Intent.EXTRA_TEXT)).append("\n");
+		String text=builder.toString();
 		List<Uri> mediaUris;
 		if(Intent.ACTION_SEND.equals(intent.getAction())){
 			Uri singleUri=intent.getParcelableExtra(Intent.EXTRA_STREAM);

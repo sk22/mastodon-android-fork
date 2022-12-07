@@ -9,8 +9,8 @@ android {
 		applicationId "org.joinmastodon.android.sk"
 		minSdk 23
 		targetSdk 33
-		versionCode 51
-		versionName "1.1.4+fork.51"
+		versionCode 55
+		versionName "1.1.4+fork.55"
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 		resConfigs "en", "ar-rSA", "bs-rBA", "ca-rES", "cs-rCZ", "de-rDE", "el-rGR", "es-rES",
 				"eu-rES", "fi-rFI", "fr-rFR", "gl-rES", "hr-rHR", "hy-rAM", "it-rIT", "iw-rIL",
@@ -32,9 +32,11 @@ android {
 		githubRelease{
 			initWith release
 		}
-		noFederatedRelease{
+		playRelease{
 			initWith release
-			versionNameSuffix '-nofederated'
+			minifyEnabled true
+			shrinkResources true
+			versionNameSuffix '-play'
 		}
 	}
 	compileOptions {

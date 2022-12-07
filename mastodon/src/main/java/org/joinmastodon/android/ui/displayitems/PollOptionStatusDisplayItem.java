@@ -76,10 +76,11 @@ public class PollOptionStatusDisplayItem extends StatusDisplayItem{
 		@Override
 		public void onBind(PollOptionStatusDisplayItem item){
 			text.setText(item.text);
-			icon.setVisibility(item.showResults ? View.GONE : View.VISIBLE);
+//			icon.setVisibility(item.showResults ? View.GONE : View.VISIBLE);
 			percent.setVisibility(item.showResults ? View.VISIBLE : View.GONE);
 			itemView.setClickable(!item.showResults);
 			if(item.showResults){
+				icon.setSelected(item.poll.ownVotes.contains(item.poll.options.indexOf(item.option)));
 				progressBg.setLevel(Math.round(10000f*item.votesFraction));
 				button.setBackground(progressBg);
 				itemView.setSelected(item.isMostVoted);

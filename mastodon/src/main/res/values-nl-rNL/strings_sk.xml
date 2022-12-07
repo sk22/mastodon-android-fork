@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sk_app_name">Megalodon</string>
+    <string name="sk_pinned_posts">Vastgemaakt</string>
+    <string name="sk_delete_and_redraft">Verwijderen en opnieuw opstellen</string>
+    <string name="sk_confirm_delete_and_redraft_title">Verwijder en stel bericht opnieuw op</string>
+    <string name="sk_confirm_delete_and_redraft">Weet je zeker dat je dit bericht wilt verwijderen en opnieuw wilt opstellen\?</string>
+    <string name="sk_pin_post">Vastmaken aan profiel</string>
+    <string name="sk_confirm_pin_post_title">Bericht vastmaken aan profiel</string>
+    <string name="sk_confirm_pin_post">Wil je dit bericht vastmaken aan je profiel\?</string>
+    <string name="sk_pinning">Bericht vastmaken…</string>
+    <string name="sk_unpin_post">Losmaken van profiel</string>
+    <string name="sk_confirm_unpin_post_title">Bericht losmaken van profiel</string>
+    <string name="sk_confirm_unpin_post">Weet je zeker dat je dit bericht wilt losmaken\?</string>
+    <string name="sk_unpinning">Bericht losmaken…</string>
+    <string name="sk_follow_requests">Volgverzoeken</string>
+    <string name="sk_visibility_unlisted">Geheim</string>
+    <string name="sk_image_description">Afbeelding beschrijving</string>
+    <string name="sk_settings_show_replies">Reacties weergeven</string>
+    <string name="sk_settings_show_boosts">Boosts weergeven</string>
+    <string name="sk_settings_load_new_posts">Automatisch nieuwe berichten laden</string>
+    <string name="sk_settings_show_interaction_counts">Aantal interacties weergeven</string>
+    <string name="sk_settings_app_version">Megalodon v%1$s (%2$d)</string>
+    <string name="sk_mark_media_as_sensitive">Markeer media als gevoelig</string>
+    <string name="sk_user_post_notifications_on">Berichtmeldingen aangezet voor %s</string>
+    <string name="sk_user_post_notifications_off">Berichtmeldingen uitgezet voor %s</string>
+    <string name="sk_federated_timeline">Federatie</string>
+    <string name="sk_federated_timeline_info_banner">Dit zijn de meest recente berichten van de mensen in jouw federatie.</string>
+    <string name="sk_update_available">Megalodon %s is klaar om te downloaden.</string>
+    <string name="sk_update_ready">Megalodon %s is gedownload en klaar om te installeren.</string>
+    <string name="sk_check_for_update">Controleren op update</string>
+    <string name="sk_no_update_available">Geen update beschikbaar</string>
+    <string name="sk_list_timelines">Lijsten</string>
+    <string name="sk_reject_follow_request">Volgverzoek afwijzen</string>
+    <string name="sk_accept_follow_request">Volgverzoek accepteren</string>
+    <string name="sk_lists_with_user">Lijsten met %s</string>
+    <string name="sk_settings_always_reveal_content_warnings">Onthul altijd inhoudswaarschuwingen</string>
+    <string name="sk_disable_marquee">Schakel scrollende tekst in titelbalken uit</string>
+    <string name="sk_settings_contribute">Bijdragen aan Megalodon</string>
+    <string name="sk_settings_show_federated_timeline">Toon gefedereerde tijdlijn</string>
+</resources>

@@ -67,7 +67,7 @@ public class FollowRequestsListFragment extends BaseRecyclerFragment<FollowReque
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		setTitle(R.string.follow_requests);
+		setTitle(R.string.sk_follow_requests);
 	}
 
 	@Override

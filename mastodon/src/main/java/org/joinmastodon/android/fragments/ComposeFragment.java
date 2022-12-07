@@ -487,7 +487,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			replyText.setText(getString(R.string.in_reply_to, replyTo.account.displayName));
 			int visibilityNameRes = switch (statusVisibility) {
 				case PUBLIC -> R.string.visibility_public;
-				case UNLISTED -> R.string.visibility_unlisted;
+				case UNLISTED -> R.string.sk_visibility_unlisted;
 				case PRIVATE -> R.string.visibility_followers_only;
 				case DIRECT -> R.string.visibility_private;
 			};

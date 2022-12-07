@@ -1,0 +1,17 @@
+Megalodon adalah versi modifikasi <a href="https://github.com/mastodon/mastodon-android">aplikasi Android Mastodon resmi</a> yang menambahkan fitur penting yang belum ada di aplikasi, seperti lini masa federasi, pengiriman tidak terdaftar, markah dan penampil deskripsi gambar.
+
+<b>Fitur unggulan</b>
+
+- <b>Pengiriman tidak terdaftar</b>: Kirim secara publik tanpa memasukkan kiriman Anda dalam tren, tagar, atau lini masa publik.
+- <b>Lini masa federasi</b>: Lihat semua kiriman publik dari orang-orang di semua tetangga Fediverse lainnya yang instansi rumah Anda terhubung.
+- <b>Penampil deskripsi gambar</b>: Periksa secara cepat jika gambar atau video nemiliki deskripsi alternatif.
+- <b>Menyematkan kiriman</b>: Sematkan kiriman penting Anda ke profil Anda dan lihat apa yang telah disematkan oleh orang lain menggunakan tab “Disematkan”.
+- <b>Markah</b>: Simpan kiriman secara cepat dan temukan nanti dalam tab Markah.
+- <b>Ikuti tagar</b>: Lihat kiriman baru dari tagar spesifik secara langsung dalam lini masa beranda Anda dengan mengikutinya.
+- <b>Menjawab permintaan pengikut</b>: Tolak atau terima permintaan pengikut dari notifikasi Anda atau daftar permintaan pengikut khusus.
+- <b>Hapus dan draf ulang</b>: Fitur yang banyak disukai yang membuat penyuntingan memungkinkan tanpa fungsi penyuntingan yang asli.
+
+<b>Fitur resmi yang belum dirilis, tersedia dari awal</b>
+
+- Menyunting kiriman
+- Pembaruan terintegrasi untuk rilis GitHub

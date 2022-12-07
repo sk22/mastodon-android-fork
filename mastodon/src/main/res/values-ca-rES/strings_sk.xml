@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sk_pinned_posts">Fixat</string>
+    <string name="sk_delete_and_redraft">Elimina i torna a escriure</string>
+    <string name="sk_confirm_delete_and_redraft_title">Eliminar i tornar a escriure</string>
+    <string name="sk_confirm_pin_post">Vols fixar aquesta publicació al teu perfil\?</string>
+    <string name="sk_pinning">S\'està fixant…</string>
+    <string name="sk_unpin_post">Deixa de fixar</string>
+    <string name="sk_confirm_unpin_post_title">Deixar de fixar al perfil</string>
+    <string name="sk_settings_show_replies">Mostra les respostes</string>
+    <string name="sk_settings_load_new_posts">Carrega automàticament les publicacions noves</string>
+    <string name="sk_federated_timeline">Federació</string>
+    <string name="sk_federated_timeline_info_banner">Aquestes són les publicacions més recents de gent de la teua federació.</string>
+    <string name="sk_update_ready">Megalodon %s s\'ha baixat i està preparat per a instal·lar-se.</string>
+    <string name="sk_accept_follow_request">Accepta la sol·licitud</string>
+    <string name="sk_disable_marquee">Desactiva el desplaçament de text a les barres de títol</string>
+    <string name="sk_user_post_notifications_on">Notificacions activades per a publicacions de: %s</string>
+    <string name="sk_app_name">Megalodon</string>
+    <string name="sk_pin_post">Fixa al perfil</string>
+    <string name="sk_confirm_pin_post_title">Fixar al perfil</string>
+    <string name="sk_confirm_delete_and_redraft">Segur que vols eliminar i tornar a escriure aquesta publicació\?</string>
+    <string name="sk_confirm_unpin_post">Segur que vols deixar de fixar aquesta publicació\?</string>
+    <string name="sk_unpinning">S\'està deixant de fixar…</string>
+    <string name="sk_image_description">Descripció de la imatge</string>
+    <string name="sk_visibility_unlisted">No llistat</string>
+    <string name="sk_settings_show_boosts">Mostra els impulsos</string>
+    <string name="sk_settings_show_interaction_counts">Mostra el recompte d\'interaccions</string>
+    <string name="sk_settings_app_version">Megalodon v. %1$s (%2$d)</string>
+    <string name="sk_user_post_notifications_off">Notificacions desactivades per a publicacions de: %s</string>
+    <string name="sk_mark_media_as_sensitive">Marca el contingut com a sensible</string>
+    <string name="sk_update_available">Megalodon %s està preparat per a baixar-se.</string>
+    <string name="sk_check_for_update">Comprova actualitzacions</string>
+    <string name="sk_no_update_available">No hi ha cap actualització disponible</string>
+    <string name="sk_list_timelines">Llistes</string>
+    <string name="sk_follow_requests">Sol·licituds de seguiment</string>
+    <string name="sk_reject_follow_request">Rebutja la sol·licitud</string>
+    <string name="sk_lists_with_user">Llistes amb %s</string>
+    <string name="sk_settings_always_reveal_content_warnings">Mostra sempre els avisos de contingut</string>
+    <string name="sk_settings_contribute">Contribueix a Megalodon</string>
+    <string name="sk_settings_show_federated_timeline">Mostra la línia de temps federada</string>
+</resources>

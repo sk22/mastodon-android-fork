@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sk_delete_and_redraft">Hapus dan tulis ulang</string>
+    <string name="sk_confirm_delete_and_redraft_title">Hapus dan tulis ulang kiriman</string>
+    <string name="sk_confirm_pin_post_title">Sematkan kiriman ke profil</string>
+    <string name="sk_confirm_pin_post">Sematkan kiriman ini ke profil Anda\?</string>
+    <string name="sk_pinning">Menyematkan kiriman…</string>
+    <string name="sk_unpin_post">Hapus sematan dari profil</string>
+    <string name="sk_confirm_unpin_post_title">Hapus sematan kiriman dari profil</string>
+    <string name="sk_image_description">Deskripsi gambar</string>
+    <string name="sk_settings_show_replies">Lihat balasan</string>
+    <string name="sk_settings_show_boosts">Lihat boost</string>
+    <string name="sk_settings_load_new_posts">Muat kiriman baru secara otomatis</string>
+    <string name="sk_settings_show_interaction_counts">Tampilkan jumlah interaksi</string>
+    <string name="sk_settings_app_version">Megalodon v%1$s (%2$d)</string>
+    <string name="sk_user_post_notifications_on">Nyalakan notifikasi kiriman untuk %s</string>
+    <string name="sk_user_post_notifications_off">Matikan notifikasi kiriman untuk %s</string>
+    <string name="sk_federated_timeline">Federasi</string>
+    <string name="sk_federated_timeline_info_banner">Kiriman terbaru dari orang-orang di federasi anda.</string>
+    <string name="sk_update_available">Megalodon %s siap untuk diunduh.</string>
+    <string name="sk_update_ready">Megalodon %s telah diunduh dan siap dipasang.</string>
+    <string name="sk_check_for_update">Periksa pembaruan</string>
+    <string name="sk_no_update_available">Tidak ada pembaruan</string>
+    <string name="sk_list_timelines">Daftar</string>
+    <string name="sk_unpinning">Menghapus sematan kiriman…</string>
+    <string name="sk_accept_follow_request">Terima permintaan pengikut</string>
+    <string name="sk_reject_follow_request">Tolak permintaan pengikut</string>
+    <string name="sk_app_name">Megalodon</string>
+    <string name="sk_confirm_delete_and_redraft">Hapus dan tulis ulang kiriman ini\?</string>
+    <string name="sk_confirm_unpin_post">Apakah Anda yakin untuk menghapus sematan kiriman ini\?</string>
+    <string name="sk_settings_contribute">Kontribusi ke Megalodon</string>
+    <string name="sk_pinned_posts">Disematkan</string>
+    <string name="sk_pin_post">Sematkan ke profil</string>
+    <string name="sk_visibility_unlisted">Tidak terdaftar</string>
+    <string name="sk_mark_media_as_sensitive">Tandai media sebagai sensitif</string>
+    <string name="sk_follow_requests">Permintaan pengikut</string>
+    <string name="sk_lists_with_user">Daftar dengan %s</string>
+    <string name="sk_settings_always_reveal_content_warnings">Selalu ungkap peringatan konten</string>
+    <string name="sk_disable_marquee">Nonaktifkan teks bergulir dalam bilah judul</string>
+    <string name="sk_settings_show_federated_timeline">Tampilkan lini masa federasi</string>
+</resources>

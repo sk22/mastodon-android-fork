@@ -4,5 +4,6 @@
 		android:id="@+id/follow_requests"
 		android:icon="@drawable/ic_follow_requests_24_badged"
 		android:showAsAction="always"
-		android:title="@string/follow_requests" />
+		android:visible="false"
+		android:title="@string/sk_follow_requests" />
 </menu>

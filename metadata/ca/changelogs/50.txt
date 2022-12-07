@@ -1,0 +1,4 @@
+— S'han preparat els fitxers per al llançament a F-Droid
+— S'ha solucionat l'actualització automàtica
+— S'han afegit icones monocromàtiques per a les icones del menú d'aplicacions
+— S'ha canviat la icona de «No llistat» incorrecta al peu de pàgina ampliat

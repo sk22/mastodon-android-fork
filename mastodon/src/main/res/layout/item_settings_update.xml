@@ -23,7 +23,7 @@
 			android:layout_marginTop="16dp"
 			android:layout_marginBottom="16dp"
 			android:textAppearance="@style/m3_body_medium"
-			tools:text="@string/update_available"/>
+			tools:text="@string/sk_update_available"/>
 
 		<FrameLayout
 			android:layout_width="wrap_content"

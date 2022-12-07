@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="sk_pinned_posts">고정됨</string>
+	<string name="sk_delete_and_redraft">삭제하고 다시 쓰기</string>
+	<string name="sk_confirm_delete_and_redraft_title">게시물 삭제하고 다시 쓰기</string>
+	<string name="sk_confirm_delete_and_redraft">정말로 이 게시물을 삭제하고 다시 쓰시겠습니까?</string>
+	<string name="sk_pin_post">고정</string>
+	<string name="sk_confirm_pin_post_title">게시물 고정</string>
+	<string name="sk_confirm_pin_post">정말로 이 게시물을 고정하시겠습니까?</string>
+	<string name="sk_pinning">고정 중…</string>
+	<string name="sk_unpin_post">고정 해제</string>
+	<string name="sk_confirm_unpin_post_title">게시물 고정 해제</string>
+	<string name="sk_confirm_unpin_post">정말로 이 게시물을 고정 해제하시겠습니까?</string>
+	<string name="sk_unpinning">고정 해제 중…</string>
+	<string name="sk_image_description">이미지 설명</string>
+	<string name="sk_visibility_unlisted">타임라인에 비표시</string>
+  <string name="sk_settings_show_replies">답장 표시</string>
+	<string name="sk_settings_show_boosts">리블로그 표시</string>
+	<string name="sk_settings_load_new_posts">자동으로 새 포스트 불러오기</string>
+	<string name="sk_settings_show_interaction_counts">상호 작용 수 표시</string>
+	<string name="sk_mark_media_as_sensitive">미디어를 민감함으로 설정하기</string>
+	<string name="sk_user_post_notifications_on">%s의 게시물 알림 켜기</string>
+	<string name="sk_user_post_notifications_off">%s의 게시물 알림 끄기</string>
+	<string name="sk_federated_timeline">연합</string>
+	<string name="sk_federated_timeline_info_banner">당신이 속한 연합에 존재하는 사람들이 공유한 최신 게시물들입니다.</string>
+	<string name="sk_check_for_update">업데이트 확인</string>
+	<string name="sk_no_update_available">사용 가능한 업데이트 없음</string>
+	<string name="sk_list_timelines">리스트</string>
+	<string name="sk_follow_requests">팔로우 요청</string>
+	<string name="sk_accept_follow_request">팔로우 요청 허가</string>
+	<string name="sk_reject_follow_request">팔로우 요청 거부</string>
+	<string name="sk_lists_with_user">%s 님이 포함된 리스트</string>
+	<string name="sk_settings_always_reveal_content_warnings">열람주의 툿을 항상 펼치기</string>
+	<string name="sk_disable_marquee">제목 표시줄의 텍스트 스크롤 비활성화</string>
+</resources>

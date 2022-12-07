@@ -1,0 +1,6 @@
+— És possible obrir la publicació original mentre respons (fent clic a la línia «En resposta a…»)
+— Ha combinat els canvis de la font superior i correccions d'errors
+— S'ha eliminat el codi «Centre d'aplicacions» no utilitzat
+— S'ha afegit una versió sense línia de temps federada per a la Play Store
+— S'ha afegit un URI de redirecció personalitzat per a facilitar l'inici de sessió
+— S'ha canviat l'enllaç de contribució

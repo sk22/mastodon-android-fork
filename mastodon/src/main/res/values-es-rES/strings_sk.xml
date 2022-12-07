@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sk_pinned_posts">Anclado</string>
+    <string name="sk_delete_and_redraft">Eliminar y editar</string>
+    <string name="sk_confirm_delete_and_redraft_title">Eliminar y editar post</string>
+    <string name="sk_confirm_delete_and_redraft">Seguro que quiere eliminar y volver a editar este post\?</string>
+    <string name="sk_pin_post">Fijar en perfil</string>
+    <string name="sk_confirm_pin_post_title">Fijar post en perfil</string>
+    <string name="sk_confirm_pin_post">Desea fijar el post en su perfil\?</string>
+    <string name="sk_pinning">Fijando post…</string>
+    <string name="sk_unpin_post">Quitar del perfil</string>
+    <string name="sk_confirm_unpin_post_title">Quitar post del perfil</string>
+    <string name="sk_confirm_unpin_post">Está seguro que quiere quitar el post\?</string>
+    <string name="sk_app_name">Megalodon</string>
+    <string name="sk_unpinning">Quitando post…</string>
+    <string name="sk_image_description">Descripción de la imagen</string>
+    <string name="sk_visibility_unlisted">Sin listar</string>
+    <string name="sk_settings_show_replies">Mostrar respuestas</string>
+    <string name="sk_settings_show_boosts">Mostrar boosts</string>
+    <string name="sk_settings_load_new_posts">Cargar nuevos posts automáticamente</string>
+    <string name="sk_settings_show_interaction_counts">Mostrar contadores de interacciones</string>
+    <string name="sk_mark_media_as_sensitive">Marcar medio como sensible</string>
+    <string name="sk_user_post_notifications_on">Activadas las notificaciones de posts para %s</string>
+    <string name="sk_user_post_notifications_off">Desactivadas las notificaciones de posts para %s</string>
+    <string name="sk_federated_timeline">Federación</string>
+    <string name="sk_federated_timeline_info_banner">Estos son los posts más recientes de las personas de tu federación.</string>
+    <string name="sk_update_available">Megalodon %s está listo para descargar.</string>
+    <string name="sk_update_ready">Megalodon %s se ha descargado y está listo para instalarse.</string>
+    <string name="sk_check_for_update">Buscar actualizaciones</string>
+    <string name="sk_no_update_available">No hay actualizaciones disponibles</string>
+    <string name="sk_list_timelines">Listas</string>
+    <string name="sk_follow_requests">Solicitudes de seguimiento</string>
+    <string name="sk_accept_follow_request">Aceptar solicitud de seguimiento</string>
+    <string name="sk_reject_follow_request">Rechazar solicitud de seguimiento</string>
+    <string name="sk_lists_with_user">Listas con %s</string>
+    <string name="sk_settings_always_reveal_content_warnings">Mostrar siempre advertencias de contenido</string>
+    <string name="sk_disable_marquee">Desactivar desplazamiento de texto en barras del título</string>
+    <string name="sk_settings_contribute">Contribuir a Megalodon</string>
+    <string name="sk_settings_show_federated_timeline">Mostrar el timeline federado</string>
+    <string name="sk_settings_app_version">Megalodon v%1$s (%2$d)</string>
+</resources>

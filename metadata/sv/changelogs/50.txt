@@ -1,0 +1,4 @@
+- Förbered filer för release av F-Droid
+- Fixa automatisk uppdaterare
+- Lägger tillbaka monokromatiska ikoner i launcherns ikoner
+- Ersätt fel olistade ikon i expanderande sidfoten

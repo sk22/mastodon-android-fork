@@ -36,7 +36,7 @@ public class DiscoverInfoBannerHelper{
 				case TRENDING_HASHTAGS -> R.string.trending_hashtags_info_banner;
 				case TRENDING_LINKS -> R.string.trending_links_info_banner;
 				case LOCAL_TIMELINE -> R.string.local_timeline_info_banner;
-				case FEDERATED_TIMELINE -> R.string.federated_timeline_info_banner;
+				case FEDERATED_TIMELINE -> R.string.sk_federated_timeline_info_banner;
 			});
 		}
 	}

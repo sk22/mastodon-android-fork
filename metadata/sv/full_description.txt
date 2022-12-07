@@ -1,0 +1,17 @@
+Megalodon är en modifierad version av den <a href="https://github.com/mastodon/mastodon-android">officialla Mastodon Android appen</a> som lägger till viktiga funktioner som saknas i den officiella appen, som den federerade tidslinjen, olistade inlägg, bokmärken och bildbeskrivningsvisning.
+
+<b>Nyckelfunktioner</b>
+
+- <b>Olistade inlägg</b>: Posta inlägg offentligt utan att de dyker upp under trender, hashtaggar eller offentliga tidslinjer.
+- <b>Federerad tidslinje</b>: Visa alla offentliga inlägg från folk på alla andra Fediverse grannskap din heminstans är ansluten till.
+- <b>Bildbeskrivningsvisare</b>: Kolla snabbt huruvida en bild eller video har en bifogad bild-/videobeskrivning.
+- <b>Nåla fast inlägg</b>: Nåla fast dina viktigaste inlägg på din profil och se vad andra har nålat fast under "Nålad" fliken.
+- <b>Bokmärken</b>: Spara snabbt inlägg och hitta dem senare i Bokmärkelistan.
+- <b>Följ hashtaggar</b>: Visa nya inlägg från specifika hashtaggar direkt i den hem tidslinje genom att följa dem.
+- <b>Svara på följarbegäranden</b>: Acceptera eller avböj följarbegäranden från dina notifieringar eller i den dedikerade Följarbegäran listan.
+- <b>Ta bort och skriv om</b>: Den mycket älskade funktionen som gjorde det möjligt att redigera inlägg utan en faktisk redigeringsfunktion.
+
+<b>Ej släppta officiella funktioner, tillgängliga i förväg</b>
+
+- Redigera inlägg
+- Integrerad uppdaterare för GitHub releaser

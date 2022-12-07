@@ -147,7 +147,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 			if(id==R.id.favorite_btn)
 				return R.string.button_favorite;
 			if(id==R.id.bookmark_btn)
-				return R.string.button_bookmark;
+				return R.string.add_bookmark;
 			if(id==R.id.share_btn)
 				return R.string.button_share;
 			return 0;

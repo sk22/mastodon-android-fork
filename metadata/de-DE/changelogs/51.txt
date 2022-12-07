@@ -1,0 +1,6 @@
+- Möglichkeit, beim Antworten den Originalpost (durch einen Klick auf „Als Antwort auf…“-Zeile) zu öffnen
+- Upstream-Änderungen und Fehlerbehebungen mergen
+- Unverwendeten „App Center“-Code entfernt
+- Release mit deaktivierter Föderierter Timeline für den Play Store hinzugefügt
+- Eigene Weiterleitungs-URI für einfacheres Einloggen
+- „Zu Megalodon beitragen“-Link angepasst

@@ -1,0 +1,4 @@
+- Siapkan berkas untuk rilis di F-Droid 
+- Perbaiki pembaruan otomatis 
+- Tanbahkan ikon monokromatik kembali dalam ikon peluncur
+- Ubah ikon tidak terdaftar yang salah dalam footer yang diperluas

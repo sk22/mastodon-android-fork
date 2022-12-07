@@ -1,0 +1,4 @@
+- Dateien für die Veröffentlichung auf F-Droid vorbereiten
+- Automatischen Updater reparieren
+- Monochrome Symbole für Launcher-Icons
+- Falsches Ungelistet-Symbol ersetzt

@@ -57,7 +57,7 @@ public class ListTimelinesFragment extends BaseRecyclerFragment<ListTimeline> im
         if(args.containsKey("profileAccount")){
             profileAccountId=args.getString("profileAccount");
             profileDisplayUsername=args.getString("profileDisplayUsername");
-            setTitle(getString(R.string.lists_with_user, profileDisplayUsername));
+            setTitle(getString(R.string.sk_lists_with_user, profileDisplayUsername));
 //            setHasOptionsMenu(true);
         }
     }

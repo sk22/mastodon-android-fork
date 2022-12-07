@@ -1,9 +1,12 @@
 package org.joinmastodon.android.ui.displayitems;
 
+import static org.joinmastodon.android.MastodonApp.context;
+
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.SpannableStringBuilder;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -38,6 +41,8 @@ public class ReblogOrReplyLineStatusDisplayItem extends StatusDisplayItem{
 		emojiHelper.setText(ssb);
 		this.icon=icon;
 		this.handleClick=handleClick;
+		TypedValue outValue = new TypedValue();
+		context.getTheme().resolveAttribute(android.R.attr.selectableItemBackground, outValue, true);
 	}
 
 	@Override
@@ -67,6 +72,8 @@ public class ReblogOrReplyLineStatusDisplayItem extends StatusDisplayItem{
 			text.setText(item.text);
 			text.setCompoundDrawablesRelativeWithIntrinsicBounds(item.icon, 0, 0, 0);
 			if(item.handleClick!=null) text.setOnClickListener(item.handleClick);
+			text.setEnabled(!item.inset);
+			text.setClickable(!item.inset);
 			if(Build.VERSION.SDK_INT<Build.VERSION_CODES.N)
 				UiUtils.fixCompoundDrawableTintOnAndroid6(text);
 		}

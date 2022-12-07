@@ -1,0 +1,17 @@
+Megalodon est une version modifiée de <a href="https://github.com/mastodon/mastodon-android">Mastodon officiel pour Android</a> ajoutant des fonctionnalités importantes qui manquent dans l'application officielle, telles que la timeline fédérée, la publication non répertoriée, les signets et une visionneuse de description d'image.
+
+<b>Principales fonctionnalités</b>
+
+- <b>Publication non répertoriée</b> : Publiez publiquement sans que votre message apparaisse dans les tendances, les hashtags ou les timelines publiques.
+- <b>Timeline fédérée</b> : Affichez tous les messages publics des personnes de tout le voisinage du Fediverse auxquel votre instance est connectée.
+- <b>Visionneuse de description d'image</b> : Vérifiez rapidement si une image ou une vidéo est associée à un texte alternatif.
+- <b>Épingler des publications</b> : Épinglez vos publications les plus importantes à votre profil et voyez ce que les autres ont épinglé en utilisant l'onglet "Épinglé".
+- <b>Signets</b> : Enregistrez rapidement les messages et retrouvez-les plus tard dans la liste des signets.
+- <b>Suivez des hashtags</b> : Voir les nouveaux messages avec des hashtags spécifiques directement dans votre timeline d'accueil en les suivant.
+- <b>Répondre aux demandes de suivi</b> : Acceptez ou refusez les demandes de suivi à partir de vos notifications ou de la liste dédiée aux demandes de suivi.
+- <b>Supprimer et reformuler</b> : La fonctionnalité la plus appréciée qui rend l'édition possible sans fonction d'édition réelle.
+
+<b>Fonctionnalités officielles inédites, disponibles à l'avance</b>
+
+- Modification des publications
+- Mise à jour intégrée pour les versions de GitHub

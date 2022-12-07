@@ -411,7 +411,7 @@ public class UiUtils{
 	}
 
 	public static void confirmDeletePost(Activity activity, String accountID, Status status, Consumer<Status> resultCallback, boolean forRedraft){
-		showConfirmationAlert(activity, forRedraft ? R.string.confirm_delete_and_redraft_title : R.string.confirm_delete_title, forRedraft ? R.string.confirm_delete_and_redraft : R.string.confirm_delete, forRedraft ? R.string.delete_and_redraft : R.string.delete, ()->{
+		showConfirmationAlert(activity, forRedraft ? R.string.sk_confirm_delete_and_redraft_title : R.string.confirm_delete_title, forRedraft ? R.string.sk_confirm_delete_and_redraft : R.string.confirm_delete, forRedraft ? R.string.sk_delete_and_redraft : R.string.delete, ()->{
 			new DeleteStatus(status.id)
 					.setCallback(new Callback<>(){
 						@Override
@@ -433,9 +433,9 @@ public class UiUtils{
 
 	public static void confirmPinPost(Activity activity, String accountID, Status status, boolean pinned, Consumer<Status> resultCallback){
 		showConfirmationAlert(activity,
-				pinned ? R.string.confirm_pin_post_title : R.string.confirm_unpin_post_title,
-				pinned ? R.string.confirm_pin_post : R.string.confirm_unpin_post,
-				pinned ? R.string.pin_post : R.string.unpin_post,
+				pinned ? R.string.sk_confirm_pin_post_title : R.string.sk_confirm_unpin_post_title,
+				pinned ? R.string.sk_confirm_pin_post : R.string.sk_confirm_unpin_post,
+				pinned ? R.string.sk_pin_post : R.string.sk_unpin_post,
 				()->{
 					new SetStatusPinned(status.id, pinned)
 							.setCallback(new Callback<>() {
@@ -452,7 +452,7 @@ public class UiUtils{
 									error.showToast(activity);
 								}
 							})
-							.wrapProgress(activity, pinned ? R.string.pinning : R.string.unpinning, false)
+							.wrapProgress(activity, pinned ? R.string.sk_pinning : R.string.sk_unpinning, false)
 							.exec(accountID);
 				}
 		);
@@ -508,7 +508,7 @@ public class UiUtils{
 					public void onSuccess(Relationship result) {
 						resultCallback.accept(result);
 						progressCallback.accept(false);
-						Toast.makeText(activity, activity.getString(result.notifying ? R.string.user_post_notifications_on : R.string.user_post_notifications_off, '@'+account.username), Toast.LENGTH_SHORT).show();
+						Toast.makeText(activity, activity.getString(result.notifying ? R.string.sk_user_post_notifications_on : R.string.sk_user_post_notifications_off, '@'+account.username), Toast.LENGTH_SHORT).show();
 					}
 
 					@Override
@@ -698,14 +698,14 @@ public class UiUtils{
 							GlobalUserPreferences.trueBlackTheme ? R.style.Theme_Mastodon_Dark_TrueBlack_Blue : R.style.Theme_Mastodon_Dark_Blue;
 				});
 				break;
-			case ORANGE:
+			case BROWN:
 				context.setTheme(switch(GlobalUserPreferences.theme){
 					case AUTO ->
-							GlobalUserPreferences.trueBlackTheme ? R.style.Theme_Mastodon_AutoLightDark_TrueBlack_Orange : R.style.Theme_Mastodon_AutoLightDark_Orange;
+							GlobalUserPreferences.trueBlackTheme ? R.style.Theme_Mastodon_AutoLightDark_TrueBlack_Brown : R.style.Theme_Mastodon_AutoLightDark_Brown;
 					case LIGHT ->
-							R.style.Theme_Mastodon_Light_Orange;
+							R.style.Theme_Mastodon_Light_Brown;
 					case DARK ->
-							GlobalUserPreferences.trueBlackTheme ? R.style.Theme_Mastodon_Dark_TrueBlack_Orange : R.style.Theme_Mastodon_Dark_Orange;
+							GlobalUserPreferences.trueBlackTheme ? R.style.Theme_Mastodon_Dark_TrueBlack_Brown : R.style.Theme_Mastodon_Dark_Brown;
 				});
 				break;
 			case YELLOW:

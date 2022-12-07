@@ -1,0 +1,4 @@
+— Se han preparado los archivos para el lanzamiento en F-Droid
+— Se ha solucionado la actualización automática
+— Se han añadido iconos monocromáticos para los iconos del menú de aplicaciones
+— Se ha cambiado el icono de «No listado» incorrecto en el pie de página ampliado

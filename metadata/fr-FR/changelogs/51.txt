@@ -1,0 +1,6 @@
+- Rendre possible l'ouverture du message d'origine lors de la réponse (en cliquant sur la ligne « En réponse à… »)
+- Fusionner les modifications en amont et les corrections de bugs
+- Supprimer le code "App Center" inutilisé
+- Ajouter une version sans timeline fédérée pour le Play Store
+- Ajouter une URI de redirection personnalisée pour une connexion plus facile
+- Modifier le lien de contribution

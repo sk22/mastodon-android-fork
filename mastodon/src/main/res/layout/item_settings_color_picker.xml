@@ -27,7 +27,7 @@
         android:textSize="16sp"
         android:singleLine="true"
         android:ellipsize="end"
-        android:text="@string/settings_color_picker"/>
+        android:text="@string/sk_settings_color_picker"/>
 
     <Button
         android:id="@+id/color_picker_button"
@@ -41,6 +41,6 @@
         android:stateListAnimator="@null"
         android:textColor="?android:textColorPrimary"
         android:textSize="16sp"
-        tools:text="@string/pink_color" />
+        tools:text="@string/sk_color_theme_pink" />
 
 </org.joinmastodon.android.ui.views.AutoOrientationLinearLayout>

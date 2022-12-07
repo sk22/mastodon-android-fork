@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sk_app_name">Megalodon</string>
+    <string name="sk_pinned_posts">Закрепленные</string>
+    <string name="sk_delete_and_redraft">Удалить и исправить</string>
+    <string name="sk_confirm_delete_and_redraft_title">Удалить и исправить пост</string>
+    <string name="sk_confirm_delete_and_redraft">Вы уверены, что хотите отредактировать этот пост\?</string>
+    <string name="sk_pin_post">Закрепить в профиле</string>
+    <string name="sk_confirm_pin_post_title">Закрепить пост в профиле</string>
+    <string name="sk_confirm_pin_post">Вы уверены, что хотите закрепить этот пост\?</string>
+    <string name="sk_pinning">Закрепляем пост…</string>
+    <string name="sk_unpin_post">Открепить от профиля</string>
+    <string name="sk_confirm_unpin_post_title">Открепить пост от профиля</string>
+    <string name="sk_image_description">Описание изображения</string>
+    <string name="sk_visibility_unlisted">Скрытый</string>
+    <string name="sk_mark_media_as_sensitive">Отметить медиафайл как деликатный</string>
+    <string name="sk_settings_app_version">Megalodon v%1$s (%2$d)</string>
+</resources>

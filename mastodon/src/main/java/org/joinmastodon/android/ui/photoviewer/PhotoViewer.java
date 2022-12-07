@@ -178,7 +178,7 @@ public class PhotoViewer implements ZoomPanView.Listener{
 		toolbar=uiOverlay.findViewById(R.id.toolbar);
 		toolbar.setNavigationOnClickListener(v->onStartSwipeToDismissTransition(0));
 		imageDescriptionButton = toolbar.getMenu()
-				.add(R.string.image_description)
+				.add(R.string.sk_image_description)
 				.setIcon(R.drawable.ic_fluent_image_alt_text_24_regular)
 				.setVisible(attachments.get(pager.getCurrentItem()).description != null
 						&& !attachments.get(pager.getCurrentItem()).description.isEmpty())

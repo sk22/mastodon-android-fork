@@ -1,12 +1,29 @@
 package org.joinmastodon.android.ui.text;
 
+import android.graphics.Typeface;
+import android.graphics.fonts.FontFamily;
+import android.graphics.fonts.FontStyle;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.BulletSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.LeadingMarginSpan;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StrikethroughSpan;
+import android.text.style.StyleSpan;
+import android.text.style.SubscriptSpan;
+import android.text.style.SuperscriptSpan;
+import android.text.style.TypefaceSpan;
+import android.text.style.UnderlineSpan;
+import android.util.TypedValue;
 import android.widget.TextView;
 
 import com.twitter.twittertext.Regex;
 
+import org.joinmastodon.android.MastodonApp;
+import org.joinmastodon.android.R;
 import org.joinmastodon.android.model.Emoji;
 import org.joinmastodon.android.model.Hashtag;
 import org.joinmastodon.android.model.Mention;
@@ -15,11 +32,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
-import org.jsoup.safety.Cleaner;
 import org.jsoup.safety.Safelist;
 import org.jsoup.select.NodeVisitor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -28,6 +45,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import androidx.annotation.NonNull;
+
+import me.grishka.appkit.utils.V;
 
 public class HtmlParser{
 	private static final String TAG="HtmlParser";
@@ -67,11 +86,17 @@ public class HtmlParser{
 			public Object span;
 			public int start;
 			public Element element;
+			public boolean more;
 
 			public SpanInfo(Object span, int start, Element element){
+				this(span, start, element, false);
+			}
+
+			public SpanInfo(Object span, int start, Element element, boolean more){
 				this.span=span;
 				this.start=start;
 				this.element=element;
+				this.more=more;
 			}
 		}
 
@@ -119,24 +144,59 @@ public class HtmlParser{
 								openSpans.add(new SpanInfo(new InvisibleSpan(), ssb.length(), el));
 							}
 						}
+						case "li" -> openSpans.add(new SpanInfo(new BulletSpan(V.dp(8)), ssb.length(), el));
+						case "em", "i" -> openSpans.add(new SpanInfo(new StyleSpan(Typeface.ITALIC), ssb.length(), el));
+						case "h1", "h2", "h3", "h4", "h5", "h6" -> {
+							// increase line height above heading (multiplying the margin)
+							if (node.previousSibling()!=null) ssb.setSpan(new RelativeSizeSpan(2), ssb.length() - 1, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+							if (!node.nodeName().equals("h1")) {
+								openSpans.add(new SpanInfo(new StyleSpan(Typeface.BOLD), ssb.length(), el));
+							}
+							openSpans.add(new SpanInfo(new RelativeSizeSpan(switch(node.nodeName()) {
+								case "h1" -> 1.5f;
+								case "h2" -> 1.25f;
+								case "h3" -> 1.125f;
+								default -> 1;
+							}), ssb.length(), el, !node.nodeName().equals("h1")));
+						}
+						case "strong", "b" -> openSpans.add(new SpanInfo(new StyleSpan(Typeface.BOLD), ssb.length(), el));
+						case "u" -> openSpans.add(new SpanInfo(new UnderlineSpan(), ssb.length(), el));
+						case "s", "del" -> openSpans.add(new SpanInfo(new StrikethroughSpan(), ssb.length(), el));
+						case "sub", "sup" -> {
+							openSpans.add(new SpanInfo(node.nodeName().equals("sub") ? new SubscriptSpan() : new SuperscriptSpan(), ssb.length(), el));
+							openSpans.add(new SpanInfo(new RelativeSizeSpan(0.8f), ssb.length(), el, true));
+						}
+						case "code", "pre" -> openSpans.add(new SpanInfo(new TypefaceSpan("monospace"), ssb.length(), el));
+						case "blockquote" -> openSpans.add(new SpanInfo(new LeadingMarginSpan.Standard(V.dp(10)), ssb.length(), el));
 					}
 				}
 			}
 
+			final static List<String> blockElements = Arrays.asList("p", "ul", "ol", "blockquote", "h1", "h2", "h3", "h4", "h5", "h6");
+
 			@Override
 			public void tail(@NonNull Node node, int depth){
 				if(node instanceof Element el){
+					processOpenSpan(el);
 					if("span".equals(el.nodeName()) && el.hasClass("ellipsis")){
 						ssb.append("…", new DeleteWhenCopiedSpan(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-					}else if("p".equals(el.nodeName())){
-						if(node.nextSibling()!=null)
-							ssb.append("\n\n");
-					}else if(!openSpans.isEmpty()){
-						SpanInfo si=openSpans.get(openSpans.size()-1);
-						if(si.element==el){
-							ssb.setSpan(si.span, si.start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-							openSpans.remove(openSpans.size()-1);
-						}
+					}else if(blockElements.contains(el.nodeName()) && node.nextSibling()!=null){
+						ssb.append("\n"); // line end
+						ssb.append("\n", new RelativeSizeSpan(0.75f), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE); // margin after block
+					}
+				}
+			}
+
+			private void processOpenSpan(Element el) {
+				if(!openSpans.isEmpty()){
+					SpanInfo si=openSpans.get(openSpans.size()-1);
+					if(si.element==el){
+						ssb.setSpan(si.span, si.start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+						openSpans.remove(openSpans.size()-1);
+						if(si.more) processOpenSpan(el);
+					}
+					if("li".equals(el.nodeName()) && el.nextSibling()!=null) {
+						ssb.append('\n');
 					}
 				}
 			}

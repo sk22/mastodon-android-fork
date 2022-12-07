@@ -12,8 +12,8 @@
 	<style name="Theme.Mastodon.AutoLightDark.Blue" parent="Theme.Mastodon.Dark.Blue"/>
 	<style name="Theme.Mastodon.AutoLightDark.TrueBlack.Blue" parent="Theme.Mastodon.Dark.TrueBlack.Blue"/>
 
-	<style name="Theme.Mastodon.AutoLightDark.Orange" parent="Theme.Mastodon.Dark.Orange"/>
-	<style name="Theme.Mastodon.AutoLightDark.TrueBlack.Orange" parent="Theme.Mastodon.Dark.TrueBlack.Orange"/>
+	<style name="Theme.Mastodon.AutoLightDark.Brown" parent="Theme.Mastodon.Dark.Brown"/>
+	<style name="Theme.Mastodon.AutoLightDark.TrueBlack.Brown" parent="Theme.Mastodon.Dark.TrueBlack.Brown"/>
 
 	<style name="Theme.Mastodon.AutoLightDark.Yellow" parent="Theme.Mastodon.Dark.Yellow"/>
 	<style name="Theme.Mastodon.AutoLightDark.TrueBlack.Yellow" parent="Theme.Mastodon.Dark.TrueBlack.Yellow"/>

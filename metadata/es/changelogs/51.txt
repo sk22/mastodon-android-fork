@@ -1,0 +1,6 @@
+— Es posible abrir la publicación original mientras respondes (haciendo clic en la línea "En respuesta a…")
+— Ha combinado los cambios de la fuente superior y correcciones de errores
+— Se ha eliminado el código "Centro de aplicaciones" no utilizado
+— Se ha añadido una versión sin línea de tiempo federada para Play Store
+— Se ha añadido un URI de redirección personalizado para facilitar el inicio de sesión
+— Se ha cambiado el enlace de las contribuciones
