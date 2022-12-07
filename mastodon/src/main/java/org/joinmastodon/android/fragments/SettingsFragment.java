@@ -715,7 +715,7 @@ public class SettingsFragment extends MastodonToolbarFragment{
 
 		@Override
 		public void onBind(ColorPicker item){
-			icon.setImageResource(R.drawable.ic_color_theme_preference);
+			icon.setImageResource(R.drawable.ic_fluent_color_24_regular);
 			button.setText(switch(GlobalUserPreferences.color){
 				case PINK -> R.string.sk_color_theme_pink;
 				case PURPLE -> R.string.sk_color_theme_purple;
