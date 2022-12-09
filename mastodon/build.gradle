@@ -7,7 +7,7 @@ android {
 	def getGitHash = { ->
 		def stdout = new ByteArrayOutputStream()
 		exec {
-			commandLine 'git', 'rev-parse', '--short', 'main'
+			commandLine 'git', 'rev-parse', '--short', 'upstream/master'
 			standardOutput = stdout
 		}
 		return stdout.toString().trim()
