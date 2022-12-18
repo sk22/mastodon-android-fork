@@ -8,4 +8,5 @@
     <item android:id="@+id/brown_color" android:title="@string/sk_color_theme_brown"/>
     <item android:id="@+id/red_color" android:title="@string/sk_color_theme_red"/>
     <item android:id="@+id/yellow_color" android:title="@string/sk_color_theme_yellow"/>
+    <item android:id="@+id/nord_color" android:title="@string/sk_color_theme_nord"/>
 </menu>

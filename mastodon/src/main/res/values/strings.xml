@@ -422,4 +422,5 @@
 	<string name="not_accepting_new_members">Not accepting new members</string>
 	<string name="category_special_interests">Special Interests</string>
 	<string name="signup_passwords_dont_match">Passwords don\'t match</string>
+    <string name="sk_color_theme_nord">Nord</string>
 </resources>

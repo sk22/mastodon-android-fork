@@ -270,4 +270,21 @@
 	<color name="m3_sys_dark_on_surface_variant">#CAC4D0</color>
 	<color name="m3_sys_dark_outline">#938F99</color>
 
+	<!-- nord theme -->
+	<color name="nord_0">#2E3440</color>
+	<color name="nord_1">#3B4252</color>
+	<color name="nord_2">#434C5E</color>
+	<color name="nord_3">#4C566A</color>
+	<color name="nord_4">#D8DEE9</color>
+	<color name="nord_5">#E5E9F0</color>
+	<color name="nord_6">#ECEFF4</color>
+	<color name="nord_7">#8FBCBB</color>
+	<color name="nord_8">#88C0D0</color>
+	<color name="nord_9">#81A1C1</color>
+	<color name="nord_10">#5E81AC</color>
+	<color name="nord_11">#BF616A</color>
+	<color name="nord_12">#D08770</color>
+	<color name="nord_13">#EBCB8B</color>
+	<color name="nord_14">#A3BE8C</color>
+	<color name="nord_15">#B48EAD</color>
 </resources>

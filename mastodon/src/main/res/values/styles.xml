@@ -549,6 +549,159 @@
 	</style>
 
 
+	<style name="Theme.Mastodon.Light.Nord" parent="Theme.Mastodon.Light.CustomBase">
+		<item name="android:colorAccent">@color/nord_8</item>
+		<item name="android:colorBackground">@color/nord_6</item>
+		<item name="colorSecondary">@color/nord_7</item>
+		<item name="colorButtonText">@color/nord_4</item>
+		<item name="colorBackgroundLight">@color/nord_4</item>
+		<item name="colorBackgroundLightest">@color/green_gray_25</item>
+		<item name="android:statusBarColor">@color/nord_4</item>
+		<item name="android:navigationBarColor">@color/green_navigation_bar_bg</item>
+		<item name="android:actionBarTheme">@style/Theme.Mastodon.Toolbar.Nord</item>
+		<item name="android:alertDialogTheme">@style/Theme.Mastodon.Dialog.Alert.Nord</item>
+		<item name="colorPollMostVoted">@color/nord_8</item>
+		<item name="colorPollVoted">@color/nord_9</item>
+		<item name="colorAccentLight">@color/green_primary_600</item>
+		<item name="colorSearchField">@color/nord_5</item>
+		<item name="colorTabInactive">@color/nord_3</item>
+		<item name="colorAccentLightest">@color/nord_9</item>
+
+
+		<!-- colors for button_bg|text_primary|secondary_dark|light_on_light|dark.xml -->
+		<item name="colorButtonBackgroundPrimaryDarkOnLight">@color/nord_0</item>
+		<item name="colorButtonBackgroundPrimaryDarkOnLightDisabled">@color/nord_1</item>
+		<item name="colorButtonTextPrimaryDarkOnLight">@color/nord_4</item>
+		<item name="colorButtonTextPrimaryDarkOnLightDisabled">@color/gray_400</item>
+
+		<item name="colorButtonBackgroundPrimaryLightOnDark">@color/nord_2</item>
+		<item name="colorButtonBackgroundPrimaryLightOnDarkDisabled">@color/nord_3</item>
+		<item name="colorButtonTextPrimaryLightOnDark">@color/nord_6</item>
+		<item name="colorButtonTextPrimaryLightOnDarkDisabled">@color/gray_50</item>
+
+		<item name="colorButtonBackgroundSecondaryDarkOnLight">@color/nord_8</item>
+		<item name="colorButtonBackgroundSecondaryDarkOnLightDisabled">@color/nord_7</item>
+		<item name="colorButtonTextSecondaryDarkOnLight">@color/nord_6</item>
+		<item name="colorButtonTextSecondaryDarkOnLightDisabled">@color/gray_50</item>
+
+		<item name="colorButtonBackgroundSecondaryLightOnDark">@color/nord_2</item>
+		<item name="colorButtonBackgroundSecondaryLightOnDarkDisabled">@color/nord_1</item>
+		<item name="colorButtonTextSecondaryLightOnDark">@color/nord_6</item>
+		<item name="colorButtonTextSecondaryLightOnDarkDisabled">@color/gray_50</item>
+	</style>
+
+	<style name="Theme.Mastodon.Dark.Nord" parent="Theme.Mastodon.Dark.CustomBase">
+		<item name="android:colorAccent">@color/nord_8</item>
+		<item name="android:colorBackground">@color/nord_0</item>
+		<item name="android:colorPrimary">@color/nord_8</item>
+		<item name="android:textColorPrimary">@color/nord_6</item>
+		<item name="android:textColorSecondary">@color/nord_5</item>
+		<item name="android:alertDialogTheme">@style/Theme.Mastodon.Dialog.Alert.Dark.Nord</item>
+		<item name="colorPollMostVoted">@color/nord_8</item>
+		<item name="colorPollVoted">@color/nord_10</item>
+		<item name="colorAccentLight">@color/nord_9</item>
+		<item name="colorAccentLightest">@color/nord_8</item>
+		<item name="colorTabInactive">@color/nord_3</item>
+		<item name="colorSearchHint">@color/nord_4</item>
+		<item name="colorSecondary">@color/nord_7</item>
+		<item name="colorWindowBackground">@color/nord_0</item>
+		<item name="android:statusBarColor">@color/nord_0</item>
+		<item name="android:navigationBarColor">@color/nord_0</item>
+		<item name="colorBackgroundLightest">@color/nord_3</item>
+		<item name="colorSearchField">@color/nord_2</item>
+		<item name="colorBackgroundPopup">@color/nord_2</item>
+		<item name="colorButtonText">@color/nord_3</item>
+		<item name="colorBackgroundLight">@color/nord_2</item>
+		<item name="android:actionBarTheme">@style/Theme.Mastodon.Toolbar.Dark.Nord</item>
+
+
+
+		<!-- colors for button_bg|text_primary|secondary_dark|light_on_light|dark.xml -->
+		<item name="colorButtonBackgroundPrimaryDarkOnLight">@color/nord_7</item>
+		<item name="colorButtonBackgroundPrimaryDarkOnLightDisabled">@color/nord_3</item>
+		<item name="colorButtonTextPrimaryDarkOnLight">@color/nord_6</item>
+		<item name="colorButtonTextPrimaryDarkOnLightDisabled">@color/nord_2</item>
+
+		<item name="colorButtonBackgroundPrimaryLightOnDark">@color/nord_8</item>
+		<item name="colorButtonBackgroundPrimaryLightOnDarkDisabled">@color/nord_7</item>
+		<item name="colorButtonTextPrimaryLightOnDark">@color/nord_6</item>
+		<item name="colorButtonTextPrimaryLightOnDarkDisabled">@color/gray_50</item>
+
+		<item name="colorButtonBackgroundSecondaryDarkOnLight">@color/green_gray_25</item>
+		<item name="colorButtonBackgroundSecondaryDarkOnLightDisabled">@color/nord_0</item>
+		<item name="colorButtonTextSecondaryDarkOnLight">@color/nord_6</item>
+		<item name="colorButtonTextSecondaryDarkOnLightDisabled">@color/gray_50</item>
+
+		<item name="colorButtonBackgroundSecondaryLightOnDark">@color/nord_7</item>
+		<item name="colorButtonBackgroundSecondaryLightOnDarkDisabled">@color/nord_8</item>
+		<item name="colorButtonTextSecondaryLightOnDark">@color/nord_6</item>
+		<item name="colorButtonTextSecondaryLightOnDarkDisabled">@color/gray_50</item>
+	</style>
+
+	<style name="Theme.Mastodon.Dark.TrueBlack.Nord" parent="Theme.Mastodon.Dark.Nord">
+		<item name="android:colorAccent">@color/nord_8</item>
+		<item name="colorPollMostVoted">@color/nord_8</item>
+		<item name="colorAccentLight">@color/nord_10</item>
+		<item name="colorAccentLightest">@color/nord_8</item>
+		<item name="colorSecondary">@color/nord_7</item>
+
+		<item name="colorPollVoted">@color/nord_10</item>
+		<item name="colorSearchField">@color/nord_2</item>
+		<item name="colorBackgroundPopup">@color/nord_2</item>
+		<item name="android:navigationBarColor">@color/black</item>
+		<item name="android:colorBackground">@color/black</item>
+		<item name="android:statusBarColor">@color/black</item>
+		<item name="android:actionBarTheme">@style/Theme.Mastodon.Toolbar.Dark.TrueBlack</item>
+		<item name="colorBackgroundLight">@color/black</item>
+		<item name="colorWindowBackground">@color/black</item>
+		<item name="colorButtonText">@color/black</item>
+		<item name="colorBackgroundLightest">@color/black</item>
+	</style>
+
+	<style name="Theme.Mastodon.AutoLightDark.Nord" parent="Theme.Mastodon.Light.Nord"/>
+	<style name="Theme.Mastodon.AutoLightDark.TrueBlack.Nord" parent="Theme.Mastodon.Light.Nord"/>
+
+	<style name="Theme.Mastodon.Dialog.Alert.Dark.Nord" parent="android:Theme.Material.Dialog.Alert">
+		<item name="android:windowTitleStyle">@style/alert_title</item>
+		<item name="android:dialogPreferredPadding">24dp</item>
+		<item name="android:windowBackground">@drawable/bg_alert</item>
+		<item name="android:buttonBarButtonStyle">@style/Widget.Mastodon.ButtonBarButton</item>
+
+		<!-- colors -->
+		<item name="android:colorAccent">@color/nord_8</item>
+		<item name="android:colorPrimary">@color/nord_10</item>
+		<item name="android:colorBackground">@color/nord_0</item>
+		<item name="android:textColorPrimary">@color/nord_5</item>
+		<item name="android:textColorSecondary">@color/nord_6</item>
+	</style>
+
+	<style name="Theme.Mastodon.Dialog.Alert.Nord" parent="android:Theme.Material.Light.Dialog.Alert">
+		<item name="android:windowTitleStyle">@style/alert_title</item>
+		<item name="android:dialogPreferredPadding">24dp</item>
+		<item name="android:windowBackground">@drawable/bg_alert</item>
+		<item name="android:buttonBarButtonStyle">@style/Widget.Mastodon.ButtonBarButton</item>
+
+		<!-- colors -->
+		<item name="android:colorAccent">@color/nord_8</item>
+		<item name="android:colorPrimary">@color/nord_7</item>
+		<item name="android:colorBackground">@color/nord_4</item>
+		<item name="android:textColorPrimary">@color/nord_0</item>
+		<item name="android:textColorSecondary">@color/nord_2</item>
+	</style>
+
+	<style name="Theme.Mastodon.Toolbar.Nord" parent="android:ThemeOverlay.Material.ActionBar">
+		<item name="android:colorPrimary">@color/nord_4</item>
+		<item name="android:textColorPrimary">@color/nord_0</item>
+		<item name="android:textColorSecondary">@color/nord_0</item>
+	</style>
+
+	<style name="Theme.Mastodon.Toolbar.Dark.Nord" parent="android:ThemeOverlay.Material.ActionBar">
+		<item name="android:colorPrimary">@color/nord_0</item>
+		<item name="android:textColorPrimary">@color/nord_4</item>
+		<item name="android:textColorSecondary">@color/nord_5</item>
+	</style>
+
+
 	<style name="Theme.Mastodon.Light.Blue" parent="Theme.Mastodon.Light.CustomBase">
 		<item name="android:colorAccent">@color/blue_primary_700</item>
 		<item name="android:colorBackground">@color/blue_gray_100</item>
