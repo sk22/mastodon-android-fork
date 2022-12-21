@@ -529,7 +529,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				case PUBLIC -> R.drawable.ic_fluent_earth_20_regular;
 				case UNLISTED -> R.drawable.ic_fluent_people_community_20_regular;
 				case PRIVATE -> R.drawable.ic_fluent_people_checkmark_20_regular;
-				case DIRECT -> R.drawable.ic_at_symbol;
+				case DIRECT -> R.drawable.ic_fluent_mention_20_regular;
 			});
 			visibilityIcon.setBounds(0, 0, V.dp(20), V.dp(20));
 			Drawable replyArrow = getActivity().getDrawable(R.drawable.ic_fluent_arrow_reply_20_filled);
@@ -1475,7 +1475,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			case PUBLIC -> R.drawable.ic_fluent_earth_24_regular;
 			case UNLISTED -> R.drawable.ic_fluent_people_community_24_regular;
 			case PRIVATE -> R.drawable.ic_fluent_people_checkmark_24_regular;
-			case DIRECT -> R.drawable.ic_at_symbol;
+			case DIRECT -> R.drawable.ic_fluent_mention_24_regular;
 		});
 	}
 

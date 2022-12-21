@@ -80,4 +80,6 @@
     <string name="sk_settings_publish_button_text">Publish button text</string>
     <string name="sk_settings_publish_button_text_title">Customize Publish button text</string>
     <string name="sk_settings_hide_translate_in_timeline">Hide translate button in timeline</string>
+    <string name="sk_settings_translation_availability_note_available">%s supports translation!</string>
+    <string name="sk_settings_translation_availability_note_unavailable">%s seems not to support translation.</string>
 </resources>
