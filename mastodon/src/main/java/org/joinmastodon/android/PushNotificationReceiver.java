@@ -137,13 +137,20 @@ public class PushNotificationReceiver extends BroadcastReceiver{
 		builder.setContentTitle(pn.title)
 				.setContentText(pn.body)
 				.setStyle(new Notification.BigTextStyle().bigText(pn.body))
-				.setSmallIcon(R.drawable.ic_ntf_logo)
 				.setContentIntent(PendingIntent.getActivity(context, accountID.hashCode() & 0xFFFF, contentIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT))
 				.setWhen(notification==null ? System.currentTimeMillis() : notification.createdAt.toEpochMilli())
 				.setShowWhen(true)
 				.setCategory(Notification.CATEGORY_SOCIAL)
 				.setAutoCancel(true)
 				.setColor(context.getColor(R.color.primary_700));
+		switch (pn.notificationType) {
+			case FAVORITE -> builder.setSmallIcon(R.drawable.ic_fluent_star_24_filled);
+			case REBLOG -> builder.setSmallIcon(R.drawable.ic_fluent_arrow_repeat_all_24_filled);
+			case FOLLOW -> builder.setSmallIcon(R.drawable.ic_fluent_person_add_24_filled);
+			case MENTION -> builder.setSmallIcon(R.drawable.ic_fluent_mention_24_filled);
+			case POLL -> builder.setSmallIcon(R.drawable.ic_fluent_poll_24_filled);
+			default -> builder.setSmallIcon(R.drawable.ic_ntf_logo);
+		}
 		if(avatar!=null){
 			builder.setLargeIcon(UiUtils.getBitmapFromDrawable(avatar));
 		}
