@@ -74,15 +74,25 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
 		inflater.inflate(R.menu.notifications, menu);
+		menu.findItem(R.id.clear_notifications).setVisible(GlobalUserPreferences.enableDeleteNotifications);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() != R.id.follow_requests) return false;
-		Bundle args=new Bundle();
-		args.putString("account", accountID);
-		Nav.go(getActivity(), FollowRequestsListFragment.class, args);
-		return true;
+		if (item.getItemId() == R.id.follow_requests) {
+			Bundle args=new Bundle();
+			args.putString("account", accountID);
+			Nav.go(getActivity(), FollowRequestsListFragment.class, args);
+			return true;
+		} else if (item.getItemId() == R.id.clear_notifications) {
+			UiUtils.confirmDeleteNotification(getActivity(), accountID, null, ()->{
+				for (int i = 0; i < tabViews.length; i++) {
+					getFragmentForPage(i).reload();
+				}
+			});
+			return true;
+		}
+		return false;
 	}
 
 	@Override

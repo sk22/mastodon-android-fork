@@ -388,10 +388,17 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 
 		if(editingStatus!=null && editingStatus.visibility!=null) {
 			statusVisibility=editingStatus.visibility;
+		} else {
+			loadDefaultStatusVisibility(savedInstanceState);
 		}
 
-		loadDefaultStatusVisibility(savedInstanceState);
 		updateVisibilityIcon();
+		visibilityPopup.getMenu().findItem(switch(statusVisibility){
+			case PUBLIC -> R.id.vis_public;
+			case UNLISTED -> R.id.vis_unlisted;
+			case PRIVATE -> R.id.vis_followers;
+			case DIRECT -> R.id.vis_private;
+		}).setChecked(true);
 
 		autocompleteViewController=new ComposeAutocompleteViewController(getActivity(), accountID);
 		autocompleteViewController.setCompletionSelectedListener(this::onAutocompleteOptionSelected);
@@ -1405,12 +1412,6 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		Menu m=visibilityPopup.getMenu();
 		UiUtils.enablePopupMenuIcons(getActivity(), visibilityPopup);
 		m.setGroupCheckable(0, true, true);
-		m.findItem(switch(statusVisibility){
-			case PUBLIC -> R.id.vis_public;
-			case UNLISTED -> R.id.vis_unlisted;
-			case PRIVATE -> R.id.vis_followers;
-			case DIRECT -> R.id.vis_private;
-		}).setChecked(true);
 		visibilityPopup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener(){
 			@Override
 			public boolean onMenuItemClick(MenuItem item){

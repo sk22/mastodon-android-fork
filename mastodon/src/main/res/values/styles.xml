@@ -226,14 +226,14 @@
 	</style>
 
 	<style name="Theme.Mastodon.Toolbar.Profile">
-		<item name="android:textColorPrimary">?android:colorPrimary</item>
-		<item name="android:textColorSecondary">?android:colorPrimary</item>
-		<item name="android:drawableTint">?android:colorPrimary</item>
+		<item name="android:textColorPrimary">?colorGray25</item>
+		<item name="android:textColorSecondary">?colorGray25</item>
+		<item name="android:drawableTint">?colorGray25</item>
 		<item name="android:popupTheme">?android:actionBarTheme</item>
 		<item name="android:titleTextAppearance">@style/m3_title_medium</item>
-		<item name="android:titleTextColor">?android:colorPrimary</item>
+		<item name="android:titleTextColor">?colorGray25</item>
 		<item name="android:subtitleTextAppearance">@style/m3_body_medium</item>
-		<item name="android:subtitleTextColor">?android:colorPrimary</item>
+		<item name="android:subtitleTextColor">?colorGray25</item>
 	</style>
 
 	<style name="Widget.Mastodon.Button" parent="android:Widget.Material.Button">

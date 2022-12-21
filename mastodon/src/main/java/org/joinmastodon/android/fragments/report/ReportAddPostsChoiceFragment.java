@@ -237,7 +237,7 @@ public class ReportAddPostsChoiceFragment extends StatusListFragment{
 
 	@Override
 	protected List<StatusDisplayItem> buildDisplayItems(Status s){
-		List<StatusDisplayItem> items=StatusDisplayItem.buildItems(this, s, accountID, s, knownAccounts, true, false);
+		List<StatusDisplayItem> items=StatusDisplayItem.buildItems(this, s, accountID, s, knownAccounts, true, false, null);
 		for(StatusDisplayItem item:items){
 			if(item instanceof ImageStatusDisplayItem isdi){
 				isdi.horizontalInset=V.dp(40+32);

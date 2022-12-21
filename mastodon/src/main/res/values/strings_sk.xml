@@ -70,4 +70,11 @@
     <string name="sk_settings_rules">Rules</string>
     <string name="sk_settings_about">About the app</string>
     <string name="sk_settings_donate">Donate</string>
+    <string name="sk_delete_notification">Delete notification</string>
+    <string name="sk_delete_notification_confirm_action">Delete notification</string>
+    <string name="sk_delete_notification_confirm">Are you sure you want to delete this notification?</string>
+    <string name="sk_delete_all_notifications">Delete all notifications</string>
+    <string name="sk_delete_all_notifications_confirm_action">Delete all</string>
+    <string name="sk_delete_all_notifications_confirm">Are you sure you want to delete this notification?</string>
+    <string name="sk_enable_delete_notifications">Enable deleting notifications</string>
 </resources>

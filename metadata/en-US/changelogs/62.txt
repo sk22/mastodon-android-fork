@@ -1,3 +1,5 @@
 - Copy post URL when long-pressing share button
 - Add option to disable swiping between tabs
 - Bugfixes and tweaks (Bookmark button, button animations)
+- New gray colors
+- Implement deleting notifications (disabled by default)

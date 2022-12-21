@@ -49,6 +49,7 @@ import org.joinmastodon.android.api.requests.accounts.SetAccountMuted;
 import org.joinmastodon.android.api.requests.accounts.SetDomainBlocked;
 import org.joinmastodon.android.api.requests.accounts.AuthorizeFollowRequest;
 import org.joinmastodon.android.api.requests.accounts.RejectFollowRequest;
+import org.joinmastodon.android.api.requests.notifications.DismissNotification;
 import org.joinmastodon.android.api.requests.statuses.DeleteStatus;
 import org.joinmastodon.android.api.requests.statuses.GetStatusByID;
 import org.joinmastodon.android.api.requests.statuses.SetStatusPinned;
@@ -66,6 +67,7 @@ import org.joinmastodon.android.fragments.ThreadFragment;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Emoji;
 import org.joinmastodon.android.model.ListTimeline;
+import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.Relationship;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.M3AlertDialogBuilder;
@@ -460,6 +462,25 @@ public class UiUtils{
 							.wrapProgress(activity, pinned ? R.string.sk_pinning : R.string.sk_unpinning, false)
 							.exec(accountID);
 				}
+		);
+	}
+
+	public static void confirmDeleteNotification(Activity activity, String accountID, Notification notification, Runnable callback) {
+		showConfirmationAlert(activity,
+				notification == null ? R.string.sk_delete_all_notifications : R.string.sk_delete_notification,
+				notification == null ? R.string.sk_delete_all_notifications_confirm : R.string.sk_delete_notification_confirm,
+				notification == null ? R.string.sk_delete_all_notifications_confirm_action : R.string.sk_delete_notification_confirm_action,
+				()-> new DismissNotification(notification != null ? notification.id : null).setCallback(new Callback<>() {
+					@Override
+					public void onSuccess(Object o) {
+						callback.run();
+					}
+
+					@Override
+					public void onError(ErrorResponse error) {
+						error.showToast(activity);
+					}
+				}).exec(accountID)
 		);
 	}
 

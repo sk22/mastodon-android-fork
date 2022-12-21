@@ -6,4 +6,10 @@
 		android:showAsAction="always"
 		android:visible="false"
 		android:title="@string/sk_follow_requests" />
+	<item
+		android:id="@+id/clear_notifications"
+		android:icon="@drawable/ic_fluent_delete_24_regular"
+		android:showAsAction="always"
+		android:visible="false"
+		android:title="@string/sk_delete_all_notifications" />
 </menu>

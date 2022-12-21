@@ -132,6 +132,7 @@ There's also a handful of custom strings exclusive to this projects that would n
 * [Add option to allow voting for multiple options on polls](https://github.com/sk22/megalodon/commit/5b28468efd49387b4f8b83f142f3adf3104ca60c)
 * [Add translate function](https://github.com/mastodon/mastodon-android/compare/master...sk22:megalodon:feature/translate-button)
 * [Add language selector](https://github.com/mastodon/mastodon-android/compare/master...sk22:megalodon:feature/language-selector)
+* [Implement deleting notifications](https://github.com/sk22/megalodon/commit/b0f9ce081f69f29ad59658fc00ca41372cd2677d) (disabled by default)
 
 
 ### Behavior
@@ -162,7 +163,7 @@ There's also a handful of custom strings exclusive to this projects that would n
 * [Custom "megalodon" text logo](https://github.com/sk22/megalodon/commit/563afd487ca5c608cfbb00fa3909d3c27384acc0) by [@LucasGGamerM](https://github.com/LucasGGamerM)
 * [Custom login screen](https://github.com/sk22/megalodon/commit/9bbf8c4618dbe13accaeb3b5482bf3fe88cac4c0)
 * [More distinct filled boost icon](https://github.com/sk22/megalodon/commits/more-distinct-filled-boost-icon)
-* [Material You color theme] by [@LucasGGamerM](https://github.com/LucasGGamerM)
+* Material You color theme by [@LucasGGamerM](https://github.com/LucasGGamerM)
 * [Animations for interaction buttons](https://github.com/mastodon/mastodon-android/compare/master...sk22:megalodon:feature/animate-buttons)
 
 

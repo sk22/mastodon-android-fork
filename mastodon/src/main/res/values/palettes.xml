@@ -81,127 +81,155 @@
 	</style>
 
 	<style name="ColorPalette.Purple">
-		<item name="colorPrimary25">#fafaff</item>
-		<item name="colorPrimary50">#f4f3ff</item>
-		<item name="colorPrimary100">#ebebff</item>
-		<item name="colorPrimary200">#d7d7ff</item>
-		<item name="colorPrimary300">#c2c2ff</item>
-		<item name="colorPrimary400">#9999ff</item>
-		<item name="colorPrimary500">#6364ff</item>
-		<item name="colorPrimary600">#562cfc</item>
-		<item name="colorPrimary700">#431cbb</item>
-		<item name="colorPrimary800">#2f0c7a</item>
-		<item name="colorPrimary900">#17063b</item>
+		<item name="colorPrimary25">@color/purple_primary_25</item>
+		<item name="colorPrimary50">@color/purple_primary_50</item>
+		<item name="colorPrimary100">@color/purple_primary_100</item>
+		<item name="colorPrimary200">@color/purple_primary_200</item>
+		<item name="colorPrimary300">@color/purple_primary_300</item>
+		<item name="colorPrimary400">@color/purple_primary_400</item>
+		<item name="colorPrimary500">@color/purple_primary_500</item>
+		<item name="colorPrimary600">@color/purple_primary_600</item>
+		<item name="colorPrimary700">@color/purple_primary_700</item>
+		<item name="colorPrimary800">@color/purple_primary_800</item>
+		<item name="colorPrimary900">@color/purple_primary_900</item>
 	</style>
 
 	<style name="ColorPalette.Green">
-		<item name="colorPrimary25">#fafaff</item>
-		<item name="colorPrimary50">#d1feaf</item>
-		<item name="colorPrimary100">#bbf294</item>
-		<item name="colorPrimary200">#a0d57b</item>
-		<item name="colorPrimary300">#85b962</item>
-		<item name="colorPrimary400">#6c9e4b</item>
-		<item name="colorPrimary500">#528232</item>
-		<item name="colorPrimary600">#3b6a1c</item>
-		<item name="colorPrimary700">#245103</item>
-		<item name="colorPrimary800">#163800</item>
-		<item name="colorPrimary900">#0a2100</item>
+		<item name="colorPrimary25">@color/green_primary_25</item>
+		<item name="colorPrimary50">@color/green_primary_50</item>
+		<item name="colorPrimary100">@color/green_primary_100</item>
+		<item name="colorPrimary200">@color/green_primary_200</item>
+		<item name="colorPrimary300">@color/green_primary_300</item>
+		<item name="colorPrimary400">@color/green_primary_400</item>
+		<item name="colorPrimary500">@color/green_primary_500</item>
+		<item name="colorPrimary600">@color/green_primary_600</item>
+		<item name="colorPrimary700">@color/green_primary_700</item>
+		<item name="colorPrimary800">@color/green_primary_800</item>
+		<item name="colorPrimary900">@color/green_primary_900</item>
 
-		<item name="colorGray400">#a2b095</item>
-		<item name="colorGray300">#bdcbaf</item>
-		<item name="colorGray200">#d9e7ca</item>
-		<item name="colorGray100">#d9e7ca</item>
-		<item name="colorGray50t">#cce8f8d8</item>
-		<item name="colorGray50">#e8f5d8</item>
-		<item name="colorGray25">#f7f8fa</item>
+		<item name="colorGray900">@color/brownish_gray_900</item>
+		<item name="colorGray800t">@color/brownish_gray_800t</item>
+		<item name="colorGray800">@color/brownish_gray_800</item>
+		<item name="colorGray700">@color/brownish_gray_700</item>
+		<item name="colorGray600">@color/brownish_gray_600</item>
+		<item name="colorGray500">@color/brownish_gray_500</item>
+
+		<item name="colorGray400">@color/green_gray_400</item>
+		<item name="colorGray300">@color/green_gray_300</item>
+		<item name="colorGray200">@color/green_gray_200</item>
+		<item name="colorGray100">@color/green_gray_100</item>
+		<item name="colorGray50t">@color/green_gray_50t</item>
+		<item name="colorGray50">@color/green_gray_50</item>
+		<item name="colorGray25">@color/green_gray_25</item>
 	</style>
 
 	<style name="ColorPalette.Blue">
-		<item name="colorPrimary25">#fafaff</item>
-		<item name="colorPrimary50">#e8f2ff</item>
-		<item name="colorPrimary100">#cee5ff</item>
-		<item name="colorPrimary200">#97cbff</item>
-		<item name="colorPrimary300">#65b1f4</item>
-		<item name="colorPrimary400">#4796d7</item>
-		<item name="colorPrimary500">#227bba</item>
-		<item name="colorPrimary600">#00639b</item>
-		<item name="colorPrimary700">#004a76</item>
-		<item name="colorPrimary800">#003354</item>
-		<item name="colorPrimary900">#001d33</item>
+		<item name="colorPrimary25">@color/blue_primary_25</item>
+		<item name="colorPrimary50">@color/blue_primary_50</item>
+		<item name="colorPrimary100">@color/blue_primary_100</item>
+		<item name="colorPrimary200">@color/blue_primary_200</item>
+		<item name="colorPrimary300">@color/blue_primary_300</item>
+		<item name="colorPrimary400">@color/blue_primary_400</item>
+		<item name="colorPrimary500">@color/blue_primary_500</item>
+		<item name="colorPrimary600">@color/blue_primary_600</item>
+		<item name="colorPrimary700">@color/blue_primary_700</item>
+		<item name="colorPrimary800">@color/blue_primary_800</item>
+		<item name="colorPrimary900">@color/blue_primary_900</item>
 
-		<item name="colorGray400">#9eadbe</item>
-		<item name="colorGray300">#b9c8da</item>
-		<item name="colorGray200">#d5e4f7</item>
-		<item name="colorGray100">#e8f2ff</item>
-		<item name="colorGray50t">#cce8f2ff</item>
-		<item name="colorGray50">#e8f2ff</item>
-		<item name="colorGray25">#f7f8fa</item>
+		<item name="colorGray400">@color/blue_gray_400</item>
+		<item name="colorGray300">@color/blue_gray_300</item>
+		<item name="colorGray200">@color/blue_gray_200</item>
+		<item name="colorGray100">@color/blue_gray_100</item>
+		<item name="colorGray50t">@color/blue_gray_50t</item>
+		<item name="colorGray50">@color/blue_gray_50</item>
+		<item name="colorGray25">@color/blue_gray_25</item>
 	</style>
 
 	<style name="ColorPalette.Brown">
-		<item name="colorPrimary25">#fafaff</item>
-		<item name="colorPrimary50">#ffeedf</item>
-		<item name="colorPrimary100">#ffdcbb</item>
-		<item name="colorPrimary200">#ffb869</item>
-		<item name="colorPrimary300">#e89a3b</item>
-		<item name="colorPrimary400">#c98121</item>
-		<item name="colorPrimary500">#a96700</item>
-		<item name="colorPrimary600">#885200</item>
-		<item name="colorPrimary700">#673d00</item>
-		<item name="colorPrimary800">#482900</item>
-		<item name="colorPrimary900">#2b1700</item>
+		<item name="colorPrimary25">@color/brown_primary_25</item>
+		<item name="colorPrimary50">@color/brown_primary_50</item>
+		<item name="colorPrimary100">@color/brown_primary_100</item>
+		<item name="colorPrimary200">@color/brown_primary_200</item>
+		<item name="colorPrimary300">@color/brown_primary_300</item>
+		<item name="colorPrimary400">@color/brown_primary_400</item>
+		<item name="colorPrimary500">@color/brown_primary_500</item>
+		<item name="colorPrimary600">@color/brown_primary_600</item>
+		<item name="colorPrimary700">@color/brown_primary_700</item>
+		<item name="colorPrimary800">@color/brown_primary_800</item>
+		<item name="colorPrimary900">@color/brown_primary_900</item>
 
-		<item name="colorGray400">#c3a689</item>
-		<item name="colorGray300">#e0c1a3</item>
-		<item name="colorGray200">#feddbd</item>
-		<item name="colorGray100">#ffeedf</item>
-		<item name="colorGray50t">#ccffeedf</item>
-		<item name="colorGray50">#ffeedf</item>
-		<item name="colorGray25">#f7f8fa</item>
+		<item name="colorGray900">@color/brownish_gray_900</item>
+		<item name="colorGray800t">@color/brownish_gray_800t</item>
+		<item name="colorGray800">@color/brownish_gray_800</item>
+		<item name="colorGray700">@color/brownish_gray_700</item>
+		<item name="colorGray600">@color/brownish_gray_600</item>
+		<item name="colorGray500">@color/brownish_gray_500</item>
+
+		<item name="colorGray400">@color/brown_gray_400</item>
+		<item name="colorGray300">@color/brown_gray_300</item>
+		<item name="colorGray200">@color/brown_gray_200</item>
+		<item name="colorGray100">@color/brown_gray_100</item>
+		<item name="colorGray50t">@color/brown_gray_50t</item>
+		<item name="colorGray50">@color/brown_gray_50</item>
+		<item name="colorGray25">@color/brown_gray_25</item>
 	</style>
 
 	<style name="ColorPalette.Yellow">
-		<item name="colorPrimary25">#fafaff</item>
-		<item name="colorPrimary50">#fff0ca</item>
-		<item name="colorPrimary100">#ffe084</item>
-		<item name="colorPrimary200">#e8c349</item>
-		<item name="colorPrimary300">#cba82f</item>
-		<item name="colorPrimary400">#ae8d10</item>
-		<item name="colorPrimary500">#8f7300</item>
-		<item name="colorPrimary600">#735c00</item>
-		<item name="colorPrimary700">#574500</item>
-		<item name="colorPrimary800">#3c2f00</item>
-		<item name="colorPrimary900">#231b00</item>
+		<item name="colorPrimary25">@color/yellow_primary_25</item>
+		<item name="colorPrimary50">@color/yellow_primary_50</item>
+		<item name="colorPrimary100">@color/yellow_primary_100</item>
+		<item name="colorPrimary200">@color/yellow_primary_200</item>
+		<item name="colorPrimary300">@color/yellow_primary_300</item>
+		<item name="colorPrimary400">@color/yellow_primary_400</item>
+		<item name="colorPrimary500">@color/yellow_primary_500</item>
+		<item name="colorPrimary600">@color/yellow_primary_600</item>
+		<item name="colorPrimary700">@color/yellow_primary_700</item>
+		<item name="colorPrimary800">@color/yellow_primary_800</item>
+		<item name="colorPrimary900">@color/yellow_primary_900</item>
 
-		<item name="colorGray400">#b8aa87</item>
-		<item name="colorGray300">#d4c5a1</item>
-		<item name="colorGray200">#f1e1bb</item>
-		<item name="colorGray100">#fff0ca</item>
-		<item name="colorGray50t">#ccfff0ca</item>
-		<item name="colorGray50">#fff0ca</item>
-		<item name="colorGray25">#f7f8fa</item>
+		<item name="colorGray900">@color/brownish_gray_900</item>
+		<item name="colorGray800t">@color/brownish_gray_800t</item>
+		<item name="colorGray800">@color/brownish_gray_800</item>
+		<item name="colorGray700">@color/brownish_gray_700</item>
+		<item name="colorGray600">@color/brownish_gray_600</item>
+		<item name="colorGray500">@color/brownish_gray_500</item>
+
+		<item name="colorGray400">@color/yellow_gray_400</item>
+		<item name="colorGray300">@color/yellow_gray_300</item>
+		<item name="colorGray200">@color/yellow_gray_200</item>
+		<item name="colorGray100">@color/yellow_gray_100</item>
+		<item name="colorGray50t">@color/yellow_gray_50t</item>
+		<item name="colorGray50">@color/yellow_gray_50</item>
+		<item name="colorGray25">@color/yellow_gray_25</item>
 	</style>
 
 
 	<style name="ColorPalette.Red">
-		<item name="colorPrimary25">#FFFBFA</item>
-		<item name="colorPrimary50">#FEF3F2</item>
-		<item name="colorPrimary100">#FEE4E2</item>
-		<item name="colorPrimary200">#FECDCA</item>
-		<item name="colorPrimary300">#FDA29B</item>
-		<item name="colorPrimary400">#F97066</item>
-		<item name="colorPrimary500">#F04438</item>
-		<item name="colorPrimary600">#D92D20</item>
-		<item name="colorPrimary700">#B42318</item>
-		<item name="colorPrimary800">#912018</item>
-		<item name="colorPrimary900">#7A271A</item>
+		<item name="colorPrimary25">@color/red_primary_25</item>
+		<item name="colorPrimary50">@color/red_primary_50</item>
+		<item name="colorPrimary100">@color/red_primary_100</item>
+		<item name="colorPrimary200">@color/red_primary_200</item>
+		<item name="colorPrimary300">@color/red_primary_300</item>
+		<item name="colorPrimary400">@color/red_primary_400</item>
+		<item name="colorPrimary500">@color/red_primary_500</item>
+		<item name="colorPrimary600">@color/red_primary_600</item>
+		<item name="colorPrimary700">@color/red_primary_700</item>
+		<item name="colorPrimary800">@color/red_primary_800</item>
+		<item name="colorPrimary900">@color/red_primary_900</item>
 
-		<item name="colorGray400">#d69f84</item>
-		<item name="colorGray300">#f4ba9e</item>
-		<item name="colorGray200">#ffdbcb</item>
-		<item name="colorGray100">#ffedea</item>
-		<item name="colorGray50t">#ffede6ca</item>
-		<item name="colorGray50">#ffede6</item>
-		<item name="colorGray25">#f7f8fa</item>
+		<item name="colorGray900">@color/brownish_gray_900</item>
+		<item name="colorGray800t">@color/brownish_gray_800t</item>
+		<item name="colorGray800">@color/brownish_gray_800</item>
+		<item name="colorGray700">@color/brownish_gray_700</item>
+		<item name="colorGray600">@color/brownish_gray_600</item>
+		<item name="colorGray500">@color/brownish_gray_500</item>
+
+		<item name="colorGray400">@color/red_gray_400</item>
+		<item name="colorGray300">@color/red_gray_300</item>
+		<item name="colorGray200">@color/red_gray_200</item>
+		<item name="colorGray100">@color/red_gray_100</item>
+		<item name="colorGray50t">@color/red_gray_50t</item>
+		<item name="colorGray50">@color/red_gray_50</item>
+		<item name="colorGray25">@color/red_gray_25</item>
 	</style>
 </resources>

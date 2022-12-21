@@ -2,6 +2,8 @@ package org.joinmastodon.android.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 
 import com.squareup.otto.Subscribe;
@@ -10,7 +12,6 @@ import org.joinmastodon.android.E;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.markers.SaveMarkers;
 import org.joinmastodon.android.api.session.AccountSessionManager;
-import org.joinmastodon.android.events.NotificationDeletedEvent;
 import org.joinmastodon.android.events.PollUpdatedEvent;
 import org.joinmastodon.android.events.RemoveAccountPostsEvent;
 import org.joinmastodon.android.model.Notification;
@@ -78,9 +79,9 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 			case FAVORITE -> getString(R.string.user_favorited);
 			case POLL -> getString(R.string.poll_ended);
 		};
-		HeaderStatusDisplayItem titleItem=extraText!=null ? new HeaderStatusDisplayItem(n.id, n.account, n.createdAt, this, accountID, null, extraText) : null;
+		HeaderStatusDisplayItem titleItem=extraText!=null ? new HeaderStatusDisplayItem(n.id, n.account, n.createdAt, this, accountID, null, extraText, n) : null;
 		if(n.status!=null){
-			ArrayList<StatusDisplayItem> items=StatusDisplayItem.buildItems(this, n.status, accountID, n, knownAccounts, titleItem!=null, titleItem==null);
+			ArrayList<StatusDisplayItem> items=StatusDisplayItem.buildItems(this, n.status, accountID, n, knownAccounts, titleItem!=null, titleItem==null, n);
 			if(titleItem!=null){
 				for(StatusDisplayItem item:items){
 					if(item instanceof ImageStatusDisplayItem imgItem){
@@ -210,7 +211,7 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 		}
 	}
 
-	private void removeNotification(Notification n){
+	public void removeNotification(Notification n){
 		data.remove(n);
 		preloadedData.remove(n);
 		int index=-1;
