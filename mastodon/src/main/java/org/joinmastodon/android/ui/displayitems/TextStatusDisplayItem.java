@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.statuses.TranslateStatus;
 import org.joinmastodon.android.api.session.AccountSession;
@@ -31,6 +32,7 @@ import me.grishka.appkit.api.ErrorResponse;
 import me.grishka.appkit.imageloader.ImageLoaderViewHolder;
 import me.grishka.appkit.imageloader.MovieDrawable;
 import me.grishka.appkit.imageloader.requests.ImageLoaderRequest;
+import me.grishka.appkit.utils.CubicBezierInterpolator;
 import me.grishka.appkit.utils.V;
 
 public class TextStatusDisplayItem extends StatusDisplayItem{
@@ -144,7 +146,9 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 			Instance instanceInfo = AccountSessionManager.getInstance().getInstanceInfo(item.session.domain);
 			boolean translateEnabled = instanceInfo.v2 != null && instanceInfo.v2.configuration.translation != null && instanceInfo.v2.configuration.translation.enabled;
 
-			translateWrap.setVisibility(item.textSelectable && translateEnabled &&
+			translateWrap.setVisibility(
+					(!GlobalUserPreferences.translateButtonOpenedOnly || item.textSelectable) &&
+					translateEnabled &&
 					!item.status.visibility.isLessVisibleThan(StatusPrivacy.UNLISTED) &&
 					item.status.language != null &&
 					(item.session.preferences == null || !item.status.language.equalsIgnoreCase(item.session.preferences.postingDefaultLanguage))
@@ -155,6 +159,7 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 				if (item.translation == null) {
 					translateProgress.setVisibility(View.VISIBLE);
 					translateButton.setClickable(false);
+					translateButton.animate().alpha(0.5f).setInterpolator(CubicBezierInterpolator.DEFAULT).setDuration(150).start();
 					new TranslateStatus(item.status.id).setCallback(new Callback<>() {
 						@Override
 						public void onSuccess(TranslatedStatus translatedStatus) {
@@ -162,6 +167,7 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 							item.translated = true;
 							translateProgress.setVisibility(View.GONE);
 							translateButton.setClickable(true);
+							translateButton.animate().alpha(1).setInterpolator(CubicBezierInterpolator.DEFAULT).setDuration(50).start();
 							rebind();
 						}
 
@@ -169,6 +175,7 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 						public void onError(ErrorResponse error) {
 							translateProgress.setVisibility(View.GONE);
 							translateButton.setClickable(true);
+							translateButton.animate().alpha(1).setInterpolator(CubicBezierInterpolator.DEFAULT).setDuration(50).start();
 							error.showToast(itemView.getContext());
 						}
 					}).exec(item.parentFragment.getAccountID());

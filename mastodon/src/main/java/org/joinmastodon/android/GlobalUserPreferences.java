@@ -27,6 +27,8 @@ public class GlobalUserPreferences{
 	public static boolean disableSwipe;
 	public static boolean voteButtonForSingleChoice;
 	public static boolean enableDeleteNotifications;
+	public static boolean translateButtonOpenedOnly;
+	public static String publishButtonText;
 	public static ThemePreference theme;
 	public static ColorPreference color;
 
@@ -57,6 +59,8 @@ public class GlobalUserPreferences{
 		disableSwipe=prefs.getBoolean("disableSwipe", false);
 		voteButtonForSingleChoice=prefs.getBoolean("voteButtonForSingleChoice", true);
 		enableDeleteNotifications=prefs.getBoolean("enableDeleteNotifications", false);
+		translateButtonOpenedOnly=prefs.getBoolean("translateButtonOpenedOnly", false);
+		publishButtonText=prefs.getString("publishButtonText", "");
 		theme=ThemePreference.values()[prefs.getInt("theme", 0)];
 		recentLanguages=fromJson(prefs.getString("recentLanguages", "{}"), recentLanguagesType, new HashMap<>());
 
@@ -82,6 +86,8 @@ public class GlobalUserPreferences{
 				.putBoolean("disableMarquee", disableMarquee)
 				.putBoolean("disableSwipe", disableSwipe)
 				.putBoolean("enableDeleteNotifications", enableDeleteNotifications)
+				.putBoolean("translateButtonOpenedOnly", translateButtonOpenedOnly)
+				.putString("publishButtonText", publishButtonText)
 				.putInt("theme", theme.ordinal())
 				.putString("color", color.name())
 				.putString("recentLanguages", gson.toJson(recentLanguages))

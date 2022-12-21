@@ -622,7 +622,12 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
 		publishButton=new Button(getActivity());
-		publishButton.setText(editingStatus==null || redraftStatus ? R.string.publish : R.string.save);
+		int publishText = editingStatus==null || redraftStatus ? R.string.publish : R.string.save;
+		if (publishText == R.string.publish && !GlobalUserPreferences.publishButtonText.isEmpty()) {
+			publishButton.setText(GlobalUserPreferences.publishButtonText);
+		} else {
+			publishButton.setText(publishText);
+		}
 		publishButton.setOnClickListener(this::onPublishClick);
 		LinearLayout wrap=new LinearLayout(getActivity());
 		wrap.setOrientation(LinearLayout.HORIZONTAL);

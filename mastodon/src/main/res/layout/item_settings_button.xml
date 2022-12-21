@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.joinmastodon.android.ui.views.AutoOrientationLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="48dp"
+    android:paddingHorizontal="16dp"
     android:gravity="center_vertical"
     android:layoutDirection="locale">
 
@@ -11,26 +13,24 @@
         android:id="@+id/icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_marginStart="16dp"
         android:layout_marginEnd="32dp"
         android:importantForAccessibility="no"
         android:tint="?android:textColorPrimary"
-        tools:src="@drawable/ic_color_theme_preference"/>
+        tools:src="@drawable/ic_fluent_color_24_regular"/>
 
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/text"
         android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_marginEnd="8dp"
         android:gravity="center_vertical"
         android:textColor="?android:textColorPrimary"
-        android:textSize="16sp"
-        android:singleLine="true"
-        android:ellipsize="end"
-        android:text="@string/sk_settings_color_palette"/>
+        android:textSize="16sp" />
 
     <Button
-        android:id="@+id/color_palette_button"
+        android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
         android:background="@drawable/bg_inline_button"
@@ -43,4 +43,4 @@
         android:textSize="16sp"
         tools:text="@string/sk_color_palette_pink" />
 
-</org.joinmastodon.android.ui.views.AutoOrientationLinearLayout>
+</LinearLayout>

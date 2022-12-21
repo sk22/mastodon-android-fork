@@ -17,8 +17,6 @@
 		android:gravity="center_vertical"
 		android:textSize="16sp"
 		android:textColor="?android:textColorPrimary"
-		android:singleLine="true"
-		android:ellipsize="end"
 		tools:text="Account settings"/>
 	<ProgressBar
 		android:id="@+id/progress"
