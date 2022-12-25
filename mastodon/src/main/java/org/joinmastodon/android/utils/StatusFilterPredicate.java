@@ -5,6 +5,7 @@ import org.joinmastodon.android.model.Filter;
 import org.joinmastodon.android.model.FilterResult;
 import org.joinmastodon.android.model.Status;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -23,6 +24,8 @@ public class StatusFilterPredicate implements Predicate<Status>{
 	@Override
 	public boolean test(Status status){
 		for(FilterResult filterResult:status.filtered){
+			if (filterResult.filter.expiresAt.isAfter(Instant.now()))
+				continue;
 			if (filterResult.filter.filterAction.equals("hide"))
 				return false;
 		}
