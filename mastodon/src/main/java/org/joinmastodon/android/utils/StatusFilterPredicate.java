@@ -2,6 +2,7 @@ package org.joinmastodon.android.utils;
 
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.FilterResult;
 import org.joinmastodon.android.model.Status;
 
 import java.util.List;
@@ -21,6 +22,10 @@ public class StatusFilterPredicate implements Predicate<Status>{
 
 	@Override
 	public boolean test(Status status){
+		for(FilterResult filterResult:status.filtered){
+			if (filterResult.filter.filterAction.equals("hide"))
+				return false;
+		}
 		for(Filter filter:filters){
 			if(filter.matches(status))
 				return false;
