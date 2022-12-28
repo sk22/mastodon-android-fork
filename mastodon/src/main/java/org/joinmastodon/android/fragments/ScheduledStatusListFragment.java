@@ -18,10 +18,12 @@ import org.joinmastodon.android.model.HeaderPaginationList;
 import org.joinmastodon.android.model.ScheduledStatus;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.displayitems.StatusDisplayItem;
+import org.parceler.Parcels;
 
 import java.util.Collections;
 import java.util.List;
 
+import me.grishka.appkit.Nav;
 import me.grishka.appkit.api.SimpleCallback;
 
 public class ScheduledStatusListFragment extends BaseStatusListFragment<ScheduledStatus> {
@@ -57,7 +59,16 @@ public class ScheduledStatusListFragment extends BaseStatusListFragment<Schedule
 
 	@Override
 	public void onItemClick(String id) {
-
+		final Bundle args=new Bundle();
+		args.putString("account", accountID);
+		ScheduledStatus scheduledStatus = getStatusByID(id);
+		Status status = scheduledStatus.params;
+		args.putParcelable("scheduledStatus", Parcels.wrap(scheduledStatus));
+		args.putParcelable("editStatus", Parcels.wrap(status));
+		args.putString("sourceText", status.text);
+		args.putString("sourceSpoiler", status.spoilerText);
+		args.putBoolean("redraftStatus", true);
+		Nav.go(getActivity(), ComposeFragment.class, args);
 	}
 
 	@Override

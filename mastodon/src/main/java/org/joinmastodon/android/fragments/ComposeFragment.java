@@ -79,7 +79,6 @@ import org.joinmastodon.android.events.ScheduledStatusCreatedEvent;
 import org.joinmastodon.android.events.ScheduledStatusDeletedEvent;
 import org.joinmastodon.android.events.StatusCountersUpdatedEvent;
 import org.joinmastodon.android.events.StatusCreatedEvent;
-import org.joinmastodon.android.events.StatusDeletedEvent;
 import org.joinmastodon.android.events.StatusUpdatedEvent;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Attachment;
@@ -114,6 +113,10 @@ import org.parceler.Parcels;
 import java.io.InterruptedIOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -160,8 +163,8 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	private int charCount, charLimit, trimmedCharCount;
 
 	private Button publishButton, languageButton;
-	private PopupMenu languagePopup, visibilityPopup;
-	private ImageButton mediaBtn, pollBtn, emojiBtn, spoilerBtn, visibilityBtn;
+	private PopupMenu languagePopup, visibilityPopup, scheduleDraftPopup;
+	private ImageButton mediaBtn, pollBtn, emojiBtn, spoilerBtn, visibilityBtn, scheduleBtn, scheduleDraftDismiss;
 	private ImageView sensitiveIcon;
 	private ComposeMediaLayout attachmentsView;
 	private TextView replyText;
@@ -170,6 +173,8 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	private View addPollOptionBtn;
 	private View sensitiveItem;
 	private View pollAllowMultipleItem;
+	private View scheduleDraftView;
+	private TextView scheduleDraftText;
 	private CheckBox pollAllowMultipleCheckbox;
 	private TextView pollDurationView;
 
@@ -187,6 +192,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	private EditText spoilerEdit;
 	private boolean hasSpoiler;
 	private boolean sensitive;
+	private Instant scheduledAt = null;
 	private ProgressBar sendProgress;
 	private ImageView sendError;
 	private View sendingOverlay;
@@ -199,6 +205,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	private boolean attachmentsErrorShowing;
 
 	private Status editingStatus;
+	private ScheduledStatus scheduledStatus;
 	private boolean redraftStatus;
 	private boolean pollChanged;
 	private boolean creatingView;
@@ -224,9 +231,12 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		customEmojis=AccountSessionManager.getInstance().getCustomEmojis(instanceDomain);
 		instance=AccountSessionManager.getInstance().getInstanceInfo(instanceDomain);
 		languageResolver=new MastodonLanguage.LanguageResolver(instance);
+		redraftStatus=getArguments().getBoolean("redraftStatus", false);
 		if(getArguments().containsKey("editStatus")){
 			editingStatus=Parcels.unwrap(getArguments().getParcelable("editStatus"));
-			redraftStatus=getArguments().getBoolean("redraftStatus");
+		}
+		if (getArguments().containsKey("scheduledStatus")) {
+			scheduledStatus=Parcels.unwrap(getArguments().getParcelable("scheduledStatus"));
 		}
 		if(instance==null){
 			Nav.finish(this);
@@ -298,6 +308,10 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		emojiBtn=view.findViewById(R.id.btn_emoji);
 		spoilerBtn=view.findViewById(R.id.btn_spoiler);
 		visibilityBtn=view.findViewById(R.id.btn_visibility);
+		scheduleBtn=view.findViewById(R.id.btn_schedule);
+		scheduleDraftView=view.findViewById(R.id.schedule_draft_view);
+		scheduleDraftText=view.findViewById(R.id.schedule_draft_text);
+		scheduleDraftDismiss=view.findViewById(R.id.schedule_draft_dismiss);
 		sensitiveIcon=view.findViewById(R.id.sensitive_icon);
 		sensitiveItem=view.findViewById(R.id.sensitive_item);
 		replyText=view.findViewById(R.id.reply_text);
@@ -309,6 +323,23 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		buildVisibilityPopup(visibilityBtn);
 		visibilityBtn.setOnClickListener(v->visibilityPopup.show());
 		visibilityBtn.setOnTouchListener(visibilityPopup.getDragToOpenListener());
+
+		scheduleDraftPopup=new PopupMenu(getContext(), scheduleBtn);
+		scheduleDraftPopup.inflate(R.menu.schedule_draft);
+		scheduleDraftPopup.setOnMenuItemClickListener(item->{
+			if (item.getItemId() == R.id.draft) updateScheduledAt(DRAFT_INSTANT);
+			return true;
+		});
+		UiUtils.enablePopupMenuIcons(getContext(), scheduleDraftPopup);
+		scheduleBtn.setOnClickListener(v->{
+			if (scheduledAt != null) updateScheduledAt(null);
+			else scheduleDraftPopup.show();
+		});
+		scheduleBtn.setOnTouchListener(scheduleDraftPopup.getDragToOpenListener());
+		scheduleDraftDismiss.setOnClickListener(v->{
+			updateScheduledAt(null);
+		});
+
 		sensitiveItem.setOnClickListener(v->toggleSensitive());
 		emojiKeyboard.setOnIconChangedListener(new PopupKeyboard.OnIconChangeListener(){
 			@Override
@@ -627,6 +658,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		}
 
 		updateSensitive();
+		updateScheduledAt(scheduledStatus != null ? scheduledStatus.scheduledAt : null);
 
 		if(editingStatus!=null){
 			updateCharCounter();
@@ -637,12 +669,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
 		publishButton=new Button(getActivity());
-		int publishText = editingStatus==null || redraftStatus ? R.string.publish : R.string.save;
-		if (publishText == R.string.publish && !GlobalUserPreferences.publishButtonText.isEmpty()) {
-			publishButton.setText(GlobalUserPreferences.publishButtonText);
-		} else {
-			publishButton.setText(publishText);
-		}
+		resetPublishButtonText();
 		publishButton.setSingleLine();
 		publishButton.setEllipsize(TextUtils.TruncateAt.END);
 		publishButton.setOnClickListener(this::onPublishClick);
@@ -761,6 +788,15 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		updatePublishButtonState();
 	}
 
+	private void resetPublishButtonText() {
+		int publishText = editingStatus==null || redraftStatus ? R.string.publish : R.string.save;
+		if (publishText == R.string.publish && !GlobalUserPreferences.publishButtonText.isEmpty()) {
+			publishButton.setText(GlobalUserPreferences.publishButtonText);
+		} else {
+			publishButton.setText(publishText);
+		}
+	}
+
 	private void updatePublishButtonState(){
 		uuid=null;
 		int nonEmptyPollOptionsCount=0;
@@ -791,7 +827,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	}
 
 	private void onPublishClick(View v){
-		publish(false);
+		publish();
 	}
 
 	private void publishErrorCallback(ErrorResponse error) {
@@ -806,20 +842,39 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	private void createScheduledStatusFinish(ScheduledStatus result) {
 		wm.removeView(sendingOverlay);
 		sendingOverlay=null;
+		Toast.makeText(getContext(), scheduledAt.equals(DRAFT_INSTANT) ?
+				R.string.sk_draft_saved : R.string.sk_post_scheduled, Toast.LENGTH_SHORT).show();
 		Nav.finish(ComposeFragment.this);
 		E.post(new ScheduledStatusCreatedEvent(result, accountID));
 	}
 
-	private void publish(boolean asDraft){
+	private void maybeDeleteScheduledPost(Runnable callback) {
+		if (scheduledStatus != null) {
+			new DeleteStatus.Scheduled(scheduledStatus.id).setCallback(new Callback<>() {
+				@Override
+				public void onSuccess(Object o) {
+					E.post(new ScheduledStatusDeletedEvent(scheduledStatus.id, accountID));
+					callback.run();
+				}
+
+				@Override
+				public void onError(ErrorResponse error) {
+					publishErrorCallback(error);
+				}
+			}).exec(accountID);
+		} else {
+			callback.run();
+		}
+	}
+
+	private void publish(){
 		String text=mainEditText.getText().toString();
 		CreateStatus.Request req=new CreateStatus.Request();
-		ScheduledStatus scheduledStatus = getArguments().containsKey("scheduledStatus") ?
-				Parcels.unwrap(getArguments().getParcelable("scheduledStatus")) : null;
 		req.status=text;
 		req.visibility=statusVisibility;
 		req.sensitive=sensitive;
 		req.language=language;
-		req.scheduledAt = asDraft ? DRAFT_INSTANT : scheduledStatus != null ? scheduledStatus.scheduledAt : null;
+		req.scheduledAt = scheduledAt;
 		if(!attachments.isEmpty()){
 			req.mediaIds=attachments.stream().map(a->a.serverAttachment.id).collect(Collectors.toList());
 		}
@@ -856,25 +911,27 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		Callback<Status> resCallback=new Callback<>(){
 			@Override
 			public void onSuccess(Status result){
-				wm.removeView(sendingOverlay);
-				sendingOverlay=null;
-				if(editingStatus==null){
-					E.post(new StatusCreatedEvent(result, accountID));
-					if(replyTo!=null){
-						replyTo.repliesCount++;
-						E.post(new StatusCountersUpdatedEvent(replyTo));
+				maybeDeleteScheduledPost(() -> {
+					wm.removeView(sendingOverlay);
+					sendingOverlay=null;
+					if(editingStatus==null){
+						E.post(new StatusCreatedEvent(result, accountID));
+						if(replyTo!=null){
+							replyTo.repliesCount++;
+							E.post(new StatusCountersUpdatedEvent(replyTo));
+						}
+					}else{
+						E.post(new StatusUpdatedEvent(result));
 					}
-				}else{
-					E.post(new StatusUpdatedEvent(result));
-				}
-				Nav.finish(ComposeFragment.this);
-				if (getArguments().getBoolean("navigateToStatus", false)) {
-					Bundle args=new Bundle();
-					args.putString("account", accountID);
-					args.putParcelable("status", Parcels.wrap(result));
-					if(replyTo!=null) args.putParcelable("inReplyToAccount", Parcels.wrap(replyTo));
-					Nav.go(getActivity(), ThreadFragment.class, args);
-				}
+					Nav.finish(ComposeFragment.this);
+					if (getArguments().getBoolean("navigateToStatus", false)) {
+						Bundle args=new Bundle();
+						args.putString("account", accountID);
+						args.putParcelable("status", Parcels.wrap(result));
+						if(replyTo!=null) args.putParcelable("inReplyToAccount", Parcels.wrap(replyTo));
+						Nav.go(getActivity(), ThreadFragment.class, args);
+					}
+				});
 			}
 
 			@Override
@@ -896,22 +953,9 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 					.setCallback(new Callback<>() {
 						@Override
 						public void onSuccess(ScheduledStatus result) {
-							if (scheduledStatus != null) {
-								new DeleteStatus.Scheduled(scheduledStatus.id).setCallback(new Callback<>() {
-									@Override
-									public void onSuccess(Object o) {
-										E.post(new ScheduledStatusDeletedEvent(scheduledStatus.id, accountID));
-										createScheduledStatusFinish(result);
-									}
-
-									@Override
-									public void onError(ErrorResponse error) {
-										publishErrorCallback(error);
-									}
-								}).exec(accountID);
-							} else {
+							maybeDeleteScheduledPost(() -> {
 								createScheduledStatusFinish(result);
-							}
+							});
 						}
 
 						@Override
@@ -991,7 +1035,8 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				.setPositiveButton(R.string.discard, (dialog, which)->Nav.finish(this))
 				.setNegativeButton(R.string.cancel, null);
 		if (editingStatus == null) builder.setNeutralButton(R.string.save, (dialog, which)->{
-			publish(true);
+			scheduledAt = DRAFT_INSTANT;
+			publish();
 		});
 		builder.show();
 	}
@@ -1467,6 +1512,25 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		sensitiveItem.setVisibility(View.GONE);
 		if (!attachments.isEmpty() && !hasSpoiler) sensitiveItem.setVisibility(View.VISIBLE);
 		if (attachments.isEmpty()) sensitive = false;
+	}
+
+	private void updateScheduledAt(Instant scheduledAt) {
+		this.scheduledAt = scheduledAt;
+		scheduleDraftView.setVisibility(scheduledAt == null ? View.GONE : View.VISIBLE);
+		scheduleBtn.setSelected(scheduledAt != null);
+		if (scheduledAt != null) {
+			DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.getDefault());
+			String at = scheduledAt.atZone(ZoneId.systemDefault()).format(formatter);
+			if (scheduledAt.equals(DRAFT_INSTANT)) {
+				scheduleDraftText.setText(R.string.sk_compose_draft);
+				publishButton.setText(R.string.save);
+			} else {
+				scheduleDraftText.setText(getContext().getString(R.string.sk_compose_scheduled_at, at));
+				publishButton.setText(R.string.sk_schedule);
+			}
+		} else {
+			resetPublishButtonText();
+		}
 	}
 
 	private int getMediaAttachmentsCount(){

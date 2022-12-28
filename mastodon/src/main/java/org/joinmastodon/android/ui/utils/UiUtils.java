@@ -60,6 +60,7 @@ import org.joinmastodon.android.api.requests.statuses.GetStatusByID;
 import org.joinmastodon.android.api.requests.statuses.SetStatusPinned;
 import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
+import org.joinmastodon.android.events.ScheduledStatusDeletedEvent;
 import org.joinmastodon.android.events.StatusCountersUpdatedEvent;
 import org.joinmastodon.android.events.FollowRequestHandledEvent;
 import org.joinmastodon.android.events.NotificationDeletedEvent;
@@ -479,7 +480,7 @@ public class UiUtils{
 							@Override
 							public void onSuccess(Object nothing){
 								resultCallback.run();
-								E.post(new StatusDeletedEvent(status.id, accountID));
+								E.post(new ScheduledStatusDeletedEvent(status.id, accountID));
 							}
 
 							@Override

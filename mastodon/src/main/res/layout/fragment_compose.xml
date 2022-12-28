@@ -229,94 +229,136 @@
 
 	<LinearLayout
 		android:layout_width="match_parent"
-		android:layout_height="48dp"
-		android:orientation="horizontal"
-		android:gravity="center_vertical"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
 		android:background="?colorBackgroundLightest"
 		android:elevation="2dp"
 		android:outlineProvider="bounds"
 		android:paddingLeft="16dp"
 		android:paddingRight="16dp"
 		android:layoutDirection="locale">
-
-		<ImageButton
-			android:id="@+id/btn_media"
-			android:layout_width="24dp"
-			android:layout_height="24dp"
-			android:layout_marginEnd="24dp"
-			android:background="?android:attr/selectableItemBackgroundBorderless"
-			android:padding="0px"
-			android:tint="@color/compose_button"
-			android:tintMode="src_in"
-			android:contentDescription="@string/add_media"
-			android:tooltipText="@string/add_media"
-			android:src="@drawable/ic_fluent_image_24_regular"/>
-
-		<ImageButton
-			android:id="@+id/btn_poll"
-			android:layout_width="24dp"
-			android:layout_height="24dp"
-			android:layout_marginEnd="24dp"
-			android:background="?android:attr/selectableItemBackgroundBorderless"
-			android:padding="0px"
-			android:tint="@color/compose_button"
-			android:tintMode="src_in"
-			android:contentDescription="@string/add_poll"
-			android:tooltipText="@string/add_poll"
-			android:src="@drawable/ic_fluent_poll_24_selector"/>
-
-		<ImageButton
-			android:id="@+id/btn_emoji"
-			android:layout_width="24dp"
-			android:layout_height="24dp"
-			android:layout_marginEnd="24dp"
-			android:background="?android:attr/selectableItemBackgroundBorderless"
-			android:padding="0px"
-			android:tint="@color/compose_button"
-			android:tintMode="src_in"
-			android:contentDescription="@string/emoji"
-			android:tooltipText="@string/emoji"
-			android:src="@drawable/ic_fluent_emoji_24_selector"/>
-
-		<ImageButton
-			android:id="@+id/btn_spoiler"
-			android:layout_width="24dp"
-			android:layout_height="24dp"
-			android:layout_marginEnd="24dp"
-			android:background="?android:attr/selectableItemBackgroundBorderless"
-			android:padding="0px"
-			android:tint="@color/compose_button"
-			android:tintMode="src_in"
-			android:contentDescription="@string/content_warning"
-			android:tooltipText="@string/content_warning"
-			android:src="@drawable/ic_fluent_chat_warning_24_selector"/>
-
-		<ImageButton
-			android:id="@+id/btn_visibility"
-			android:layout_width="24dp"
-			android:layout_height="24dp"
-			android:layout_marginEnd="24dp"
-			android:background="?android:attr/selectableItemBackgroundBorderless"
-			android:padding="0px"
-			android:tint="@color/compose_button"
-			android:tintMode="src_in"
-			android:contentDescription="@string/post_visibility"
-			android:tooltipText="@string/post_visibility"
-			android:src="@drawable/ic_fluent_earth_24_regular"/>
-
-		<Space
-			android:layout_width="0px"
-			android:layout_height="1px"
-			android:layout_weight="1"/>
-
-		<TextView
-			android:id="@+id/char_counter"
-			android:layout_width="wrap_content"
+		<LinearLayout
+			android:id="@+id/schedule_draft_view"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:textAppearance="@style/m3_body_large"
-			android:textColor="?android:textColorSecondary"
-			tools:text="500"/>
+			android:paddingTop="14dp"
+			android:paddingBottom="6dp"
+			android:gravity="center_vertical">
+			<TextView
+				android:id="@+id/schedule_draft_text"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:text="@string/sk_draft"
+				android:layout_weight="1" />
+			<ImageButton
+				android:id="@+id/schedule_draft_dismiss"
+				android:layout_width="24dp"
+				android:layout_height="24dp"
+				android:layout_marginStart="8dp"
+				android:layout_marginEnd="-4dp"
+				android:src="@drawable/ic_fluent_dismiss_20_filled"
+				android:background="?android:selectableItemBackgroundBorderless"
+				android:padding="4dp"/>
+		</LinearLayout>
 
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="48dp"
+			android:orientation="horizontal"
+			android:gravity="center_vertical">
+
+			<ImageButton
+				android:id="@+id/btn_media"
+				android:layout_width="24dp"
+				android:layout_height="24dp"
+				android:layout_marginEnd="24dp"
+				android:background="?android:attr/selectableItemBackgroundBorderless"
+				android:padding="0px"
+				android:tint="@color/compose_button"
+				android:tintMode="src_in"
+				android:contentDescription="@string/add_media"
+				android:tooltipText="@string/add_media"
+				android:src="@drawable/ic_fluent_image_24_regular"/>
+
+			<ImageButton
+				android:id="@+id/btn_poll"
+				android:layout_width="24dp"
+				android:layout_height="24dp"
+				android:layout_marginEnd="24dp"
+				android:background="?android:attr/selectableItemBackgroundBorderless"
+				android:padding="0px"
+				android:tint="@color/compose_button"
+				android:tintMode="src_in"
+				android:contentDescription="@string/add_poll"
+				android:tooltipText="@string/add_poll"
+				android:src="@drawable/ic_fluent_poll_24_selector"/>
+
+			<ImageButton
+				android:id="@+id/btn_emoji"
+				android:layout_width="24dp"
+				android:layout_height="24dp"
+				android:layout_marginEnd="24dp"
+				android:background="?android:attr/selectableItemBackgroundBorderless"
+				android:padding="0px"
+				android:tint="@color/compose_button"
+				android:tintMode="src_in"
+				android:contentDescription="@string/emoji"
+				android:tooltipText="@string/emoji"
+				android:src="@drawable/ic_fluent_emoji_24_selector"/>
+
+			<ImageButton
+				android:id="@+id/btn_spoiler"
+				android:layout_width="24dp"
+				android:layout_height="24dp"
+				android:layout_marginEnd="24dp"
+				android:background="?android:attr/selectableItemBackgroundBorderless"
+				android:padding="0px"
+				android:tint="@color/compose_button"
+				android:tintMode="src_in"
+				android:contentDescription="@string/content_warning"
+				android:tooltipText="@string/content_warning"
+				android:src="@drawable/ic_fluent_chat_warning_24_selector"/>
+
+			<ImageButton
+				android:id="@+id/btn_visibility"
+				android:layout_width="24dp"
+				android:layout_height="24dp"
+				android:layout_marginEnd="24dp"
+				android:background="?android:attr/selectableItemBackgroundBorderless"
+				android:padding="0px"
+				android:tint="@color/compose_button"
+				android:tintMode="src_in"
+				android:contentDescription="@string/post_visibility"
+				android:tooltipText="@string/post_visibility"
+				android:src="@drawable/ic_fluent_earth_24_regular"/>
+
+			<ImageButton
+				android:id="@+id/btn_schedule"
+				android:layout_width="24dp"
+				android:layout_height="24dp"
+				android:layout_marginEnd="24dp"
+				android:background="?android:attr/selectableItemBackgroundBorderless"
+				android:padding="0px"
+				android:tint="@color/compose_button"
+				android:tintMode="src_in"
+				android:contentDescription="@string/sk_draft_or_schedule"
+				android:tooltipText="@string/sk_draft_or_schedule"
+				android:src="@drawable/ic_fluent_clock_24_selector"/>
+
+			<Space
+				android:layout_width="0px"
+				android:layout_height="1px"
+				android:layout_weight="1"/>
+
+			<TextView
+				android:id="@+id/char_counter"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textAppearance="@style/m3_body_large"
+				android:textColor="?android:textColorSecondary"
+				tools:text="500"/>
+
+		</LinearLayout>
 	</LinearLayout>
 
 </org.joinmastodon.android.ui.views.SizeListenerLinearLayout>

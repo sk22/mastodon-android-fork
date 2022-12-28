@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/schedule" android:title="@string/sk_schedule" android:icon="@drawable/ic_fluent_clock_24_regular" />
+    <item android:id="@+id/draft" android:title="@string/sk_draft" android:icon="@drawable/ic_fluent_drafts_24_regular" />
+</menu>

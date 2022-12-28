@@ -105,8 +105,14 @@
     <string name="sk_forward_report_to">Forward to %s</string>
     <string name="sk_unsent_posts">Unsent posts</string>
     <string name="sk_draft">Draft</string>
+    <string name="sk_schedule">Schedule</string>
     <string name="sk_confirm_delete_draft_title">Delete draft</string>
     <string name="sk_confirm_delete_draft">Are you sure you want to delete this drafted post?</string>
     <string name="sk_confirm_delete_scheduled_post_title">Delete scheduled post</string>
     <string name="sk_confirm_delete_scheduled_post">Are you sure you want to delete this scheduled post?</string>
+    <string name="sk_draft_or_schedule">Draft or schedule</string>
+    <string name="sk_compose_draft">Post will be saved as a draft.</string>
+    <string name="sk_compose_scheduled_at">Scheduled to send: %s</string>
+    <string name="sk_draft_saved">Draft saved</string>
+    <string name="sk_post_scheduled">Post scheduled</string>
 </resources>
