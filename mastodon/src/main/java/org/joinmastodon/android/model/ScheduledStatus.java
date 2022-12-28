@@ -1,5 +1,6 @@
 package org.joinmastodon.android.model;
 
+import org.joinmastodon.android.api.ObjectValidationException;
 import org.joinmastodon.android.api.RequiredField;
 import org.parceler.Parcel;
 
@@ -20,5 +21,15 @@ public class ScheduledStatus extends BaseModel implements DisplayItemsParent{
     @Override
     public String getID() {
         return id;
+    }
+
+    @Override
+    public void postprocess() throws ObjectValidationException {
+        super.postprocess();
+        params.mediaAttachments = mediaAttachments;
+        params.createdAt = scheduledAt;
+        params.mentions = List.of();
+        params.tags = List.of();
+        params.emojis = List.of();
     }
 }

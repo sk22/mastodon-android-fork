@@ -642,6 +642,10 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			Bundle args=new Bundle();
 			args.putString("account", accountID);
 			Nav.go(getActivity(), FollowedHashtagsFragment.class, args);
+		}else if(id==R.id.scheduled){
+			Bundle args=new Bundle();
+			args.putString("account", accountID);
+			Nav.go(getActivity(), ScheduledStatusListFragment.class, args);
 		}
 		return true;
 	}

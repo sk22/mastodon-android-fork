@@ -8,6 +8,7 @@ import org.joinmastodon.android.ui.text.HtmlParser;
 import org.parceler.Parcel;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Parcel
@@ -72,7 +73,7 @@ public class Status extends BaseModel implements DisplayItemsParent{
 			t.postprocess();
 		for(Emoji e:emojis)
 			e.postprocess();
-		if (mediaAttachments!=null) for(Attachment a:mediaAttachments)
+		for(Attachment a:mediaAttachments)
 			a.postprocess();
 		account.postprocess();
 		if(poll!=null)

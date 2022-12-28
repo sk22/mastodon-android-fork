@@ -3,5 +3,6 @@
 	<item android:id="@+id/followed_hashtags" android:title="@string/sk_hashtags_you_follow" android:icon="@drawable/ic_fluent_number_symbol_24_regular" android:showAsAction="always"/>
 	<item android:id="@+id/bookmarks" android:title="@string/bookmarks" android:icon="@drawable/ic_fluent_bookmark_multiple_24_regular" android:showAsAction="always"/>
 	<item android:id="@+id/favorites" android:title="@string/your_favorites" android:icon="@drawable/ic_fluent_star_24_regular"/>
+	<item android:id="@+id/scheduled" android:title="@string/sk_unsent_posts" android:icon="@drawable/ic_fluent_drafts_24_regular"/>
 	<item android:id="@+id/share" android:title="@string/share_user" android:icon="@drawable/ic_fluent_share_24_regular"/>
 </menu>

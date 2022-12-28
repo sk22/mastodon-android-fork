@@ -81,6 +81,8 @@ public abstract class StatusDisplayItem{
 		Status statusForContent=status.getContentStatus();
 		Bundle args=new Bundle();
 		args.putString("account", accountID);
+		Account ownAccount = AccountSessionManager.getInstance().getAccount(accountID).self;
+
 		if(status.reblog!=null){
 			boolean isOwnPost = AccountSessionManager.getInstance().isSelf(fragment.getAccountID(), status.account);
 			items.add(new ReblogOrReplyLineStatusDisplayItem(parentID, fragment, fragment.getString(R.string.user_boosted, status.account.displayName), status.account.emojis, R.drawable.ic_fluent_arrow_repeat_all_20_filled, isOwnPost ? status.visibility : null, i->{
@@ -95,9 +97,10 @@ public abstract class StatusDisplayItem{
 			}));
 		}
 		HeaderStatusDisplayItem header;
-		items.add(header=new HeaderStatusDisplayItem(parentID, statusForContent.account, statusForContent.createdAt, fragment, accountID, statusForContent, null, notification));
-		if(!TextUtils.isEmpty(statusForContent.content))
-			items.add(new TextStatusDisplayItem(parentID, HtmlParser.parse(statusForContent.content, statusForContent.emojis, statusForContent.mentions, statusForContent.tags, accountID), fragment, statusForContent));
+		items.add(header=new HeaderStatusDisplayItem(parentID, statusForContent.account == null ? ownAccount : statusForContent.account, statusForContent.createdAt, fragment, accountID, statusForContent, null, notification));
+		String content = TextUtils.isEmpty(statusForContent.content) ? statusForContent.text : statusForContent.content;
+		if(!TextUtils.isEmpty(content))
+			items.add(new TextStatusDisplayItem(parentID, HtmlParser.parse(content, statusForContent.emojis, statusForContent.mentions, statusForContent.tags, accountID), fragment, statusForContent));
 		else
 			header.needBottomPadding=true;
 		List<Attachment> imageAttachments=statusForContent.mediaAttachments.stream().filter(att->att.type.isImage()).collect(Collectors.toList());

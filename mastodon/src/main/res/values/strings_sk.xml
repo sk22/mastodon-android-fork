@@ -103,4 +103,5 @@
     <string name="sk_reply_as">Reply with other account</string>
     <string name="sk_settings_uniform_icon_for_notifications">Uniform icon for all notifications</string>
     <string name="sk_forward_report_to">Forward to %s</string>
+    <string name="sk_unsent_posts">Unsent posts</string>
 </resources>
