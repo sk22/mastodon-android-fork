@@ -35,7 +35,6 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -69,7 +68,6 @@ import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.MastodonAPIController;
 import org.joinmastodon.android.api.MastodonErrorResponse;
 import org.joinmastodon.android.api.ProgressListener;
-import org.joinmastodon.android.api.requests.accounts.GetPreferences;
 import org.joinmastodon.android.api.requests.statuses.CreateStatus;
 import org.joinmastodon.android.api.requests.statuses.EditStatus;
 import org.joinmastodon.android.api.requests.statuses.GetAttachmentByID;
@@ -1146,7 +1144,10 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 					@Override
 					public void onProgress(long transferred, long total){
 						if(updateUploadEtaRunnable==null){
-							UiUtils.runOnUiThread(updateUploadEtaRunnable=ComposeFragment.this::updateUploadETAs, 100);
+							// getting a NoSuchMethodError: No static method -$$Nest$mupdateUploadETAs(ComposeFragment;)V in class ComposeFragment
+							// when using method reference out of nowhere after changing code elsewhere. no idea. programming is awful, actually
+							// noinspection Convert2MethodRef
+							UiUtils.runOnUiThread(updateUploadEtaRunnable=()->ComposeFragment.this.updateUploadETAs(), 50);
 						}
 						int progress=Math.round(transferred/(float)total*attachment.progressBar.getMax());
 						if(Build.VERSION.SDK_INT>=24)
@@ -1309,7 +1310,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				att.uploadStateText.setText(getString(R.string.file_upload_time_remaining, time));
 			}
 		}
-		UiUtils.runOnUiThread(updateUploadEtaRunnable, 100);
+		UiUtils.runOnUiThread(updateUploadEtaRunnable, 50);
 	}
 
 	private void onEditMediaDescriptionClick(View v){
