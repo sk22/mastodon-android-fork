@@ -69,13 +69,17 @@ import org.joinmastodon.android.api.MastodonAPIController;
 import org.joinmastodon.android.api.MastodonErrorResponse;
 import org.joinmastodon.android.api.ProgressListener;
 import org.joinmastodon.android.api.requests.statuses.CreateStatus;
+import org.joinmastodon.android.api.requests.statuses.DeleteStatus;
 import org.joinmastodon.android.api.requests.statuses.EditStatus;
 import org.joinmastodon.android.api.requests.statuses.GetAttachmentByID;
 import org.joinmastodon.android.api.requests.statuses.UploadAttachment;
 import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
+import org.joinmastodon.android.events.ScheduledStatusCreatedEvent;
+import org.joinmastodon.android.events.ScheduledStatusDeletedEvent;
 import org.joinmastodon.android.events.StatusCountersUpdatedEvent;
 import org.joinmastodon.android.events.StatusCreatedEvent;
+import org.joinmastodon.android.events.StatusDeletedEvent;
 import org.joinmastodon.android.events.StatusUpdatedEvent;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Attachment;
@@ -790,13 +794,32 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		publish(false);
 	}
 
+	private void publishErrorCallback(ErrorResponse error) {
+		wm.removeView(sendingOverlay);
+		sendingOverlay=null;
+		sendProgress.setVisibility(View.GONE);
+		sendError.setVisibility(View.VISIBLE);
+		publishButton.setEnabled(true);
+		error.showToast(getActivity());
+	}
+
+	private void createScheduledStatusFinish(ScheduledStatus result) {
+		wm.removeView(sendingOverlay);
+		sendingOverlay=null;
+		Nav.finish(ComposeFragment.this);
+		E.post(new ScheduledStatusCreatedEvent(result, accountID));
+	}
+
 	private void publish(boolean asDraft){
 		String text=mainEditText.getText().toString();
 		CreateStatus.Request req=new CreateStatus.Request();
+		ScheduledStatus scheduledStatus = getArguments().containsKey("scheduledStatus") ?
+				Parcels.unwrap(getArguments().getParcelable("scheduledStatus")) : null;
 		req.status=text;
 		req.visibility=statusVisibility;
 		req.sensitive=sensitive;
 		req.language=language;
+		req.scheduledAt = asDraft ? DRAFT_INSTANT : scheduledStatus != null ? scheduledStatus.scheduledAt : null;
 		if(!attachments.isEmpty()){
 			req.mediaIds=attachments.stream().map(a->a.serverAttachment.id).collect(Collectors.toList());
 		}
@@ -815,7 +838,6 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		}
 		if(uuid==null)
 			uuid=UUID.randomUUID().toString();
-		if (asDraft) req.scheduledAt = DRAFT_INSTANT;
 
 		sendingOverlay=new View(getActivity());
 		WindowManager.LayoutParams overlayParams=new WindowManager.LayoutParams();
@@ -857,12 +879,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 
 			@Override
 			public void onError(ErrorResponse error){
-				wm.removeView(sendingOverlay);
-				sendingOverlay=null;
-				sendProgress.setVisibility(View.GONE);
-				sendError.setVisibility(View.VISIBLE);
-				publishButton.setEnabled(true);
-				error.showToast(getActivity());
+				publishErrorCallback(error);
 			}
 		};
 
@@ -878,18 +895,28 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			new CreateStatus.Scheduled(req, uuid)
 					.setCallback(new Callback<>() {
 						@Override
-						public void onSuccess(ScheduledStatus scheduledStatus) {
-							Nav.finish(ComposeFragment.this);
+						public void onSuccess(ScheduledStatus result) {
+							if (scheduledStatus != null) {
+								new DeleteStatus.Scheduled(scheduledStatus.id).setCallback(new Callback<>() {
+									@Override
+									public void onSuccess(Object o) {
+										E.post(new ScheduledStatusDeletedEvent(scheduledStatus.id, accountID));
+										createScheduledStatusFinish(result);
+									}
+
+									@Override
+									public void onError(ErrorResponse error) {
+										publishErrorCallback(error);
+									}
+								}).exec(accountID);
+							} else {
+								createScheduledStatusFinish(result);
+							}
 						}
 
 						@Override
 						public void onError(ErrorResponse error) {
-							wm.removeView(sendingOverlay);
-							sendingOverlay=null;
-							sendProgress.setVisibility(View.GONE);
-							sendError.setVisibility(View.VISIBLE);
-							publishButton.setEnabled(true);
-							error.showToast(getActivity());
+							publishErrorCallback(error);
 						}
 					}).exec(accountID);
 		}

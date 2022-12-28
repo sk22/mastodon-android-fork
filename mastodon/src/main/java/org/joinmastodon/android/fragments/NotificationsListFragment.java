@@ -79,7 +79,7 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 			case FAVORITE -> getString(R.string.user_favorited);
 			case POLL -> getString(R.string.poll_ended);
 		};
-		HeaderStatusDisplayItem titleItem=extraText!=null ? new HeaderStatusDisplayItem(n.id, n.account, n.createdAt, this, accountID, null, extraText, n) : null;
+		HeaderStatusDisplayItem titleItem=extraText!=null ? new HeaderStatusDisplayItem(n.id, n.account, n.createdAt, this, accountID, null, extraText, n, null) : null;
 		if(n.status!=null){
 			ArrayList<StatusDisplayItem> items=StatusDisplayItem.buildItems(this, n.status, accountID, n, knownAccounts, titleItem!=null, titleItem==null, n);
 			if(titleItem!=null){

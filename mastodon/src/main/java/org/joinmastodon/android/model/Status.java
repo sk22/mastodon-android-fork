@@ -28,7 +28,7 @@ public class Status extends BaseModel implements DisplayItemsParent{
 	public boolean sensitive;
 	@RequiredField
 	public String spoilerText;
-//	@RequiredField
+	@RequiredField
 	public List<Attachment> mediaAttachments;
 	public Application application;
 	@RequiredField

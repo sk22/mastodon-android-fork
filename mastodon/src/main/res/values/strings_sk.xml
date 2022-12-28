@@ -104,4 +104,9 @@
     <string name="sk_settings_uniform_icon_for_notifications">Uniform icon for all notifications</string>
     <string name="sk_forward_report_to">Forward to %s</string>
     <string name="sk_unsent_posts">Unsent posts</string>
+    <string name="sk_draft">Draft</string>
+    <string name="sk_confirm_delete_draft_title">Delete draft</string>
+    <string name="sk_confirm_delete_draft">Are you sure you want to delete this drafted post?</string>
+    <string name="sk_confirm_delete_scheduled_post_title">Delete scheduled post</string>
+    <string name="sk_confirm_delete_scheduled_post">Are you sure you want to delete this scheduled post?</string>
 </resources>

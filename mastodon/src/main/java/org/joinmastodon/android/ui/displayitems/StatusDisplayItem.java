@@ -17,6 +17,7 @@ import org.joinmastodon.android.model.Attachment;
 import org.joinmastodon.android.model.DisplayItemsParent;
 import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.Poll;
+import org.joinmastodon.android.model.ScheduledStatus;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.PhotoLayoutHelper;
 import org.joinmastodon.android.ui.text.HtmlParser;
@@ -81,7 +82,7 @@ public abstract class StatusDisplayItem{
 		Status statusForContent=status.getContentStatus();
 		Bundle args=new Bundle();
 		args.putString("account", accountID);
-		Account ownAccount = AccountSessionManager.getInstance().getAccount(accountID).self;
+		ScheduledStatus scheduledStatus = parentObject instanceof ScheduledStatus ? (ScheduledStatus) parentObject : null;
 
 		if(status.reblog!=null){
 			boolean isOwnPost = AccountSessionManager.getInstance().isSelf(fragment.getAccountID(), status.account);
@@ -97,10 +98,9 @@ public abstract class StatusDisplayItem{
 			}));
 		}
 		HeaderStatusDisplayItem header;
-		items.add(header=new HeaderStatusDisplayItem(parentID, statusForContent.account == null ? ownAccount : statusForContent.account, statusForContent.createdAt, fragment, accountID, statusForContent, null, notification));
-		String content = TextUtils.isEmpty(statusForContent.content) ? statusForContent.text : statusForContent.content;
-		if(!TextUtils.isEmpty(content))
-			items.add(new TextStatusDisplayItem(parentID, HtmlParser.parse(content, statusForContent.emojis, statusForContent.mentions, statusForContent.tags, accountID), fragment, statusForContent));
+		items.add(header=new HeaderStatusDisplayItem(parentID, statusForContent.account, statusForContent.createdAt, fragment, accountID, statusForContent, null, notification, scheduledStatus));
+		if(!TextUtils.isEmpty(statusForContent.content))
+			items.add(new TextStatusDisplayItem(parentID, HtmlParser.parse(statusForContent.content, statusForContent.emojis, statusForContent.mentions, statusForContent.tags, accountID), fragment, statusForContent));
 		else
 			header.needBottomPadding=true;
 		List<Attachment> imageAttachments=statusForContent.mediaAttachments.stream().filter(att->att.type.isImage()).collect(Collectors.toList());

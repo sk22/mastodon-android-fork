@@ -23,6 +23,7 @@ import android.widget.Toast;
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.accounts.GetAccountRelationships;
+import org.joinmastodon.android.api.requests.statuses.CreateStatus;
 import org.joinmastodon.android.api.requests.statuses.GetStatusSourceText;
 import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
@@ -36,6 +37,7 @@ import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Attachment;
 import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.Relationship;
+import org.joinmastodon.android.model.ScheduledStatus;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.text.HtmlParser;
 import org.joinmastodon.android.ui.utils.CustomEmojiHelper;
@@ -43,9 +45,12 @@ import org.joinmastodon.android.ui.utils.UiUtils;
 import org.parceler.Parcels;
 
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Locale;
 
 import me.grishka.appkit.Nav;
 import me.grishka.appkit.api.APIRequest;
@@ -68,9 +73,11 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 	boolean needBottomPadding;
 	private String extraText;
 	private Notification notification;
+	private ScheduledStatus scheduledStatus;
 
-	public HeaderStatusDisplayItem(String parentID, Account user, Instant createdAt, BaseStatusListFragment parentFragment, String accountID, Status status, String extraText, Notification notification){
+	public HeaderStatusDisplayItem(String parentID, Account user, Instant createdAt, BaseStatusListFragment parentFragment, String accountID, Status status, String extraText, Notification notification, ScheduledStatus scheduledStatus){
 		super(parentID, parentFragment);
+		user=scheduledStatus != null ? AccountSessionManager.getInstance().getAccount(accountID).self : user;
 		this.user=user;
 		this.createdAt=createdAt;
 		avaRequest=new UrlImageLoaderRequest(GlobalUserPreferences.playGifs ? user.avatar : user.avatarStatic, V.dp(50), V.dp(50));
@@ -78,6 +85,7 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 		parsedName=new SpannableStringBuilder(user.displayName);
 		this.status=status;
 		this.notification=notification;
+		this.scheduledStatus=scheduledStatus;
 		HtmlParser.parseCustomEmoji(parsedName, user.emojis);
 		emojiHelper.setText(parsedName);
 		if(status!=null){
@@ -167,6 +175,12 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 					}
 					if(TextUtils.isEmpty(item.status.content) && TextUtils.isEmpty(item.status.spoilerText)){
 						Nav.go(item.parentFragment.getActivity(), ComposeFragment.class, args);
+					}else if(item.scheduledStatus!=null){
+						args.putString("sourceText", item.status.text);
+						args.putString("sourceSpoiler", item.status.spoilerText);
+						args.putBoolean("redraftStatus", true);
+						args.putParcelable("scheduledStatus", Parcels.wrap(item.scheduledStatus));
+						Nav.go(item.parentFragment.getActivity(), ComposeFragment.class, args);
 					}else{
 						new GetStatusSourceText(item.status.id)
 								.setCallback(new Callback<>(){
@@ -192,7 +206,11 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 								.exec(item.parentFragment.getAccountID());
 					}
 				}else if(id==R.id.delete){
-					UiUtils.confirmDeletePost(item.parentFragment.getActivity(), item.parentFragment.getAccountID(), item.status, s->{});
+					if (item.scheduledStatus != null) {
+						UiUtils.confirmDeleteScheduledPost(item.parentFragment.getActivity(), item.parentFragment.getAccountID(), item.scheduledStatus, ()->{});
+					} else {
+						UiUtils.confirmDeletePost(item.parentFragment.getActivity(), item.parentFragment.getAccountID(), item.status, s->{});
+					}
 				}else if(id==R.id.pin || id==R.id.unpin) {
 					UiUtils.confirmPinPost(item.parentFragment.getActivity(), item.parentFragment.getAccountID(), item.status, !item.status.pinned, s->{});
 				}else if(id==R.id.mute){
@@ -249,7 +267,14 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 		public void onBind(HeaderStatusDisplayItem item){
 			name.setText(item.parsedName);
 			username.setText('@'+item.user.acct);
-			if(item.status==null || item.status.editedAt==null)
+			if (item.scheduledStatus!=null)
+				if (item.scheduledStatus.scheduledAt.equals(CreateStatus.DRAFT_INSTANT)) {
+					timestamp.setText(R.string.sk_draft);
+				} else {
+					DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.getDefault());
+					timestamp.setText(item.scheduledStatus.scheduledAt.atZone(ZoneId.systemDefault()).format(formatter));
+				}
+			else if(item.status==null || item.status.editedAt==null)
 				timestamp.setText(UiUtils.formatRelativeTimestamp(itemView.getContext(), item.createdAt));
 			else
 				timestamp.setText(item.parentFragment.getString(R.string.edited_timestamp, UiUtils.formatRelativeTimestamp(itemView.getContext(), item.status.editedAt)));
@@ -342,14 +367,15 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 
 			Account account=item.user;
 			boolean isOwnPost=AccountSessionManager.getInstance().isSelf(item.parentFragment.getAccountID(), account);
-			menu.findItem(R.id.open_with_account).setVisible(hasMultipleAccounts);
+			boolean isPostScheduled=item.scheduledStatus!=null;
+			menu.findItem(R.id.open_with_account).setVisible(!isPostScheduled && hasMultipleAccounts);
 			menu.findItem(R.id.edit).setVisible(item.status!=null && isOwnPost);
 			menu.findItem(R.id.delete).setVisible(item.status!=null && isOwnPost);
-			menu.findItem(R.id.delete_and_redraft).setVisible(item.status!=null && isOwnPost);
-			menu.findItem(R.id.pin).setVisible(item.status!=null && isOwnPost && !item.status.pinned);
-			menu.findItem(R.id.unpin).setVisible(item.status!=null && isOwnPost && item.status.pinned);
-			menu.findItem(R.id.open_in_browser).setVisible(item.status!=null);
-			menu.findItem(R.id.copy_link).setVisible(item.status!=null);
+			menu.findItem(R.id.delete_and_redraft).setVisible(!isPostScheduled && item.status!=null && isOwnPost);
+			menu.findItem(R.id.pin).setVisible(!isPostScheduled && item.status!=null && isOwnPost && !item.status.pinned);
+			menu.findItem(R.id.unpin).setVisible(!isPostScheduled && item.status!=null && isOwnPost && item.status.pinned);
+			menu.findItem(R.id.open_in_browser).setVisible(!isPostScheduled && item.status!=null);
+			menu.findItem(R.id.copy_link).setVisible(!isPostScheduled && item.status!=null);
 			MenuItem blockDomain=menu.findItem(R.id.block_domain);
 			MenuItem mute=menu.findItem(R.id.mute);
 			MenuItem block=menu.findItem(R.id.block);
@@ -365,7 +391,7 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 				bookmark.setVisible(false);
 			}
 			*/
-			if(isOwnPost){
+			if(isPostScheduled || isOwnPost){
 				mute.setVisible(false);
 				block.setVisible(false);
 				report.setVisible(false);

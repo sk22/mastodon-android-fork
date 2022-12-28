@@ -1,5 +1,7 @@
 package org.joinmastodon.android.model;
 
+import android.text.TextUtils;
+
 import org.joinmastodon.android.api.ObjectValidationException;
 import org.joinmastodon.android.api.RequiredField;
 import org.parceler.Parcel;
@@ -28,6 +30,8 @@ public class ScheduledStatus extends BaseModel implements DisplayItemsParent{
         super.postprocess();
         params.mediaAttachments = mediaAttachments;
         params.createdAt = scheduledAt;
+        params.id = id;
+        if (params.content == null) params.content = params.text;
         params.mentions = List.of();
         params.tags = List.of();
         params.emojis = List.of();
