@@ -27,7 +27,7 @@ public class Status extends BaseModel implements DisplayItemsParent{
 	public boolean sensitive;
 	@RequiredField
 	public String spoilerText;
-	@RequiredField
+//	@RequiredField
 	public List<Attachment> mediaAttachments;
 	public Application application;
 	@RequiredField
@@ -72,7 +72,7 @@ public class Status extends BaseModel implements DisplayItemsParent{
 			t.postprocess();
 		for(Emoji e:emojis)
 			e.postprocess();
-		for(Attachment a:mediaAttachments)
+		if (mediaAttachments!=null) for(Attachment a:mediaAttachments)
 			a.postprocess();
 		account.postprocess();
 		if(poll!=null)

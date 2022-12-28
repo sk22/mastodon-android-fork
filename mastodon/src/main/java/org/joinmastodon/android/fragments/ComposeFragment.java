@@ -1,12 +1,14 @@
 package org.joinmastodon.android.fragments;
 
 import static org.joinmastodon.android.GlobalUserPreferences.recentLanguages;
+import static org.joinmastodon.android.api.requests.statuses.CreateStatus.DRAFT_INSTANT;
 import static org.joinmastodon.android.utils.MastodonLanguage.allLanguages;
 import static org.joinmastodon.android.utils.MastodonLanguage.defaultRecentLanguages;
 
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -85,6 +87,7 @@ import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Mention;
 import org.joinmastodon.android.model.Poll;
 import org.joinmastodon.android.model.Preferences;
+import org.joinmastodon.android.model.ScheduledStatus;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.model.StatusPrivacy;
 import org.joinmastodon.android.ui.ComposeAutocompleteViewController;
@@ -786,10 +789,10 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	}
 
 	private void onPublishClick(View v){
-		publish();
+		publish(false);
 	}
 
-	private void publish(){
+	private void publish(boolean asDraft){
 		String text=mainEditText.getText().toString();
 		CreateStatus.Request req=new CreateStatus.Request();
 		req.status=text;
@@ -814,6 +817,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		}
 		if(uuid==null)
 			uuid=UUID.randomUUID().toString();
+		if (asDraft) req.scheduledAt = DRAFT_INSTANT;
 
 		sendingOverlay=new View(getActivity());
 		WindowManager.LayoutParams overlayParams=new WindowManager.LayoutParams();
@@ -868,10 +872,28 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			new EditStatus(req, editingStatus.id)
 					.setCallback(resCallback)
 					.exec(accountID);
-		}else{
+		}else if(req.scheduledAt == null){
 			new CreateStatus(req, uuid)
 					.setCallback(resCallback)
 					.exec(accountID);
+		}else{
+			new CreateStatus.Scheduled(req, uuid)
+					.setCallback(new Callback<>() {
+						@Override
+						public void onSuccess(ScheduledStatus scheduledStatus) {
+							Nav.finish(ComposeFragment.this);
+						}
+
+						@Override
+						public void onError(ErrorResponse error) {
+							wm.removeView(sendingOverlay);
+							sendingOverlay=null;
+							sendProgress.setVisibility(View.GONE);
+							sendError.setVisibility(View.VISIBLE);
+							publishButton.setEnabled(true);
+							error.showToast(getActivity());
+						}
+					}).exec(accountID);
 		}
 
 		if (replyTo == null) {
@@ -939,11 +961,14 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	}
 
 	private void confirmDiscardDraftAndFinish(){
-		new M3AlertDialogBuilder(getActivity())
+		AlertDialog.Builder builder = new M3AlertDialogBuilder(getActivity())
 				.setTitle(editingStatus==null ? R.string.discard_draft : R.string.discard_changes)
 				.setPositiveButton(R.string.discard, (dialog, which)->Nav.finish(this))
-				.setNegativeButton(R.string.cancel, null)
-				.show();
+				.setNegativeButton(R.string.cancel, null);
+		if (editingStatus == null) builder.setNeutralButton(R.string.save, (dialog, which)->{
+			publish(true);
+		});
+		builder.show();
 	}
 
 	private void openFilePicker(){
