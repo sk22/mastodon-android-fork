@@ -1524,10 +1524,10 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			String at = scheduledAt.atZone(ZoneId.systemDefault()).format(formatter);
 			if (scheduledAt.isAfter(DRAFTS_AFTER_INSTANT)) {
 				scheduleDraftText.setText(R.string.sk_compose_draft);
-				publishButton.setText(R.string.save);
+				publishButton.setText(scheduledStatus != null ? R.string.save : R.string.sk_draft);
 			} else {
 				scheduleDraftText.setText(getContext().getString(R.string.sk_compose_scheduled_at, at));
-				publishButton.setText(R.string.sk_schedule);
+				publishButton.setText(scheduledStatus != null ? R.string.save : R.string.sk_schedule);
 			}
 		} else {
 			resetPublishButtonText();
