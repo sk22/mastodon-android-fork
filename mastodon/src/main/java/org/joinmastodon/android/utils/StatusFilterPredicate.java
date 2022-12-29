@@ -23,11 +23,15 @@ public class StatusFilterPredicate implements Predicate<Status>{
 
 	@Override
 	public boolean test(Status status){
-		for(FilterResult filterResult:status.filtered){
-			if (filterResult.filter.expiresAt.isAfter(Instant.now()))
-				continue;
-			if (filterResult.filter.filterAction.equals("hide"))
-				return false;
+		if(status.filtered!=null){
+			if (status.filtered.isEmpty()){
+				return true;
+			}
+			boolean shouldHide=status.filtered.stream()
+					.map(filterResult->filterResult.filter)
+					.filter(filter->filter.expiresAt==null||filter.expiresAt.isAfter(Instant.now()))
+					.anyMatch(filter->filter.filterAction==Filter.FilterAction.HIDE);
+			return !shouldHide;
 		}
 		for(Filter filter:filters){
 			if(filter.matches(status))

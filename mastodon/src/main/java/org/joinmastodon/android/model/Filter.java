@@ -23,7 +23,7 @@ public class Filter extends BaseModel{
 	public Instant expiresAt;
 	public boolean irreversible;
 	public boolean wholeWord;
-	public String filterAction;
+	public FilterAction filterAction;
 
 	@SerializedName("context")
 	private List<FilterContext> _context;
@@ -78,5 +78,12 @@ public class Filter extends BaseModel{
 		PUBLIC,
 		@SerializedName("thread")
 		THREAD
+	}
+
+	public enum FilterAction{
+		@SerializedName("hide")
+		HIDE,
+		@SerializedName("warn")
+		WARN
 	}
 }
