@@ -244,9 +244,6 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		if(getArguments().containsKey("editStatus")){
 			editingStatus=Parcels.unwrap(getArguments().getParcelable("editStatus"));
 		}
-		if (getArguments().containsKey("scheduledStatus")) {
-			scheduledStatus=Parcels.unwrap(getArguments().getParcelable("scheduledStatus"));
-		}
 		if(instance==null){
 			Nav.finish(this);
 			return;
@@ -254,6 +251,11 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		if(customEmojis.isEmpty()){
 			AccountSessionManager.getInstance().updateInstanceInfo(instanceDomain);
 		}
+
+		// sorry about all this ugly code, but i can't find any consistency in ComposeFragment.java
+		Bundle bundle = savedInstanceState != null ? savedInstanceState : getArguments();
+		if (bundle.containsKey("scheduledStatus")) scheduledStatus=Parcels.unwrap(bundle.getParcelable("scheduledStatus"));
+		if (bundle.containsKey("scheduledAt")) scheduledAt=(Instant) bundle.getSerializable("scheduledAt");
 
 		if(instance.maxTootChars>0)
 			charLimit=instance.maxTootChars;
@@ -490,6 +492,8 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			outState.putParcelableArrayList("attachments", serializedAttachments);
 		}
 		outState.putSerializable("visibility", statusVisibility);
+		if (scheduledAt != null) outState.putSerializable("scheduledAt", scheduledAt);
+		if (scheduledStatus != null) outState.putParcelable("scheduledStatus", Parcels.wrap(scheduledStatus));
 	}
 
 	@Override
@@ -672,7 +676,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		}
 
 		updateSensitive();
-		updateScheduledAt(scheduledStatus != null ? scheduledStatus.scheduledAt : null);
+		updateScheduledAt(scheduledAt != null ? scheduledAt : scheduledStatus != null ? scheduledStatus.scheduledAt : null);
 
 		if(editingStatus!=null){
 			updateCharCounter();
