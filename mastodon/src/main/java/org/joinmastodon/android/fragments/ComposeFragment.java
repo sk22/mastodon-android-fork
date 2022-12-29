@@ -23,6 +23,7 @@ import android.graphics.PixelFormat;
 import android.graphics.RenderEffect;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.InsetDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.icu.text.BreakIterator;
 import android.media.MediaMetadataRetriever;
@@ -39,6 +40,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -842,6 +844,24 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	@Override
 	protected void updateToolbar(){
 		super.updateToolbar();
+		if (replyTo != null || hasDraft()) return;
+		Button draftsBtn=new Button(getActivity());
+		draftsBtn.setTextColor(UiUtils.getThemeColor(getActivity(), android.R.attr.textColorSecondary));
+		draftsBtn.setBackground(getActivity().getDrawable(R.drawable.bg_text_button));
+		draftsBtn.setPadding(V.dp(8), 0, V.dp(8), 0);
+		draftsBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(getActivity().getDrawable(R.drawable.ic_fluent_drafts_20_regular), null, null, null);
+		draftsBtn.setCompoundDrawableTintList(draftsBtn.getTextColors());
+		draftsBtn.setContentDescription(getString(R.string.sk_unsent_posts));
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) draftsBtn.setTooltipText(getString(R.string.sk_unsent_posts));
+		draftsBtn.setOnClickListener(v->{
+			Bundle args=new Bundle();
+			args.putString("account", accountID);
+			InputMethodManager imm=getActivity().getSystemService(InputMethodManager.class);
+			imm.hideSoftInputFromWindow(draftsBtn.getWindowToken(), 0);
+			Nav.go(getActivity(), ScheduledStatusListFragment.class, args);
+			if (!hasDraft()) Nav.finish(this);
+		});
+		getToolbar().addView(draftsBtn);
 		getToolbar().setNavigationIcon(R.drawable.ic_fluent_dismiss_24_regular);
 	}
 
