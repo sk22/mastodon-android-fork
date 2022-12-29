@@ -8,7 +8,6 @@ import org.joinmastodon.android.ui.text.HtmlParser;
 import org.parceler.Parcel;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
 @Parcel

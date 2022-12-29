@@ -4,7 +4,6 @@ import com.google.gson.reflect.TypeToken;
 
 import org.joinmastodon.android.api.requests.HeaderPaginationRequest;
 import org.joinmastodon.android.model.ScheduledStatus;
-import org.joinmastodon.android.model.Status;
 
 public class GetScheduledStatuses extends HeaderPaginationRequest<ScheduledStatus>{
 	public GetScheduledStatuses(String maxID, int limit){
