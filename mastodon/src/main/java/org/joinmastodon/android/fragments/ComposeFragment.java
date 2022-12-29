@@ -10,6 +10,8 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -35,6 +37,7 @@ import android.text.Layout;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -50,6 +53,7 @@ import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -58,6 +62,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.twitter.twittertext.TwitterTextEmojiRegex;
@@ -115,7 +120,10 @@ import java.io.InterruptedIOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
@@ -163,7 +171,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	private String accountID;
 	private int charCount, charLimit, trimmedCharCount;
 
-	private Button publishButton, languageButton;
+	private Button publishButton, languageButton, scheduleTimeBtn;
 	private PopupMenu languagePopup, visibilityPopup, scheduleDraftPopup;
 	private ImageButton mediaBtn, pollBtn, emojiBtn, spoilerBtn, visibilityBtn, scheduleBtn, scheduleDraftDismiss;
 	private ImageView sensitiveIcon;
@@ -313,6 +321,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		scheduleDraftView=view.findViewById(R.id.schedule_draft_view);
 		scheduleDraftText=view.findViewById(R.id.schedule_draft_text);
 		scheduleDraftDismiss=view.findViewById(R.id.schedule_draft_dismiss);
+		scheduleTimeBtn=view.findViewById(R.id.scheduled_time_btn);
 		sensitiveIcon=view.findViewById(R.id.sensitive_icon);
 		sensitiveItem=view.findViewById(R.id.sensitive_item);
 		replyText=view.findViewById(R.id.reply_text);
@@ -329,6 +338,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		scheduleDraftPopup.inflate(R.menu.schedule_draft);
 		scheduleDraftPopup.setOnMenuItemClickListener(item->{
 			if (item.getItemId() == R.id.draft) updateScheduledAt(getDraftInstant());
+			else pickScheduledDateTime();
 			return true;
 		});
 		UiUtils.enablePopupMenuIcons(getContext(), scheduleDraftPopup);
@@ -337,9 +347,8 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			else scheduleDraftPopup.show();
 		});
 		scheduleBtn.setOnTouchListener(scheduleDraftPopup.getDragToOpenListener());
-		scheduleDraftDismiss.setOnClickListener(v->{
-			updateScheduledAt(null);
-		});
+		scheduleDraftDismiss.setOnClickListener(v->updateScheduledAt(null));
+		scheduleTimeBtn.setOnClickListener(v->pickScheduledDateTime());
 
 		sensitiveItem.setOnClickListener(v->toggleSensitive());
 		emojiKeyboard.setOnIconChangedListener(new PopupKeyboard.OnIconChangeListener(){
@@ -1519,18 +1528,31 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		if (attachments.isEmpty()) sensitive = false;
 	}
 
+	private void pickScheduledDateTime() {
+		LocalDateTime now = LocalDateTime.now();
+		new DatePickerDialog(getActivity(), (datePicker, year, arrayMonth, dayOfMonth) -> {
+			new TimePickerDialog(getActivity(), (timePicker, hour, minute) -> {
+				updateScheduledAt(LocalDateTime.of(year, arrayMonth + 1, dayOfMonth, hour, minute)
+						.toInstant(OffsetDateTime.now().getOffset()));
+			}, now.getHour(), now.getMinute(), DateFormat.is24HourFormat(getActivity())).show();
+		}, now.getYear(), now.getMonthValue() - 1, now.getDayOfMonth()).show();
+	}
+
 	private void updateScheduledAt(Instant scheduledAt) {
 		this.scheduledAt = scheduledAt;
 		scheduleDraftView.setVisibility(scheduledAt == null ? View.GONE : View.VISIBLE);
 		scheduleBtn.setSelected(scheduledAt != null);
 		if (scheduledAt != null) {
 			DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.getDefault());
-			String at = scheduledAt.atZone(ZoneId.systemDefault()).format(formatter);
 			if (scheduledAt.isAfter(DRAFTS_AFTER_INSTANT)) {
+				scheduleTimeBtn.setVisibility(View.GONE);
 				scheduleDraftText.setText(R.string.sk_compose_draft);
 				publishButton.setText(scheduledStatus != null ? R.string.save : R.string.sk_draft);
 			} else {
-				scheduleDraftText.setText(getContext().getString(R.string.sk_compose_scheduled_at, at));
+				String at = scheduledAt.atZone(ZoneId.systemDefault()).format(formatter);
+				scheduleTimeBtn.setVisibility(View.VISIBLE);
+				scheduleTimeBtn.setText(at);
+				scheduleDraftText.setText(R.string.sk_compose_scheduled);
 				publishButton.setText(scheduledStatus != null ? R.string.save : R.string.sk_schedule);
 			}
 		} else {

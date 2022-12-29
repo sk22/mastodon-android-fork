@@ -241,15 +241,32 @@
 			android:id="@+id/schedule_draft_view"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:paddingTop="14dp"
-			android:paddingBottom="6dp"
-			android:gravity="center_vertical">
+			android:gravity="center_vertical"
+			android:minHeight="48dp"
+			android:paddingTop="4dp">
+
 			<TextView
 				android:id="@+id/schedule_draft_text"
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"
-				android:text="@string/sk_draft"
-				android:layout_weight="1" />
+				android:layout_weight="1"
+				android:text="@string/sk_compose_draft" />
+			<Button
+				android:id="@+id/scheduled_time_btn"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="8dp"
+				android:gravity="center"
+				android:padding="8dp"
+				android:textSize="14sp"
+				android:minHeight="48dp"
+				android:textColor="?android:textColorSecondary"
+				android:background="@drawable/bg_text_button"
+				android:fontFamily="sans-serif"
+				android:drawableStart="@drawable/ic_fluent_clock_20_regular"
+				android:drawablePadding="8dp"
+				android:drawableTint="?android:textColorSecondary"
+				tools:text="Dec 12, 2021, 12:42 PM"/>
 			<ImageButton
 				android:id="@+id/schedule_draft_dismiss"
 				android:layout_width="24dp"
