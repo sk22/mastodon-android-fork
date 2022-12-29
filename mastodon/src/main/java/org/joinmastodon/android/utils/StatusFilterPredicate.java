@@ -2,7 +2,6 @@ package org.joinmastodon.android.utils;
 
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.model.Filter;
-import org.joinmastodon.android.model.FilterResult;
 import org.joinmastodon.android.model.Status;
 
 import java.time.Instant;
@@ -27,11 +26,11 @@ public class StatusFilterPredicate implements Predicate<Status>{
 			if (status.filtered.isEmpty()){
 				return true;
 			}
-			boolean shouldHide=status.filtered.stream()
+			boolean matches=status.filtered.stream()
 					.map(filterResult->filterResult.filter)
 					.filter(filter->filter.expiresAt==null||filter.expiresAt.isAfter(Instant.now()))
 					.anyMatch(filter->filter.filterAction==Filter.FilterAction.HIDE);
-			return !shouldHide;
+			return !matches;
 		}
 		for(Filter filter:filters){
 			if(filter.matches(status))

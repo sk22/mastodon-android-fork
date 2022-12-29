@@ -5,7 +5,6 @@ import android.view.View;
 
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.statuses.GetStatusContext;
-import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.StatusCreatedEvent;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Filter;
@@ -17,6 +16,7 @@ import org.joinmastodon.android.ui.displayitems.StatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.TextStatusDisplayItem;
 import org.joinmastodon.android.ui.text.HtmlParser;
 import org.joinmastodon.android.ui.utils.UiUtils;
+import org.joinmastodon.android.utils.StatusFilterPredicate;
 import org.parceler.Parcels;
 
 import java.util.Collections;
@@ -92,16 +92,10 @@ public class ThreadFragment extends StatusListFragment{
 	}
 
 	private List<Status> filterStatuses(List<Status> statuses){
-		List<Filter> filters=AccountSessionManager.getInstance().getAccount(accountID).wordFilters.stream().filter(f->f.context.contains(Filter.FilterContext.THREAD)).collect(Collectors.toList());
-		if(filters.isEmpty())
-			return statuses;
-		return statuses.stream().filter(status->{
-			for(Filter filter:filters){
-				if(filter.matches(status))
-					return false;
-			}
-			return true;
-		}).collect(Collectors.toList());
+		StatusFilterPredicate statusFilterPredicate=new StatusFilterPredicate(accountID,Filter.FilterContext.THREAD);
+		return statuses.stream()
+				.filter(statusFilterPredicate)
+				.collect(Collectors.toList());
 	}
 
 	@Override

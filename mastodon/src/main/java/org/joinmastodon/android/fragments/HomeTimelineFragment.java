@@ -19,8 +19,10 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.otto.Subscribe;
 
@@ -43,12 +45,9 @@ import org.joinmastodon.android.utils.StatusFilterPredicate;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import me.grishka.appkit.Nav;
 import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
@@ -266,18 +265,14 @@ public class HomeTimelineFragment extends StatusListFragment{
 							List<StatusDisplayItem> targetList=displayItems.subList(gapPos, gapPos+1);
 							targetList.clear();
 							List<Status> insertedPosts=data.subList(gapPostIndex+1, gapPostIndex+1);
-							List<Filter> filters=AccountSessionManager.getInstance().getAccount(accountID).wordFilters.stream().filter(f->f.context.contains(Filter.FilterContext.HOME)).collect(Collectors.toList());
-							outer:
+							StatusFilterPredicate filterPredicate=new StatusFilterPredicate(accountID, Filter.FilterContext.HOME);
 							for(Status s:result){
 								if(idsBelowGap.contains(s.id))
 									break;
-								for(Filter filter:filters){
-									if(filter.matches(s)){
-										continue outer;
-									}
+								if(filterPredicate.test(s)){
+									targetList.addAll(buildDisplayItems(s));
+									insertedPosts.add(s);
 								}
-								targetList.addAll(buildDisplayItems(s));
-								insertedPosts.add(s);
 							}
 							if(targetList.isEmpty()){
 								// oops. We didn't add new posts, but at least we know there are none.
