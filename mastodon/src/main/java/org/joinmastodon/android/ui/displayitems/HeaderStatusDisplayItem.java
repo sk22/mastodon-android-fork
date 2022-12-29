@@ -268,7 +268,7 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 			name.setText(item.parsedName);
 			username.setText('@'+item.user.acct);
 			if (item.scheduledStatus!=null)
-				if (item.scheduledStatus.scheduledAt.equals(CreateStatus.DRAFT_INSTANT)) {
+				if (item.scheduledStatus.scheduledAt.isAfter(CreateStatus.DRAFTS_AFTER_INSTANT)) {
 					timestamp.setText(R.string.sk_draft);
 				} else {
 					DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.getDefault());

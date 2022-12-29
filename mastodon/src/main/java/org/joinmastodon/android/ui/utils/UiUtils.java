@@ -469,7 +469,7 @@ public class UiUtils{
 	}
 
 	public static void confirmDeleteScheduledPost(Activity activity, String accountID, ScheduledStatus status, Runnable resultCallback){
-		boolean isDraft = status.scheduledAt.equals(CreateStatus.DRAFT_INSTANT);
+		boolean isDraft = status.scheduledAt.isAfter(CreateStatus.DRAFTS_AFTER_INSTANT);
 		showConfirmationAlert(activity,
 				isDraft ? R.string.sk_confirm_delete_draft_title : R.string.sk_confirm_delete_scheduled_post_title,
 				isDraft ? R.string.sk_confirm_delete_draft : R.string.sk_confirm_delete_scheduled_post,

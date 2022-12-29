@@ -1,7 +1,8 @@
 package org.joinmastodon.android.fragments;
 
 import static org.joinmastodon.android.GlobalUserPreferences.recentLanguages;
-import static org.joinmastodon.android.api.requests.statuses.CreateStatus.DRAFT_INSTANT;
+import static org.joinmastodon.android.api.requests.statuses.CreateStatus.DRAFTS_AFTER_INSTANT;
+import static org.joinmastodon.android.api.requests.statuses.CreateStatus.getDraftInstant;
 import static org.joinmastodon.android.utils.MastodonLanguage.allLanguages;
 import static org.joinmastodon.android.utils.MastodonLanguage.defaultRecentLanguages;
 
@@ -327,7 +328,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		scheduleDraftPopup=new PopupMenu(getContext(), scheduleBtn);
 		scheduleDraftPopup.inflate(R.menu.schedule_draft);
 		scheduleDraftPopup.setOnMenuItemClickListener(item->{
-			if (item.getItemId() == R.id.draft) updateScheduledAt(DRAFT_INSTANT);
+			if (item.getItemId() == R.id.draft) updateScheduledAt(getDraftInstant());
 			return true;
 		});
 		UiUtils.enablePopupMenuIcons(getContext(), scheduleDraftPopup);
@@ -842,7 +843,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	private void createScheduledStatusFinish(ScheduledStatus result) {
 		wm.removeView(sendingOverlay);
 		sendingOverlay=null;
-		Toast.makeText(getContext(), scheduledAt.equals(DRAFT_INSTANT) ?
+		Toast.makeText(getContext(), scheduledAt.isAfter(DRAFTS_AFTER_INSTANT) ?
 				R.string.sk_draft_saved : R.string.sk_post_scheduled, Toast.LENGTH_SHORT).show();
 		Nav.finish(ComposeFragment.this);
 		E.post(new ScheduledStatusCreatedEvent(result, accountID));
@@ -1035,7 +1036,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				.setPositiveButton(R.string.discard, (dialog, which)->Nav.finish(this))
 				.setNegativeButton(R.string.cancel, null);
 		if (editingStatus == null) builder.setNeutralButton(R.string.save, (dialog, which)->{
-			scheduledAt = DRAFT_INSTANT;
+			scheduledAt = getDraftInstant();
 			publish();
 		});
 		builder.show();
@@ -1521,7 +1522,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		if (scheduledAt != null) {
 			DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.getDefault());
 			String at = scheduledAt.atZone(ZoneId.systemDefault()).format(formatter);
-			if (scheduledAt.equals(DRAFT_INSTANT)) {
+			if (scheduledAt.isAfter(DRAFTS_AFTER_INSTANT)) {
 				scheduleDraftText.setText(R.string.sk_compose_draft);
 				publishButton.setText(R.string.save);
 			} else {
