@@ -390,8 +390,12 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				DraftPollOption opt=createDraftPollOption();
 				opt.edit.setText(eopt.title);
 			}
-			pollDuration=(int)editingStatus.poll.expiresAt.minus(System.currentTimeMillis(), ChronoUnit.MILLIS).getEpochSecond();
-			pollDurationStr=UiUtils.formatTimeLeft(getActivity(), editingStatus.poll.expiresAt);
+			pollDuration=scheduledStatus == null
+					? (int)editingStatus.poll.expiresAt.minus(System.currentTimeMillis(), ChronoUnit.MILLIS).getEpochSecond()
+					: Integer.parseInt(scheduledStatus.params.poll.expiresIn);
+			pollDurationStr=UiUtils.formatTimeLeft(getActivity(), scheduledStatus == null
+					? editingStatus.poll.expiresAt
+					: Instant.now().plus(pollDuration, ChronoUnit.SECONDS));
 			updatePollOptionHints();
 			pollDurationView.setText(getString(R.string.compose_poll_duration, pollDurationStr));
 		}else{

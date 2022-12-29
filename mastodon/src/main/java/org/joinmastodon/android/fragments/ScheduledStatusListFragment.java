@@ -51,7 +51,7 @@ public class ScheduledStatusListFragment extends BaseStatusListFragment<Schedule
 
 	@Override
 	protected List<StatusDisplayItem> buildDisplayItems(ScheduledStatus s) {
-		return StatusDisplayItem.buildItems(this, s.params, accountID, s, knownAccounts, false, false, null);
+		return StatusDisplayItem.buildItems(this, s.toStatus(), accountID, s, knownAccounts, false, false, null);
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class ScheduledStatusListFragment extends BaseStatusListFragment<Schedule
 		final Bundle args=new Bundle();
 		args.putString("account", accountID);
 		ScheduledStatus scheduledStatus = getStatusByID(id);
-		Status status = scheduledStatus.params;
+		Status status = scheduledStatus.toStatus();
 		args.putParcelable("scheduledStatus", Parcels.wrap(scheduledStatus));
 		args.putParcelable("editStatus", Parcels.wrap(status));
 		args.putString("sourceText", status.text);

@@ -57,6 +57,11 @@ public class Poll extends BaseModel{
 		public String title;
 		public Integer votesCount;
 
+		public Option() {}
+		public Option(String title) {
+			this.title = title;
+		}
+
 		@Override
 		public String toString(){
 			return "Option{"+
