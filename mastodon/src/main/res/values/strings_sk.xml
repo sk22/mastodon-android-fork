@@ -115,4 +115,8 @@
     <string name="sk_compose_scheduled">Scheduled for</string>
     <string name="sk_draft_saved">Draft saved</string>
     <string name="sk_post_scheduled">Post scheduled</string>
+    <string name="sk_scheduled_too_soon_title">Scheduled time is too soon</string>
+    <string name="sk_scheduled_too_soon">Post must be scheduled at least 10 minutes in the future.</string>
+    <string name="sk_save_draft">Save draft?</string>
+    <string name="sk_save_changes">Save changes?</string>
 </resources>

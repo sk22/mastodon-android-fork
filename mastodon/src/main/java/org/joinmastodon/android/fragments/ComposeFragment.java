@@ -826,6 +826,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				nonDoneAttachmentCount++;
 		}
 		publishButton.setEnabled((trimmedCharCount>0 || !attachments.isEmpty()) && charCount<=charLimit && nonDoneAttachmentCount==0 && (pollOptions.isEmpty() || nonEmptyPollOptionsCount>1));
+		sendError.setVisibility(View.GONE);
 	}
 
 	private void onCustomEmojiClick(Emoji emoji){
@@ -850,7 +851,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		sendProgress.setVisibility(View.GONE);
 		sendError.setVisibility(View.VISIBLE);
 		publishButton.setEnabled(true);
-		error.showToast(getActivity());
+		if (error != null) error.showToast(getActivity());
 	}
 
 	private void createScheduledStatusFinish(ScheduledStatus result) {
@@ -962,7 +963,11 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			new CreateStatus(req, uuid)
 					.setCallback(resCallback)
 					.exec(accountID);
-		}else{
+		}else if(req.scheduledAt.isAfter(Instant.now().plus(10, ChronoUnit.MINUTES))){
+			// checking for 10 instead of 5 minutes (as per mastodon) because i really don't want
+			// bugs to occur because the client's clock is wrong by a minute or two - the api
+			// returns a status instead of a scheduled status if scheduled time is less than 5
+			// minutes into the future and this is 1. unexpected for the user and 2. hard to handle
 			new CreateStatus.Scheduled(req, uuid)
 					.setCallback(new Callback<>() {
 						@Override
@@ -977,6 +982,14 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 							publishErrorCallback(error);
 						}
 					}).exec(accountID);
+		}else{
+			new M3AlertDialogBuilder(getActivity())
+					.setTitle(R.string.sk_scheduled_too_soon_title)
+					.setMessage(R.string.sk_scheduled_too_soon)
+					.setPositiveButton(R.string.ok, (a, b)->{})
+					.show();
+			publishErrorCallback(null);
+			publishButton.setEnabled(false);
 		}
 
 		if (replyTo == null) {
@@ -996,6 +1009,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			List<String> existingMediaIDs=editingStatus.mediaAttachments.stream().map(a->a.id).collect(Collectors.toList());
 			if(!existingMediaIDs.equals(attachments.stream().map(a->a.serverAttachment.id).collect(Collectors.toList())))
 				return true;
+			if(!statusVisibility.equals(editingStatus.visibility)) return true;
 			return pollChanged;
 		}
 		boolean pollFieldsHaveContent=false;
@@ -1044,15 +1058,14 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	}
 
 	private void confirmDiscardDraftAndFinish(){
-		AlertDialog.Builder builder = new M3AlertDialogBuilder(getActivity())
-				.setTitle(editingStatus==null ? R.string.discard_draft : R.string.discard_changes)
-				.setPositiveButton(R.string.discard, (dialog, which)->Nav.finish(this))
-				.setNegativeButton(R.string.cancel, null);
-		if (editingStatus == null) builder.setNeutralButton(R.string.save, (dialog, which)->{
-			scheduledAt = getDraftInstant();
-			publish();
-		});
-		builder.show();
+		new M3AlertDialogBuilder(getActivity())
+				.setTitle(editingStatus != null ? R.string.sk_save_changes : R.string.sk_save_draft)
+				.setPositiveButton(R.string.save, (d, w) -> {
+					updateScheduledAt(getDraftInstant());
+					publish();
+				})
+				.setNegativeButton(R.string.discard, (d, w) -> Nav.finish(this))
+				.show();
 	}
 
 	private void openFilePicker(){
@@ -1529,19 +1542,23 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	}
 
 	private void pickScheduledDateTime() {
-		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime soon = LocalDateTime.now()
+				.plus(15, ChronoUnit.MINUTES) // so 14:59 doesn't get rounded up to…
+				.plus(1, ChronoUnit.HOURS) // …15:00, but rather 16:00
+				.withMinute(0);
 		new DatePickerDialog(getActivity(), (datePicker, year, arrayMonth, dayOfMonth) -> {
 			new TimePickerDialog(getActivity(), (timePicker, hour, minute) -> {
 				updateScheduledAt(LocalDateTime.of(year, arrayMonth + 1, dayOfMonth, hour, minute)
 						.toInstant(OffsetDateTime.now().getOffset()));
-			}, now.getHour(), now.getMinute(), DateFormat.is24HourFormat(getActivity())).show();
-		}, now.getYear(), now.getMonthValue() - 1, now.getDayOfMonth()).show();
+			}, soon.getHour(), soon.getMinute(), DateFormat.is24HourFormat(getActivity())).show();
+		}, soon.getYear(), soon.getMonthValue() - 1, soon.getDayOfMonth()).show();
 	}
 
 	private void updateScheduledAt(Instant scheduledAt) {
 		this.scheduledAt = scheduledAt;
 		scheduleDraftView.setVisibility(scheduledAt == null ? View.GONE : View.VISIBLE);
 		scheduleBtn.setSelected(scheduledAt != null);
+		updatePublishButtonState();
 		if (scheduledAt != null) {
 			DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.getDefault());
 			if (scheduledAt.isAfter(DRAFTS_AFTER_INSTANT)) {
