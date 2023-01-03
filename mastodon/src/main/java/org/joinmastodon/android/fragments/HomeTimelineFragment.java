@@ -188,10 +188,8 @@ public class HomeTimelineFragment extends StatusListFragment{
 							result.get(result.size()-1).hasGapAfter=true;
 							toAdd=result;
 						}
-						List<Filter> filters=AccountSessionManager.getInstance().getAccount(accountID).wordFilters.stream().filter(f->f.context.contains(Filter.FilterContext.HOME)).collect(Collectors.toList());
-						if(!filters.isEmpty()){
-							toAdd=toAdd.stream().filter(new StatusFilterPredicate(filters)).collect(Collectors.toList());
-						}
+						StatusFilterPredicate filterPredicate=new StatusFilterPredicate(accountID, Filter.FilterContext.HOME);
+						toAdd=toAdd.stream().filter(filterPredicate).collect(Collectors.toList());
 						if(!toAdd.isEmpty()){
 							prependItems(toAdd, true);
 							showNewPostsButton();
