@@ -243,6 +243,7 @@ public class SettingsFragment extends MastodonToolbarFragment{
 			args.putParcelable("instance", Parcels.wrap(instance));
 			Nav.go(getActivity(), InstanceRulesFragment.class, args);
 		}, R.drawable.ic_fluent_task_list_ltr_24_regular));
+		items.add(new TextItem(R.string.sk_settings_about_instance	, ()->UiUtils.launchWebBrowser(getActivity(), "https://"+session.domain+"/about"), R.drawable.ic_fluent_open_24_regular));
 		items.add(new TextItem(R.string.settings_tos, ()->UiUtils.launchWebBrowser(getActivity(), "https://"+session.domain+"/terms"), R.drawable.ic_fluent_open_24_regular));
 		items.add(new TextItem(R.string.settings_privacy_policy, ()->UiUtils.launchWebBrowser(getActivity(), "https://"+session.domain+"/terms"), R.drawable.ic_fluent_open_24_regular));
 		items.add(new TextItem(R.string.log_out, this::confirmLogOut, R.drawable.ic_fluent_sign_out_24_regular));
