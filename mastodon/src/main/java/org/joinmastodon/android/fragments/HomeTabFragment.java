@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -41,6 +42,7 @@ import org.joinmastodon.android.updater.GithubSelfUpdater;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.grishka.appkit.Nav;
 import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
 import me.grishka.appkit.fragments.AppKitFragment;
@@ -56,7 +58,7 @@ public class HomeTabFragment extends MastodonToolbarFragment {
     private Button toolbarShowNewPostsBtn;
     private boolean newPostsBtnShown;
     private AnimatorSet currentNewPostsAnim;
-    private LinearLayout view;
+    private FrameLayout view;
     private ViewPager2 pager;
     private final List<Fragment> fragments = new ArrayList<>();
     private final List<FrameLayout> tabViews = new ArrayList<>();
@@ -75,8 +77,8 @@ public class HomeTabFragment extends MastodonToolbarFragment {
 
     @Override
     public View onCreateContentView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-        view = new LinearLayout(getContext());
-        view.setOrientation(LinearLayout.VERTICAL);
+        view = new FrameLayout(getContext());
+        pager = new ViewPager2(getContext());
 
         if (fragments.size() == 0) {
             Bundle args = new Bundle();
@@ -84,12 +86,12 @@ public class HomeTabFragment extends MastodonToolbarFragment {
             args.putBoolean("__is_tab", true);
 
             fragments.add(new HomeTimelineFragment());
-            fragments.add(new FederatedTimelineFragment());
             fragments.add(new LocalTimelineFragment());
-            fragments.forEach(f -> f.setArguments(args));
+            fragments.add(new FederatedTimelineFragment());
 
             FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
             for (int i = 0; i < fragments.size(); i++) {
+                fragments.get(i).setArguments(args);
                 FrameLayout tabView = new FrameLayout(getActivity());
                 tabView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                 tabView.setVisibility(View.GONE);
@@ -101,6 +103,8 @@ public class HomeTabFragment extends MastodonToolbarFragment {
             transaction.commit();
         }
 
+        view.addView(pager, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
         return view;
     }
 
@@ -108,28 +112,18 @@ public class HomeTabFragment extends MastodonToolbarFragment {
     public void onViewCreated(View view, Bundle savedInstanceState){
         super.onViewCreated(view, savedInstanceState);
 
-        pager = new ViewPager2(getContext());
         UiUtils.reduceSwipeSensitivity(pager);
-        pager.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
         pager.setUserInputEnabled(!GlobalUserPreferences.disableSwipe);
         pager.setAdapter(new HomePagerAdapter());
         pager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback(){
             @Override
             public void onPageSelected(int position){
-                if(position==0)
-                    return;
-                Fragment _page=fragments.get(position);
-                if(_page instanceof BaseRecyclerFragment<?> page){
-                    if(!page.loaded && !page.isDataLoading())
-                        page.loadData();
+                if (position==0) return;
+                if (fragments.get(position) instanceof BaseRecyclerFragment<?> page){
+                    if(!page.loaded && !page.isDataLoading()) page.loadData();
                 }
             }
         });
-        this.view.addView(pager);
-
-//        fab=view.findViewById(R.id.fab);
-//        fab.setOnClickListener(this::onFabClick);
-//        fab.setOnLongClickListener(v-> UiUtils.pickAccountForCompose(getActivity(), accountID));
 
         updateToolbarLogo();
 //        list.addOnScrollListener(new RecyclerView.OnScrollListener(){

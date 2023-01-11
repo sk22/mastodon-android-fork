@@ -62,10 +62,9 @@ import me.grishka.appkit.api.SimpleCallback;
 import me.grishka.appkit.utils.CubicBezierInterpolator;
 import me.grishka.appkit.utils.V;
 
-public class HomeTimelineFragment extends StatusListFragment{
+public class HomeTimelineFragment extends FabStatusListFragment {
 	private static final int ANNOUNCEMENTS_RESULT = 654;
 
-	private ImageButton fab;
 	private ImageView toolbarLogo;
 	private Button toolbarShowNewPostsBtn;
 	private boolean newPostsBtnShown;
@@ -73,10 +72,6 @@ public class HomeTimelineFragment extends StatusListFragment{
 	private MenuItem announcements;
 
 	private String maxID;
-
-	public HomeTimelineFragment() {
-		setListLayoutId(R.layout.recycler_fragment_with_fab);
-	}
 
 	@Override
 	public void onAttach(Activity activity){
@@ -112,9 +107,6 @@ public class HomeTimelineFragment extends StatusListFragment{
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState){
 		super.onViewCreated(view, savedInstanceState);
-		fab=view.findViewById(R.id.fab);
-		fab.setOnClickListener(this::onFabClick);
-		fab.setOnLongClickListener(v->UiUtils.pickAccountForCompose(getActivity(), accountID));
 
 //		updateToolbarLogo();
 		list.addOnScrollListener(new RecyclerView.OnScrollListener(){
@@ -153,12 +145,6 @@ public class HomeTimelineFragment extends StatusListFragment{
 
 	public void onStatusCreated(StatusCreatedEvent ev){
 		prependItems(Collections.singletonList(ev.status), true);
-	}
-
-	private void onFabClick(View v){
-		Bundle args=new Bundle();
-		args.putString("account", accountID);
-		Nav.go(getActivity(), ComposeFragment.class, args);
 	}
 
 	private void loadNewPosts(){

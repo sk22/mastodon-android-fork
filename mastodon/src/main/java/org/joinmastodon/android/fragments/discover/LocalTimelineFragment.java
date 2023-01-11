@@ -3,7 +3,9 @@ package org.joinmastodon.android.fragments.discover;
 import android.os.Bundle;
 import android.view.View;
 
+import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.timelines.GetPublicTimeline;
+import org.joinmastodon.android.fragments.FabStatusListFragment;
 import org.joinmastodon.android.fragments.StatusListFragment;
 import org.joinmastodon.android.model.Filter;
 import org.joinmastodon.android.model.Status;
@@ -15,7 +17,7 @@ import java.util.stream.Collectors;
 
 import me.grishka.appkit.api.SimpleCallback;
 
-public class LocalTimelineFragment extends StatusListFragment{
+public class LocalTimelineFragment extends FabStatusListFragment {
 	private DiscoverInfoBannerHelper bannerHelper=new DiscoverInfoBannerHelper(DiscoverInfoBannerHelper.BannerType.LOCAL_TIMELINE);
 	private String maxID;
 
