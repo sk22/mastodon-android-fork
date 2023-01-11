@@ -53,13 +53,9 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 	private DiscoverNewsFragment newsFragment;
 	private DiscoverAccountsFragment accountsFragment;
 	private SearchFragment searchFragment;
-	private LocalTimelineFragment localTimelineFragment;
-	private FederatedTimelineFragment federatedTimelineFragment;
 
 	private String accountID;
 	private Runnable searchDebouncer=this::onSearchChangedDebounced;
-
-	private final boolean noFederated = !GlobalUserPreferences.showFederatedTimeline;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -78,18 +74,15 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 		tabLayout=view.findViewById(R.id.tabbar);
 		pager=view.findViewById(R.id.pager);
 
-		tabViews=new FrameLayout[noFederated ? 5 : 6];
+		tabViews=new FrameLayout[4];
 		for(int i=0;i<tabViews.length;i++){
 			FrameLayout tabView=new FrameLayout(getActivity());
-			int switchIndex = noFederated && i > 0 ? i + 1 : i;
-			tabView.setId(switch(switchIndex){
-				case 0 -> R.id.discover_local_timeline;
-				case 1 -> R.id.discover_federated_timeline;
-				case 2 -> R.id.discover_hashtags;
-				case 3 -> R.id.discover_posts;
-				case 4 -> R.id.discover_news;
-				case 5 -> R.id.discover_users;
-				default -> throw new IllegalStateException("Unexpected value: "+switchIndex);
+			tabView.setId(switch(i){
+				case 0 -> R.id.discover_hashtags;
+				case 1 -> R.id.discover_posts;
+				case 2 -> R.id.discover_news;
+				case 3 -> R.id.discover_users;
+				default -> throw new IllegalStateException("Unexpected value: "+i);
 			});
 			tabView.setVisibility(View.GONE);
 			view.addView(tabView); // needed so the fragment manager will have somewhere to restore the tab fragment
@@ -116,7 +109,7 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 			}
 		});
 
-		if(localTimelineFragment==null){
+		if(hashtagsFragment==null){
 			Bundle args=new Bundle();
 			args.putString("account", accountID);
 			args.putBoolean("__is_tab", true);
@@ -133,36 +126,23 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 			accountsFragment=new DiscoverAccountsFragment();
 			accountsFragment.setArguments(args);
 
-			localTimelineFragment=new LocalTimelineFragment();
-			localTimelineFragment.setArguments(args);
 
-			FragmentTransaction transaction = getChildFragmentManager().beginTransaction()
+			getChildFragmentManager().beginTransaction()
 					.add(R.id.discover_posts, postsFragment)
-					.add(R.id.discover_local_timeline, localTimelineFragment)
 					.add(R.id.discover_hashtags, hashtagsFragment)
 					.add(R.id.discover_news, newsFragment)
-					.add(R.id.discover_users, accountsFragment);
-
-			if (!noFederated) {
-				federatedTimelineFragment=new FederatedTimelineFragment();
-				federatedTimelineFragment.setArguments(args);
-				transaction.add(R.id.discover_federated_timeline, federatedTimelineFragment);
-			}
-
-			transaction.commit();
+					.add(R.id.discover_users, accountsFragment)
+					.commit();
 		}
 
 		tabLayoutMediator=new TabLayoutMediator(tabLayout, pager, new TabLayoutMediator.TabConfigurationStrategy(){
 			@Override
 			public void onConfigureTab(@NonNull TabLayout.Tab tab, int position){
-				if (noFederated && position > 0) position++;
 				tab.setText(switch(position){
-					case 0 -> R.string.local_timeline;
-					case 1 -> R.string.sk_federated_timeline;
-					case 2 -> R.string.hashtags;
-					case 3 -> R.string.posts;
-					case 4 -> R.string.news;
-					case 5 -> R.string.for_you;
+					case 0 -> R.string.hashtags;
+					case 1 -> R.string.posts;
+					case 2 -> R.string.news;
+					case 3 -> R.string.for_you;
 					default -> throw new IllegalStateException("Unexpected value: "+position);
 				});
 				tab.view.textView.setAllCaps(true);
@@ -248,8 +228,8 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 	}
 
 	public void loadData(){
-		if(localTimelineFragment!=null && !localTimelineFragment.loaded && !localTimelineFragment.dataLoading)
-			localTimelineFragment.loadData();
+		if(hashtagsFragment!=null && !hashtagsFragment.loaded && !hashtagsFragment.dataLoading)
+			hashtagsFragment.loadData();
 	}
 
 	private void onSearchEditFocusChanged(View v, boolean hasFocus){
@@ -284,14 +264,11 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 	}
 
 	private Fragment getFragmentForPage(int page){
-		if (noFederated && page > 0) page++;
 		return switch(page){
-			case 0 -> localTimelineFragment;
-			case 1 -> federatedTimelineFragment;
-			case 2 -> hashtagsFragment;
-			case 3 -> postsFragment;
-			case 4 -> newsFragment;
-			case 5 -> accountsFragment;
+			case 0 -> hashtagsFragment;
+			case 1 -> postsFragment;
+			case 2 -> newsFragment;
+			case 3 -> accountsFragment;
 			default -> throw new IllegalStateException("Unexpected value: "+page);
 		};
 	}
