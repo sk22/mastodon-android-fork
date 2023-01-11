@@ -52,10 +52,11 @@ import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
 import me.grishka.appkit.fragments.AppKitFragment;
 import me.grishka.appkit.fragments.BaseRecyclerFragment;
+import me.grishka.appkit.fragments.OnBackPressedListener;
 import me.grishka.appkit.utils.CubicBezierInterpolator;
 import me.grishka.appkit.utils.V;
 
-public class HomeTabFragment extends MastodonToolbarFragment implements ScrollableToTop {
+public class HomeTabFragment extends MastodonToolbarFragment implements ScrollableToTop, OnBackPressedListener {
     private static final int ANNOUNCEMENTS_RESULT = 654;
 
     private String accountID;
@@ -375,6 +376,15 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
     @Subscribe
     public void onSelfUpdateStateChanged(SelfUpdateStateChangedEvent ev){
         updateUpdateState(ev.state);
+    }
+
+    @Override
+    public boolean onBackPressed(){
+        if(pager.getCurrentItem() > 0){
+            navigateTo(0);
+            return true;
+        }
+        return false;
     }
 
     @Override

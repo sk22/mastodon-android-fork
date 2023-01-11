@@ -248,8 +248,9 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 			tabBar.selectTab(R.id.tab_home);
 			onTabSelected(R.id.tab_home);
 			return true;
+		} else {
+			return homeTabFragment.onBackPressed();
 		}
-		return false;
 	}
 
 	@Override
