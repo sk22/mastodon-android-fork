@@ -1,5 +1,6 @@
 package org.joinmastodon.android.fragments;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 import com.squareup.otto.Subscribe;
@@ -169,6 +170,12 @@ public abstract class StatusListFragment extends BaseStatusListFragment<Status>{
 		}
 		displayItems.subList(index, lastIndex).clear();
 		adapter.notifyItemRangeRemoved(index, lastIndex-index);
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig){
+		super.onConfigurationChanged(newConfig);
+		if (getParentFragment() instanceof HomeTabFragment home) home.updateToolbarLogo();
 	}
 
 	public class EventListener{

@@ -1,5 +1,6 @@
 package org.joinmastodon.android.fragments;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;

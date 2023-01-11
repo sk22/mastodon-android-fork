@@ -1,6 +1,9 @@
 package org.joinmastodon.android.fragments;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -16,21 +19,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.squareup.otto.Subscribe;
+
 import org.joinmastodon.android.E;
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.announcements.GetAnnouncements;
+import org.joinmastodon.android.events.SelfUpdateStateChangedEvent;
 import org.joinmastodon.android.fragments.discover.DiscoverPostsFragment;
 import org.joinmastodon.android.fragments.discover.FederatedTimelineFragment;
 import org.joinmastodon.android.fragments.discover.LocalTimelineFragment;
@@ -47,9 +50,10 @@ import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
 import me.grishka.appkit.fragments.AppKitFragment;
 import me.grishka.appkit.fragments.BaseRecyclerFragment;
+import me.grishka.appkit.utils.CubicBezierInterpolator;
 import me.grishka.appkit.utils.V;
 
-public class HomeTabFragment extends MastodonToolbarFragment {
+public class HomeTabFragment extends MastodonToolbarFragment implements ScrollableToTop {
     private static final int ANNOUNCEMENTS_RESULT = 654;
 
     private String accountID;
@@ -126,22 +130,25 @@ public class HomeTabFragment extends MastodonToolbarFragment {
         });
 
         updateToolbarLogo();
-//        list.addOnScrollListener(new RecyclerView.OnScrollListener(){
-//            @Override
-//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy){
-//                if(newPostsBtnShown && list.getChildAdapterPosition(list.getChildAt(0))<=getMainAdapterOffset()){
-//                    hideNewPostsButton();
-//                }
-//            }
-//        });
-//
-//        if(GithubSelfUpdater.needSelfUpdating()){
-//            E.register(this);
-//            updateUpdateState(GithubSelfUpdater.getInstance().getState());
-//        }
+
+        if(GithubSelfUpdater.needSelfUpdating()){
+            E.register(this);
+            updateUpdateState(GithubSelfUpdater.getInstance().getState());
+        }
     }
 
-    private void updateToolbarLogo(){
+    public void updateToolbarLogo(){
+        Toolbar toolbar=getToolbar();
+
+        if (toolbar.getChildCount() > 2) {
+            return;
+            // so that home, local and federated timelines don't invoke this 3 times
+            // and add the logo 3 times via onConfigurationChanged
+        }
+
+        toolbar.setOnClickListener(v->scrollToTop());
+        toolbar.setNavigationContentDescription(R.string.back);
+
         toolbarLogo=new ImageView(getActivity());
         toolbarLogo.setScaleType(ImageView.ScaleType.CENTER);
         toolbarLogo.setImageResource(R.drawable.logo);
@@ -158,7 +165,7 @@ public class HomeTabFragment extends MastodonToolbarFragment {
         toolbarShowNewPostsBtn.setCompoundDrawablePadding(V.dp(8));
         if(Build.VERSION.SDK_INT<Build.VERSION_CODES.N)
             UiUtils.fixCompoundDrawableTintOnAndroid6(toolbarShowNewPostsBtn);
-//        toolbarShowNewPostsBtn.setOnClickListener(this::onNewPostsBtnClick);
+        toolbarShowNewPostsBtn.setOnClickListener(this::onNewPostsBtnClick);
 
         if(newPostsBtnShown){
             toolbarShowNewPostsBtn.setVisibility(View.VISIBLE);
@@ -177,23 +184,23 @@ public class HomeTabFragment extends MastodonToolbarFragment {
         logoParams.setMargins(0, V.dp(2), 0, 0);
         logoWrap.addView(toolbarLogo, logoParams);
         logoWrap.addView(toolbarShowNewPostsBtn, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, V.dp(32), Gravity.CENTER));
-
-        Toolbar toolbar=getToolbar();
         toolbar.addView(logoWrap, new Toolbar.LayoutParams(Gravity.CENTER));
-        View switcher = LayoutInflater.from(getContext()).inflate(R.layout.home_switcher, toolbar, false);
-        toolbar.addView(switcher);
-        PopupMenu switcherPopup = new PopupMenu(getContext(), switcher);
-        switcherPopup.inflate(R.menu.home_switcher);
-        UiUtils.enablePopupMenuIcons(getContext(), switcherPopup);
-        switcher.setOnClickListener(v->switcherPopup.show());
-        switcher.setOnTouchListener(switcherPopup.getDragToOpenListener());
-        toolbar.setContentInsetsAbsolute(0, toolbar.getContentInsetRight());
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
         inflater.inflate(R.menu.home, menu);
         announcements = menu.findItem(R.id.announcements);
+
+        Toolbar toolbar = getToolbar();
+        View switcher = LayoutInflater.from(getContext()).inflate(R.layout.home_switcher, toolbar, false);
+        PopupMenu switcherPopup = new PopupMenu(getContext(), switcher);
+        switcherPopup.inflate(R.menu.home_switcher);
+        UiUtils.enablePopupMenuIcons(getContext(), switcherPopup);
+        switcher.setOnClickListener(v->switcherPopup.show());
+        switcher.setOnTouchListener(switcherPopup.getDragToOpenListener());
+        toolbar.setContentInsetsAbsolute(0, toolbar.getContentInsetRight());
+        toolbar.addView(switcher);
 
         new GetAnnouncements(false).setCallback(new Callback<>() {
             @Override
@@ -210,9 +217,110 @@ public class HomeTabFragment extends MastodonToolbarFragment {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        Bundle args=new Bundle();
+        args.putString("account", accountID);
+        if (item.getItemId() == R.id.settings) Nav.go(getActivity(), SettingsFragment.class, args);
+        if (item.getItemId() == R.id.announcements) {
+            Nav.goForResult(getActivity(), AnnouncementsFragment.class, args, ANNOUNCEMENTS_RESULT, this);
+        }
+        return true;
+    }
+
+    @Override
+    public void scrollToTop(){
+        ((ScrollableToTop) fragments.get(pager.getCurrentItem())).scrollToTop();
+    }
+
+    public void hideNewPostsButton(){
+        if(!newPostsBtnShown)
+            return;
+        newPostsBtnShown=false;
+        if(currentNewPostsAnim!=null){
+            currentNewPostsAnim.cancel();
+        }
+        toolbarLogo.setVisibility(View.VISIBLE);
+        AnimatorSet set=new AnimatorSet();
+        set.playTogether(
+                ObjectAnimator.ofFloat(toolbarLogo, View.ALPHA, 1f),
+                ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.ALPHA, 0f),
+                ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.SCALE_X, .8f),
+                ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.SCALE_Y, .8f)
+        );
+        set.setDuration(300);
+        set.setInterpolator(CubicBezierInterpolator.DEFAULT);
+        set.addListener(new AnimatorListenerAdapter(){
+            @Override
+            public void onAnimationEnd(Animator animation){
+                toolbarShowNewPostsBtn.setVisibility(View.INVISIBLE);
+                currentNewPostsAnim=null;
+            }
+        });
+        currentNewPostsAnim=set;
+        set.start();
+    }
+
+    public void showNewPostsButton(){
+        if(newPostsBtnShown)
+            return;
+        newPostsBtnShown=true;
+        if(currentNewPostsAnim!=null){
+            currentNewPostsAnim.cancel();
+        }
+        toolbarShowNewPostsBtn.setVisibility(View.VISIBLE);
+        AnimatorSet set=new AnimatorSet();
+        set.playTogether(
+                ObjectAnimator.ofFloat(toolbarLogo, View.ALPHA, 0f),
+                ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.ALPHA, 1f),
+                ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.SCALE_X, 1f),
+                ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.SCALE_Y, 1f)
+        );
+        set.setDuration(300);
+        set.setInterpolator(CubicBezierInterpolator.DEFAULT);
+        set.addListener(new AnimatorListenerAdapter(){
+            @Override
+            public void onAnimationEnd(Animator animation){
+                toolbarLogo.setVisibility(View.INVISIBLE);
+                currentNewPostsAnim=null;
+            }
+        });
+        currentNewPostsAnim=set;
+        set.start();
+    }
+
+    public boolean isNewPostsBtnShown() {
+        return newPostsBtnShown;
+    }
+
+    private void onNewPostsBtnClick(View view) {
+        if(newPostsBtnShown){
+            hideNewPostsButton();
+            scrollToTop();
+        }
+    }
+
+    @Override
     public void onFragmentResult(int reqCode, boolean noMoreUnread, Bundle result){
         if (reqCode == ANNOUNCEMENTS_RESULT && noMoreUnread) {
             announcements.setIcon(R.drawable.ic_fluent_megaphone_24_regular);
+        }
+    }
+
+    private void updateUpdateState(GithubSelfUpdater.UpdateState state){
+        if(state!=GithubSelfUpdater.UpdateState.NO_UPDATE && state!=GithubSelfUpdater.UpdateState.CHECKING)
+            getToolbar().getMenu().findItem(R.id.settings).setIcon(R.drawable.ic_settings_24_badged);
+    }
+
+    @Subscribe
+    public void onSelfUpdateStateChanged(SelfUpdateStateChangedEvent ev){
+        updateUpdateState(ev.state);
+    }
+
+    @Override
+    public void onDestroyView(){
+        super.onDestroyView();
+        if(GithubSelfUpdater.needSelfUpdating()){
+            E.unregister(this);
         }
     }
 

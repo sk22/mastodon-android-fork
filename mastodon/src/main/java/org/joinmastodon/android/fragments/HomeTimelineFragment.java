@@ -1,52 +1,21 @@
 package org.joinmastodon.android.fragments;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.app.Activity;
-import android.content.res.ColorStateList;
-import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.TypedValue;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.PopupMenu;
-import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.squareup.otto.Subscribe;
-
-import org.joinmastodon.android.E;
 import org.joinmastodon.android.GlobalUserPreferences;
-import org.joinmastodon.android.R;
-import org.joinmastodon.android.api.requests.announcements.GetAnnouncements;
 import org.joinmastodon.android.api.requests.timelines.GetHomeTimeline;
 import org.joinmastodon.android.api.session.AccountSessionManager;
-import org.joinmastodon.android.events.SelfUpdateStateChangedEvent;
 import org.joinmastodon.android.events.StatusCreatedEvent;
-import org.joinmastodon.android.model.Announcement;
 import org.joinmastodon.android.model.CacheablePaginatedResponse;
 import org.joinmastodon.android.model.Filter;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.displayitems.GapStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.StatusDisplayItem;
-import org.joinmastodon.android.ui.utils.UiUtils;
-import org.joinmastodon.android.updater.GithubSelfUpdater;
 import org.joinmastodon.android.utils.StatusFilterPredicate;
 
 import java.util.Collections;
@@ -55,27 +24,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import me.grishka.appkit.Nav;
 import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
 import me.grishka.appkit.api.SimpleCallback;
-import me.grishka.appkit.utils.CubicBezierInterpolator;
 import me.grishka.appkit.utils.V;
 
 public class HomeTimelineFragment extends FabStatusListFragment {
-	private static final int ANNOUNCEMENTS_RESULT = 654;
-
-	private ImageView toolbarLogo;
-	private Button toolbarShowNewPostsBtn;
-	private boolean newPostsBtnShown;
-	private AnimatorSet currentNewPostsAnim;
-	private MenuItem announcements;
-
+	private HomeTabFragment parent;
 	private String maxID;
 
 	@Override
 	public void onAttach(Activity activity){
 		super.onAttach(activity);
+		if (getParentFragment() instanceof HomeTabFragment home) parent = home;
 		loadData();
 	}
 
@@ -108,27 +69,14 @@ public class HomeTimelineFragment extends FabStatusListFragment {
 	public void onViewCreated(View view, Bundle savedInstanceState){
 		super.onViewCreated(view, savedInstanceState);
 
-//		updateToolbarLogo();
 		list.addOnScrollListener(new RecyclerView.OnScrollListener(){
 			@Override
 			public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy){
-				if(newPostsBtnShown && list.getChildAdapterPosition(list.getChildAt(0))<=getMainAdapterOffset()){
-//					hideNewPostsButton();
+				if(parent != null && parent.isNewPostsBtnShown() && list.getChildAdapterPosition(list.getChildAt(0))<=getMainAdapterOffset()){
+					parent.hideNewPostsButton();
 				}
 			}
 		});
-
-		if(GithubSelfUpdater.needSelfUpdating()){
-			E.register(this);
-			updateUpdateState(GithubSelfUpdater.getInstance().getState());
-		}
-	}
-
-	@Override
-	public void onFragmentResult(int reqCode, boolean noMoreUnread, Bundle result){
-		if (reqCode == ANNOUNCEMENTS_RESULT && noMoreUnread) {
-			announcements.setIcon(R.drawable.ic_fluent_megaphone_24_regular);
-		}
 	}
 
 	@Override
@@ -175,7 +123,7 @@ public class HomeTimelineFragment extends FabStatusListFragment {
 						toAdd=toAdd.stream().filter(filterPredicate).collect(Collectors.toList());
 						if(!toAdd.isEmpty()){
 							prependItems(toAdd, true);
-//							showNewPostsButton();
+							if (parent != null) parent.showNewPostsButton();
 							AccountSessionManager.getInstance().getAccount(accountID).getCacheController().putHomeTimeline(toAdd, false);
 						}
 					}
@@ -292,87 +240,6 @@ public class HomeTimelineFragment extends FabStatusListFragment {
 			dataLoading=false;
 		}
 		super.onRefresh();
-	}
-
-	private void showNewPostsButton(){
-		if(newPostsBtnShown)
-			return;
-		newPostsBtnShown=true;
-		if(currentNewPostsAnim!=null){
-			currentNewPostsAnim.cancel();
-		}
-		toolbarShowNewPostsBtn.setVisibility(View.VISIBLE);
-		AnimatorSet set=new AnimatorSet();
-		set.playTogether(
-				ObjectAnimator.ofFloat(toolbarLogo, View.ALPHA, 0f),
-				ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.ALPHA, 1f),
-				ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.SCALE_X, 1f),
-				ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.SCALE_Y, 1f)
-		);
-		set.setDuration(300);
-		set.setInterpolator(CubicBezierInterpolator.DEFAULT);
-		set.addListener(new AnimatorListenerAdapter(){
-			@Override
-			public void onAnimationEnd(Animator animation){
-				toolbarLogo.setVisibility(View.INVISIBLE);
-				currentNewPostsAnim=null;
-			}
-		});
-		currentNewPostsAnim=set;
-		set.start();
-	}
-
-	private void hideNewPostsButton(){
-		if(!newPostsBtnShown)
-			return;
-		newPostsBtnShown=false;
-		if(currentNewPostsAnim!=null){
-			currentNewPostsAnim.cancel();
-		}
-		toolbarLogo.setVisibility(View.VISIBLE);
-		AnimatorSet set=new AnimatorSet();
-		set.playTogether(
-				ObjectAnimator.ofFloat(toolbarLogo, View.ALPHA, 1f),
-				ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.ALPHA, 0f),
-				ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.SCALE_X, .8f),
-				ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.SCALE_Y, .8f)
-		);
-		set.setDuration(300);
-		set.setInterpolator(CubicBezierInterpolator.DEFAULT);
-		set.addListener(new AnimatorListenerAdapter(){
-			@Override
-			public void onAnimationEnd(Animator animation){
-				toolbarShowNewPostsBtn.setVisibility(View.INVISIBLE);
-				currentNewPostsAnim=null;
-			}
-		});
-		currentNewPostsAnim=set;
-		set.start();
-	}
-
-	private void onNewPostsBtnClick(View v){
-		if(newPostsBtnShown){
-//			hideNewPostsButton();
-			scrollToTop();
-		}
-	}
-
-	@Override
-	public void onDestroyView(){
-		super.onDestroyView();
-		if(GithubSelfUpdater.needSelfUpdating()){
-			E.unregister(this);
-		}
-	}
-
-	private void updateUpdateState(GithubSelfUpdater.UpdateState state){
-		if(state!=GithubSelfUpdater.UpdateState.NO_UPDATE && state!=GithubSelfUpdater.UpdateState.CHECKING)
-			getToolbar().getMenu().findItem(R.id.settings).setIcon(R.drawable.ic_settings_24_badged);
-	}
-
-	@Subscribe
-	public void onSelfUpdateStateChanged(SelfUpdateStateChangedEvent ev){
-		updateUpdateState(ev.state);
 	}
 
 	@Override
