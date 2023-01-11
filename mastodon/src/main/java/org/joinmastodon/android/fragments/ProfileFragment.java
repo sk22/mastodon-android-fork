@@ -241,6 +241,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			tabViews[i]=tabView;
 		}
 
+		UiUtils.reduceSwipeSensitivity(pager);
 		pager.setOffscreenPageLimit(5);
 		pager.setUserInputEnabled(!GlobalUserPreferences.disableSwipe);
 		pager.setAdapter(new ProfilePagerAdapter());

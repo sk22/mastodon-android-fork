@@ -109,6 +109,7 @@ public class HomeTabFragment extends MastodonToolbarFragment {
         super.onViewCreated(view, savedInstanceState);
 
         pager = new ViewPager2(getContext());
+        UiUtils.reduceSwipeSensitivity(pager);
         pager.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
         pager.setUserInputEnabled(!GlobalUserPreferences.disableSwipe);
         pager.setAdapter(new HomePagerAdapter());

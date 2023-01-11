@@ -31,6 +31,7 @@ import android.provider.OpenableColumns;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -87,6 +88,7 @@ import org.joinmastodon.android.ui.text.CustomEmojiSpan;
 import org.parceler.Parcels;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -111,6 +113,8 @@ import androidx.annotation.StringRes;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
+
 import me.grishka.appkit.Nav;
 import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
@@ -1012,6 +1016,21 @@ public class UiUtils{
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	// https://github.com/tuskyapp/Tusky/pull/3148
+	public static void reduceSwipeSensitivity(ViewPager2 pager) {
+		try {
+			Field recyclerViewField = ViewPager2.class.getDeclaredField("mRecyclerView");
+			recyclerViewField.setAccessible(true);
+			RecyclerView recyclerView = (RecyclerView) recyclerViewField.get(pager);
+			Field touchSlopField = RecyclerView.class.getDeclaredField("mTouchSlop");
+			touchSlopField.setAccessible(true);
+			int touchSlop = touchSlopField.getInt(recyclerView);
+			touchSlopField.set(recyclerView, touchSlop * 3);
+		} catch (Exception ex) {
+			Log.e("reduceSwipeSensitivity", Log.getStackTraceString(ex));
 		}
 	}
 }

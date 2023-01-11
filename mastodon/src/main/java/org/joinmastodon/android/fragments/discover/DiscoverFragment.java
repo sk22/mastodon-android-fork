@@ -99,6 +99,7 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 		tabLayout.setTabTextSize(V.dp(16));
 		tabLayout.setTabTextColors(UiUtils.getThemeColor(getActivity(), R.attr.colorTabInactive), UiUtils.getThemeColor(getActivity(), android.R.attr.textColorPrimary));
 
+		UiUtils.reduceSwipeSensitivity(pager);
 		pager.setOffscreenPageLimit(4);
 		pager.setUserInputEnabled(!GlobalUserPreferences.disableSwipe);
 		pager.setAdapter(new DiscoverPagerAdapter());

@@ -102,6 +102,7 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 
 		tabLayout=view.findViewById(R.id.tabbar);
 		pager=view.findViewById(R.id.pager);
+		UiUtils.reduceSwipeSensitivity(pager);
 
 		tabViews=new FrameLayout[3];
 		for(int i=0;i<tabViews.length;i++){
