@@ -9,7 +9,9 @@ import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,6 +21,9 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupMenu;
+import android.widget.Toast;
 import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
@@ -379,6 +384,14 @@ public class HomeTimelineFragment extends StatusListFragment{
 
 		Toolbar toolbar=getToolbar();
 		toolbar.addView(logoWrap, new Toolbar.LayoutParams(Gravity.CENTER));
+		View switcher = LayoutInflater.from(getContext()).inflate(R.layout.home_switcher, toolbar, false);
+		toolbar.addView(switcher);
+		PopupMenu switcherPopup = new PopupMenu(getContext(), switcher);
+		switcherPopup.inflate(R.menu.home_switcher);
+		UiUtils.enablePopupMenuIcons(getContext(), switcherPopup);
+		switcher.setOnClickListener(v->switcherPopup.show());
+		switcher.setOnTouchListener(switcherPopup.getDragToOpenListener());
+		toolbar.setContentInsetsAbsolute(0, toolbar.getContentInsetRight());
 	}
 
 	private void showNewPostsButton(){
