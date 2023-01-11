@@ -4,10 +4,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -66,11 +68,15 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
     private ViewPager2 pager;
     private final List<Fragment> fragments = new ArrayList<>();
     private final List<FrameLayout> tabViews = new ArrayList<>();
+    private Button switcher;
+    private PopupMenu switcherPopup;
+    private Drawable chevron;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         accountID = getArguments().getString("account");
+        chevron = getActivity().getDrawable(R.drawable.ic_fluent_chevron_down_16_filled);
     }
 
     @Override
@@ -122,6 +128,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
         pager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback(){
             @Override
             public void onPageSelected(int position){
+                updateSwitcherIcon(position);
                 if (position==0) return;
                 if (fragments.get(position) instanceof BaseRecyclerFragment<?> page){
                     if(!page.loaded && !page.isDataLoading()) page.loadData();
@@ -146,6 +153,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
             // and add the logo 3 times via onConfigurationChanged
         }
 
+        updateSwitcherIcon(pager.getCurrentItem());
         toolbar.setOnClickListener(v->scrollToTop());
         toolbar.setNavigationContentDescription(R.string.back);
 
@@ -187,15 +195,17 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
         toolbar.addView(logoWrap, new Toolbar.LayoutParams(Gravity.CENTER));
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
         inflater.inflate(R.menu.home, menu);
         announcements = menu.findItem(R.id.announcements);
 
         Toolbar toolbar = getToolbar();
-        View switcher = LayoutInflater.from(getContext()).inflate(R.layout.home_switcher, toolbar, false);
-        PopupMenu switcherPopup = new PopupMenu(getContext(), switcher);
+        switcher = (Button) LayoutInflater.from(getContext()).inflate(R.layout.home_switcher, toolbar, false);
+        switcherPopup = new PopupMenu(getContext(), switcher);
         switcherPopup.inflate(R.menu.home_switcher);
+        switcherPopup.setOnMenuItemClickListener(this::onSwitcherItemSelected);
         UiUtils.enablePopupMenuIcons(getContext(), switcherPopup);
         switcher.setOnClickListener(v->switcherPopup.show());
         switcher.setOnTouchListener(switcherPopup.getDragToOpenListener());
@@ -214,6 +224,57 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
                 error.showToast(getActivity());
             }
         }).exec(accountID);
+    }
+
+    private boolean onSwitcherItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.home) navigateTo(0);
+        else if (item.getItemId() == R.id.local) navigateTo(1);
+        else if (item.getItemId() == R.id.federated) navigateTo(2);
+        return false;
+    }
+
+    private void navigateTo(int i) {
+        pager.setCurrentItem(i);
+        updateSwitcherIcon(i);
+    }
+
+    private void updateSwitcherIcon(int i) {
+        Drawable d = getActivity().getDrawable(switch (i) {
+            default -> R.drawable.ic_fluent_home_24_regular;
+            case 1 -> R.drawable.ic_fluent_people_community_24_regular;
+            case 2 -> R.drawable.ic_fluent_earth_24_regular;
+        });
+        switcher.setCompoundDrawablesWithIntrinsicBounds(d, null, chevron, null);
+
+        MenuItem home = switcherPopup.getMenu().findItem(R.id.home);
+        MenuItem local = switcherPopup.getMenu().findItem(R.id.local);
+        MenuItem federated = switcherPopup.getMenu().findItem(R.id.federated);
+        home.setIcon(R.drawable.ic_fluent_home_24_regular);
+        local.setIcon(R.drawable.ic_fluent_people_community_24_regular);
+        federated.setIcon(R.drawable.ic_fluent_earth_24_regular);
+        home.setEnabled(true);
+        local.setEnabled(true);
+        federated.setEnabled(true);
+
+        MenuItem selectedItem = switch (i) {
+            case 0 -> home;
+            case 1 -> local;
+            case 2 -> federated;
+            default -> null;
+        };
+        if (selectedItem != null) {
+            selectedItem.setIcon(switch (i) {
+                case 0 -> R.drawable.ic_fluent_home_24_filled;
+                case 1 -> R.drawable.ic_fluent_people_community_24_filled;
+                case 2 -> R.drawable.ic_fluent_earth_24_filled;
+                default -> 0;
+            });
+            selectedItem.setEnabled(false);
+        }
+
+        UiUtils.insetPopupMenuIcon(getContext(), home);
+        UiUtils.insetPopupMenuIcon(getContext(), local);
+        UiUtils.insetPopupMenuIcon(getContext(), federated);
     }
 
     @Override
