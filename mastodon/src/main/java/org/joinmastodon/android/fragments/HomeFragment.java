@@ -41,7 +41,7 @@ import me.grishka.appkit.views.FragmentRootLinearLayout;
 
 public class HomeFragment extends AppKitFragment implements OnBackPressedListener{
 	private FragmentRootLinearLayout content;
-	private HomeTimelineFragment homeTimelineFragment;
+	private HomeTabFragment homeTabFragment;
 	private NotificationsFragment notificationsFragment;
 	private DiscoverFragment searchFragment;
 	private ProfileFragment profileFragment;
@@ -65,8 +65,8 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 		if(savedInstanceState==null){
 			Bundle args=new Bundle();
 			args.putString("account", accountID);
-			homeTimelineFragment=new HomeTimelineFragment();
-			homeTimelineFragment.setArguments(args);
+			homeTabFragment=new HomeTabFragment();
+			homeTabFragment.setArguments(args);
 			args=new Bundle(args);
 			args.putBoolean("noAutoLoad", true);
 			searchFragment=new DiscoverFragment();
@@ -110,7 +110,7 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 
 		if(savedInstanceState==null){
 			getChildFragmentManager().beginTransaction()
-					.add(R.id.fragment_wrap, homeTimelineFragment)
+					.add(R.id.fragment_wrap, homeTabFragment)
 					.add(R.id.fragment_wrap, searchFragment).hide(searchFragment)
 					.add(R.id.fragment_wrap, notificationsFragment).hide(notificationsFragment)
 					.add(R.id.fragment_wrap, profileFragment).hide(profileFragment)
@@ -136,16 +136,16 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 	@Override
 	public void onViewStateRestored(Bundle savedInstanceState){
 		super.onViewStateRestored(savedInstanceState);
-		if(savedInstanceState==null || homeTimelineFragment!=null)
+		if(savedInstanceState==null || homeTabFragment !=null)
 			return;
-		homeTimelineFragment=(HomeTimelineFragment) getChildFragmentManager().getFragment(savedInstanceState, "homeTimelineFragment");
+		homeTabFragment=(HomeTabFragment) getChildFragmentManager().getFragment(savedInstanceState, "homeTabFragment");
 		searchFragment=(DiscoverFragment) getChildFragmentManager().getFragment(savedInstanceState, "searchFragment");
 		notificationsFragment=(NotificationsFragment) getChildFragmentManager().getFragment(savedInstanceState, "notificationsFragment");
 		profileFragment=(ProfileFragment) getChildFragmentManager().getFragment(savedInstanceState, "profileFragment");
 		currentTab=savedInstanceState.getInt("selectedTab");
 		Fragment current=fragmentForTab(currentTab);
 		getChildFragmentManager().beginTransaction()
-				.hide(homeTimelineFragment)
+				.hide(homeTabFragment)
 				.hide(searchFragment)
 				.hide(notificationsFragment)
 				.hide(profileFragment)
@@ -180,7 +180,7 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 			super.onApplyWindowInsets(insets.replaceSystemWindowInsets(insets.getSystemWindowInsetLeft(), 0, insets.getSystemWindowInsetRight(), insets.getSystemWindowInsetBottom()));
 		}
 		WindowInsets topOnlyInsets=insets.replaceSystemWindowInsets(0, insets.getSystemWindowInsetTop(), 0, 0);
-		homeTimelineFragment.onApplyWindowInsets(topOnlyInsets);
+		homeTabFragment.onApplyWindowInsets(topOnlyInsets);
 		searchFragment.onApplyWindowInsets(topOnlyInsets);
 		notificationsFragment.onApplyWindowInsets(topOnlyInsets);
 		profileFragment.onApplyWindowInsets(topOnlyInsets);
@@ -188,7 +188,7 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 
 	private Fragment fragmentForTab(@IdRes int tab){
 		if(tab==R.id.tab_home){
-			return homeTimelineFragment;
+			return homeTabFragment;
 		}else if(tab==R.id.tab_search){
 			return searchFragment;
 		}else if(tab==R.id.tab_notifications){
@@ -256,7 +256,7 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 	public void onSaveInstanceState(Bundle outState){
 		super.onSaveInstanceState(outState);
 		outState.putInt("selectedTab", currentTab);
-		getChildFragmentManager().putFragment(outState, "homeTimelineFragment", homeTimelineFragment);
+		getChildFragmentManager().putFragment(outState, "homeTabFragment", homeTabFragment);
 		getChildFragmentManager().putFragment(outState, "searchFragment", searchFragment);
 		getChildFragmentManager().putFragment(outState, "notificationsFragment", notificationsFragment);
 		getChildFragmentManager().putFragment(outState, "profileFragment", profileFragment);

@@ -74,14 +74,13 @@ public class HomeTimelineFragment extends StatusListFragment{
 
 	private String maxID;
 
-	public HomeTimelineFragment(){
+	public HomeTimelineFragment() {
 		setListLayoutId(R.layout.recycler_fragment_with_fab);
 	}
 
 	@Override
 	public void onAttach(Activity activity){
 		super.onAttach(activity);
-		setHasOptionsMenu(true);
 		loadData();
 	}
 
@@ -117,12 +116,12 @@ public class HomeTimelineFragment extends StatusListFragment{
 		fab.setOnClickListener(this::onFabClick);
 		fab.setOnLongClickListener(v->UiUtils.pickAccountForCompose(getActivity(), accountID));
 
-		updateToolbarLogo();
+//		updateToolbarLogo();
 		list.addOnScrollListener(new RecyclerView.OnScrollListener(){
 			@Override
 			public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy){
 				if(newPostsBtnShown && list.getChildAdapterPosition(list.getChildAt(0))<=getMainAdapterOffset()){
-					hideNewPostsButton();
+//					hideNewPostsButton();
 				}
 			}
 		});
@@ -134,46 +133,10 @@ public class HomeTimelineFragment extends StatusListFragment{
 	}
 
 	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
-		inflater.inflate(R.menu.home, menu);
-		announcements = menu.findItem(R.id.announcements);
-
-		new GetAnnouncements(false).setCallback(new Callback<>() {
-			@Override
-			public void onSuccess(List<Announcement> result) {
-				boolean hasUnread = result.stream().anyMatch(a -> !a.read);
-				announcements.setIcon(hasUnread ? R.drawable.ic_announcements_24_badged : R.drawable.ic_fluent_megaphone_24_regular);
-			}
-
-			@Override
-			public void onError(ErrorResponse error) {
-				error.showToast(getActivity());
-			}
-		}).exec(accountID);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item){
-		Bundle args=new Bundle();
-		args.putString("account", accountID);
-		if (item.getItemId() == R.id.settings) Nav.go(getActivity(), SettingsFragment.class, args);
-		if (item.getItemId() == R.id.announcements) {
-			Nav.goForResult(getActivity(), AnnouncementsFragment.class, args, ANNOUNCEMENTS_RESULT, this);
-		}
-		return true;
-	}
-
-	@Override
 	public void onFragmentResult(int reqCode, boolean noMoreUnread, Bundle result){
 		if (reqCode == ANNOUNCEMENTS_RESULT && noMoreUnread) {
 			announcements.setIcon(R.drawable.ic_fluent_megaphone_24_regular);
 		}
-	}
-
-	@Override
-	public void onConfigurationChanged(Configuration newConfig){
-		super.onConfigurationChanged(newConfig);
-		updateToolbarLogo();
 	}
 
 	@Override
@@ -226,7 +189,7 @@ public class HomeTimelineFragment extends StatusListFragment{
 						toAdd=toAdd.stream().filter(filterPredicate).collect(Collectors.toList());
 						if(!toAdd.isEmpty()){
 							prependItems(toAdd, true);
-							showNewPostsButton();
+//							showNewPostsButton();
 							AccountSessionManager.getInstance().getAccount(accountID).getCacheController().putHomeTimeline(toAdd, false);
 						}
 					}
@@ -345,55 +308,6 @@ public class HomeTimelineFragment extends StatusListFragment{
 		super.onRefresh();
 	}
 
-	private void updateToolbarLogo(){
-		toolbarLogo=new ImageView(getActivity());
-		toolbarLogo.setScaleType(ImageView.ScaleType.CENTER);
-		toolbarLogo.setImageResource(R.drawable.logo);
-		toolbarLogo.setImageTintList(ColorStateList.valueOf(UiUtils.getThemeColor(getActivity(), android.R.attr.textColorPrimary)));
-
-		toolbarShowNewPostsBtn=new Button(getActivity());
-		toolbarShowNewPostsBtn.setTextAppearance(R.style.m3_title_medium);
-		toolbarShowNewPostsBtn.setTextColor(0xffffffff);
-		toolbarShowNewPostsBtn.setStateListAnimator(null);
-		toolbarShowNewPostsBtn.setBackgroundResource(R.drawable.bg_button_new_posts);
-		toolbarShowNewPostsBtn.setText(R.string.see_new_posts);
-		toolbarShowNewPostsBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_fluent_arrow_up_16_filled, 0, 0, 0);
-		toolbarShowNewPostsBtn.setCompoundDrawableTintList(toolbarShowNewPostsBtn.getTextColors());
-		toolbarShowNewPostsBtn.setCompoundDrawablePadding(V.dp(8));
-		if(Build.VERSION.SDK_INT<Build.VERSION_CODES.N)
-			UiUtils.fixCompoundDrawableTintOnAndroid6(toolbarShowNewPostsBtn);
-		toolbarShowNewPostsBtn.setOnClickListener(this::onNewPostsBtnClick);
-
-		if(newPostsBtnShown){
-			toolbarShowNewPostsBtn.setVisibility(View.VISIBLE);
-			toolbarLogo.setVisibility(View.INVISIBLE);
-			toolbarLogo.setAlpha(0f);
-		}else{
-			toolbarShowNewPostsBtn.setVisibility(View.INVISIBLE);
-			toolbarShowNewPostsBtn.setAlpha(0f);
-			toolbarShowNewPostsBtn.setScaleX(.8f);
-			toolbarShowNewPostsBtn.setScaleY(.8f);
-			toolbarLogo.setVisibility(View.VISIBLE);
-		}
-
-		FrameLayout logoWrap=new FrameLayout(getActivity());
-		FrameLayout.LayoutParams logoParams=new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
-		logoParams.setMargins(0, V.dp(2), 0, 0);
-		logoWrap.addView(toolbarLogo, logoParams);
-		logoWrap.addView(toolbarShowNewPostsBtn, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, V.dp(32), Gravity.CENTER));
-
-		Toolbar toolbar=getToolbar();
-		toolbar.addView(logoWrap, new Toolbar.LayoutParams(Gravity.CENTER));
-		View switcher = LayoutInflater.from(getContext()).inflate(R.layout.home_switcher, toolbar, false);
-		toolbar.addView(switcher);
-		PopupMenu switcherPopup = new PopupMenu(getContext(), switcher);
-		switcherPopup.inflate(R.menu.home_switcher);
-		UiUtils.enablePopupMenuIcons(getContext(), switcherPopup);
-		switcher.setOnClickListener(v->switcherPopup.show());
-		switcher.setOnTouchListener(switcherPopup.getDragToOpenListener());
-		toolbar.setContentInsetsAbsolute(0, toolbar.getContentInsetRight());
-	}
-
 	private void showNewPostsButton(){
 		if(newPostsBtnShown)
 			return;
@@ -452,7 +366,7 @@ public class HomeTimelineFragment extends StatusListFragment{
 
 	private void onNewPostsBtnClick(View v){
 		if(newPostsBtnShown){
-			hideNewPostsButton();
+//			hideNewPostsButton();
 			scrollToTop();
 		}
 	}
