@@ -290,22 +290,6 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 		local.setEnabled(true);
 		federated.setEnabled(true);
 
-		MenuItem selectedItem = switch (i) {
-			case 0 -> home;
-			case 1 -> local;
-			case 2 -> federated;
-			default -> null;
-		};
-		if (selectedItem != null) {
-			selectedItem.setIcon(switch (i) {
-				case 0 -> R.drawable.ic_fluent_home_24_filled;
-				case 1 -> R.drawable.ic_fluent_people_community_24_filled;
-				case 2 -> R.drawable.ic_fluent_earth_24_filled;
-				default -> 0;
-			});
-			selectedItem.setEnabled(false);
-		}
-
 		if (!listItems.isEmpty()) {
 			MenuItem listsItem = switcherPopup.getMenu().findItem(R.id.lists);
 			listsItem.setVisible(true);
