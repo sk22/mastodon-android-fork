@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -17,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -35,22 +37,27 @@ import org.joinmastodon.android.E;
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.announcements.GetAnnouncements;
+import org.joinmastodon.android.api.requests.lists.GetLists;
+import org.joinmastodon.android.api.requests.tags.GetFollowedHashtags;
 import org.joinmastodon.android.events.SelfUpdateStateChangedEvent;
-import org.joinmastodon.android.fragments.discover.DiscoverPostsFragment;
 import org.joinmastodon.android.fragments.discover.FederatedTimelineFragment;
 import org.joinmastodon.android.fragments.discover.LocalTimelineFragment;
 import org.joinmastodon.android.model.Announcement;
+import org.joinmastodon.android.model.Hashtag;
+import org.joinmastodon.android.model.HeaderPaginationList;
+import org.joinmastodon.android.model.ListTimeline;
 import org.joinmastodon.android.ui.SimpleViewHolder;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.updater.GithubSelfUpdater;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import me.grishka.appkit.Nav;
 import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
-import me.grishka.appkit.fragments.AppKitFragment;
 import me.grishka.appkit.fragments.BaseRecyclerFragment;
 import me.grishka.appkit.fragments.OnBackPressedListener;
 import me.grishka.appkit.utils.CubicBezierInterpolator;
@@ -72,6 +79,8 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
     private Button switcher;
     private PopupMenu switcherPopup;
     private Drawable chevron;
+    private final Map<Integer, ListTimeline> listItems = new HashMap<>();
+    private final Map<Integer, Hashtag> hashtagsItems = new HashMap<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -143,6 +152,30 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
             E.register(this);
             updateUpdateState(GithubSelfUpdater.getInstance().getState());
         }
+
+        new GetLists().setCallback(new Callback<>() {
+            @Override
+            public void onSuccess(List<ListTimeline> lists) {
+                addListsToSwitcher(lists);
+            }
+
+            @Override
+            public void onError(ErrorResponse error) {
+                error.showToast(getContext());
+            }
+        }).exec(accountID);
+
+        new GetFollowedHashtags().setCallback(new Callback<>() {
+            @Override
+            public void onSuccess(HeaderPaginationList<Hashtag> hashtags) {
+                addHashtagsToSwitcher(hashtags);
+            }
+
+            @Override
+            public void onError(ErrorResponse error) {
+                error.showToast(getContext());
+            }
+        }).exec(accountID);
     }
 
     public void updateToolbarLogo(){
@@ -208,7 +241,10 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
         switcherPopup.inflate(R.menu.home_switcher);
         switcherPopup.setOnMenuItemClickListener(this::onSwitcherItemSelected);
         UiUtils.enablePopupMenuIcons(getContext(), switcherPopup);
-        switcher.setOnClickListener(v->switcherPopup.show());
+        switcher.setOnClickListener(v->{
+            updateSwitcherMenu();
+            switcherPopup.show();
+        });
         switcher.setOnTouchListener(switcherPopup.getDragToOpenListener());
         toolbar.setContentInsetsAbsolute(0, toolbar.getContentInsetRight());
         toolbar.addView(switcher);
@@ -227,26 +263,29 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
         }).exec(accountID);
     }
 
-    private boolean onSwitcherItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.home) navigateTo(0);
-        else if (item.getItemId() == R.id.local) navigateTo(1);
-        else if (item.getItemId() == R.id.federated) navigateTo(2);
-        return false;
+    private void addListsToSwitcher(List<ListTimeline> lists) {
+        if (lists.size() == 0) return;
+        for (int i = 0; i < lists.size(); i++) {
+            ListTimeline list = lists.get(i);
+            int id = View.generateViewId();
+            listItems.put(id, list);
+        }
+        updateSwitcherMenu();
     }
 
-    private void navigateTo(int i) {
-        pager.setCurrentItem(i);
-        updateSwitcherIcon(i);
+    private void addHashtagsToSwitcher(List<Hashtag> hashtags) {
+        if (hashtags.size() == 0) return;
+        for (int i = 0; i < hashtags.size(); i++) {
+            Hashtag tag = hashtags.get(i);
+            int id = View.generateViewId();
+            hashtagsItems.put(id, tag);
+        }
+        updateSwitcherMenu();
     }
 
-    private void updateSwitcherIcon(int i) {
-        Drawable d = getActivity().getDrawable(switch (i) {
-            default -> R.drawable.ic_fluent_home_24_regular;
-            case 1 -> R.drawable.ic_fluent_people_community_24_regular;
-            case 2 -> R.drawable.ic_fluent_earth_24_regular;
-        });
-        switcher.setCompoundDrawablesWithIntrinsicBounds(d, null, chevron, null);
-
+    private void updateSwitcherMenu() {
+        Context context = getContext();
+        int i = pager.getCurrentItem();
         MenuItem home = switcherPopup.getMenu().findItem(R.id.home);
         MenuItem local = switcherPopup.getMenu().findItem(R.id.local);
         MenuItem federated = switcherPopup.getMenu().findItem(R.id.federated);
@@ -273,9 +312,74 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
             selectedItem.setEnabled(false);
         }
 
-        UiUtils.insetPopupMenuIcon(getContext(), home);
-        UiUtils.insetPopupMenuIcon(getContext(), local);
-        UiUtils.insetPopupMenuIcon(getContext(), federated);
+        if (!listItems.isEmpty()) {
+            MenuItem listsItem = switcherPopup.getMenu().findItem(R.id.lists);
+            listsItem.setVisible(true);
+            SubMenu listsMenu = listsItem.getSubMenu();
+            listsMenu.clear();
+            listItems.forEach((id, list) -> {
+                MenuItem item = listsMenu.add(Menu.NONE, id, Menu.NONE, list.title);
+                item.setIcon(R.drawable.ic_fluent_people_list_24_regular);
+                UiUtils.insetPopupMenuIcon(context, item);
+            });
+        }
+
+        if (!hashtagsItems.isEmpty()) {
+            MenuItem hashtagsItem = switcherPopup.getMenu().findItem(R.id.followed_hashtags);
+            hashtagsItem.setVisible(true);
+            SubMenu hashtagsMenu = hashtagsItem.getSubMenu();
+            hashtagsMenu.clear();
+            hashtagsItems.forEach((id, hashtag) -> {
+                MenuItem item = hashtagsMenu.add(Menu.NONE, id, Menu.NONE, hashtag.name);
+                item.setIcon(R.drawable.ic_fluent_number_symbol_24_regular);
+                UiUtils.insetPopupMenuIcon(context, item);
+            });
+        }
+
+        UiUtils.insetPopupMenuIcon(context, home);
+        UiUtils.insetPopupMenuIcon(context, local);
+        UiUtils.insetPopupMenuIcon(context, federated);
+    }
+
+    private boolean onSwitcherItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        ListTimeline list;
+        Hashtag hashtag;
+        if (id == R.id.home) {
+            navigateTo(0);
+            return true;
+        } else if (id == R.id.local) {
+            navigateTo(1);
+            return true;
+        } else if (id == R.id.federated) {
+            navigateTo(2);
+            return true;
+        } else if ((list = listItems.get(id)) != null) {
+            Bundle args = new Bundle();
+            args.putString("account", accountID);
+            args.putString("listID", list.id);
+            args.putString("listTitle", list.title);
+            args.putInt("repliesPolicy", list.repliesPolicy.ordinal());
+            Nav.go(getActivity(), ListTimelineFragment.class, args);
+        } else if ((hashtag = hashtagsItems.get(id)) != null) {
+            UiUtils.openHashtagTimeline(getActivity(), accountID, hashtag.name, hashtag.following);
+        }
+        return false;
+    }
+
+    private void navigateTo(int i) {
+        pager.setCurrentItem(i);
+        updateSwitcherIcon(i);
+    }
+
+    private void updateSwitcherIcon(int i) {
+        Context context = getContext();
+        Drawable d = getActivity().getDrawable(switch (i) {
+            default -> R.drawable.ic_fluent_home_24_regular;
+            case 1 -> R.drawable.ic_fluent_people_community_24_regular;
+            case 2 -> R.drawable.ic_fluent_earth_24_regular;
+        });
+        switcher.setCompoundDrawablesWithIntrinsicBounds(d, null, chevron, null);
     }
 
     @Override
