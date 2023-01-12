@@ -9,11 +9,8 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,10 +18,12 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
@@ -68,17 +67,17 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 
 	private String accountID;
 	private MenuItem announcements;
-	private ImageView toolbarLogo;
+//	private ImageView toolbarLogo;
 	private Button toolbarShowNewPostsBtn;
 	private boolean newPostsBtnShown;
 	private AnimatorSet currentNewPostsAnim;
-	private FrameLayout view;
 	private ViewPager2 pager;
 	private final List<Fragment> fragments = new ArrayList<>();
 	private final List<FrameLayout> tabViews = new ArrayList<>();
-	private Button switcher;
+	private FrameLayout toolbarFrame;
+	private ImageView timelineIcon;
+	private TextView timelineTitle;
 	private PopupMenu switcherPopup;
-	private Drawable chevron;
 	private final Map<Integer, ListTimeline> listItems = new HashMap<>();
 	private final Map<Integer, Hashtag> hashtagsItems = new HashMap<>();
 
@@ -86,7 +85,6 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		accountID = getArguments().getString("account");
-		chevron = getActivity().getDrawable(R.drawable.ic_fluent_chevron_down_16_filled);
 	}
 
 	@Override
@@ -97,8 +95,9 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 
 	@Override
 	public View onCreateContentView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-		view = new FrameLayout(getContext());
+		FrameLayout view = new FrameLayout(getContext());
 		pager = new ViewPager2(getContext());
+		toolbarFrame = (FrameLayout) LayoutInflater.from(getContext()).inflate(R.layout.home_toolbar, getToolbar(), false);
 
 		if (fragments.size() == 0) {
 			Bundle args = new Bundle();
@@ -140,6 +139,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			public void onPageSelected(int position){
 				updateSwitcherIcon(position);
 				if (position==0) return;
+				hideNewPostsButton();
 				if (fragments.get(position) instanceof BaseRecyclerFragment<?> page){
 					if(!page.loaded && !page.isDataLoading()) page.loadData();
 				}
@@ -179,54 +179,45 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 	}
 
 	public void updateToolbarLogo(){
-		Toolbar toolbar=getToolbar();
-
-		if (toolbar.getChildCount() > 2) {
-			return;
-			// so that home, local and federated timelines don't invoke this 3 times
-			// and add the logo 3 times via onConfigurationChanged
-		}
-
-		updateSwitcherIcon(pager.getCurrentItem());
+		Toolbar toolbar = getToolbar();
+		ViewParent parentView = toolbarFrame.getParent();
+		if (parentView == toolbar) return;
+		if (parentView instanceof Toolbar parentToolbar) parentToolbar.removeView(toolbarFrame);
+		toolbar.addView(toolbarFrame, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 		toolbar.setOnClickListener(v->scrollToTop());
 		toolbar.setNavigationContentDescription(R.string.back);
+		toolbar.setContentInsetsAbsolute(0, toolbar.getContentInsetRight());
 
-		toolbarLogo=new ImageView(getActivity());
-		toolbarLogo.setScaleType(ImageView.ScaleType.CENTER);
-		toolbarLogo.setImageResource(R.drawable.logo);
-		toolbarLogo.setImageTintList(ColorStateList.valueOf(UiUtils.getThemeColor(getActivity(), android.R.attr.textColorPrimary)));
+		updateSwitcherIcon(pager.getCurrentItem());
 
-		toolbarShowNewPostsBtn=new Button(getActivity());
-		toolbarShowNewPostsBtn.setTextAppearance(R.style.m3_title_medium);
-		toolbarShowNewPostsBtn.setTextColor(0xffffffff);
-		toolbarShowNewPostsBtn.setStateListAnimator(null);
-		toolbarShowNewPostsBtn.setBackgroundResource(R.drawable.bg_button_new_posts);
-		toolbarShowNewPostsBtn.setText(R.string.see_new_posts);
-		toolbarShowNewPostsBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_fluent_arrow_up_16_filled, 0, 0, 0);
+//		toolbarLogo=new ImageView(getActivity());
+//		toolbarLogo.setScaleType(ImageView.ScaleType.CENTER);
+//		toolbarLogo.setImageResource(R.drawable.logo);
+//		toolbarLogo.setImageTintList(ColorStateList.valueOf(UiUtils.getThemeColor(getActivity(), android.R.attr.textColorPrimary)));
+
+		toolbarShowNewPostsBtn=toolbarFrame.findViewById(R.id.show_new_posts_btn);
 		toolbarShowNewPostsBtn.setCompoundDrawableTintList(toolbarShowNewPostsBtn.getTextColors());
-		toolbarShowNewPostsBtn.setCompoundDrawablePadding(V.dp(8));
-		if(Build.VERSION.SDK_INT<Build.VERSION_CODES.N)
-			UiUtils.fixCompoundDrawableTintOnAndroid6(toolbarShowNewPostsBtn);
+		if(Build.VERSION.SDK_INT<Build.VERSION_CODES.N) UiUtils.fixCompoundDrawableTintOnAndroid6(toolbarShowNewPostsBtn);
 		toolbarShowNewPostsBtn.setOnClickListener(this::onNewPostsBtnClick);
+
+		toolbar.post(() -> {
+			// toolbar frame goes from screen edge to beginning of right-aligned option buttons.
+			// centering button by applying the same space on the left
+			int padding = toolbar.getWidth() - toolbarFrame.getWidth();
+			((FrameLayout) toolbarShowNewPostsBtn.getParent()).setPadding(padding, 0, 0, 0);
+		});
 
 		if(newPostsBtnShown){
 			toolbarShowNewPostsBtn.setVisibility(View.VISIBLE);
-			toolbarLogo.setVisibility(View.GONE);
-			toolbarLogo.setAlpha(0f);
+			timelineTitle.setVisibility(View.GONE);
+			timelineTitle.setAlpha(0f);
 		}else{
 			toolbarShowNewPostsBtn.setVisibility(View.INVISIBLE);
 			toolbarShowNewPostsBtn.setAlpha(0f);
 			toolbarShowNewPostsBtn.setScaleX(.8f);
 			toolbarShowNewPostsBtn.setScaleY(.8f);
-			toolbarLogo.setVisibility(View.GONE);
+			timelineTitle.setVisibility(View.VISIBLE);
 		}
-
-		FrameLayout logoWrap=new FrameLayout(getActivity());
-		FrameLayout.LayoutParams logoParams=new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
-		logoParams.setMargins(0, V.dp(2), 0, 0);
-		logoWrap.addView(toolbarLogo, logoParams);
-		logoWrap.addView(toolbarShowNewPostsBtn, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, V.dp(32), Gravity.CENTER));
-		toolbar.addView(logoWrap, new Toolbar.LayoutParams(Gravity.CENTER));
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -235,8 +226,9 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 		inflater.inflate(R.menu.home, menu);
 		announcements = menu.findItem(R.id.announcements);
 
-		Toolbar toolbar = getToolbar();
-		switcher = (Button) LayoutInflater.from(getContext()).inflate(R.layout.home_switcher, toolbar, false);
+		timelineIcon = toolbarFrame.findViewById(R.id.timeline_icon);
+		timelineTitle = toolbarFrame.findViewById(R.id.timeline_title);
+		View switcher = toolbarFrame.findViewById(R.id.switcher_btn);
 		switcherPopup = new PopupMenu(getContext(), switcher);
 		switcherPopup.inflate(R.menu.home_switcher);
 		switcherPopup.setOnMenuItemClickListener(this::onSwitcherItemSelected);
@@ -245,9 +237,11 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			updateSwitcherMenu();
 			switcherPopup.show();
 		});
-		switcher.setOnTouchListener(switcherPopup.getDragToOpenListener());
-		toolbar.setContentInsetsAbsolute(0, toolbar.getContentInsetRight());
-		toolbar.addView(switcher);
+		View.OnTouchListener listener = switcherPopup.getDragToOpenListener();
+		switcher.setOnTouchListener((v, m)-> {
+			updateSwitcherMenu();
+			return listener.onTouch(v, m);
+		});
 
 		new GetAnnouncements(false).setCallback(new Callback<>() {
 			@Override
@@ -295,12 +289,6 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 		home.setEnabled(true);
 		local.setEnabled(true);
 		federated.setEnabled(true);
-
-		setTitle(switch (i) {
-			default -> R.string.home_timeline;
-			case 1 -> R.string.local_timeline;
-			case 2 -> R.string.sk_federated_timeline;
-		});
 
 		MenuItem selectedItem = switch (i) {
 			case 0 -> home;
@@ -379,13 +367,16 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 	}
 
 	private void updateSwitcherIcon(int i) {
-		Context context = getContext();
-		Drawable d = getActivity().getDrawable(switch (i) {
+		timelineIcon.setImageResource(switch (i) {
 			default -> R.drawable.ic_fluent_home_24_regular;
 			case 1 -> R.drawable.ic_fluent_people_community_24_regular;
 			case 2 -> R.drawable.ic_fluent_earth_24_regular;
 		});
-		switcher.setCompoundDrawablesWithIntrinsicBounds(d, null, chevron, null);
+		timelineTitle.setText(switch (i) {
+			default -> R.string.sk_timeline_home;
+			case 1 -> R.string.sk_timeline_local;
+			case 2 -> R.string.sk_timeline_federated;
+		});
 	}
 
 	@Override
@@ -411,10 +402,12 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 		if(currentNewPostsAnim!=null){
 			currentNewPostsAnim.cancel();
 		}
-		toolbarLogo.setVisibility(View.VISIBLE);
+		timelineTitle.setVisibility(View.VISIBLE);
 		AnimatorSet set=new AnimatorSet();
 		set.playTogether(
-				ObjectAnimator.ofFloat(toolbarLogo, View.ALPHA, 1f),
+				ObjectAnimator.ofFloat(timelineTitle, View.ALPHA, 1f),
+				ObjectAnimator.ofFloat(timelineTitle, View.SCALE_X, 1f),
+				ObjectAnimator.ofFloat(timelineTitle, View.SCALE_Y, 1f),
 				ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.ALPHA, 0f),
 				ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.SCALE_X, .8f),
 				ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.SCALE_Y, .8f)
@@ -442,7 +435,9 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 		toolbarShowNewPostsBtn.setVisibility(View.VISIBLE);
 		AnimatorSet set=new AnimatorSet();
 		set.playTogether(
-				ObjectAnimator.ofFloat(toolbarLogo, View.ALPHA, 0f),
+				ObjectAnimator.ofFloat(timelineTitle, View.ALPHA, 0f),
+				ObjectAnimator.ofFloat(timelineTitle, View.SCALE_X, .8f),
+				ObjectAnimator.ofFloat(timelineTitle, View.SCALE_Y, .8f),
 				ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.ALPHA, 1f),
 				ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.SCALE_X, 1f),
 				ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.SCALE_Y, 1f)
@@ -452,7 +447,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 		set.addListener(new AnimatorListenerAdapter(){
 			@Override
 			public void onAnimationEnd(Animator animation){
-				toolbarLogo.setVisibility(View.INVISIBLE);
+				timelineTitle.setVisibility(View.GONE);
 				currentNewPostsAnim=null;
 			}
 		});

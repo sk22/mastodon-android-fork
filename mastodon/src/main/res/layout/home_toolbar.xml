@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/switcher_btn"
+        android:background="?android:selectableItemBackgroundBorderless"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical">
+        <ImageView
+            android:id="@+id/timeline_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/ic_fluent_home_24_regular" />
+        <TextView
+            android:id="@+id/timeline_title"
+            style="?android:attr/titleTextAppearance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="8dp" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_fluent_chevron_down_16_filled"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="8dp" />
+    </LinearLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <Button
+            android:id="@+id/show_new_posts_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/m3_title_medium"
+            android:text="@string/see_new_posts"
+            android:background="@drawable/bg_button_new_posts"
+            android:drawableStart="@drawable/ic_fluent_arrow_up_16_filled"
+            android:drawablePadding="8dp"
+            android:layout_gravity="center" />
+    </FrameLayout>
+</FrameLayout>

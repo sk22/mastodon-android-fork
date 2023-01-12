@@ -140,4 +140,7 @@
     <string name="sk_delete_list_confirm">Are you sure you want to delete this list?</string>
     <string name="sk_edit_list_title">Edit list</string>
     <string name="sk_your_lists">Your lists</string>
+    <string name="sk_timeline_home">Home</string>
+    <string name="sk_timeline_local">Local</string>
+    <string name="sk_timeline_federated">Federation</string>
 </resources>
