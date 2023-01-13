@@ -239,6 +239,7 @@ public class HomeTimelineFragment extends FabStatusListFragment {
 			currentRequest=null;
 			dataLoading=false;
 		}
+		if (parent != null) parent.hideNewPostsButton();
 		super.onRefresh();
 	}
 
