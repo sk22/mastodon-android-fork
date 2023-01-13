@@ -37,9 +37,10 @@
         <Button
             android:id="@+id/show_new_posts_btn"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="32sp"
             android:textAppearance="@style/m3_title_medium"
             android:text="@string/see_new_posts"
+            android:textColor="@color/gray_25"
             android:background="@drawable/bg_button_new_posts"
             android:drawableStart="@drawable/ic_fluent_arrow_up_16_filled"
             android:drawablePadding="8dp"
