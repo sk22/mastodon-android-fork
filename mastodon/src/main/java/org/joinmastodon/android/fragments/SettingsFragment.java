@@ -400,6 +400,7 @@ public class SettingsFragment extends MastodonToolbarFragment{
 			lp.windowAnimations=R.style.window_fade_out;
 			MastodonApp.context.getSystemService(WindowManager.class).addView(themeTransitionWindowView, lp);
 		}
+		needAppRestart = true; // avoid issues with corrupted, not correctly inset HomeTabFragment
 		getActivity().recreate();
 	}
 
