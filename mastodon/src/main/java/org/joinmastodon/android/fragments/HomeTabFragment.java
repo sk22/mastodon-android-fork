@@ -107,7 +107,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 
 			fragments.add(new HomeTimelineFragment());
 			fragments.add(new LocalTimelineFragment());
-			fragments.add(new FederatedTimelineFragment());
+			if (GlobalUserPreferences.showFederatedTimeline) fragments.add(new FederatedTimelineFragment());
 
 			FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
 			for (int i = 0; i < fragments.size(); i++) {
@@ -285,16 +285,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 
 	private void updateSwitcherMenu() {
 		Context context = getContext();
-		int i = pager.getCurrentItem();
-		MenuItem home = switcherPopup.getMenu().findItem(R.id.home);
-		MenuItem local = switcherPopup.getMenu().findItem(R.id.local);
-		MenuItem federated = switcherPopup.getMenu().findItem(R.id.federated);
-		home.setIcon(R.drawable.ic_fluent_home_24_regular);
-		local.setIcon(R.drawable.ic_fluent_people_community_24_regular);
-		federated.setIcon(R.drawable.ic_fluent_earth_24_regular);
-		home.setEnabled(true);
-		local.setEnabled(true);
-		federated.setEnabled(true);
+		switcherPopup.getMenu().findItem(R.id.federated).setVisible(GlobalUserPreferences.showFederatedTimeline);
 
 		if (!listItems.isEmpty()) {
 			MenuItem listsItem = switcherPopup.getMenu().findItem(R.id.lists);
@@ -319,10 +310,6 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 				UiUtils.insetPopupMenuIcon(context, item);
 			});
 		}
-
-		UiUtils.insetPopupMenuIcon(context, home);
-		UiUtils.insetPopupMenuIcon(context, local);
-		UiUtils.insetPopupMenuIcon(context, federated);
 	}
 
 	private boolean onSwitcherItemSelected(MenuItem item) {
