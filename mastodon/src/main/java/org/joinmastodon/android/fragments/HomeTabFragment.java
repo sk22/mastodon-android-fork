@@ -76,6 +76,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 	private final List<FrameLayout> tabViews = new ArrayList<>();
 	private FrameLayout toolbarFrame;
 	private ImageView timelineIcon;
+	private ImageView collapsedChevron;
 	private TextView timelineTitle;
 	private PopupMenu switcherPopup;
 	private final Map<Integer, ListTimeline> listItems = new HashMap<>();
@@ -127,9 +128,28 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 		return view;
 	}
 
+	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState){
 		super.onViewCreated(view, savedInstanceState);
+
+		timelineIcon = toolbarFrame.findViewById(R.id.timeline_icon);
+		timelineTitle = toolbarFrame.findViewById(R.id.timeline_title);
+		collapsedChevron = toolbarFrame.findViewById(R.id.collapsed_chevron);
+		View switcher = toolbarFrame.findViewById(R.id.switcher_btn);
+		switcherPopup = new PopupMenu(getContext(), switcher);
+		switcherPopup.inflate(R.menu.home_switcher);
+		switcherPopup.setOnMenuItemClickListener(this::onSwitcherItemSelected);
+		UiUtils.enablePopupMenuIcons(getContext(), switcherPopup);
+		switcher.setOnClickListener(v->{
+			updateSwitcherMenu();
+			switcherPopup.show();
+		});
+		View.OnTouchListener listener = switcherPopup.getDragToOpenListener();
+		switcher.setOnTouchListener((v, m)-> {
+			updateSwitcherMenu();
+			return listener.onTouch(v, m);
+		});
 
 		UiUtils.reduceSwipeSensitivity(pager);
 		pager.setUserInputEnabled(!GlobalUserPreferences.disableSwipe);
@@ -209,39 +229,25 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 
 		if(newPostsBtnShown){
 			toolbarShowNewPostsBtn.setVisibility(View.VISIBLE);
+			collapsedChevron.setVisibility(View.VISIBLE);
+			collapsedChevron.setAlpha(1f);
 			timelineTitle.setVisibility(View.GONE);
 			timelineTitle.setAlpha(0f);
 		}else{
 			toolbarShowNewPostsBtn.setVisibility(View.INVISIBLE);
 			toolbarShowNewPostsBtn.setAlpha(0f);
+			collapsedChevron.setVisibility(View.GONE);
+			collapsedChevron.setAlpha(0f);
 			toolbarShowNewPostsBtn.setScaleX(.8f);
 			toolbarShowNewPostsBtn.setScaleY(.8f);
 			timelineTitle.setVisibility(View.VISIBLE);
 		}
 	}
 
-	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
 		inflater.inflate(R.menu.home, menu);
 		announcements = menu.findItem(R.id.announcements);
-
-		timelineIcon = toolbarFrame.findViewById(R.id.timeline_icon);
-		timelineTitle = toolbarFrame.findViewById(R.id.timeline_title);
-		View switcher = toolbarFrame.findViewById(R.id.switcher_btn);
-		switcherPopup = new PopupMenu(getContext(), switcher);
-		switcherPopup.inflate(R.menu.home_switcher);
-		switcherPopup.setOnMenuItemClickListener(this::onSwitcherItemSelected);
-		UiUtils.enablePopupMenuIcons(getContext(), switcherPopup);
-		switcher.setOnClickListener(v->{
-			updateSwitcherMenu();
-			switcherPopup.show();
-		});
-		View.OnTouchListener listener = switcherPopup.getDragToOpenListener();
-		switcher.setOnTouchListener((v, m)-> {
-			updateSwitcherMenu();
-			return listener.onTouch(v, m);
-		});
 
 		new GetAnnouncements(false).setCallback(new Callback<>() {
 			@Override
@@ -394,14 +400,18 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 				ObjectAnimator.ofFloat(timelineTitle, View.SCALE_Y, 1f),
 				ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.ALPHA, 0f),
 				ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.SCALE_X, .8f),
-				ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.SCALE_Y, .8f)
+				ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.SCALE_Y, .8f),
+				ObjectAnimator.ofFloat(collapsedChevron, View.ALPHA, 0f),
+				ObjectAnimator.ofFloat(collapsedChevron, View.SCALE_X, .8f),
+				ObjectAnimator.ofFloat(collapsedChevron, View.SCALE_Y, .8f)
 		);
-		set.setDuration(300);
+		set.setDuration(GlobalUserPreferences.reduceMotion ? 0 : 300);
 		set.setInterpolator(CubicBezierInterpolator.DEFAULT);
 		set.addListener(new AnimatorListenerAdapter(){
 			@Override
 			public void onAnimationEnd(Animator animation){
 				toolbarShowNewPostsBtn.setVisibility(View.INVISIBLE);
+				collapsedChevron.setVisibility(View.GONE);
 				currentNewPostsAnim=null;
 			}
 		});
@@ -417,6 +427,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			currentNewPostsAnim.cancel();
 		}
 		toolbarShowNewPostsBtn.setVisibility(View.VISIBLE);
+		collapsedChevron.setVisibility(View.VISIBLE);
 		AnimatorSet set=new AnimatorSet();
 		set.playTogether(
 				ObjectAnimator.ofFloat(timelineTitle, View.ALPHA, 0f),
@@ -424,9 +435,12 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 				ObjectAnimator.ofFloat(timelineTitle, View.SCALE_Y, .8f),
 				ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.ALPHA, 1f),
 				ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.SCALE_X, 1f),
-				ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.SCALE_Y, 1f)
+				ObjectAnimator.ofFloat(toolbarShowNewPostsBtn, View.SCALE_Y, 1f),
+				ObjectAnimator.ofFloat(collapsedChevron, View.ALPHA, 1f),
+				ObjectAnimator.ofFloat(collapsedChevron, View.SCALE_X, 1f),
+				ObjectAnimator.ofFloat(collapsedChevron, View.SCALE_Y, 1f)
 		);
-		set.setDuration(300);
+		set.setDuration(GlobalUserPreferences.reduceMotion ? 0 : 300);
 		set.setInterpolator(CubicBezierInterpolator.DEFAULT);
 		set.addListener(new AnimatorListenerAdapter(){
 			@Override
