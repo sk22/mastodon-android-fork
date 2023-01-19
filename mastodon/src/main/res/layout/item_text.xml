@@ -26,6 +26,17 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:visibility="gone"
-        android:paddingRight="16dp"/>
+        android:paddingHorizontal="8dp"
+        tools:ignore="RtlSymmetry" />
+
+    <ImageView
+        android:id="@+id/dragger_thingy"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:scaleType="center"
+        android:tint="?colorDarkIcon"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_fluent_re_order_dots_vertical_24_regular"
+        android:visibility="gone" />
 
 </LinearLayout>

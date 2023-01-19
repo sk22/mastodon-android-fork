@@ -154,4 +154,5 @@
     <string name="sk_publish_anyway">Publish anyway</string>
     <string name="sk_settings_disable_alt_text_reminder">Disable alt text reminder</string>
     <string name="sk_notify_posts_info_banner">If you enable post notifications for some people, their new posts will appear here.</string>
+    <string name="sk_timelines">Timelines</string>
 </resources>

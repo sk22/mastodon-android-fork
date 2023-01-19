@@ -10,4 +10,5 @@
     <item android:id="@+id/followed_hashtags" android:icon="@drawable/ic_fluent_number_symbol_24_regular" android:title="@string/sk_hashtags_you_follow" android:visible="false">
         <menu />
     </item>
+    <item android:id="@+id/timelines_edit" android:icon="@drawable/ic_fluent_edit_24_regular" android:title="@string/edit" />
 </menu>

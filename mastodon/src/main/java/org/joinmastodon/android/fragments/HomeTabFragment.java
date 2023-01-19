@@ -351,6 +351,8 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			return true;
 		} else if (id == R.id.post_notifications) {
 			navigateTo(showFederatedTimeline ? 3 : 2);
+		} else if (id == R.id.timelines_edit) {
+			Nav.go(getActivity(), EditTimelinesFragment.class, null);
 		} else if ((list = listItems.get(id)) != null) {
 			Bundle args = new Bundle();
 			args.putString("account", accountID);
