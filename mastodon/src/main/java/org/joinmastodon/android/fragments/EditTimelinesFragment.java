@@ -1,13 +1,15 @@
 package org.joinmastodon.android.fragments;
 
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -19,12 +21,17 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.joinmastodon.android.GlobalUserPreferences;
+import org.joinmastodon.android.MastodonApp;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.model.TimelineDefinition;
 import org.joinmastodon.android.ui.DividerItemDecoration;
+import org.joinmastodon.android.ui.utils.UiUtils;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import me.grishka.appkit.fragments.BaseRecyclerFragment;
 import me.grishka.appkit.utils.BindableViewHolder;
@@ -34,6 +41,11 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
     private TimelinesAdapter adapter;
     private final ItemTouchHelper itemTouchHelper;
     private @ColorInt int backgroundColor;
+    private Menu optionsMenu;
+    private boolean changed;
+
+    private final Map<MenuItem, TimelineDefinition> timelineByMenuItem = new HashMap<>();
+    private final Map<TimelineDefinition, MenuItem> menuItemByTimeline = new HashMap<>();
 
     public EditTimelinesFragment() {
         super(10);
@@ -46,7 +58,9 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
                     return false;
                 } else {
                     Collections.swap(data, fromPosition, toPosition);
+                    changed = true;
                     adapter.notifyItemMoved(fromPosition, toPosition);
+                    saveTimelines();
                     return true;
                 }
             }
@@ -75,7 +89,7 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(false);
+        setHasOptionsMenu(true);
         setTitle(R.string.sk_timelines);
         TypedValue outValue = new TypedValue();
         getActivity().getTheme().resolveAttribute(R.attr.colorWindowBackground, outValue, true);
@@ -99,17 +113,59 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        inflater.inflate(R.menu.menu_list, menu);
+        this.optionsMenu = menu;
+        inflater.inflate(R.menu.edit_timelines, menu);
+        SubMenu timelines = menu.findItem(R.id.add_timeline).getSubMenu();
+        timelineByMenuItem.clear();
+        menuItemByTimeline.clear();
+        TimelineDefinition.ALL_TIMELINES.forEach(tl -> {
+            if (data.contains(tl)) return;
+            MenuItem item = timelines.add(0, View.generateViewId(), Menu.NONE, tl.getTitle(getContext()));
+            item.setIcon(tl.getIconResource());
+            timelineByMenuItem.put(item, tl);
+            menuItemByTimeline.put(tl, item);
+        });
+        if (timelines.size() == 0) menu.findItem(R.id.add).getSubMenu().removeItem(R.id.add_timeline);
+        UiUtils.enableOptionsMenuIcons(getContext(), menu, R.id.add);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        TimelineDefinition tl = timelineByMenuItem.get(item);
+        if (tl == null) return false;
+        if (!removeTimelineFromOptions(tl)) return false;
+        data.add(tl);
+        changed = true;
+        adapter.notifyItemInserted(data.indexOf(tl));
+        saveTimelines();
         return true;
+    }
+
+    private boolean removeTimelineFromOptions(TimelineDefinition tl) {
+        MenuItem menuItem = menuItemByTimeline.get(tl);
+        assert menuItem != null;
+        MenuItem containingMenuItem = switch (tl.getType()) {
+            case HOME, LOCAL, FEDERATED, POST_NOTIFICATIONS -> optionsMenu.findItem(R.id.add_timeline);
+            case LIST -> optionsMenu.findItem(R.id.add_list);
+            case HASHTAG -> optionsMenu.findItem(R.id.add_hashtag);
+        };
+        Menu containingMenu = containingMenuItem.getSubMenu();
+        containingMenu.removeItem(menuItem.getItemId());
+        if (containingMenu.size() == 0) {
+            optionsMenu.findItem(R.id.add).getSubMenu().removeItem(containingMenuItem.getItemId());
+        }
+        return true;
+    }
+
+    private void saveTimelines() {
+        GlobalUserPreferences.pinnedTimelines = data;
+        GlobalUserPreferences.save();
     }
 
     @Override
     protected void doLoadData(int offset, int count){
-        onDataLoaded(List.of(new TimelineDefinition("one"), new TimelineDefinition("two"), new TimelineDefinition("three"), new TimelineDefinition("four")), false);
+        onDataLoaded(GlobalUserPreferences.pinnedTimelines, false);
+        GlobalUserPreferences.pinnedTimelines.forEach(this::removeTimelineFromOptions);
     }
 
     @Override
@@ -120,6 +176,15 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
     @Override
     public void scrollToTop() {
         smoothScrollRecyclerViewToTop(list);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (!changed) return;
+        Intent intent = Intent.makeRestartActivityTask(MastodonApp.context.getPackageManager().getLaunchIntentForPackage(MastodonApp.context.getPackageName()).getComponent());
+        MastodonApp.context.startActivity(intent);
+        Runtime.getRuntime().exit(0);
     }
 
     private class TimelinesAdapter extends RecyclerView.Adapter<TimelineViewHolder>{
@@ -143,7 +208,6 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
     private class TimelineViewHolder extends BindableViewHolder<TimelineDefinition> implements UsableRecyclerView.Clickable{
         private final TextView title;
         private final ImageView dragger;
-        protected ValueAnimator runningBackgroundAnimation;
 
         public TimelineViewHolder(){
             super(getActivity(), R.layout.item_text, list);
@@ -154,8 +218,8 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
         @SuppressLint("ClickableViewAccessibility")
         @Override
         public void onBind(TimelineDefinition item) {
-            title.setText(item.getName());
-            title.setCompoundDrawablesRelativeWithIntrinsicBounds(itemView.getContext().getDrawable(R.drawable.ic_fluent_people_list_24_regular), null, null, null);
+            title.setText(item.getTitle(getContext()));
+            title.setCompoundDrawablesRelativeWithIntrinsicBounds(itemView.getContext().getDrawable(item.getIconResource()), null, null, null);
             dragger.setVisibility(View.VISIBLE);
             itemView.setOnLongClickListener(l -> {
                 itemTouchHelper.startDrag(this);
@@ -172,8 +236,6 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
         }
 
         @Override
-        public void onClick() {
-
-        }
+        public void onClick() {}
     }
 }

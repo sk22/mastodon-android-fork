@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/home" android:icon="@drawable/ic_fluent_home_24_regular" android:title="@string/sk_timeline_home" />
-    <item android:id="@+id/local" android:icon="@drawable/ic_fluent_people_community_24_regular" android:title="@string/sk_timeline_local" />
-    <item android:id="@+id/federated" android:icon="@drawable/ic_fluent_earth_24_regular" android:title="@string/sk_timeline_federated" />
-    <item android:id="@+id/post_notifications" android:icon="@drawable/ic_fluent_alert_24_regular" android:title="@string/sk_notify_posts" />
     <item android:id="@+id/lists" android:icon="@drawable/ic_fluent_people_list_24_regular" android:title="@string/sk_list_timelines" android:visible="false">
         <menu />
     </item>

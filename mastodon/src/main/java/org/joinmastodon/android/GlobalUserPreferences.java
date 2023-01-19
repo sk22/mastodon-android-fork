@@ -8,6 +8,8 @@ import android.content.SharedPreferences;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
+import org.joinmastodon.android.model.TimelineDefinition;
+
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
@@ -37,13 +39,16 @@ public class GlobalUserPreferences{
 	public static ColorPreference color;
 
 	private final static Type recentLanguagesType = new TypeToken<Map<String, List<String>>>() {}.getType();
+	private final static Type pinnedTimelinesType = new TypeToken<List<TimelineDefinition>>() {}.getType();
 	public static Map<String, List<String>> recentLanguages;
+	public static List<TimelineDefinition> pinnedTimelines;
 
 	private static SharedPreferences getPrefs(){
 		return MastodonApp.context.getSharedPreferences("global", Context.MODE_PRIVATE);
 	}
 
 	private static <T> T fromJson(String json, Type type, T orElse) {
+		if (json == null) return orElse;
 		try { return gson.fromJson(json, type); }
 		catch (JsonSyntaxException ignored) { return orElse; }
 	}
@@ -70,7 +75,8 @@ public class GlobalUserPreferences{
 		disableAltTextReminder=prefs.getBoolean("disableAltTextReminder", false);
 		publishButtonText=prefs.getString("publishButtonText", "");
 		theme=ThemePreference.values()[prefs.getInt("theme", 0)];
-		recentLanguages=fromJson(prefs.getString("recentLanguages", "{}"), recentLanguagesType, new HashMap<>());
+		recentLanguages=fromJson(prefs.getString("recentLanguages", null), recentLanguagesType, new HashMap<>());
+		pinnedTimelines=fromJson(prefs.getString("pinnedTimelines", null), pinnedTimelinesType, TimelineDefinition.DEFAULT_TIMELINES);
 
 		try {
 			color=ColorPreference.valueOf(prefs.getString("color", ColorPreference.PINK.name()));
@@ -103,6 +109,7 @@ public class GlobalUserPreferences{
 				.putInt("theme", theme.ordinal())
 				.putString("color", color.name())
 				.putString("recentLanguages", gson.toJson(recentLanguages))
+				.putString("pinnedTimelines", gson.toJson(pinnedTimelines))
 				.apply();
 	}
 

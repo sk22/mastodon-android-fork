@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.lists.CreateList;
+import org.joinmastodon.android.api.requests.lists.GetList;
 import org.joinmastodon.android.api.requests.lists.UpdateList;
 import org.joinmastodon.android.api.requests.timelines.GetListTimeline;
 import org.joinmastodon.android.model.ListTimeline;
@@ -48,6 +49,20 @@ public class ListTimelineFragment extends StatusListFragment {
 
         setTitle(listTitle);
         setHasOptionsMenu(true);
+
+        new GetList(listID).setCallback(new Callback<>() {
+            @Override
+            public void onSuccess(ListTimeline listTimeline) {
+                // TODO: save updated info
+                if (!listTimeline.title.equals(listTitle)) setTitle(listTimeline.title);
+                if (!listTimeline.repliesPolicy.equals(repliesPolicy)) repliesPolicy = listTimeline.repliesPolicy;
+            }
+
+            @Override
+            public void onError(ErrorResponse error) {
+                error.showToast(getContext());
+            }
+        });
     }
 
     @Override

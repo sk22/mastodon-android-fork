@@ -155,4 +155,9 @@
     <string name="sk_settings_disable_alt_text_reminder">Disable alt text reminder</string>
     <string name="sk_notify_posts_info_banner">If you enable post notifications for some people, their new posts will appear here.</string>
     <string name="sk_timelines">Timelines</string>
+    <string name="sk_timeline_posts">Posts</string>
+    <string name="sk_timelines_add">Add</string>
+    <string name="sk_timeline">Timeline</string>
+    <string name="sk_list">List</string>
+    <string name="sk_hashtag">Hashtag</string>
 </resources>

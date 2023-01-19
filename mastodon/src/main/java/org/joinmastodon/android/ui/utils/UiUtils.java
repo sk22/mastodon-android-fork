@@ -35,6 +35,7 @@ import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -775,8 +776,7 @@ public class UiUtils{
 	public static void enableOptionsMenuIcons(Context context, Menu menu, @IdRes int... asAction) {
 		if(menu.getClass().getSimpleName().equals("MenuBuilder")){
 			try {
-				Method m = menu.getClass().getDeclaredMethod(
-						"setOptionalIconsVisible", Boolean.TYPE);
+				Method m = menu.getClass().getDeclaredMethod("setOptionalIconsVisible", Boolean.TYPE);
 				m.setAccessible(true);
 				m.invoke(menu, true);
 				enableMenuIcons(context, menu, asAction);
@@ -789,6 +789,8 @@ public class UiUtils{
 		ColorStateList iconTint=ColorStateList.valueOf(UiUtils.getThemeColor(context, android.R.attr.textColorSecondary));
 		for(int i=0;i<m.size();i++){
 			MenuItem item=m.getItem(i);
+			SubMenu subMenu = item.getSubMenu();
+			if (subMenu != null) enableMenuIcons(context, subMenu, exclude);
 			if (item.getIcon() == null || Arrays.stream(exclude).anyMatch(id -> id == item.getItemId())) continue;
 			insetPopupMenuIcon(item, iconTint);
 		}

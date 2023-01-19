@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/add" android:title="@string/sk_timelines_add" android:icon="@drawable/ic_fluent_add_24_regular" android:showAsAction="always">
+        <menu>
+            <item android:id="@+id/add_timeline" android:title="@string/sk_timeline" android:icon="@drawable/ic_fluent_timeline_24_regular"><menu /></item>
+            <item android:id="@+id/add_list" android:title="@string/sk_list" android:icon="@drawable/ic_fluent_people_list_24_regular"><menu /></item>
+            <item android:id="@+id/add_hashtag" android:title="@string/sk_hashtag" android:icon="@drawable/ic_fluent_number_symbol_24_regular"><menu /></item>
+        </menu>
+    </item>
+</menu>
