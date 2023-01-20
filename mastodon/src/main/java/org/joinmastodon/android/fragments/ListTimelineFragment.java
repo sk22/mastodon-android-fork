@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
-import org.joinmastodon.android.api.requests.lists.CreateList;
 import org.joinmastodon.android.api.requests.lists.GetList;
 import org.joinmastodon.android.api.requests.lists.UpdateList;
 import org.joinmastodon.android.api.requests.timelines.GetListTimeline;
@@ -83,7 +82,7 @@ public class ListTimelineFragment extends StatusListFragment {
         inflater.inflate(R.menu.list, menu);
         optionsMenu = menu;
         UiUtils.enableOptionsMenuIcons(getContext(), menu, R.id.pin);
-        updatePinnedState();
+        updatePinButton();
     }
 
     @Override
@@ -131,7 +130,7 @@ public class ListTimelineFragment extends StatusListFragment {
             Toast.makeText(getContext(), hasList ? R.string.sk_unpinned_timeline : R.string.sk_pinned_timeline, Toast.LENGTH_SHORT).show();
             GlobalUserPreferences.pinnedTimelines.put(accountID, pinnedTimelines);
             GlobalUserPreferences.save();
-            updatePinnedState();
+            updatePinButton();
         }
         return true;
     }
@@ -149,10 +148,12 @@ public class ListTimelineFragment extends StatusListFragment {
         return pinnedTimelines.contains(TimelineDefinition.ofList(listID, listTitle));
     }
 
-    private void updatePinnedState() {
-        optionsMenu.findItem(R.id.pin).setIcon(hasList() ?
-                R.drawable.ic_fluent_pin_off_24_regular :
+    private void updatePinButton() {
+        MenuItem pin = optionsMenu.findItem(R.id.pin);
+        pin.setIcon(hasList() ?
+                R.drawable.ic_fluent_pin_24_filled :
                 R.drawable.ic_fluent_pin_24_regular);
+        pin.setTitle(hasList() ? R.string.sk_unpin_timeline : R.string.sk_pin_timeline);
     }
 
     @Override
