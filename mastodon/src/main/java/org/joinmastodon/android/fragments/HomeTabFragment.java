@@ -154,7 +154,6 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 		collapsedChevron = toolbarFrame.findViewById(R.id.collapsed_chevron);
 		switcher = toolbarFrame.findViewById(R.id.switcher_btn);
 		switcherPopup = new PopupMenu(getContext(), switcher);
-		switcherPopup.inflate(R.menu.home_switcher);
 		switcherPopup.setOnMenuItemClickListener(this::onSwitcherItemSelected);
 		UiUtils.enablePopupMenuIcons(getContext(), switcherPopup);
 		switcher.setOnClickListener(v->{
@@ -315,21 +314,24 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 
 	private void updateSwitcherMenu() {
 		Context context = getContext();
+		Menu switcherMenu = switcherPopup.getMenu();
+		switcherMenu.clear();
+		timelinesByMenuItem.clear();
 
 		for (TimelineDefinition tl : timelines) {
-			if (timelinesByMenuItem.containsValue(tl)) return;
 			int menuItemId = View.generateViewId();
 			timelinesByMenuItem.put(menuItemId, tl);
-			MenuItem item = switcherPopup.getMenu().add(0, menuItemId, 0, tl.getTitle(getContext()));
+			MenuItem item = switcherMenu.add(0, menuItemId, 0, tl.getTitle(getContext()));
 			item.setIcon(tl.getIcon().iconRes);
 			UiUtils.insetPopupMenuIcon(getContext(), item);
 		}
 
 		if (!listItems.isEmpty()) {
-			MenuItem listsItem = switcherPopup.getMenu().findItem(R.id.lists);
-			listsItem.setVisible(true);
-			SubMenu listsMenu = listsItem.getSubMenu();
+			SubMenu listsMenu = switcherMenu.addSubMenu(R.string.sk_list_timelines);
+			UiUtils.insetPopupMenuIcon(context, listsMenu.getItem().setVisible(true)
+					.setIcon(R.drawable.ic_fluent_people_list_24_regular));
 			listsMenu.clear();
+			UiUtils.insetPopupMenuIcon(context, UiUtils.makeBackItem(listsMenu));
 			listItems.forEach((id, list) -> {
 				MenuItem item = listsMenu.add(Menu.NONE, id, Menu.NONE, list.title);
 				item.setIcon(R.drawable.ic_fluent_people_list_24_regular);
@@ -338,16 +340,21 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 		}
 
 		if (!hashtagsItems.isEmpty()) {
-			MenuItem hashtagsItem = switcherPopup.getMenu().findItem(R.id.followed_hashtags);
-			hashtagsItem.setVisible(true);
-			SubMenu hashtagsMenu = hashtagsItem.getSubMenu();
+			SubMenu hashtagsMenu = switcherMenu.addSubMenu(R.string.sk_hashtags_you_follow);
+			UiUtils.insetPopupMenuIcon(context, hashtagsMenu.getItem().setVisible(true)
+					.setIcon(R.drawable.ic_fluent_number_symbol_24_regular));
 			hashtagsMenu.clear();
+			UiUtils.insetPopupMenuIcon(context, UiUtils.makeBackItem(hashtagsMenu));
 			hashtagsItems.forEach((id, hashtag) -> {
 				MenuItem item = hashtagsMenu.add(Menu.NONE, id, Menu.NONE, hashtag.name);
 				item.setIcon(R.drawable.ic_fluent_number_symbol_24_regular);
 				UiUtils.insetPopupMenuIcon(context, item);
 			});
 		}
+
+		MenuItem editItem = switcherMenu.add(0, R.id.menu_edit, Menu.NONE, R.string.sk_edit_timelines);
+		editItem.setIcon(R.drawable.ic_fluent_edit_24_regular);
+		UiUtils.insetPopupMenuIcon(context, editItem);
 	}
 
 	private boolean onSwitcherItemSelected(MenuItem item) {
@@ -355,16 +362,10 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 		ListTimeline list;
 		Hashtag hashtag;
 
-		TimelineDefinition tl = timelinesByMenuItem.get(id);
-
-		if (tl != null) {
-			for (int i = 0; i < timelines.length; i++) {
-				if (timelines[i] == tl) {
-					navigateTo(i);
-					return true;
-				}
-			}
-		} else if (id == R.id.timelines_edit) {
+		if (id == R.id.menu_back) {
+			switcher.post(() -> switcherPopup.show());
+			return true;
+		} else if (id == R.id.menu_edit) {
 			Bundle args = new Bundle();
 			args.putString("account", accountID);
 			Nav.go(getActivity(), EditTimelinesFragment.class, args);
@@ -377,6 +378,16 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			Nav.goForResult(getActivity(), ListTimelineFragment.class, args, PINNED_UPDATED_RESULT, this);
 		} else if ((hashtag = hashtagsItems.get(id)) != null) {
 			UiUtils.openHashtagTimeline(getActivity(), accountID, hashtag.name, hashtag.following);
+		} else {
+			TimelineDefinition tl = timelinesByMenuItem.get(id);
+			if (tl != null) {
+				for (int i = 0; i < timelines.length; i++) {
+					if (timelines[i] == tl) {
+						navigateTo(i);
+						return true;
+					}
+				}
+			}
 		}
 		return false;
 	}

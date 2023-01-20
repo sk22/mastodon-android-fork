@@ -1,5 +1,6 @@
 package org.joinmastodon.android.ui.utils;
 
+import static android.view.Menu.NONE;
 import static org.joinmastodon.android.GlobalUserPreferences.theme;
 import static org.joinmastodon.android.GlobalUserPreferences.trueBlackTheme;
 
@@ -893,6 +894,12 @@ public class UiUtils{
 		Intent intent = Intent.makeRestartActivityTask(MastodonApp.context.getPackageManager().getLaunchIntentForPackage(MastodonApp.context.getPackageName()).getComponent());
 		MastodonApp.context.startActivity(intent);
 		Runtime.getRuntime().exit(0);
+	}
+
+	public static MenuItem makeBackItem(Menu m) {
+		MenuItem back = m.add(0, R.id.menu_back, NONE, R.string.back);
+		back.setIcon(R.drawable.ic_arrow_back);
+		return back;
 	}
 
 	@FunctionalInterface

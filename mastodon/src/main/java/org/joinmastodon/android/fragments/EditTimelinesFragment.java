@@ -2,6 +2,8 @@ package org.joinmastodon.android.fragments;
 
 import static android.view.Menu.NONE;
 
+import static org.joinmastodon.android.ui.utils.UiUtils.makeBackItem;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
@@ -141,12 +143,6 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
         MenuItem item = menu.add(0, View.generateViewId(), Menu.NONE, tl.getTitle(getContext()));
         item.setIcon(tl.getIcon().iconRes);
         timelineByMenuItem.put(item, tl);
-    }
-
-    private MenuItem makeBackItem(Menu m) {
-        MenuItem back = m.add(0, R.id.menu_back, NONE, R.string.back);
-        back.setIcon(R.drawable.ic_arrow_back);
-        return back;
     }
 
     private void updateOptionsMenu() {
