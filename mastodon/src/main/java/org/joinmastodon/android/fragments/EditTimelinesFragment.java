@@ -22,14 +22,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.MastodonApp;
 import org.joinmastodon.android.R;
+import org.joinmastodon.android.api.requests.lists.GetLists;
+import org.joinmastodon.android.api.requests.tags.GetFollowedHashtags;
+import org.joinmastodon.android.model.Hashtag;
+import org.joinmastodon.android.model.HeaderPaginationList;
+import org.joinmastodon.android.model.ListTimeline;
 import org.joinmastodon.android.model.TimelineDefinition;
 import org.joinmastodon.android.ui.DividerItemDecoration;
 import org.joinmastodon.android.ui.utils.UiUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import me.grishka.appkit.api.Callback;
+import me.grishka.appkit.api.ErrorResponse;
 import me.grishka.appkit.fragments.BaseRecyclerFragment;
 import me.grishka.appkit.utils.BindableViewHolder;
 import me.grishka.appkit.views.UsableRecyclerView;
@@ -41,6 +50,8 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
     private Menu optionsMenu;
     private boolean changed;
     private final Map<MenuItem, TimelineDefinition> timelineByMenuItem = new HashMap<>();
+    private final List<ListTimeline> listTimelines = new ArrayList<>();
+    private final List<Hashtag> hashtags = new ArrayList<>();
 
     public EditTimelinesFragment() {
         super(10);
@@ -56,6 +67,34 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
         TypedValue outValue = new TypedValue();
         getActivity().getTheme().resolveAttribute(R.attr.colorWindowBackground, outValue, true);
         backgroundColor = outValue.data;
+
+        String accountID = getArguments().getString("account");
+
+        new GetLists().setCallback(new Callback<>() {
+            @Override
+            public void onSuccess(List<ListTimeline> result) {
+                listTimelines.addAll(result);
+                updateOptionsMenu();
+            }
+
+            @Override
+            public void onError(ErrorResponse error) {
+                error.showToast(getContext());
+            }
+        }).exec(accountID);
+
+        new GetFollowedHashtags().setCallback(new Callback<>() {
+            @Override
+            public void onSuccess(HeaderPaginationList<Hashtag> result) {
+                hashtags.addAll(result);
+                updateOptionsMenu();
+            }
+
+            @Override
+            public void onError(ErrorResponse error) {
+                error.showToast(getContext());
+            }
+        }).exec(accountID);
     }
 
     @Override
@@ -93,24 +132,34 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
         return true;
     }
 
+    private void addTimelineToOptions(TimelineDefinition tl, Menu menu) {
+        if (data.contains(tl)) return;
+        MenuItem item = menu.add(0, View.generateViewId(), Menu.NONE, tl.getTitle(getContext()));
+        item.setIcon(tl.getIconResource());
+        timelineByMenuItem.put(item, tl);
+        UiUtils.insetPopupMenuIcon(getContext(), item);
+    }
+
     private void updateOptionsMenu() {
-        MenuItem timelines = optionsMenu.findItem(R.id.add_timeline);
-        MenuItem lists = optionsMenu.findItem(R.id.add_list);
-        MenuItem hashtags = optionsMenu.findItem(R.id.add_hashtag);
-        timelines.getSubMenu().clear();
-        lists.getSubMenu().clear();
-        hashtags.getSubMenu().clear();
+        MenuItem timelinesItem = optionsMenu.findItem(R.id.add_timeline);
+        Menu timelinesMenu = timelinesItem.getSubMenu();
+        MenuItem listsItem = optionsMenu.findItem(R.id.add_list);
+        Menu listsMenu = listsItem.getSubMenu();
+        MenuItem hashtagsItem = optionsMenu.findItem(R.id.add_hashtag);
+        Menu hashtagsMenu = hashtagsItem.getSubMenu();
+
+        timelinesMenu.clear();
+        listsMenu.clear();
+        hashtagsMenu.clear();
         timelineByMenuItem.clear();
-        TimelineDefinition.ALL_TIMELINES.forEach(tl -> {
-            if (data.contains(tl)) return;
-            MenuItem item = timelines.getSubMenu().add(0, View.generateViewId(), Menu.NONE, tl.getTitle(getContext()));
-            item.setIcon(tl.getIconResource());
-            timelineByMenuItem.put(item, tl);
-            UiUtils.insetPopupMenuIcon(getContext(), item);
-        });
-        timelines.setVisible(timelines.getSubMenu().size() > 0);
-        lists.setVisible(lists.getSubMenu().size() > 0);
-        hashtags.setVisible(lists.getSubMenu().size() > 0);
+
+        TimelineDefinition.ALL_TIMELINES.forEach(tl -> addTimelineToOptions(tl, timelinesMenu));
+        listTimelines.stream().map(TimelineDefinition::ofList).forEach(tl -> addTimelineToOptions(tl, listsMenu));
+        hashtags.stream().map(TimelineDefinition::ofHashtag).forEach(tl -> addTimelineToOptions(tl, hashtagsMenu));
+
+        timelinesItem.setVisible(timelinesItem.getSubMenu().size() > 0);
+        listsItem.setVisible(listsItem.getSubMenu().size() > 0);
+        hashtagsItem.setVisible(listsItem.getSubMenu().size() > 0);
     }
 
     private void saveTimelines() {

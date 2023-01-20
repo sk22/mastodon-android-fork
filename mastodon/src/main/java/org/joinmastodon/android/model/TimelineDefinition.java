@@ -2,6 +2,7 @@ package org.joinmastodon.android.model;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.os.Bundle;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.Nullable;
@@ -14,7 +15,6 @@ import org.joinmastodon.android.fragments.NotificationsListFragment;
 import org.joinmastodon.android.fragments.discover.FederatedTimelineFragment;
 import org.joinmastodon.android.fragments.discover.LocalTimelineFragment;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,17 +26,22 @@ public class TimelineDefinition {
     private @Nullable String listId;
     private @Nullable ListTimeline.RepliesPolicy listRepliesPolicy;
 
-    public static TimelineDefinition forList(String id, String title, ListTimeline.RepliesPolicy repliesPolicy) {
-        TimelineDefinition def = new TimelineDefinition(TimelineType.LIST, title);
-        def.listId = id;
-        def.listRepliesPolicy = repliesPolicy;
+    private @Nullable String hashtagName;
+
+    public static TimelineDefinition ofList(ListTimeline list) {
+        TimelineDefinition def = new TimelineDefinition(TimelineType.LIST, list.title);
+        def.listId = list.id;
+        def.listRepliesPolicy = list.repliesPolicy;
         return def;
     }
 
-    public static TimelineDefinition forHashtag(String name) {
-        return new TimelineDefinition(TimelineType.LIST, name);
+    public static TimelineDefinition ofHashtag(Hashtag hashtag) {
+        TimelineDefinition def = new TimelineDefinition(TimelineType.HASHTAG, hashtag.name);
+        def.hashtagName = hashtag.name;
+        return def;
     }
 
+    @SuppressWarnings("unused")
     public TimelineDefinition() {}
 
     public TimelineDefinition(TimelineType type) {
@@ -105,6 +110,17 @@ public class TimelineDefinition {
         int result = type != null ? type.ordinal() : 0;
         result = 31 * result + (listId != null ? listId.hashCode() : 0);
         return result;
+    }
+
+    public Bundle populateArguments(Bundle args) {
+        if (type == TimelineType.LIST) {
+            args.putString("listTitle", title);
+            args.putString("listID", listId);
+            if (listRepliesPolicy != null) args.putInt("repliesPolicy", listRepliesPolicy.ordinal());
+        } else if (type == TimelineType.HASHTAG) {
+            args.putString("hashtag", hashtagName);
+        }
+        return args;
     }
 
     public enum TimelineType { HOME, LOCAL, FEDERATED, POST_NOTIFICATIONS, LIST, HASHTAG }

@@ -123,7 +123,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 
 			FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
 			for (int i = 0; i < count; i++) {
-				fragments[i].setArguments(args);
+				fragments[i].setArguments(timelines[i].populateArguments(new Bundle(args)));
 				FrameLayout tabView = new FrameLayout(getActivity());
 				tabView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 				tabView.setVisibility(View.GONE);
@@ -362,7 +362,9 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 				}
 			}
 		} else if (id == R.id.timelines_edit) {
-			Nav.go(getActivity(), EditTimelinesFragment.class, null);
+			Bundle args = new Bundle();
+			args.putString("account", accountID);
+			Nav.go(getActivity(), EditTimelinesFragment.class, args);
 		} else if ((list = listItems.get(id)) != null) {
 			Bundle args = new Bundle();
 			args.putString("account", accountID);
