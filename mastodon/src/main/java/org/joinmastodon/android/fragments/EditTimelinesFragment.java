@@ -2,14 +2,12 @@ package org.joinmastodon.android.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -30,7 +28,6 @@ import org.joinmastodon.android.ui.utils.UiUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import me.grishka.appkit.fragments.BaseRecyclerFragment;
@@ -43,46 +40,11 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
     private @ColorInt int backgroundColor;
     private Menu optionsMenu;
     private boolean changed;
-
     private final Map<MenuItem, TimelineDefinition> timelineByMenuItem = new HashMap<>();
-    private final Map<TimelineDefinition, MenuItem> menuItemByTimeline = new HashMap<>();
 
     public EditTimelinesFragment() {
         super(10);
-        ItemTouchHelper.SimpleCallback itemTouchCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
-            @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                int fromPosition = viewHolder.getAbsoluteAdapterPosition();
-                int toPosition = target.getAbsoluteAdapterPosition();
-                if (Math.max(fromPosition, toPosition) >= data.size() || Math.min(fromPosition, toPosition) < 0) {
-                    return false;
-                } else {
-                    Collections.swap(data, fromPosition, toPosition);
-                    changed = true;
-                    adapter.notifyItemMoved(fromPosition, toPosition);
-                    saveTimelines();
-                    return true;
-                }
-            }
-
-            @Override
-            public void onSelectedChanged(@Nullable RecyclerView.ViewHolder viewHolder, int actionState) {
-                if (actionState == ItemTouchHelper.ACTION_STATE_DRAG && viewHolder != null) {
-                    viewHolder.itemView.animate().alpha(0.65f);
-                    viewHolder.itemView.setBackgroundColor(backgroundColor);
-                }
-            }
-
-            @Override
-            public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
-                super.clearView(recyclerView, viewHolder);
-                viewHolder.itemView.animate().alpha(1f);
-                viewHolder.itemView.setBackgroundColor(0);
-            }
-
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {}
-        };
+        ItemTouchHelper.SimpleCallback itemTouchCallback = new ItemTouchHelperCallback() ;
         itemTouchHelper = new ItemTouchHelper(itemTouchCallback);
     }
 
@@ -113,48 +75,42 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        this.optionsMenu = menu;
         inflater.inflate(R.menu.edit_timelines, menu);
-        SubMenu timelines = menu.findItem(R.id.add_timeline).getSubMenu();
-        timelineByMenuItem.clear();
-        menuItemByTimeline.clear();
-        TimelineDefinition.ALL_TIMELINES.forEach(tl -> {
-            if (data.contains(tl)) return;
-            MenuItem item = timelines.add(0, View.generateViewId(), Menu.NONE, tl.getTitle(getContext()));
-            item.setIcon(tl.getIconResource());
-            timelineByMenuItem.put(item, tl);
-            menuItemByTimeline.put(tl, item);
-        });
-        if (timelines.size() == 0) menu.findItem(R.id.add).getSubMenu().removeItem(R.id.add_timeline);
-        UiUtils.enableOptionsMenuIcons(getContext(), menu, R.id.add);
+        this.optionsMenu = menu;
+        updateOptionsMenu();
+        UiUtils.enableOptionsMenuIcons(getContext(), optionsMenu, R.id.add);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         TimelineDefinition tl = timelineByMenuItem.get(item);
         if (tl == null) return false;
-        if (!removeTimelineFromOptions(tl)) return false;
         data.add(tl);
         changed = true;
         adapter.notifyItemInserted(data.indexOf(tl));
+        updateOptionsMenu();
         saveTimelines();
         return true;
     }
 
-    private boolean removeTimelineFromOptions(TimelineDefinition tl) {
-        MenuItem menuItem = menuItemByTimeline.get(tl);
-        assert menuItem != null;
-        MenuItem containingMenuItem = switch (tl.getType()) {
-            case HOME, LOCAL, FEDERATED, POST_NOTIFICATIONS -> optionsMenu.findItem(R.id.add_timeline);
-            case LIST -> optionsMenu.findItem(R.id.add_list);
-            case HASHTAG -> optionsMenu.findItem(R.id.add_hashtag);
-        };
-        Menu containingMenu = containingMenuItem.getSubMenu();
-        containingMenu.removeItem(menuItem.getItemId());
-        if (containingMenu.size() == 0) {
-            optionsMenu.findItem(R.id.add).getSubMenu().removeItem(containingMenuItem.getItemId());
-        }
-        return true;
+    private void updateOptionsMenu() {
+        MenuItem timelines = optionsMenu.findItem(R.id.add_timeline);
+        MenuItem lists = optionsMenu.findItem(R.id.add_list);
+        MenuItem hashtags = optionsMenu.findItem(R.id.add_hashtag);
+        timelines.getSubMenu().clear();
+        lists.getSubMenu().clear();
+        hashtags.getSubMenu().clear();
+        timelineByMenuItem.clear();
+        TimelineDefinition.ALL_TIMELINES.forEach(tl -> {
+            if (data.contains(tl)) return;
+            MenuItem item = timelines.getSubMenu().add(0, View.generateViewId(), Menu.NONE, tl.getTitle(getContext()));
+            item.setIcon(tl.getIconResource());
+            timelineByMenuItem.put(item, tl);
+            UiUtils.insetPopupMenuIcon(getContext(), item);
+        });
+        timelines.setVisible(timelines.getSubMenu().size() > 0);
+        lists.setVisible(lists.getSubMenu().size() > 0);
+        hashtags.setVisible(lists.getSubMenu().size() > 0);
     }
 
     private void saveTimelines() {
@@ -165,7 +121,7 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
     @Override
     protected void doLoadData(int offset, int count){
         onDataLoaded(GlobalUserPreferences.pinnedTimelines, false);
-        GlobalUserPreferences.pinnedTimelines.forEach(this::removeTimelineFromOptions);
+        updateOptionsMenu();
     }
 
     @Override
@@ -237,5 +193,49 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
 
         @Override
         public void onClick() {}
+    }
+
+    private class ItemTouchHelperCallback extends ItemTouchHelper.SimpleCallback {
+        public ItemTouchHelperCallback() {
+            super(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
+        }
+
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            int fromPosition = viewHolder.getAbsoluteAdapterPosition();
+            int toPosition = target.getAbsoluteAdapterPosition();
+            if (Math.max(fromPosition, toPosition) >= data.size() || Math.min(fromPosition, toPosition) < 0) {
+                return false;
+            } else {
+                Collections.swap(data, fromPosition, toPosition);
+                changed = true;
+                adapter.notifyItemMoved(fromPosition, toPosition);
+                saveTimelines();
+                return true;
+            }
+        }
+
+        @Override
+        public void onSelectedChanged(@Nullable RecyclerView.ViewHolder viewHolder, int actionState) {
+            if (actionState == ItemTouchHelper.ACTION_STATE_DRAG && viewHolder != null) {
+                viewHolder.itemView.animate().alpha(0.65f);
+                viewHolder.itemView.setBackgroundColor(backgroundColor);
+            }
+        }
+
+        @Override
+        public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+            super.clearView(recyclerView, viewHolder);
+            viewHolder.itemView.animate().alpha(1f);
+            viewHolder.itemView.setBackgroundColor(0);
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            int position = viewHolder.getAbsoluteAdapterPosition();
+            data.remove(position);
+            adapter.notifyItemRemoved(position);
+            updateOptionsMenu();
+        }
     }
 }
