@@ -22,6 +22,7 @@ import org.joinmastodon.android.ui.M3AlertDialogBuilder;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.ui.views.ListTimelineEditor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import me.grishka.appkit.Nav;
@@ -36,6 +37,8 @@ public class ListTimelineFragment extends StatusListFragment {
     private String listTitle;
     private ListTimeline.RepliesPolicy repliesPolicy;
     private ImageButton fab;
+    private List<TimelineDefinition> pinnedTimelines;
+    private Menu optionsMenu;
 
     public ListTimelineFragment() {
         setListLayoutId(R.layout.recycler_fragment_with_fab);
@@ -51,6 +54,8 @@ public class ListTimelineFragment extends StatusListFragment {
 
         setTitle(listTitle);
         setHasOptionsMenu(true);
+
+        pinnedTimelines = new ArrayList<>(GlobalUserPreferences.pinnedTimelines.getOrDefault(accountID, TimelineDefinition.DEFAULT_TIMELINES));
 
         new GetList(listID).setCallback(new Callback<>() {
             @Override
@@ -71,7 +76,9 @@ public class ListTimelineFragment extends StatusListFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.list, menu);
+        optionsMenu = menu;
         UiUtils.enableOptionsMenuIcons(getContext(), menu, R.id.pin);
+        updatePinnedState();
     }
 
     @Override
@@ -112,11 +119,24 @@ public class ListTimelineFragment extends StatusListFragment {
                 Nav.finish(this);
             });
         } else if (item.getItemId() == R.id.pin) {
-            List<TimelineDefinition> tls = GlobalUserPreferences.pinnedTimelines
-                    .getOrDefault(accountID, TimelineDefinition.DEFAULT_TIMELINES);
-            if (tls != null) tls.add(TimelineDefinition.ofList(listID, listTitle));
+            TimelineDefinition def = TimelineDefinition.ofList(listID, listTitle);
+            if (hasList()) pinnedTimelines.remove(def);
+            else pinnedTimelines.add(def);
+            GlobalUserPreferences.pinnedTimelines.put(accountID, pinnedTimelines);
+            GlobalUserPreferences.save();
+            updatePinnedState();
         }
         return true;
+    }
+
+    private boolean hasList() {
+        return pinnedTimelines.contains(TimelineDefinition.ofList(listID, listTitle));
+    }
+
+    private void updatePinnedState() {
+        optionsMenu.findItem(R.id.pin).setIcon(hasList() ?
+                R.drawable.ic_fluent_pin_off_24_regular :
+                R.drawable.ic_fluent_pin_24_regular);
     }
 
     @Override

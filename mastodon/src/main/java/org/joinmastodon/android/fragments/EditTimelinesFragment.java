@@ -49,7 +49,7 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
     private final ItemTouchHelper itemTouchHelper;
     private @ColorInt int backgroundColor;
     private Menu optionsMenu;
-    private boolean changed;
+    private boolean updated;
     private final Map<MenuItem, TimelineDefinition> timelineByMenuItem = new HashMap<>();
     private final List<ListTimeline> listTimelines = new ArrayList<>();
     private final List<Hashtag> hashtags = new ArrayList<>();
@@ -126,7 +126,7 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
         TimelineDefinition tl = timelineByMenuItem.get(item);
         if (tl == null) return false;
         data.add(tl);
-        changed = true;
+        updated = true;
         adapter.notifyItemInserted(data.indexOf(tl));
         updateOptionsMenu();
         saveTimelines();
@@ -187,7 +187,7 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (!changed) return;
+        if (!updated) return;
         Intent intent = Intent.makeRestartActivityTask(MastodonApp.context.getPackageManager().getLaunchIntentForPackage(MastodonApp.context.getPackageName()).getComponent());
         MastodonApp.context.startActivity(intent);
         Runtime.getRuntime().exit(0);
@@ -258,7 +258,7 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
                 return false;
             } else {
                 Collections.swap(data, fromPosition, toPosition);
-                changed = true;
+                updated = true;
                 adapter.notifyItemMoved(fromPosition, toPosition);
                 saveTimelines();
                 return true;
@@ -283,6 +283,7 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
             int position = viewHolder.getAbsoluteAdapterPosition();
+            updated = true;
             data.remove(position);
             adapter.notifyItemRemoved(position);
             updateOptionsMenu();
