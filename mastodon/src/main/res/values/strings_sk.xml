@@ -164,4 +164,9 @@
     <string name="sk_unpin_timeline">Unpin timeline</string>
     <string name="sk_pinned_timeline">Pinned to home</string>
     <string name="sk_unpinned_timeline">Unpinned from home</string>
+    <string name="sk_remove">Remove</string>
+    <string name="sk_timeline_icon">Icon</string>
+    <string name="sk_icon_heart">Heart</string>
+    <string name="sk_icon_star">Star</string>
+    <string name="sk_edit_timeline">Edit timeline</string>
 </resources>

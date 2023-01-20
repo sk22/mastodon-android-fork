@@ -321,7 +321,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			int menuItemId = View.generateViewId();
 			timelinesByMenuItem.put(menuItemId, tl);
 			MenuItem item = switcherPopup.getMenu().add(0, menuItemId, 0, tl.getTitle(getContext()));
-			item.setIcon(tl.getIconResource());
+			item.setIcon(tl.getIcon().iconRes);
 			UiUtils.insetPopupMenuIcon(getContext(), item);
 		}
 
@@ -390,7 +390,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 	}
 
 	private void updateSwitcherIcon(int i) {
-		timelineIcon.setImageResource(timelines[i].getIconResource());
+		timelineIcon.setImageResource(timelines[i].getIcon().iconRes);
 		timelineTitle.setText(timelines[i].getTitle(getContext()));
 	}
 
@@ -443,7 +443,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 	}
 
 	public void showNewPostsButton(){
-		if(newPostsBtnShown || pager == null || pager.getCurrentItem() != 0)
+		if(newPostsBtnShown || pager == null || !timelines[pager.getCurrentItem()].equals(TimelineDefinition.HOME_TIMELINE))
 			return;
 		newPostsBtnShown=true;
 		if(currentNewPostsAnim!=null){

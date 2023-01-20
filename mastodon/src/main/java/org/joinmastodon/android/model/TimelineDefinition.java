@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 
 import org.joinmastodon.android.BuildConfig;
 import org.joinmastodon.android.R;
@@ -63,13 +64,36 @@ public class TimelineDefinition {
     }
 
     public String getTitle(Context ctx) {
-        if (title != null) return title;
+        return title != null ? title : getDefaultTitle(ctx);
+    }
+
+    public String getCustomTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title == null || title.isBlank() ? null : title;
+    }
+
+    public String getDefaultTitle(Context ctx) {
         return switch (type) {
             case HOME -> ctx.getString(R.string.sk_timeline_home);
             case LOCAL -> ctx.getString(R.string.sk_timeline_local);
             case FEDERATED -> ctx.getString(R.string.sk_timeline_federated);
             case POST_NOTIFICATIONS -> ctx.getString(R.string.sk_timeline_posts);
-            default -> null;
+            case LIST -> listTitle;
+            case HASHTAG -> hashtagName;
+        };
+    }
+
+    public Icon getDefaultIcon() {
+        return switch (type) {
+            case HOME -> Icon.HOME;
+            case LOCAL -> Icon.LOCAL;
+            case FEDERATED -> Icon.FEDERATED;
+            case POST_NOTIFICATIONS -> Icon.POST_NOTIFICATIONS;
+            case LIST -> Icon.LIST;
+            case HASHTAG -> Icon.HASHTAG;
         };
     }
 
@@ -84,18 +108,13 @@ public class TimelineDefinition {
         };
     }
 
-    public @DrawableRes int getIconResource() {
-        return icon == null ? switch (type) {
-            case HOME -> R.drawable.ic_fluent_home_24_regular;
-            case LOCAL -> R.drawable.ic_fluent_people_community_24_regular;
-            case FEDERATED -> R.drawable.ic_fluent_earth_24_regular;
-            case POST_NOTIFICATIONS -> R.drawable.ic_fluent_alert_24_regular;
-            case LIST -> R.drawable.ic_fluent_people_list_24_regular;
-            case HASHTAG -> R.drawable.ic_fluent_number_symbol_24_regular;
-        } : switch (icon) {
-            case HEART -> R.drawable.ic_fluent_heart_24_regular;
-            case STAR -> R.drawable.ic_fluent_star_24_regular;
-        };
+    @Nullable
+    public Icon getIcon() {
+        return icon == null ? getDefaultIcon() : icon;
+    }
+
+    public void setIcon(@Nullable Icon icon) {
+        this.icon = icon;
     }
 
     public TimelineType getType() {
@@ -109,16 +128,26 @@ public class TimelineDefinition {
 
         TimelineDefinition that = (TimelineDefinition) o;
         if (type != that.type) return false;
-        if (type == TimelineType.HASHTAG) return Objects.equals(title, that.title);
         if (type == TimelineType.LIST) return Objects.equals(listId, that.listId);
+        if (type == TimelineType.HASHTAG) return Objects.equals(hashtagName, that.hashtagName);
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = type != null ? type.ordinal() : 0;
+        int result = type.ordinal();
         result = 31 * result + (listId != null ? listId.hashCode() : 0);
+        result = 31 * result + (hashtagName != null ? hashtagName.hashCode() : 0);
         return result;
+    }
+
+    public TimelineDefinition copy() {
+        TimelineDefinition def = new TimelineDefinition(type, title);
+        def.listId = listId;
+        def.listTitle = listTitle;
+        def.hashtagName = hashtagName;
+        def.icon = icon == null ? null : Icon.values()[icon.ordinal()];
+        return def;
     }
 
     public Bundle populateArguments(Bundle args) {
@@ -133,7 +162,30 @@ public class TimelineDefinition {
 
     public enum TimelineType { HOME, LOCAL, FEDERATED, POST_NOTIFICATIONS, LIST, HASHTAG }
 
-    public enum Icon { HEART, STAR }
+    public enum Icon {
+        HEART(R.drawable.ic_fluent_heart_24_regular, R.string.sk_icon_heart),
+        STAR(R.drawable.ic_fluent_star_24_regular, R.string.sk_icon_star),
+
+        HOME(R.drawable.ic_fluent_home_24_regular, R.string.sk_timeline_home, true),
+        LOCAL(R.drawable.ic_fluent_people_community_24_regular, R.string.sk_timeline_local, true),
+        FEDERATED(R.drawable.ic_fluent_earth_24_regular, R.string.sk_timeline_federated, true),
+        POST_NOTIFICATIONS(R.drawable.ic_fluent_alert_24_regular, R.string.sk_timeline_posts, true),
+        LIST(R.drawable.ic_fluent_people_list_24_regular, R.string.sk_list, true),
+        HASHTAG(R.drawable.ic_fluent_number_symbol_24_regular, R.string.sk_hashtag, true);
+
+        public final int iconRes, nameRes;
+        public final boolean hidden;
+
+        Icon(@DrawableRes int iconRes, @StringRes int nameRes) {
+            this(iconRes, nameRes, false);
+        }
+
+        Icon(@DrawableRes int iconRes, @StringRes int nameRes, boolean hidden) {
+            this.iconRes = iconRes;
+            this.nameRes = nameRes;
+            this.hidden = hidden;
+        }
+    }
 
     public static final TimelineDefinition HOME_TIMELINE = new TimelineDefinition(TimelineType.HOME);
     public static final TimelineDefinition LOCAL_TIMELINE = new TimelineDefinition(TimelineType.LOCAL);
@@ -141,7 +193,12 @@ public class TimelineDefinition {
     public static final TimelineDefinition POSTS_TIMELINE = new TimelineDefinition(TimelineType.POST_NOTIFICATIONS);
 
     public static final List<TimelineDefinition> DEFAULT_TIMELINES = BuildConfig.BUILD_TYPE.equals("playRelease")
-            ? List.of(HOME_TIMELINE, LOCAL_TIMELINE)
-            : List.of(HOME_TIMELINE, LOCAL_TIMELINE, FEDERATED_TIMELINE);
-    public static final List<TimelineDefinition> ALL_TIMELINES = List.of(HOME_TIMELINE, LOCAL_TIMELINE, FEDERATED_TIMELINE, POSTS_TIMELINE);
+            ? List.of(HOME_TIMELINE.copy(), LOCAL_TIMELINE.copy())
+            : List.of(HOME_TIMELINE.copy(), LOCAL_TIMELINE.copy(), FEDERATED_TIMELINE.copy());
+    public static final List<TimelineDefinition> ALL_TIMELINES = List.of(
+            HOME_TIMELINE.copy(),
+            LOCAL_TIMELINE.copy(),
+            FEDERATED_TIMELINE.copy(),
+            POSTS_TIMELINE.copy()
+    );
 }
