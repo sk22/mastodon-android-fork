@@ -2,12 +2,14 @@ package org.joinmastodon.android.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.HapticFeedbackConstants;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
@@ -39,6 +41,8 @@ public class ListTimelineFragment extends StatusListFragment {
     private ImageButton fab;
     private List<TimelineDefinition> pinnedTimelines;
     private Menu optionsMenu;
+    private Bundle resultArgs = new Bundle();
+    private boolean pinnedUpdated;
 
     public ListTimelineFragment() {
         setListLayoutId(R.layout.recycler_fragment_with_fab);
@@ -51,6 +55,7 @@ public class ListTimelineFragment extends StatusListFragment {
         listID = args.getString("listID");
         listTitle = args.getString("listTitle");
         repliesPolicy = ListTimeline.RepliesPolicy.values()[args.getInt("repliesPolicy", 0)];
+        resultArgs.putString("listID", listID);
 
         setTitle(listTitle);
         setHasOptionsMenu(true);
@@ -83,8 +88,6 @@ public class ListTimelineFragment extends StatusListFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Bundle args = new Bundle();
-        args.putString("listID", listID);
         if (item.getItemId() == R.id.edit) {
             ListTimelineEditor editor = new ListTimelineEditor(getContext());
             editor.applyList(listTitle, repliesPolicy);
@@ -99,9 +102,9 @@ public class ListTimelineFragment extends StatusListFragment {
                                 setTitle(list.title);
                                 listTitle = list.title;
                                 repliesPolicy = list.repliesPolicy;
-                                args.putString("listTitle", listTitle);
-                                args.putInt("repliesPolicy", repliesPolicy.ordinal());
-                                setResult(true, args);
+                                resultArgs.putString("listTitle", listTitle);
+                                resultArgs.putInt("repliesPolicy", repliesPolicy.ordinal());
+                                setResult(true, resultArgs);
                             }
 
                             @Override
@@ -114,19 +117,32 @@ public class ListTimelineFragment extends StatusListFragment {
                     .show();
         } else if (item.getItemId() == R.id.delete) {
             UiUtils.confirmDeleteList(getActivity(), accountID, listID, listTitle, () -> {
-                args.putBoolean("deleted", true);
-                setResult(true, args);
+                resultArgs.putBoolean("deleted", true);
+                setResult(true, resultArgs);
                 Nav.finish(this);
             });
         } else if (item.getItemId() == R.id.pin) {
+            pinnedUpdated = true;
+            getToolbar().performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK);
             TimelineDefinition def = TimelineDefinition.ofList(listID, listTitle);
-            if (hasList()) pinnedTimelines.remove(def);
+            boolean hasList = hasList();
+            if (hasList) pinnedTimelines.remove(def);
             else pinnedTimelines.add(def);
+            Toast.makeText(getContext(), hasList ? R.string.sk_unpinned_timeline : R.string.sk_pinned_timeline, Toast.LENGTH_SHORT).show();
             GlobalUserPreferences.pinnedTimelines.put(accountID, pinnedTimelines);
             GlobalUserPreferences.save();
             updatePinnedState();
         }
         return true;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (pinnedUpdated) {
+            resultArgs.putBoolean("pinnedUpdated", true);
+            setResult(true, resultArgs);
+        }
     }
 
     private boolean hasList() {

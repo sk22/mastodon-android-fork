@@ -64,6 +64,7 @@ import me.grishka.appkit.utils.V;
 
 public class HomeTabFragment extends MastodonToolbarFragment implements ScrollableToTop, OnBackPressedListener {
 	private static final int ANNOUNCEMENTS_RESULT = 654;
+	private static final int PINNED_UPDATED_RESULT = 523;
 
 	private String accountID;
 	private MenuItem announcements;
@@ -375,13 +376,12 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			args.putString("listID", list.id);
 			args.putString("listTitle", list.title);
 			args.putInt("repliesPolicy", list.repliesPolicy.ordinal());
-			Nav.go(getActivity(), ListTimelineFragment.class, args);
+			Nav.goForResult(getActivity(), ListTimelineFragment.class, args, PINNED_UPDATED_RESULT, this);
 		} else if ((hashtag = hashtagsItems.get(id)) != null) {
 			UiUtils.openHashtagTimeline(getActivity(), accountID, hashtag.name, hashtag.following);
 		}
 		return false;
 	}
-
 	private void navigateTo(int i) {
 		navigateTo(i, !GlobalUserPreferences.reduceMotion);
 	}
@@ -488,9 +488,11 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 	}
 
 	@Override
-	public void onFragmentResult(int reqCode, boolean noMoreUnread, Bundle result){
-		if (reqCode == ANNOUNCEMENTS_RESULT && noMoreUnread) {
+	public void onFragmentResult(int reqCode, boolean success, Bundle result){
+		if (reqCode == ANNOUNCEMENTS_RESULT && success) {
 			announcements.setIcon(R.drawable.ic_fluent_megaphone_24_regular);
+		} else if (reqCode == PINNED_UPDATED_RESULT && result != null && result.getBoolean("pinnedUpdated", false)) {
+			UiUtils.restartApp();
 		}
 	}
 

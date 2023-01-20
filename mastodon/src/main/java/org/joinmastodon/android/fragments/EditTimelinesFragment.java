@@ -187,10 +187,7 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (!updated) return;
-        Intent intent = Intent.makeRestartActivityTask(MastodonApp.context.getPackageManager().getLaunchIntentForPackage(MastodonApp.context.getPackageName()).getComponent());
-        MastodonApp.context.startActivity(intent);
-        Runtime.getRuntime().exit(0);
+        if (updated) UiUtils.restartApp();
     }
 
     private class TimelinesAdapter extends RecyclerView.Adapter<TimelineViewHolder>{

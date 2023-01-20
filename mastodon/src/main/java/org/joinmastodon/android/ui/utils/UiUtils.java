@@ -889,6 +889,12 @@ public class UiUtils{
 		builder.show();
 	}
 
+	public static void restartApp() {
+		Intent intent = Intent.makeRestartActivityTask(MastodonApp.context.getPackageManager().getLaunchIntentForPackage(MastodonApp.context.getPackageName()).getComponent());
+		MastodonApp.context.startActivity(intent);
+		Runtime.getRuntime().exit(0);
+	}
+
 	@FunctionalInterface
 	public interface InteractionPerformer {
 		void interact(StatusInteractionController ic, Status status, Consumer<Status> resultConsumer);

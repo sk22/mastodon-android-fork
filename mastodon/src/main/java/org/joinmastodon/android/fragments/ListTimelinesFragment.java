@@ -21,6 +21,7 @@ import org.joinmastodon.android.api.requests.lists.RemoveAccountsFromList;
 import org.joinmastodon.android.model.ListTimeline;
 import org.joinmastodon.android.ui.DividerItemDecoration;
 import org.joinmastodon.android.ui.M3AlertDialogBuilder;
+import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.ui.views.ListTimelineEditor;
 
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class ListTimelinesFragment extends BaseRecyclerFragment<ListTimeline> im
     private HashMap<String, Boolean> userInList = new HashMap<>();
     private int inProgress = 0;
     private ListsAdapter adapter;
+    private boolean pinnedUpdated;
 
     public ListTimelinesFragment() {
         super(10);
@@ -72,6 +74,12 @@ public class ListTimelinesFragment extends BaseRecyclerFragment<ListTimeline> im
         super.onShown();
         if(!getArguments().getBoolean("noAutoLoad") && !loaded && !dataLoading)
             loadData();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (pinnedUpdated) UiUtils.restartApp();
     }
 
     @Override
@@ -159,6 +167,7 @@ public class ListTimelinesFragment extends BaseRecyclerFragment<ListTimeline> im
     @Override
     public void onFragmentResult(int reqCode, boolean listChanged, Bundle result){
         if (reqCode == LIST_CHANGED_RESULT && listChanged) {
+            if (result.getBoolean("pinnedUpdated")) pinnedUpdated = true;
             String listID = result.getString("listID");
             for (int i = 0; i < data.size(); i++) {
                 ListTimeline item = data.get(i);

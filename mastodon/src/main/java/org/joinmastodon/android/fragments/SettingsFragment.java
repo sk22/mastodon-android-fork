@@ -316,11 +316,7 @@ public class SettingsFragment extends MastodonToolbarFragment{
 		if(needUpdateNotificationSettings && PushSubscriptionManager.arePushNotificationsAvailable()){
 			AccountSessionManager.getInstance().getAccount(accountID).getPushSubscriptionManager().updatePushSettings(pushSubscription);
 		}
-		if(needAppRestart){
-			Intent intent = Intent.makeRestartActivityTask(MastodonApp.context.getPackageManager().getLaunchIntentForPackage(MastodonApp.context.getPackageName()).getComponent());
-			MastodonApp.context.startActivity(intent);
-			Runtime.getRuntime().exit(0);
-		}
+		if(needAppRestart) UiUtils.restartApp();
 	}
 
 	@Override

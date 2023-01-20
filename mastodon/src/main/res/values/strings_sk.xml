@@ -161,4 +161,6 @@
     <string name="sk_list">List</string>
     <string name="sk_hashtag">Hashtag</string>
     <string name="sk_pin_timeline">Pin timeline</string>
+    <string name="sk_pinned_timeline">Pinned to home</string>
+    <string name="sk_unpinned_timeline">Unpinned from home</string>
 </resources>
