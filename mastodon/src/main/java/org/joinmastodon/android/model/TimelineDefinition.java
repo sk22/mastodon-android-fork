@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.Nullable;
 
+import org.joinmastodon.android.BuildConfig;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.fragments.HashtagTimelineFragment;
 import org.joinmastodon.android.fragments.HomeTimelineFragment;
@@ -24,21 +25,29 @@ public class TimelineDefinition {
     private @Nullable Icon icon;
 
     private @Nullable String listId;
-    private @Nullable ListTimeline.RepliesPolicy listRepliesPolicy;
+    private @Nullable String listTitle;
 
     private @Nullable String hashtagName;
 
+    public static TimelineDefinition ofList(String listId, String listTitle) {
+        TimelineDefinition def = new TimelineDefinition(TimelineType.LIST, listTitle);
+        def.listId = listId;
+        def.listTitle = listTitle;
+        return def;
+    }
+
     public static TimelineDefinition ofList(ListTimeline list) {
-        TimelineDefinition def = new TimelineDefinition(TimelineType.LIST, list.title);
-        def.listId = list.id;
-        def.listRepliesPolicy = list.repliesPolicy;
+        return ofList(list.id, list.title);
+    }
+
+    public static TimelineDefinition ofHashtag(String hashtag) {
+        TimelineDefinition def = new TimelineDefinition(TimelineType.HASHTAG, hashtag);
+        def.hashtagName = hashtag;
         return def;
     }
 
     public static TimelineDefinition ofHashtag(Hashtag hashtag) {
-        TimelineDefinition def = new TimelineDefinition(TimelineType.HASHTAG, hashtag.name);
-        def.hashtagName = hashtag.name;
-        return def;
+        return ofHashtag(hashtag.name);
     }
 
     @SuppressWarnings("unused")
@@ -116,7 +125,6 @@ public class TimelineDefinition {
         if (type == TimelineType.LIST) {
             args.putString("listTitle", title);
             args.putString("listID", listId);
-            if (listRepliesPolicy != null) args.putInt("repliesPolicy", listRepliesPolicy.ordinal());
         } else if (type == TimelineType.HASHTAG) {
             args.putString("hashtag", hashtagName);
         }
@@ -132,6 +140,8 @@ public class TimelineDefinition {
     public static final TimelineDefinition FEDERATED_TIMELINE = new TimelineDefinition(TimelineType.FEDERATED);
     public static final TimelineDefinition POSTS_TIMELINE = new TimelineDefinition(TimelineType.POST_NOTIFICATIONS);
 
-    public static final List<TimelineDefinition> DEFAULT_TIMELINES = List.of(LOCAL_TIMELINE);
+    public static final List<TimelineDefinition> DEFAULT_TIMELINES = BuildConfig.BUILD_TYPE.equals("playRelease")
+            ? List.of(LOCAL_TIMELINE)
+            : List.of(LOCAL_TIMELINE, FEDERATED_TIMELINE);
     public static final List<TimelineDefinition> ALL_TIMELINES = List.of(LOCAL_TIMELINE, FEDERATED_TIMELINE, POSTS_TIMELINE);
 }

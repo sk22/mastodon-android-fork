@@ -160,4 +160,5 @@
     <string name="sk_timeline">Timeline</string>
     <string name="sk_list">List</string>
     <string name="sk_hashtag">Hashtag</string>
+    <string name="sk_pin_timeline">Pin timeline</string>
 </resources>

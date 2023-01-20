@@ -44,6 +44,7 @@ import me.grishka.appkit.utils.BindableViewHolder;
 import me.grishka.appkit.views.UsableRecyclerView;
 
 public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefinition> implements ScrollableToTop {
+    private String accountID;
     private TimelinesAdapter adapter;
     private final ItemTouchHelper itemTouchHelper;
     private @ColorInt int backgroundColor;
@@ -68,7 +69,7 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
         getActivity().getTheme().resolveAttribute(R.attr.colorWindowBackground, outValue, true);
         backgroundColor = outValue.data;
 
-        String accountID = getArguments().getString("account");
+        accountID = getArguments().getString("account");
 
         new GetLists().setCallback(new Callback<>() {
             @Override
@@ -159,17 +160,17 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
 
         timelinesItem.setVisible(timelinesItem.getSubMenu().size() > 0);
         listsItem.setVisible(listsItem.getSubMenu().size() > 0);
-        hashtagsItem.setVisible(listsItem.getSubMenu().size() > 0);
+        hashtagsItem.setVisible(hashtagsItem.getSubMenu().size() > 0);
     }
 
     private void saveTimelines() {
-        GlobalUserPreferences.pinnedTimelines = data;
+        GlobalUserPreferences.pinnedTimelines.put(accountID, data);
         GlobalUserPreferences.save();
     }
 
     @Override
     protected void doLoadData(int offset, int count){
-        onDataLoaded(GlobalUserPreferences.pinnedTimelines, false);
+        onDataLoaded(GlobalUserPreferences.pinnedTimelines.getOrDefault(accountID, TimelineDefinition.DEFAULT_TIMELINES), false);
         updateOptionsMenu();
     }
 

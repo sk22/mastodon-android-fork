@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
+import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.lists.CreateList;
 import org.joinmastodon.android.api.requests.lists.GetList;
@@ -16,6 +17,7 @@ import org.joinmastodon.android.api.requests.lists.UpdateList;
 import org.joinmastodon.android.api.requests.timelines.GetListTimeline;
 import org.joinmastodon.android.model.ListTimeline;
 import org.joinmastodon.android.model.Status;
+import org.joinmastodon.android.model.TimelineDefinition;
 import org.joinmastodon.android.ui.M3AlertDialogBuilder;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.ui.views.ListTimelineEditor;
@@ -69,6 +71,7 @@ public class ListTimelineFragment extends StatusListFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.list, menu);
+        UiUtils.enableOptionsMenuIcons(getContext(), menu, R.id.pin);
     }
 
     @Override
@@ -108,6 +111,10 @@ public class ListTimelineFragment extends StatusListFragment {
                 setResult(true, args);
                 Nav.finish(this);
             });
+        } else if (item.getItemId() == R.id.pin) {
+            List<TimelineDefinition> tls = GlobalUserPreferences.pinnedTimelines
+                    .getOrDefault(accountID, TimelineDefinition.DEFAULT_TIMELINES);
+            if (tls != null) tls.add(TimelineDefinition.ofList(listID, listTitle));
         }
         return true;
     }

@@ -1,8 +1,5 @@
 package org.joinmastodon.android.fragments;
 
-import static org.joinmastodon.android.GlobalUserPreferences.pinnedTimelines;
-import static org.joinmastodon.android.GlobalUserPreferences.showFederatedTimeline;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -83,16 +80,23 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 	private PopupMenu switcherPopup;
 	private final Map<Integer, ListTimeline> listItems = new HashMap<>();
 	private final Map<Integer, Hashtag> hashtagsItems = new HashMap<>();
-	private final int count = pinnedTimelines.size() + 1;
-	private final Fragment[] fragments = new Fragment[count];
-	private final FrameLayout[] tabViews = new FrameLayout[count];
-	private final TimelineDefinition[] timelines = new TimelineDefinition[count];
+	private List<TimelineDefinition> timelineDefinitions;
+	private int count;
+	private Fragment[] fragments;
+	private FrameLayout[] tabViews;
+	private TimelineDefinition[] timelines;
 	private Map<Integer, TimelineDefinition> timelinesByMenuItem = new HashMap<>();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		accountID = getArguments().getString("account");
+		timelineDefinitions = GlobalUserPreferences.pinnedTimelines.getOrDefault(accountID, TimelineDefinition.DEFAULT_TIMELINES);
+		assert timelineDefinitions != null;
+		count = timelineDefinitions.size() + 1;
+		fragments = new Fragment[count];
+		tabViews = new FrameLayout[count];
+		timelines = new TimelineDefinition[count];
 	}
 
 	@Override
@@ -115,8 +119,8 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 
 			fragments[0] = new HomeTimelineFragment();
 			timelines[0] = TimelineDefinition.HOME_TIMELINE;
-			for (int i = 1; i <= pinnedTimelines.size(); i++) {
-				TimelineDefinition tl = pinnedTimelines.get(i - 1);
+			for (int i = 1; i <= timelineDefinitions.size(); i++) {
+				TimelineDefinition tl = timelineDefinitions.get(i - 1);
 				fragments[i] = tl.getFragment();
 				timelines[i] = tl;
 			}
