@@ -97,12 +97,12 @@ public class TimelineDefinition {
         if (type != that.type) return false;
         if (type == TimelineType.HASHTAG) return Objects.equals(title, that.title);
         if (type == TimelineType.LIST) return Objects.equals(listId, that.listId);
-        return false;
+        return true;
     }
 
     @Override
     public int hashCode() {
-        int result = type != null ? type.hashCode() : 0;
+        int result = type != null ? type.ordinal() : 0;
         result = 31 * result + (listId != null ? listId.hashCode() : 0);
         return result;
     }
