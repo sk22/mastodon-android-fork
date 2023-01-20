@@ -1,13 +1,15 @@
 package org.joinmastodon.android.fragments;
 
+import static android.view.Menu.NONE;
+
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -20,7 +22,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.joinmastodon.android.GlobalUserPreferences;
-import org.joinmastodon.android.MastodonApp;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.lists.GetLists;
 import org.joinmastodon.android.api.requests.tags.GetFollowedHashtags;
@@ -115,21 +116,24 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.edit_timelines, menu);
         this.optionsMenu = menu;
         updateOptionsMenu();
-        UiUtils.enableOptionsMenuIcons(getContext(), optionsMenu, R.id.add);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_back) {
+            updateOptionsMenu();
+            optionsMenu.performIdentifierAction(R.id.menu_add_timeline, 0);
+            return true;
+        }
         TimelineDefinition tl = timelineByMenuItem.get(item);
-        if (tl == null) return false;
-        data.add(tl);
-        updated = true;
-        adapter.notifyItemInserted(data.indexOf(tl));
-        updateOptionsMenu();
-        saveTimelines();
+        if (tl != null) {
+            data.add(tl);
+            adapter.notifyItemInserted(data.indexOf(tl));
+            saveTimelines();
+            updateOptionsMenu();
+        };
         return true;
     }
 
@@ -138,33 +142,47 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
         MenuItem item = menu.add(0, View.generateViewId(), Menu.NONE, tl.getTitle(getContext()));
         item.setIcon(tl.getIconResource());
         timelineByMenuItem.put(item, tl);
-        UiUtils.insetPopupMenuIcon(getContext(), item);
+    }
+
+    private MenuItem makeBackItem(Menu m) {
+        MenuItem back = m.add(0, R.id.menu_back, NONE, R.string.back);
+        back.setIcon(R.drawable.ic_arrow_back);
+        return back;
     }
 
     private void updateOptionsMenu() {
-        MenuItem timelinesItem = optionsMenu.findItem(R.id.add_timeline);
-        Menu timelinesMenu = timelinesItem.getSubMenu();
-        MenuItem listsItem = optionsMenu.findItem(R.id.add_list);
-        Menu listsMenu = listsItem.getSubMenu();
-        MenuItem hashtagsItem = optionsMenu.findItem(R.id.add_hashtag);
-        Menu hashtagsMenu = hashtagsItem.getSubMenu();
-
-        timelinesMenu.clear();
-        listsMenu.clear();
-        hashtagsMenu.clear();
+        optionsMenu.clear();
         timelineByMenuItem.clear();
+
+        SubMenu menu = optionsMenu.addSubMenu(0, R.id.menu_add_timeline, NONE, R.string.sk_timelines_add);
+        menu.getItem().setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.getItem().setIcon(R.drawable.ic_fluent_add_24_regular);
+
+        SubMenu timelinesMenu = menu.addSubMenu(R.string.sk_timeline);
+        timelinesMenu.getItem().setIcon(R.drawable.ic_fluent_timeline_24_regular);
+        SubMenu listsMenu = menu.addSubMenu(R.string.sk_list);
+        listsMenu.getItem().setIcon(R.drawable.ic_fluent_people_list_24_regular);
+        SubMenu hashtagsMenu = menu.addSubMenu(R.string.sk_hashtag);
+        hashtagsMenu.getItem().setIcon(R.drawable.ic_fluent_number_symbol_24_regular);
+
+        makeBackItem(timelinesMenu);
+        makeBackItem(listsMenu);
+        makeBackItem(hashtagsMenu);
 
         TimelineDefinition.ALL_TIMELINES.forEach(tl -> addTimelineToOptions(tl, timelinesMenu));
         listTimelines.stream().map(TimelineDefinition::ofList).forEach(tl -> addTimelineToOptions(tl, listsMenu));
         hashtags.stream().map(TimelineDefinition::ofHashtag).forEach(tl -> addTimelineToOptions(tl, hashtagsMenu));
 
-        timelinesItem.setVisible(timelinesItem.getSubMenu().size() > 0);
-        listsItem.setVisible(listsItem.getSubMenu().size() > 0);
-        hashtagsItem.setVisible(hashtagsItem.getSubMenu().size() > 0);
+        timelinesMenu.getItem().setVisible(timelinesMenu.size() > 0);
+        listsMenu.getItem().setVisible(listsMenu.size() > 0);
+        hashtagsMenu.getItem().setVisible(hashtagsMenu.size() > 0);
+
+        UiUtils.enableOptionsMenuIcons(getContext(), optionsMenu, R.id.menu_add_timeline);
     }
 
     private void saveTimelines() {
-        GlobalUserPreferences.pinnedTimelines.put(accountID, data);
+        updated = true;
+        GlobalUserPreferences.pinnedTimelines.put(accountID, data.size() > 0 ? data : List.of(TimelineDefinition.HOME_TIMELINE));
         GlobalUserPreferences.save();
     }
 
@@ -255,7 +273,6 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
                 return false;
             } else {
                 Collections.swap(data, fromPosition, toPosition);
-                updated = true;
                 adapter.notifyItemMoved(fromPosition, toPosition);
                 saveTimelines();
                 return true;
@@ -280,9 +297,9 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
             int position = viewHolder.getAbsoluteAdapterPosition();
-            updated = true;
             data.remove(position);
             adapter.notifyItemRemoved(position);
+            saveTimelines();
             updateOptionsMenu();
         }
     }

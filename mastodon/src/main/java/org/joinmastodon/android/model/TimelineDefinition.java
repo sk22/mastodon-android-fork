@@ -141,7 +141,7 @@ public class TimelineDefinition {
     public static final TimelineDefinition POSTS_TIMELINE = new TimelineDefinition(TimelineType.POST_NOTIFICATIONS);
 
     public static final List<TimelineDefinition> DEFAULT_TIMELINES = BuildConfig.BUILD_TYPE.equals("playRelease")
-            ? List.of(LOCAL_TIMELINE)
-            : List.of(LOCAL_TIMELINE, FEDERATED_TIMELINE);
-    public static final List<TimelineDefinition> ALL_TIMELINES = List.of(LOCAL_TIMELINE, FEDERATED_TIMELINE, POSTS_TIMELINE);
+            ? List.of(HOME_TIMELINE, LOCAL_TIMELINE)
+            : List.of(HOME_TIMELINE, LOCAL_TIMELINE, FEDERATED_TIMELINE);
+    public static final List<TimelineDefinition> ALL_TIMELINES = List.of(HOME_TIMELINE, LOCAL_TIMELINE, FEDERATED_TIMELINE, POSTS_TIMELINE);
 }

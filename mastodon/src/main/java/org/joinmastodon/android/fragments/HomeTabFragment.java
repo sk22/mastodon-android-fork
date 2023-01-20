@@ -94,7 +94,8 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 		accountID = getArguments().getString("account");
 		timelineDefinitions = GlobalUserPreferences.pinnedTimelines.getOrDefault(accountID, TimelineDefinition.DEFAULT_TIMELINES);
 		assert timelineDefinitions != null;
-		count = timelineDefinitions.size() + 1;
+		if (timelineDefinitions.size() == 0) timelineDefinitions = List.of(TimelineDefinition.HOME_TIMELINE);
+		count = timelineDefinitions.size();
 		fragments = new Fragment[count];
 		tabViews = new FrameLayout[count];
 		timelines = new TimelineDefinition[count];
@@ -118,10 +119,8 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			args.putBoolean("__is_tab", true);
 			args.putBoolean("onlyPosts", true);
 
-			fragments[0] = new HomeTimelineFragment();
-			timelines[0] = TimelineDefinition.HOME_TIMELINE;
-			for (int i = 1; i <= timelineDefinitions.size(); i++) {
-				TimelineDefinition tl = timelineDefinitions.get(i - 1);
+			for (int i = 0; i < timelineDefinitions.size(); i++) {
+				TimelineDefinition tl = timelineDefinitions.get(i);
 				fragments[i] = tl.getFragment();
 				timelines[i] = tl;
 			}
@@ -175,8 +174,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			@Override
 			public void onPageSelected(int position){
 				updateSwitcherIcon(position);
-				if (position==0) return;
-				hideNewPostsButton();
+				if (!timelines[position].equals(TimelineDefinition.HOME_TIMELINE)) hideNewPostsButton();
 				if (fragments[position] instanceof BaseRecyclerFragment<?> page){
 					if(!page.loaded && !page.isDataLoading()) page.loadData();
 				}
