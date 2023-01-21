@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -161,9 +162,9 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			switcherPopup.show();
 		});
 		View.OnTouchListener listener = switcherPopup.getDragToOpenListener();
-		switcher.setOnTouchListener((v, m)-> {
-			updateSwitcherMenu();
-			return listener.onTouch(v, m);
+		switcher.setOnTouchListener((v, motionEvent) -> {
+			if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) updateSwitcherMenu();
+			return listener.onTouch(v, motionEvent);
 		});
 
 		UiUtils.reduceSwipeSensitivity(pager);
