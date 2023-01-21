@@ -2,6 +2,7 @@ package org.joinmastodon.android.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.HapticFeedbackConstants;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,6 +17,7 @@ import org.joinmastodon.android.api.requests.tags.SetHashtagFollowed;
 import org.joinmastodon.android.api.requests.timelines.GetHashtagTimeline;
 import org.joinmastodon.android.model.Hashtag;
 import org.joinmastodon.android.model.Status;
+import org.joinmastodon.android.model.TimelineDefinition;
 import org.joinmastodon.android.ui.utils.UiUtils;
 
 import java.util.List;
@@ -26,7 +28,7 @@ import me.grishka.appkit.api.ErrorResponse;
 import me.grishka.appkit.api.SimpleCallback;
 import me.grishka.appkit.utils.V;
 
-public class HashtagTimelineFragment extends StatusListFragment{
+public class HashtagTimelineFragment extends PinnableStatusListFragment {
 	private String hashtag;
 	private boolean following;
 	private ImageButton fab;
@@ -41,7 +43,6 @@ public class HashtagTimelineFragment extends StatusListFragment{
 		super.onAttach(activity);
 		updateTitle(getArguments().getString("hashtag"));
 		following=getArguments().getBoolean("following", false);
-
 		setHasOptionsMenu(true);
 	}
 
@@ -59,11 +60,31 @@ public class HashtagTimelineFragment extends StatusListFragment{
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.hashtag_timeline, menu);
+		super.onCreateOptionsMenu(menu, inflater);
 		followButton = menu.findItem(R.id.follow_hashtag);
 		updateFollowingState(following);
 
-		followButton.setOnMenuItemClickListener(i -> {
+		new GetHashtag(hashtag).setCallback(new Callback<>() {
+			@Override
+			public void onSuccess(Hashtag hashtag) {
+				updateTitle(hashtag.name);
+				updateFollowingState(hashtag.following);
+			}
+
+			@Override
+			public void onError(ErrorResponse error) {
+				error.showToast(getActivity());
+			}
+		}).exec(accountID);
+	}
+
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (super.onOptionsItemSelected(item)) return true;
+		if (item.getItemId() == R.id.follow_hashtag) {
 			updateFollowingState(!following);
+			getToolbar().performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK);
 			new SetHashtagFollowed(hashtag, following).setCallback(new Callback<>() {
 				@Override
 				public void onSuccess(Hashtag i) {
@@ -78,20 +99,13 @@ public class HashtagTimelineFragment extends StatusListFragment{
 				}
 			}).exec(accountID);
 			return true;
-		});
+		}
+		return false;
+	}
 
-		new GetHashtag(hashtag).setCallback(new Callback<>() {
-			@Override
-			public void onSuccess(Hashtag hashtag) {
-				updateTitle(hashtag.name);
-				updateFollowingState(hashtag.following);
-			}
-
-			@Override
-			public void onError(ErrorResponse error) {
-				error.showToast(getActivity());
-			}
-		}).exec(accountID);
+	@Override
+	protected TimelineDefinition makeTimelineDefinition() {
+		return TimelineDefinition.ofHashtag(hashtag);
 	}
 
 	@Override

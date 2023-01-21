@@ -326,6 +326,10 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			UiUtils.insetPopupMenuIcon(getContext(), item);
 		}
 
+		MenuItem editItem = switcherMenu.add(0, R.id.menu_edit, Menu.NONE, R.string.sk_edit_timelines);
+		editItem.setIcon(R.drawable.ic_fluent_edit_24_regular);
+		UiUtils.insetPopupMenuIcon(context, editItem);
+
 		if (!listItems.isEmpty()) {
 			SubMenu listsMenu = switcherMenu.addSubMenu(R.string.sk_list_timelines);
 			UiUtils.insetPopupMenuIcon(context, listsMenu.getItem().setVisible(true)
@@ -351,10 +355,6 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 				UiUtils.insetPopupMenuIcon(context, item);
 			});
 		}
-
-		MenuItem editItem = switcherMenu.add(0, R.id.menu_edit, Menu.NONE, R.string.sk_edit_timelines);
-		editItem.setIcon(R.drawable.ic_fluent_edit_24_regular);
-		UiUtils.insetPopupMenuIcon(context, editItem);
 	}
 
 	private boolean onSwitcherItemSelected(MenuItem item) {
@@ -362,22 +362,24 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 		ListTimeline list;
 		Hashtag hashtag;
 
+		Bundle args = new Bundle();
+		args.putString("account", accountID);
+
 		if (id == R.id.menu_back) {
 			switcher.post(() -> switcherPopup.show());
 			return true;
 		} else if (id == R.id.menu_edit) {
-			Bundle args = new Bundle();
-			args.putString("account", accountID);
+
 			Nav.go(getActivity(), EditTimelinesFragment.class, args);
 		} else if ((list = listItems.get(id)) != null) {
-			Bundle args = new Bundle();
-			args.putString("account", accountID);
 			args.putString("listID", list.id);
 			args.putString("listTitle", list.title);
 			args.putInt("repliesPolicy", list.repliesPolicy.ordinal());
 			Nav.goForResult(getActivity(), ListTimelineFragment.class, args, PINNED_UPDATED_RESULT, this);
 		} else if ((hashtag = hashtagsItems.get(id)) != null) {
-			UiUtils.openHashtagTimeline(getActivity(), accountID, hashtag.name, hashtag.following);
+			args.putString("hashtag", hashtag.name);
+			args.putBoolean("following", hashtag.following);
+			Nav.goForResult(getActivity(), HashtagTimelineFragment.class, args, PINNED_UPDATED_RESULT, this);
 		} else {
 			TimelineDefinition tl = timelinesByMenuItem.get(id);
 			if (tl != null) {

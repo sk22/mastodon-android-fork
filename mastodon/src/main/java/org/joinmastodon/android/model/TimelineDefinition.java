@@ -129,7 +129,7 @@ public class TimelineDefinition {
         TimelineDefinition that = (TimelineDefinition) o;
         if (type != that.type) return false;
         if (type == TimelineType.LIST) return Objects.equals(listId, that.listId);
-        if (type == TimelineType.HASHTAG) return Objects.equals(hashtagName, that.hashtagName);
+        if (type == TimelineType.HASHTAG) return Objects.equals(hashtagName.toLowerCase(), that.hashtagName.toLowerCase());
         return true;
     }
 
@@ -137,7 +137,7 @@ public class TimelineDefinition {
     public int hashCode() {
         int result = type.ordinal();
         result = 31 * result + (listId != null ? listId.hashCode() : 0);
-        result = 31 * result + (hashtagName != null ? hashtagName.hashCode() : 0);
+        result = 31 * result + (hashtagName.toLowerCase() != null ? hashtagName.toLowerCase().hashCode() : 0);
         return result;
     }
 

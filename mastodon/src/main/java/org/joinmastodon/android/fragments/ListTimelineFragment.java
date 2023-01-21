@@ -33,15 +33,12 @@ import me.grishka.appkit.api.SimpleCallback;
 import me.grishka.appkit.utils.V;
 
 
-public class ListTimelineFragment extends StatusListFragment {
+public class ListTimelineFragment extends PinnableStatusListFragment {
     private String listID;
     private String listTitle;
     private ListTimeline.RepliesPolicy repliesPolicy;
     private ImageButton fab;
-    private List<TimelineDefinition> pinnedTimelines;
-    private Menu optionsMenu;
     private Bundle resultArgs = new Bundle();
-    private boolean pinnedUpdated;
 
     public ListTimelineFragment() {
         setListLayoutId(R.layout.recycler_fragment_with_fab);
@@ -58,8 +55,6 @@ public class ListTimelineFragment extends StatusListFragment {
 
         setTitle(listTitle);
         setHasOptionsMenu(true);
-
-        pinnedTimelines = new ArrayList<>(GlobalUserPreferences.pinnedTimelines.getOrDefault(accountID, TimelineDefinition.DEFAULT_TIMELINES));
 
         new GetList(listID).setCallback(new Callback<>() {
             @Override
@@ -78,15 +73,14 @@ public class ListTimelineFragment extends StatusListFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.list, menu);
-        optionsMenu = menu;
+        super.onCreateOptionsMenu(menu, inflater);
         UiUtils.enableOptionsMenuIcons(getContext(), menu, R.id.pin);
-        updatePinButton();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (super.onOptionsItemSelected(item)) return true;
         if (item.getItemId() == R.id.edit) {
             ListTimelineEditor editor = new ListTimelineEditor(getContext());
             editor.applyList(listTitle, repliesPolicy);
@@ -120,40 +114,18 @@ public class ListTimelineFragment extends StatusListFragment {
                 setResult(true, resultArgs);
                 Nav.finish(this);
             });
-        } else if (item.getItemId() == R.id.pin) {
-            pinnedUpdated = true;
-            getToolbar().performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK);
-            TimelineDefinition def = TimelineDefinition.ofList(listID, listTitle);
-            boolean hasList = hasList();
-            if (hasList) pinnedTimelines.remove(def);
-            else pinnedTimelines.add(def);
-            Toast.makeText(getContext(), hasList ? R.string.sk_unpinned_timeline : R.string.sk_pinned_timeline, Toast.LENGTH_SHORT).show();
-            GlobalUserPreferences.pinnedTimelines.put(accountID, pinnedTimelines);
-            GlobalUserPreferences.save();
-            updatePinButton();
         }
         return true;
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (pinnedUpdated) {
-            resultArgs.putBoolean("pinnedUpdated", true);
-            setResult(true, resultArgs);
-        }
+    public Bundle getResultArgs() {
+        return resultArgs;
     }
 
-    private boolean hasList() {
-        return pinnedTimelines.contains(TimelineDefinition.ofList(listID, listTitle));
-    }
-
-    private void updatePinButton() {
-        MenuItem pin = optionsMenu.findItem(R.id.pin);
-        pin.setIcon(hasList() ?
-                R.drawable.ic_fluent_pin_24_filled :
-                R.drawable.ic_fluent_pin_24_regular);
-        pin.setTitle(hasList() ? R.string.sk_unpin_timeline : R.string.sk_pin_timeline);
+    @Override
+    protected TimelineDefinition makeTimelineDefinition() {
+        return TimelineDefinition.ofList(listID, listTitle);
     }
 
     @Override
