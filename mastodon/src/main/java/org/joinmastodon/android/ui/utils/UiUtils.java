@@ -774,6 +774,16 @@ public class UiUtils{
 		item.setTitle(ssb);
 	}
 
+	public static void resetPopupItemTint(MenuItem item) {
+		if(Build.VERSION.SDK_INT>=26) {
+			item.setIconTintList(null);
+		} else {
+			Drawable icon=item.getIcon().mutate();
+			icon.setTintList(null);
+			item.setIcon(icon);
+		}
+	}
+
 	public static void enableOptionsMenuIcons(Context context, Menu menu, @IdRes int... asAction) {
 		if(menu.getClass().getSimpleName().equals("MenuBuilder")){
 			try {

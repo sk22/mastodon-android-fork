@@ -297,6 +297,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			public void onSuccess(List<Announcement> result) {
 				boolean hasUnread = result.stream().anyMatch(a -> !a.read);
 				announcements.setIcon(hasUnread ? R.drawable.ic_announcements_24_badged : R.drawable.ic_fluent_megaphone_24_regular);
+				updateBadgedOptionsItem(announcements, hasUnread);
 			}
 
 			@Override
@@ -304,6 +305,17 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 				error.showToast(getActivity());
 			}
 		}).exec(accountID);
+
+		UiUtils.enableOptionsMenuIcons(getContext(), menu);
+	}
+
+	private void updateBadgedOptionsItem(MenuItem item, boolean asAction) {
+		item.setShowAsAction(asAction ? MenuItem.SHOW_AS_ACTION_ALWAYS : MenuItem.SHOW_AS_ACTION_NEVER);
+		if (asAction) {
+			UiUtils.resetPopupItemTint(item);
+		} else {
+			UiUtils.insetPopupMenuIcon(getContext(), item);
+		}
 	}
 
 	private <T> void addItemsToMap(List<T> addItems, Map<Integer, T> items) {
@@ -325,10 +337,6 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			item.setIcon(tl.getIcon().iconRes);
 			UiUtils.insetPopupMenuIcon(getContext(), item);
 		}
-
-		MenuItem editItem = switcherMenu.add(0, R.id.menu_edit, Menu.NONE, R.string.sk_edit_timelines);
-		editItem.setIcon(R.drawable.ic_fluent_edit_24_regular);
-		UiUtils.insetPopupMenuIcon(context, editItem);
 
 		if (!listItems.isEmpty()) {
 			SubMenu listsMenu = switcherMenu.addSubMenu(R.string.sk_list_timelines);
@@ -368,9 +376,6 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 		if (id == R.id.menu_back) {
 			switcher.post(() -> switcherPopup.show());
 			return true;
-		} else if (id == R.id.menu_edit) {
-
-			Nav.go(getActivity(), EditTimelinesFragment.class, args);
 		} else if ((list = listItems.get(id)) != null) {
 			args.putString("listID", list.id);
 			args.putString("listTitle", list.title);
@@ -411,9 +416,13 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 	public boolean onOptionsItemSelected(MenuItem item){
 		Bundle args=new Bundle();
 		args.putString("account", accountID);
-		if (item.getItemId() == R.id.settings) Nav.go(getActivity(), SettingsFragment.class, args);
-		if (item.getItemId() == R.id.announcements) {
+		int id = item.getItemId();
+		if (id == R.id.settings) {
+			Nav.go(getActivity(), SettingsFragment.class, args);
+		} else if (id == R.id.announcements) {
 			Nav.goForResult(getActivity(), AnnouncementsFragment.class, args, ANNOUNCEMENTS_RESULT, this);
+		} else if (id == R.id.edit_timelines) {
+			Nav.go(getActivity(), EditTimelinesFragment.class, args);
 		}
 		return true;
 	}
@@ -502,14 +511,19 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 	public void onFragmentResult(int reqCode, boolean success, Bundle result){
 		if (reqCode == ANNOUNCEMENTS_RESULT && success) {
 			announcements.setIcon(R.drawable.ic_fluent_megaphone_24_regular);
+			announcements.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+			UiUtils.insetPopupMenuIcon(getContext(), announcements);
 		} else if (reqCode == PINNED_UPDATED_RESULT && result != null && result.getBoolean("pinnedUpdated", false)) {
 			UiUtils.restartApp();
 		}
 	}
 
 	private void updateUpdateState(GithubSelfUpdater.UpdateState state){
-		if(state!=GithubSelfUpdater.UpdateState.NO_UPDATE && state!=GithubSelfUpdater.UpdateState.CHECKING)
-			getToolbar().getMenu().findItem(R.id.settings).setIcon(R.drawable.ic_settings_24_badged);
+		if(state!=GithubSelfUpdater.UpdateState.NO_UPDATE && state!=GithubSelfUpdater.UpdateState.CHECKING) {
+			MenuItem settings = getToolbar().getMenu().findItem(R.id.settings);
+			settings.setIcon(R.drawable.ic_settings_24_badged);
+			updateBadgedOptionsItem(settings, true);
+		}
 	}
 
 	@Subscribe
