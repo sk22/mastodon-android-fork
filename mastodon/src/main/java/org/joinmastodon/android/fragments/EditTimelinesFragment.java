@@ -270,8 +270,16 @@ public class EditTimelinesFragment extends BaseRecyclerFragment<TimelineDefiniti
             TimelineDefinition.Icon currentIcon = item.getIcon();
             btn.setImageResource(currentIcon.iconRes);
             btn.setContentDescription(ctx.getString(currentIcon.nameRes));
-            btn.setOnTouchListener(popup.getDragToOpenListener());
-            btn.setOnClickListener(l -> popup.show());
+            View.OnTouchListener touchListener = (v, event) -> {
+                if(event.getAction() == MotionEvent.ACTION_UP){
+                    popup.show();
+                    return true;
+                } else {
+                    popup.getDragToOpenListener();
+                }
+                return false;
+            };
+            btn.setOnTouchListener(touchListener);
 
             Menu menu = popup.getMenu();
             TimelineDefinition.Icon defaultIcon = item.getDefaultIcon();
