@@ -40,6 +40,7 @@ import org.joinmastodon.android.ui.displayitems.PollFooterStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.PollOptionStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.StatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.TextStatusDisplayItem;
+import org.joinmastodon.android.ui.displayitems.WarningFilteredStatusDisplayItem;
 import org.joinmastodon.android.ui.photoviewer.PhotoViewer;
 import org.joinmastodon.android.ui.photoviewer.PhotoViewerHost;
 import org.joinmastodon.android.ui.utils.UiUtils;
@@ -474,6 +475,28 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 		updateImagesSpoilerState(status, itemID);
 	}
 
+//	public void onRevealFilteredClick(TextStatusDisplayItem.Holder holder){
+//		Status status=holder.getItem().status;
+//		revealFiltered(status, holder.getItemID());
+//	}
+
+	public void onRevealFilteredClick(WarningFilteredStatusDisplayItem.Holder holder){
+		Status status=holder.getItem().status;
+		revealFiltered(status, holder.getItemID());
+	}
+
+	protected void revealFiltered(Status status, String itemID){
+		status.filterRevealed=true;
+		TextStatusDisplayItem.Holder text=findHolderOfType(itemID, TextStatusDisplayItem.Holder.class);
+		if(text!=null)
+			adapter.notifyItemChanged(text.getAbsoluteAdapterPosition()-getMainAdapterOffset());
+		HeaderStatusDisplayItem.Holder header=findHolderOfType(itemID, HeaderStatusDisplayItem.Holder.class);
+		if(header!=null)
+			header.rebind();
+		updateImagesSpoilerState(status, itemID);
+	}
+
+
 	public void onVisibilityIconClick(HeaderStatusDisplayItem.Holder holder){
 		Status status=holder.getItem().status;
 		status.spoilerRevealed=!status.spoilerRevealed;
@@ -503,6 +526,13 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 	}
 
 	public void onGapClick(GapStatusDisplayItem.Holder item){}
+
+	public void onWarningClick(WarningFilteredStatusDisplayItem.Holder warningItem){
+//		Status status = warningItem.getItem().status;
+//		String itemID = warningItem.getItemID();
+		warningItem.itemView.setVisibility(View.GONE);
+//		adapter.notifyItemChanged();
+	}
 
 	public String getAccountID(){
 		return accountID;

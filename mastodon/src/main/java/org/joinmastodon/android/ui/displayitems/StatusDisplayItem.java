@@ -98,6 +98,14 @@ public abstract class StatusDisplayItem{
 		args.putString("account", accountID);
 		ScheduledStatus scheduledStatus = parentObject instanceof ScheduledStatus ? (ScheduledStatus) parentObject : null;
 
+		List<Filter> filters=AccountSessionManager.getInstance().getAccount(accountID).wordFilters.stream().filter(f->f.context.contains(Filter.FilterContext.HOME)).collect(Collectors.toList());
+		StatusFilterPredicate filterPredicate = new StatusFilterPredicate(filters);
+		if(!filterPredicate.testWithWarning(status)){
+			if(!status.filterRevealed){
+				items.add(new WarningFilteredStatusDisplayItem(parentID, fragment, status));
+			}
+		}
+
 		if(status.reblog!=null){
 			boolean isOwnPost = AccountSessionManager.getInstance().isSelf(fragment.getAccountID(), status.account);
 			items.add(new ReblogOrReplyLineStatusDisplayItem(parentID, fragment, fragment.getString(R.string.user_boosted, status.account.displayName), status.account.emojis, R.drawable.ic_fluent_arrow_repeat_all_20_filled, isOwnPost ? status.visibility : null, i->{
@@ -131,14 +139,6 @@ public abstract class StatusDisplayItem{
 					)));
 		}
 
-		List<Filter> filters=AccountSessionManager.getInstance().getAccount(accountID).wordFilters.stream().filter(f->f.context.contains(Filter.FilterContext.HOME)).collect(Collectors.toList());
-		StatusFilterPredicate filterPredicate = new StatusFilterPredicate(filters);
-		if(!filterPredicate.testWithWarning(status)){
-			if(!status.filterRevealed){
-				items.add(new WarningFilteredStatusDisplayItem(parentID, fragment, status));
-				return items;
-			}
-		}
 		HeaderStatusDisplayItem header;
 		items.add(header=new HeaderStatusDisplayItem(parentID, statusForContent.account, statusForContent.createdAt, fragment, accountID, statusForContent, null, notification, scheduledStatus));
 		if(!TextUtils.isEmpty(statusForContent.content))
@@ -178,11 +178,14 @@ public abstract class StatusDisplayItem{
 			if(status.hasGapAfter && !(fragment instanceof ThreadFragment))
 				items.add(new GapStatusDisplayItem(parentID, fragment));
 		}
+
 		int i=1;
 		for(StatusDisplayItem item:items){
 			item.inset=inset;
 			item.index=i++;
 		}
+
+
 		return items;
 	}
 

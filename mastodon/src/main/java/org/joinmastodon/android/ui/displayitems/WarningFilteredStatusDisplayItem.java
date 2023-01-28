@@ -27,14 +27,16 @@ public class WarningFilteredStatusDisplayItem extends StatusDisplayItem{
     }
 
     public static class Holder extends StatusDisplayItem.Holder<WarningFilteredStatusDisplayItem>{
+        public final View warningWrap;
         public final ProgressBar progress;
         public final TextView text;
 
         public Holder(Context context, ViewGroup parent){
             super(context, R.layout.display_item_warning, parent);
+            warningWrap=findViewById(R.id.warning_wrap);
             progress=findViewById(R.id.progress);
             text=findViewById(R.id.text);
-//            itemView.setForeground(new SawtoothTearDrawable(context));
+//            itemView.setOnClickListener(v->item.parentFragment.onRevealFilteredClick(this));
         }
 
         @Override
@@ -44,8 +46,7 @@ public class WarningFilteredStatusDisplayItem extends StatusDisplayItem{
 
         @Override
         public void onClick(){
-            item.status.filterRevealed = true;
-//            item.parentFragment.onGapClick(this);
+            item.parentFragment.onWarningClick(this);
         }
     }
 }
