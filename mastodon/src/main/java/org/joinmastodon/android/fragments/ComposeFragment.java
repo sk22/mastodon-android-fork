@@ -710,7 +710,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				if(!TextUtils.isEmpty(replyTo.spoilerText)){
 					hasSpoiler=true;
 					spoilerEdit.setVisibility(View.VISIBLE);
-					if(GlobalUserPreferences.prefixRepliesWithRe){
+					if(GlobalUserPreferences.prefixRepliesWithRe && !replyTo.spoilerText.startsWith("re: ")){
 						spoilerEdit.setText("re: " + replyTo.spoilerText);
 					}else{
 						spoilerEdit.setText(replyTo.spoilerText);
