@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.joinmastodon.android.R;
+import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.fragments.HashtagTimelineFragment;
@@ -19,6 +20,7 @@ import org.joinmastodon.android.fragments.ThreadFragment;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Attachment;
 import org.joinmastodon.android.model.DisplayItemsParent;
+import org.joinmastodon.android.model.Filter;
 import org.joinmastodon.android.model.Hashtag;
 import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.Poll;
@@ -26,6 +28,7 @@ import org.joinmastodon.android.model.ScheduledStatus;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.PhotoLayoutHelper;
 import org.joinmastodon.android.ui.text.HtmlParser;
+import org.joinmastodon.android.utils.StatusFilterPredicate;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -78,6 +81,7 @@ public abstract class StatusDisplayItem{
 			case ACCOUNT -> new AccountStatusDisplayItem.Holder(activity, parent);
 			case HASHTAG -> new HashtagStatusDisplayItem.Holder(activity, parent);
 			case GAP -> new GapStatusDisplayItem.Holder(activity, parent);
+			case WARNING -> new WarningFilteredStatusDisplayItem.Holder(activity, parent);
 			case EXTENDED_FOOTER -> new ExtendedFooterStatusDisplayItem.Holder(activity, parent);
 		};
 	}
@@ -125,6 +129,15 @@ public abstract class StatusDisplayItem{
 								Nav.go(fragment.getActivity(), HashtagTimelineFragment.class, args);
 							}
 					)));
+		}
+
+		List<Filter> filters=AccountSessionManager.getInstance().getAccount(accountID).wordFilters.stream().filter(f->f.context.contains(Filter.FilterContext.HOME)).collect(Collectors.toList());
+		StatusFilterPredicate filterPredicate = new StatusFilterPredicate(filters);
+		if(!filterPredicate.testWithWarning(status)){
+			if(!status.filterRevealed){
+				items.add(new WarningFilteredStatusDisplayItem(parentID, fragment, status));
+				return items;
+			}
 		}
 		HeaderStatusDisplayItem header;
 		items.add(header=new HeaderStatusDisplayItem(parentID, statusForContent.account, statusForContent.createdAt, fragment, accountID, statusForContent, null, notification, scheduledStatus));
@@ -196,6 +209,7 @@ public abstract class StatusDisplayItem{
 		ACCOUNT,
 		HASHTAG,
 		GAP,
+		WARNING,
 		EXTENDED_FOOTER
 	}
 
