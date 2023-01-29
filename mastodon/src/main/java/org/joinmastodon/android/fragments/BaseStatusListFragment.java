@@ -496,6 +496,10 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 		updateImagesSpoilerState(status, itemID);
 	}
 
+//	public void notifyItemsChanged(int adapterPosition){
+//		adapter.notifyItemChanged(adapterPosition);
+//	}
+
 
 	public void onVisibilityIconClick(HeaderStatusDisplayItem.Holder holder){
 		Status status=holder.getItem().status;

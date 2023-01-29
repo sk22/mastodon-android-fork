@@ -73,6 +73,15 @@ public abstract class ImageStatusDisplayItem extends StatusDisplayItem{
 			photo.setImageDrawable(crossfadeDrawable);
 			photo.setContentDescription(TextUtils.isEmpty(item.attachment.description) ? item.parentFragment.getString(R.string.media_no_description) : item.attachment.description);
 			didClear=false;
+
+			if(!item.status.filterRevealed){
+				this.itemView.setVisibility(View.GONE);
+				ViewGroup.LayoutParams params = this.itemView.getLayoutParams();
+				params.height = 0;
+				params.width = 0;
+				this.itemView.setLayoutParams(params);
+//					item.parentFragment.notifyItemsChanged(this.getAbsoluteAdapterPosition());
+			}
 		}
 
 		@Override

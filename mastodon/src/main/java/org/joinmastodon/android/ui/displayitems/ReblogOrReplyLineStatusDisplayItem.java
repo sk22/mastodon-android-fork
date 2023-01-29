@@ -100,6 +100,7 @@ public class ReblogOrReplyLineStatusDisplayItem extends StatusDisplayItem{
 			if (visibilityText != 0) text.setContentDescription(item.text + " (" + ctx.getString(visibilityText) + ")");
 			if(Build.VERSION.SDK_INT<Build.VERSION_CODES.N)
 				UiUtils.fixCompoundDrawableTintOnAndroid6(text);
+
 		}
 
 		@Override

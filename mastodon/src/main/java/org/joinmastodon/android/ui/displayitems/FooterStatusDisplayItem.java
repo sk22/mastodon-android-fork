@@ -139,6 +139,15 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 			bookmark.setSelected(item.status.bookmarked);
 			boost.setEnabled(item.status.visibility==StatusPrivacy.PUBLIC || item.status.visibility==StatusPrivacy.UNLISTED || item.status.visibility==StatusPrivacy.LOCAL
 					|| (item.status.visibility==StatusPrivacy.PRIVATE && item.status.account.id.equals(AccountSessionManager.getInstance().getAccount(item.accountID).self.id)));
+
+			if(!item.status.filterRevealed){
+				this.itemView.setVisibility(View.GONE);
+				ViewGroup.LayoutParams params = this.itemView.getLayoutParams();
+				params.height = 0;
+				params.width = 0;
+				this.itemView.setLayoutParams(params);
+//					item.parentFragment.notifyItemsChanged(this.getAbsoluteAdapterPosition());
+			}
 		}
 
 		private void bindButton(TextView btn, long count){
