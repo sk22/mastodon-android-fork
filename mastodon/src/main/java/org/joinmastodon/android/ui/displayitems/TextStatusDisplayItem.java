@@ -1,11 +1,17 @@
 package org.joinmastodon.android.ui.displayitems;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
-import android.util.TypedValue;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -20,7 +26,6 @@ import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Status;
-import org.joinmastodon.android.ui.drawables.SpoilerStripesDrawable;
 import org.joinmastodon.android.model.StatusPrivacy;
 import org.joinmastodon.android.model.TranslatedStatus;
 import org.joinmastodon.android.ui.text.HtmlParser;
@@ -44,6 +49,7 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 	public final Status status;
 	public boolean disableTranslate;
 	public boolean translated = false;
+	public boolean shouldTruncate = true;
 	public TranslatedStatus translation = null;
 	private AccountSession session;
 
@@ -109,9 +115,13 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 
 		@Override
 		public void onBind(TextStatusDisplayItem item){
-			text.setText(item.translated
-							? HtmlParser.parse(item.translation.content, item.status.emojis, item.status.mentions, item.status.tags, item.parentFragment.getAccountID())
-							: item.text);
+			if (item.translated)
+				text.setText(HtmlParser.parse(item.translation.content, item.status.emojis, item.status.mentions, item.status.tags, item.parentFragment.getAccountID()));
+			else if (item.shouldTruncate)
+				text.setText(UiUtils.truncateString(text.getPaint(), item.text));
+			else
+				text.setText(item.text);
+
 			text.setTextIsSelectable(item.textSelectable);
 			spoilerTitleInline.setTextIsSelectable(item.textSelectable);
 			text.setInvalidateOnEveryFrame(false);

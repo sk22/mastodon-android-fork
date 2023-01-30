@@ -31,6 +31,7 @@ import android.os.Looper;
 import android.provider.OpenableColumns;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.HapticFeedbackConstants;
@@ -131,6 +132,7 @@ public class UiUtils {
 	private static Handler mainHandler = new Handler(Looper.getMainLooper());
 	private static final DateTimeFormatter DATE_FORMATTER_SHORT_WITH_YEAR = DateTimeFormatter.ofPattern("d MMM uuuu"), DATE_FORMATTER_SHORT = DateTimeFormatter.ofPattern("d MMM");
 	public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG, FormatStyle.SHORT);
+	private static final int POST_MAX_CHAR_LENGTH=666;
 
 	private UiUtils() {
 	}
@@ -1175,5 +1177,13 @@ public class UiUtils {
 
 		// fucking finally
 		return container;
+	}
+
+	public static CharSequence truncateString(TextPaint textPaint, CharSequence text) {
+		if (text.length() > POST_MAX_CHAR_LENGTH){
+			float paintLength = textPaint.measureText(text, 0, POST_MAX_CHAR_LENGTH);
+			return TextUtils.ellipsize(text, textPaint, paintLength, TextUtils.TruncateAt.END);
+		}
+		return text;
 	}
 }
