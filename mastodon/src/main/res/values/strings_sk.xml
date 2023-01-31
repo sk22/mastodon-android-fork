@@ -251,4 +251,5 @@
     <string name="sk_new_reports">New reports</string>
     <string name="sk_settings_server_version">Server version: %s</string>
     <string name="sk_notify_poll_results">Poll results</string>
+    <string name="sk_settings_prefix_replies_with_re">Prefix replies with “re:”</string>
 </resources>

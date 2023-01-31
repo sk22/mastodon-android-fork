@@ -154,6 +154,7 @@ public class MainActivity extends FragmentStackActivity{
 		);
 		Bundle currentArgs = currentFragment.getArguments();
 		if (this.fragmentContainers.size() == 1
+				&& currentArgs != null
 				&& currentArgs.getBoolean("_can_go_back", false)
 				&& currentArgs.containsKey("account")) {
 			Bundle args = new Bundle();
