@@ -3,6 +3,7 @@ package org.joinmastodon.android.fragments;
 import static org.joinmastodon.android.GlobalUserPreferences.recentLanguages;
 import static org.joinmastodon.android.api.requests.statuses.CreateStatus.DRAFTS_AFTER_INSTANT;
 import static org.joinmastodon.android.api.requests.statuses.CreateStatus.getDraftInstant;
+import static org.joinmastodon.android.ui.utils.UiUtils.isPhotoPickerAvailable;
 import static org.joinmastodon.android.utils.MastodonLanguage.allLanguages;
 import static org.joinmastodon.android.utils.MastodonLanguage.defaultRecentLanguages;
 import static android.os.ext.SdkExtensions.getExtensionVersion;
@@ -42,6 +43,7 @@ import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -66,6 +68,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.bottomSoftwareFoundation.bottom.Bottom;
 import com.twitter.twittertext.TwitterTextEmojiRegex;
 
 import org.joinmastodon.android.E;
@@ -115,6 +118,7 @@ import org.joinmastodon.android.ui.views.LinkedTextView;
 import org.joinmastodon.android.ui.views.ReorderableLinearLayout;
 import org.joinmastodon.android.ui.views.SizeListenerLinearLayout;
 import org.joinmastodon.android.utils.MastodonLanguage;
+import org.joinmastodon.android.utils.StringEncoder;
 import org.parceler.Parcel;
 import org.parceler.Parcels;
 
@@ -155,11 +159,11 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	private static final Pattern GLITCH_LOCAL_ONLY_PATTERN = Pattern.compile("[\\s\\S]*" + GLITCH_LOCAL_ONLY_SUFFIX + "[\uFE00-\uFE0F]*");
 	private static final String TAG="ComposeFragment";
 
-	private static final Pattern MENTION_PATTERN=Pattern.compile("(^|[^\\/\\w])@(([a-z0-9_]+)@[a-z0-9\\.\\-]+[a-z0-9]+)", Pattern.CASE_INSENSITIVE);
+	public static final Pattern MENTION_PATTERN=Pattern.compile("(^|[^\\/\\w])@(([a-z0-9_]+)@[a-z0-9\\.\\-]+[a-z0-9]+)", Pattern.CASE_INSENSITIVE);
 
 	// from https://github.com/mastodon/mastodon-ios/blob/main/Mastodon/Helper/MastodonRegex.swift
-	private static final Pattern AUTO_COMPLETE_PATTERN=Pattern.compile("(?<!\\w)(?:@([a-zA-Z0-9_]+)(@[a-zA-Z0-9_.-]+)?|#([^\\s.]+)|:([a-zA-Z0-9_]+))");
-	private static final Pattern HIGHLIGHT_PATTERN=Pattern.compile("(?<!\\w)(?:@([a-zA-Z0-9_]+)(@[a-zA-Z0-9_.-]+)?|#([^\\s.]+))");
+	public static final Pattern AUTO_COMPLETE_PATTERN=Pattern.compile("(?<!\\w)(?:@([a-zA-Z0-9_]+)(@[a-zA-Z0-9_.-]+)?|#([^\\s.]+)|:([a-zA-Z0-9_]+))");
+	public static final Pattern HIGHLIGHT_PATTERN=Pattern.compile("(?<!\\w)(?:@([a-zA-Z0-9_]+)(@[a-zA-Z0-9_.-]+)?|#([^\\s.]+))");
 
 	@SuppressLint("NewApi") // this class actually exists on 6.0
 	private final BreakIterator breakIterator=BreakIterator.getCharacterInstance();
@@ -229,7 +233,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	private boolean ignoreSelectionChanges=false;
 	private Runnable updateUploadEtaRunnable;
 
-	private String language;
+	private String language, encoding;
 	private MastodonLanguage.LanguageResolver languageResolver;
 
 	@Override
@@ -839,9 +843,13 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	}
 
 	private void updateLanguage(MastodonLanguage loc) {
-		language = loc.getLanguage();
-		languageButton.setText(loc.getLanguageName());
-		languageButton.setContentDescription(getActivity().getString(R.string.sk_post_language, loc.getDefaultName()));
+		updateLanguage(loc.getLanguage(), loc.getLanguageName(), loc.getDefaultName());
+	}
+
+	private void updateLanguage(String languageTag, String languageName, String defaultName) {
+		language = languageTag;
+		languageButton.setText(languageName);
+		languageButton.setContentDescription(getActivity().getString(R.string.sk_post_language, defaultName));
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -858,8 +866,12 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 
 		Menu languageMenu = languagePopup.getMenu();
 		for (String recentLanguage : Optional.ofNullable(recentLanguages.get(accountID)).orElse(defaultRecentLanguages)) {
-			MastodonLanguage l = languageResolver.from(recentLanguage);
-			languageMenu.add(0, allLanguages.indexOf(l), Menu.NONE, getActivity().getString(R.string.sk_language_name, l.getDefaultName(), l.getLanguageName()));
+			if (recentLanguage.equals("bottom")) {
+				addBottomLanguage(languageMenu);
+			} else {
+				MastodonLanguage l = languageResolver.from(recentLanguage);
+				languageMenu.add(0, allLanguages.indexOf(l), Menu.NONE, getActivity().getString(R.string.sk_language_name, l.getDefaultName(), l.getLanguageName()));
+			}
 		}
 
 		SubMenu allLanguagesMenu = languageMenu.addSubMenu(R.string.sk_available_languages);
@@ -868,11 +880,33 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			allLanguagesMenu.add(0, i, Menu.NONE, getActivity().getString(R.string.sk_language_name, l.getDefaultName(), l.getLanguageName()));
 		}
 
+		if (GlobalUserPreferences.bottomEncoding) addBottomLanguage(allLanguagesMenu);
+
+		btn.setOnLongClickListener(v->{
+			btn.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+			if (!GlobalUserPreferences.bottomEncoding) {
+				GlobalUserPreferences.bottomEncoding = true;
+				GlobalUserPreferences.save();
+				addBottomLanguage(allLanguagesMenu);
+			}
+			return false;
+		});
+
 		languagePopup.setOnMenuItemClickListener(i->{
 			if (i.hasSubMenu()) return false;
-			updateLanguage(allLanguages.get(i.getItemId()));
+			if (i.getItemId() == allLanguages.size()) {
+				updateLanguage(language, "\uD83E\uDD7A\uD83D\uDC49\uD83D\uDC48", "bottom");
+				encoding = "bottom";
+			} else {
+				updateLanguage(allLanguages.get(i.getItemId()));
+				encoding = null;
+			}
 			return true;
 		});
+	}
+
+	private void addBottomLanguage(Menu menu) {
+		menu.add(0, allLanguages.size(), Menu.NONE, "bottom (\uD83E\uDD7A\uD83D\uDC49\uD83D\uDC48)");
 	}
 
 	@Override
@@ -999,6 +1033,10 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	private void publish(boolean force){
 		String text=mainEditText.getText().toString();
 		CreateStatus.Request req=new CreateStatus.Request();
+		if ("bottom".equals(encoding)) {
+			text = new StringEncoder(Bottom::encode).encode(text);
+			req.spoilerText = "bottom-encoded emoji spam";
+		}
 		if (localOnly &&
 				GlobalUserPreferences.accountsInGlitchMode.contains(accountID) &&
 				!GLITCH_LOCAL_ONLY_PATTERN.matcher(text).matches()) {
@@ -1139,7 +1177,9 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		if (replyTo == null) {
 			List<String> newRecentLanguages = new ArrayList<>(Optional.ofNullable(recentLanguages.get(accountID)).orElse(defaultRecentLanguages));
 			newRecentLanguages.remove(language);
+			newRecentLanguages.remove(encoding);
 			newRecentLanguages.add(0, language);
+			newRecentLanguages.add(0, encoding);
 			recentLanguages.put(accountID, newRecentLanguages.stream().limit(4).collect(Collectors.toList()));
 			GlobalUserPreferences.save();
 		}
@@ -1215,18 +1255,6 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				.show();
 	}
 
-	/**
-	 * Check to see if Android platform photopicker is available on the device\
-	 * @return whether the device supports photopicker intents.
-	 */
-	private boolean isPhotoPickerAvailable() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-			return true;
-		} else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-			return getExtensionVersion(Build.VERSION_CODES.R) >= 2;
-		} else
-			return false;
-	}
 
 	/**
 	 * Builds the correct intent for the device version to select media.
@@ -1238,24 +1266,24 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	 */
 	private void openFilePicker(boolean photoPicker){
 		Intent intent;
-		boolean usePhotoPicker = photoPicker && isPhotoPickerAvailable();
-		if (usePhotoPicker) {
-			intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
-			intent.putExtra(MediaStore.EXTRA_PICK_IMAGES_MAX, MediaStore.getPickImagesMaxLimit());
-		} else {
-			intent = new Intent(Intent.ACTION_GET_CONTENT);
+		boolean usePhotoPicker=photoPicker && isPhotoPickerAvailable();
+		if(usePhotoPicker){
+			intent=new Intent(MediaStore.ACTION_PICK_IMAGES);
+			intent.putExtra(MediaStore.EXTRA_PICK_IMAGES_MAX, MAX_ATTACHMENTS-getMediaAttachmentsCount());
+		}else{
+			intent=new Intent(Intent.ACTION_GET_CONTENT);
 			intent.addCategory(Intent.CATEGORY_OPENABLE);
 			intent.setType("*/*");
 		}
-		if (!usePhotoPicker && instance.configuration != null &&
-				instance.configuration.mediaAttachments != null &&
-				instance.configuration.mediaAttachments.supportedMimeTypes != null &&
-				!instance.configuration.mediaAttachments.supportedMimeTypes.isEmpty()) {
+		if(!usePhotoPicker && instance.configuration!=null &&
+				instance.configuration.mediaAttachments!=null &&
+				instance.configuration.mediaAttachments.supportedMimeTypes!=null &&
+				!instance.configuration.mediaAttachments.supportedMimeTypes.isEmpty()){
 			intent.putExtra(Intent.EXTRA_MIME_TYPES,
 					instance.configuration.mediaAttachments.supportedMimeTypes.toArray(
 							new String[0]));
-		} else {
-			if (!usePhotoPicker) {
+		}else{
+			if(!usePhotoPicker){
 				// If photo picker is being used these are the default mimetypes.
 				intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"image/*", "video/*"});
 			}

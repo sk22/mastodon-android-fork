@@ -3,14 +3,16 @@ package org.joinmastodon.android.ui.displayitems;
 import android.app.Activity;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.github.bottomSoftwareFoundation.bottom.Bottom;
+import com.github.bottomSoftwareFoundation.bottom.TranslationError;
 
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
@@ -20,13 +22,15 @@ import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Status;
-import org.joinmastodon.android.ui.drawables.SpoilerStripesDrawable;
 import org.joinmastodon.android.model.StatusPrivacy;
 import org.joinmastodon.android.model.TranslatedStatus;
 import org.joinmastodon.android.ui.text.HtmlParser;
 import org.joinmastodon.android.ui.utils.CustomEmojiHelper;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.ui.views.LinkedTextView;
+import org.joinmastodon.android.utils.StringEncoder;
+
+import java.util.regex.Pattern;
 
 import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
@@ -46,6 +50,7 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 	public boolean translated = false;
 	public TranslatedStatus translation = null;
 	private AccountSession session;
+	public static final Pattern BOTTOM_TEXT_PATTERN = Pattern.compile("(?:[\uD83E\uDEC2\uD83D\uDC96✨\uD83E\uDD7A,]+|❤️)(?:\uD83D\uDC49\uD83D\uDC48(?:[\uD83E\uDEC2\uD83D\uDC96✨\uD83E\uDD7A,]+|❤️))*\uD83D\uDC49\uD83D\uDC48");
 
 	public TextStatusDisplayItem(String parentID, CharSequence text, BaseStatusListFragment parentFragment, Status status, boolean disableTranslate){
 		super(parentID, parentFragment);
@@ -145,17 +150,31 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 					instanceInfo.v2 != null && instanceInfo.v2.configuration.translation != null &&
 					instanceInfo.v2.configuration.translation.enabled;
 
-			translateWrap.setVisibility(
-					(!GlobalUserPreferences.translateButtonOpenedOnly || item.textSelectable) &&
+			boolean isBottomText = BOTTOM_TEXT_PATTERN.matcher(item.status.getStrippedText()).find();
+			translateWrap.setVisibility((isBottomText || (
 					translateEnabled &&
 					!item.status.visibility.isLessVisibleThan(StatusPrivacy.UNLISTED) &&
 					item.status.language != null &&
-					(item.session.preferences == null || !item.status.language.equalsIgnoreCase(item.session.preferences.postingDefaultLanguage))
-					? View.VISIBLE : View.GONE);
+					(item.session.preferences == null || !item.status.language.equalsIgnoreCase(item.session.preferences.postingDefaultLanguage))))
+					&& (!GlobalUserPreferences.translateButtonOpenedOnly || item.textSelectable)
+					? View.VISIBLE : View.GONE
+			);
 			translateButton.setText(item.translated ? R.string.sk_translate_show_original : R.string.sk_translate_post);
-			translateInfo.setText(item.translated ? itemView.getResources().getString(R.string.sk_translated_using, item.translation.provider) : "");
+			translateInfo.setText(item.translated ? itemView.getResources().getString(R.string.sk_translated_using, isBottomText ? "bottom-java" : item.translation.provider) : "");
 			translateButton.setOnClickListener(v->{
 				if (item.translation == null) {
+					if (isBottomText) {
+						try {
+							item.translation = new TranslatedStatus();
+							item.translation.content = new StringEncoder(Bottom::decode).decode(item.status.getStrippedText(), BOTTOM_TEXT_PATTERN);
+							item.translated = true;
+						} catch (TranslationError err) {
+							item.translation = null;
+							Toast.makeText(itemView.getContext(), err.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+						}
+						rebind();
+						return;
+					}
 					translateProgress.setVisibility(View.VISIBLE);
 					translateButton.setClickable(false);
 					translateButton.animate().alpha(0.5f).setInterpolator(CubicBezierInterpolator.DEFAULT).setDuration(150).start();

@@ -16,6 +16,10 @@ public class LinkSpan extends CharacterStyle {
 	private String accountID;
 	private String text;
 
+	public LinkSpan(String link, OnLinkClickListener listener, Type type, String accountID){
+		this(link, listener, type, accountID, null);
+	}
+
 	public LinkSpan(String link, OnLinkClickListener listener, Type type, String accountID, String text){
 		this.listener=listener;
 		this.link=link;
@@ -38,6 +42,7 @@ public class LinkSpan extends CharacterStyle {
 			case URL -> UiUtils.openURL(context, accountID, link);
 			case MENTION -> UiUtils.openProfileByID(context, accountID, link);
 			case HASHTAG -> UiUtils.openHashtagTimeline(context, accountID, link, null);
+			case CUSTOM -> listener.onLinkClick(this);
 		}
 	}
 
@@ -64,6 +69,7 @@ public class LinkSpan extends CharacterStyle {
 	public enum Type{
 		URL,
 		MENTION,
-		HASHTAG
+		HASHTAG,
+		CUSTOM
 	}
 }

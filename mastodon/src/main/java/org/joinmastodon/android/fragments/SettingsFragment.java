@@ -43,11 +43,13 @@ import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.MastodonAPIController;
 import org.joinmastodon.android.api.PushSubscriptionManager;
 import org.joinmastodon.android.api.requests.oauth.RevokeOauthToken;
+import org.joinmastodon.android.api.session.AccountActivationInfo;
 import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.SelfUpdateStateChangedEvent;
 import org.joinmastodon.android.fragments.onboarding.InstanceRulesFragment;
 import org.joinmastodon.android.model.Instance;
+import org.joinmastodon.android.fragments.onboarding.AccountActivationFragment;
 import org.joinmastodon.android.model.PushNotification;
 import org.joinmastodon.android.model.PushSubscription;
 import org.joinmastodon.android.ui.M3AlertDialogBuilder;
@@ -65,7 +67,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import me.grishka.appkit.Nav;
 import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
@@ -322,6 +323,19 @@ public class SettingsFragment extends MastodonToolbarFragment{
 			}));
 			checkForUpdateItem = new TextItem(R.string.sk_check_for_update, GithubSelfUpdater.getInstance()::checkForUpdates);
 			items.add(checkForUpdateItem);
+		}
+
+		if(BuildConfig.DEBUG){
+			items.add(new RedHeaderItem("Debug options"));
+			items.add(new TextItem("Test e-mail confirmation flow", ()->{
+				AccountSession sess=AccountSessionManager.getInstance().getAccount(accountID);
+				sess.activated=false;
+				sess.activationInfo=new AccountActivationInfo("test@email", System.currentTimeMillis());
+				Bundle args=new Bundle();
+				args.putString("account", accountID);
+				args.putBoolean("debug", true);
+				Nav.goClearingStack(getActivity(), AccountActivationFragment.class, args);
+			}));
 		}
 
 		items.add(new FooterItem(getString(R.string.sk_settings_app_version, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)));
@@ -601,7 +615,7 @@ public class SettingsFragment extends MastodonToolbarFragment{
 			this.text=getString(text);
 		}
 
-		public HeaderItem(String text) {
+		public HeaderItem(String text){
 			this.text=text;
 		}
 
@@ -712,6 +726,11 @@ public class SettingsFragment extends MastodonToolbarFragment{
 			this.secondaryText = secondaryText;
 		}
 
+		public TextItem(String text, Runnable onClick){
+			this.text=text;
+			this.onClick=onClick;
+		}
+
 		@Override
 		public int getViewType(){
 			return 4;
@@ -721,6 +740,10 @@ public class SettingsFragment extends MastodonToolbarFragment{
 	private class RedHeaderItem extends HeaderItem{
 
 		public RedHeaderItem(int text){
+			super(text);
+		}
+
+		public RedHeaderItem(String text){
 			super(text);
 		}
 
