@@ -83,10 +83,10 @@ public abstract class StatusDisplayItem{
 	}
 
 	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, Notification notification){
-		return buildItems(fragment, status, accountID, parentObject, knownAccounts, inset, addFooter, notification, false);
+		return buildItems(fragment, status, accountID, parentObject, knownAccounts, inset, addFooter, notification, false, true);
 	}
 
-	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, Notification notification, boolean disableTranslate){
+	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, Notification notification, boolean disableTranslate, boolean shouldTruncate){
 		String parentID=parentObject.getID();
 		ArrayList<StatusDisplayItem> items=new ArrayList<>();
 		Status statusForContent=status.getContentStatus();
@@ -128,9 +128,11 @@ public abstract class StatusDisplayItem{
 		}
 		HeaderStatusDisplayItem header;
 		items.add(header=new HeaderStatusDisplayItem(parentID, statusForContent.account, statusForContent.createdAt, fragment, accountID, statusForContent, null, notification, scheduledStatus));
-		if(!TextUtils.isEmpty(statusForContent.content))
-			items.add(new TextStatusDisplayItem(parentID, HtmlParser.parse(statusForContent.content, statusForContent.emojis, statusForContent.mentions, statusForContent.tags, accountID), fragment, statusForContent, disableTranslate));
-		else
+		if(!TextUtils.isEmpty(statusForContent.content)) {
+			TextStatusDisplayItem textStatusDisplayItem = new TextStatusDisplayItem(parentID, HtmlParser.parse(statusForContent.content, statusForContent.emojis, statusForContent.mentions, statusForContent.tags, accountID), fragment, statusForContent, disableTranslate);
+			textStatusDisplayItem.shouldTruncate = shouldTruncate;
+			items.add(textStatusDisplayItem);
+		} else
 			header.needBottomPadding=true;
 		List<Attachment> imageAttachments=statusForContent.mediaAttachments.stream().filter(att->att.type.isImage()).collect(Collectors.toList());
 		if(!imageAttachments.isEmpty()){
