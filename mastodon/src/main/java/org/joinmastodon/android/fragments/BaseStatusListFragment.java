@@ -505,14 +505,12 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 
 	public void onGapClick(GapStatusDisplayItem.Holder item){}
 
-	public void onWarningClick(WarningFilteredStatusDisplayItem.Holder warningItem){
-		int i = warningItem.getAbsoluteAdapterPosition();
-		for(StatusDisplayItem item:warningItem.filteredItems){
-			i++;
-			displayItems.add(i, item);
-		}
-		displayItems.remove(warningItem.getAbsoluteAdapterPosition());
-		adapter.notifyItemChanged(warningItem.getAbsoluteAdapterPosition());
+	public void onWarningClick(WarningFilteredStatusDisplayItem.Holder warning){
+		int startPos = warning.getAbsoluteAdapterPosition();
+		displayItems.remove(startPos);
+		displayItems.addAll(startPos, warning.filteredItems);
+		adapter.notifyItemRangeInserted(startPos, warning.filteredItems.size() - 1);
+		if (startPos == 0) scrollToTop();
 	}
 
 	public String getAccountID(){
