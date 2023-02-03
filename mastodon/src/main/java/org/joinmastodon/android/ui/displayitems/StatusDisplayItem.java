@@ -19,6 +19,7 @@ import org.joinmastodon.android.fragments.ThreadFragment;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Attachment;
 import org.joinmastodon.android.model.DisplayItemsParent;
+import org.joinmastodon.android.model.Filter;
 import org.joinmastodon.android.model.Hashtag;
 import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.Poll;
@@ -26,6 +27,7 @@ import org.joinmastodon.android.model.ScheduledStatus;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.PhotoLayoutHelper;
 import org.joinmastodon.android.ui.text.HtmlParser;
+import org.joinmastodon.android.utils.StatusFilterPredicate;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -79,20 +81,39 @@ public abstract class StatusDisplayItem{
 			case HASHTAG -> new HashtagStatusDisplayItem.Holder(activity, parent);
 			case GAP -> new GapStatusDisplayItem.Holder(activity, parent);
 			case EXTENDED_FOOTER -> new ExtendedFooterStatusDisplayItem.Holder(activity, parent);
+			case WARNING -> new WarningFilteredStatusDisplayItem.Holder(activity, parent);
 		};
 	}
 
 	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, Notification notification){
-		return buildItems(fragment, status, accountID, parentObject, knownAccounts, inset, addFooter, notification, false);
+		return buildItems(fragment, status, accountID, parentObject, knownAccounts, inset, addFooter, notification, false, Filter.FilterContext.HOME);
+	}
+
+	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, Notification notification, Filter.FilterContext filterContext){
+		return buildItems(fragment, status, accountID, parentObject, knownAccounts, inset, addFooter, notification, false, filterContext);
 	}
 
 	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, Notification notification, boolean disableTranslate){
+		return buildItems(fragment, status, accountID, parentObject, knownAccounts, inset, addFooter, notification, disableTranslate, Filter.FilterContext.HOME);
+	}
+
+	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, Notification notification, boolean disableTranslate, Filter.FilterContext filterContext){
 		String parentID=parentObject.getID();
 		ArrayList<StatusDisplayItem> items=new ArrayList<>();
+		ArrayList<StatusDisplayItem> filtered=new ArrayList<>();
+
 		Status statusForContent=status.getContentStatus();
 		Bundle args=new Bundle();
 		args.putString("account", accountID);
 		ScheduledStatus scheduledStatus = parentObject instanceof ScheduledStatus ? (ScheduledStatus) parentObject : null;
+
+		List<Filter> filters = AccountSessionManager.getInstance().getAccount(accountID).wordFilters.stream()
+			.filter(f -> f.context.contains(filterContext)).collect(Collectors.toList());
+		StatusFilterPredicate filterPredicate = new StatusFilterPredicate(filters);
+
+		if(!statusForContent.filterRevealed){
+			statusForContent.filterRevealed = filterPredicate.testWithWarning(status);
+		}
 
 		if(status.reblog!=null){
 			boolean isOwnPost = AccountSessionManager.getInstance().isSelf(fragment.getAccountID(), status.account);
@@ -170,6 +191,12 @@ public abstract class StatusDisplayItem{
 			item.inset=inset;
 			item.index=i++;
 		}
+
+		if (!statusForContent.filterRevealed) {
+			filtered.add(new WarningFilteredStatusDisplayItem(parentID, fragment, statusForContent, items));
+			return filtered;
+		}
+
 		return items;
 	}
 
@@ -196,6 +223,7 @@ public abstract class StatusDisplayItem{
 		ACCOUNT,
 		HASHTAG,
 		GAP,
+		WARNING,
 		EXTENDED_FOOTER
 	}
 
@@ -205,7 +233,7 @@ public abstract class StatusDisplayItem{
 		}
 
 		public Holder(Context context, int layout, ViewGroup parent){
- 			super(context, layout, parent);
+			super(context, layout, parent);
 		}
 
 		public String getItemID(){

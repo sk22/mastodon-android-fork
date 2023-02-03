@@ -252,4 +252,5 @@
     <string name="sk_settings_server_version">Server version: %s</string>
     <string name="sk_notify_poll_results">Poll results</string>
     <string name="sk_settings_prefix_reply_cw_with_re">Prefix reply CW with “re:”</string>
+    <string name="sk_filtered">Filtered: %s</string>
 </resources>

@@ -14,6 +14,7 @@ import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.PollUpdatedEvent;
 import org.joinmastodon.android.events.RemoveAccountPostsEvent;
 import org.joinmastodon.android.model.Account;
+import org.joinmastodon.android.model.Filter;
 import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.PaginatedResponse;
 import org.joinmastodon.android.model.Status;
@@ -91,7 +92,7 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 		};
 		HeaderStatusDisplayItem titleItem=extraText!=null ? new HeaderStatusDisplayItem(n.id, n.account, n.createdAt, this, accountID, n.status, extraText, n, null) : null;
 		if(n.status!=null){
-			ArrayList<StatusDisplayItem> items=StatusDisplayItem.buildItems(this, n.status, accountID, n, knownAccounts, titleItem!=null, titleItem==null, n);
+			ArrayList<StatusDisplayItem> items=StatusDisplayItem.buildItems(this, n.status, accountID, n, knownAccounts, titleItem!=null, titleItem==null, n, false, Filter.FilterContext.NOTIFICATIONS);
 			if(titleItem!=null){
 				for(StatusDisplayItem item:items){
 					if(item instanceof ImageStatusDisplayItem imgItem){

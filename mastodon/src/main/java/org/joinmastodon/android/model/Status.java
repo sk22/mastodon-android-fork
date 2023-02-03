@@ -58,6 +58,7 @@ public class Status extends BaseModel implements DisplayItemsParent{
 	public boolean bookmarked;
 	public boolean pinned;
 
+	public transient boolean filterRevealed;
 	public transient boolean spoilerRevealed;
 	public transient boolean hasGapAfter;
 	private transient String strippedText;

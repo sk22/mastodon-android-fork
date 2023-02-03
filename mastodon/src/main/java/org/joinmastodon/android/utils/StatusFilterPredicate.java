@@ -38,4 +38,22 @@ public class StatusFilterPredicate implements Predicate<Status>{
 		}
 		return true;
 	}
+
+	public boolean testWithWarning(Status status) {
+		if(status.filtered!=null){
+			if (status.filtered.isEmpty()){
+				return true;
+			}
+			boolean matches=status.filtered.stream()
+					.map(filterResult->filterResult.filter)
+					.filter(filter->filter.expiresAt==null||filter.expiresAt.isAfter(Instant.now()))
+					.anyMatch(filter->filter.filterAction==Filter.FilterAction.WARN);
+			return !matches;
+		}
+		for(Filter filter:filters){
+			if(filter.matches(status))
+				return false;
+		}
+		return true;
+	}
 }
