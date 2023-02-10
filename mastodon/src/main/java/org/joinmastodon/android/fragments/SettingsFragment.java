@@ -213,6 +213,20 @@ public class SettingsFragment extends MastodonToolbarFragment{
 			GlobalUserPreferences.showReplies=i.checked;
 			GlobalUserPreferences.save();
 		}));
+		if (instance.pleroma != null) {
+			items.add(new ButtonItem(R.string.sk_settings_reply_visibility, R.drawable.ic_fluent_chat_24_regular, b->{
+				PopupMenu popupMenu=new PopupMenu(getActivity(), b, Gravity.CENTER_HORIZONTAL);
+				popupMenu.inflate(R.menu.reply_visibility);
+				popupMenu.setOnMenuItemClickListener(item -> this.onReplyVisibilityChanged(item, b));
+				b.setOnTouchListener(popupMenu.getDragToOpenListener());
+				b.setOnClickListener(v->popupMenu.show());
+				b.setText(switch(GlobalUserPreferences.replyVisibility){
+					case "following" -> R.string.sk_settings_reply_visibility_following;
+					case "self" -> R.string.sk_settings_reply_visibility_self;
+					default -> R.string.sk_settings_reply_visibility_all;
+				});
+			}));
+		}
 		items.add(new SwitchItem(R.string.sk_settings_show_boosts, R.drawable.ic_fluent_arrow_repeat_all_24_regular, GlobalUserPreferences.showBoosts, i->{
 			GlobalUserPreferences.showBoosts=i.checked;
 			GlobalUserPreferences.save();
@@ -458,6 +472,23 @@ public class SettingsFragment extends MastodonToolbarFragment{
 		if(UiUtils.isDarkTheme()){
 			restartActivityToApplyNewTheme();
 		}
+	}
+
+	private boolean onReplyVisibilityChanged(MenuItem item, Button btn){
+		String pref = "";
+		int id = item.getItemId();
+
+		if (id == R.id.reply_visibility_following) pref = "following";
+		else if (id == R.id.reply_visibility_self) pref = "self";
+
+		GlobalUserPreferences.replyVisibility=pref;
+		GlobalUserPreferences.save();
+		btn.setText(switch(GlobalUserPreferences.replyVisibility){
+			case "following" -> R.string.sk_settings_reply_visibility_following;
+			case "self" -> R.string.sk_settings_reply_visibility_self;
+			default -> R.string.sk_settings_reply_visibility_all;
+		});
+		return true;
 	}
 
 	private void restartActivityToApplyNewTheme(){

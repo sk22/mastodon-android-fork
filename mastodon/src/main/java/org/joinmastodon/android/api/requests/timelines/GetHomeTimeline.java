@@ -2,6 +2,7 @@ package org.joinmastodon.android.api.requests.timelines;
 
 import com.google.gson.reflect.TypeToken;
 
+import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.api.MastodonAPIRequest;
 import org.joinmastodon.android.model.Status;
 
@@ -18,5 +19,7 @@ public class GetHomeTimeline extends MastodonAPIRequest<List<Status>>{
 			addQueryParameter("since_id", sinceID);
 		if(limit>0)
 			addQueryParameter("limit", ""+limit);
+		if(!GlobalUserPreferences.replyVisibility.isEmpty())
+			addQueryParameter("reply_visibility", GlobalUserPreferences.replyVisibility);
 	}
 }
