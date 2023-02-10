@@ -788,7 +788,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			fab.setVisibility(View.INVISIBLE);
 			scrollDiff = 0;
 		} else if (dy < 0 && fab.getVisibility() != View.VISIBLE) {
-			if (scrollDiff > 400) {
+			if (v.getScrollY() == 0 || scrollDiff > 400) {
 				fab.setVisibility(View.VISIBLE);
 				TranslateAnimation animate = new TranslateAnimation(
 						0,
