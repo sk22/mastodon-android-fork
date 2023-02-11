@@ -5,9 +5,12 @@ import android.view.View;
 
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.statuses.GetStatusContext;
+import org.joinmastodon.android.api.session.AccountSession;
+import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.StatusCreatedEvent;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.model.StatusContext;
 import org.joinmastodon.android.ui.displayitems.ExtendedFooterStatusDisplayItem;
@@ -19,6 +22,7 @@ import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.utils.StatusFilterPredicate;
 import org.parceler.Parcels;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,6 +72,30 @@ public class ThreadFragment extends StatusListFragment{
 							data.add(mainStatus);
 							onAppendItems(Collections.singletonList(mainStatus));
 						}
+						AccountSession account=AccountSessionManager.getInstance().getAccount(accountID);
+						Instance instance=AccountSessionManager.getInstance().getInstanceInfo(account.domain);
+						if(instance.pleroma != null){
+							List<String> threadIds=new ArrayList<>();
+							threadIds.add(mainStatus.id);
+							for(Status s:result.descendants){
+								if(threadIds.contains(s.inReplyToId)){
+									threadIds.add(s.id);
+								}
+							}
+							threadIds.add(mainStatus.inReplyToId);
+							for(int i=result.ancestors.size()-1; i >= 0; i--){
+								Status s=result.ancestors.get(i);
+								if(s.inReplyToId != null && threadIds.contains(s.id)){
+									threadIds.add(s.inReplyToId);
+								}
+							}
+
+							result.ancestors=result.ancestors.stream().filter(s -> threadIds.contains(s.id)).collect(Collectors.toList());
+							result.descendants=getDescendantsOrdered(mainStatus.id,
+									result.descendants.stream()
+											.filter(s -> threadIds.contains(s.id))
+											.collect(Collectors.toList()));
+						}
 						result.descendants=filterStatuses(result.descendants);
 						result.ancestors=filterStatuses(result.ancestors);
 						if(footerProgress!=null)
@@ -88,6 +116,24 @@ public class ThreadFragment extends StatusListFragment{
 					}
 				})
 				.exec(accountID);
+	}
+
+	private List<Status> getDescendantsOrdered(String id, List<Status> statuses){
+		List<Status> out=new ArrayList<>();
+		for(Status s:getDirectDescendants(id, statuses)){
+			out.add(s);
+			getDirectDescendants(s.id, statuses).forEach(d ->{
+				out.add(d);
+				out.addAll(getDescendantsOrdered(d.id, statuses));
+			});
+		}
+		return out;
+	}
+
+	private List<Status> getDirectDescendants(String id, List<Status> statuses){
+		return statuses.stream()
+				.filter(s -> s.inReplyToId.equals(id))
+				.collect(Collectors.toList());
 	}
 
 	private List<Status> filterStatuses(List<Status> statuses){
