@@ -278,6 +278,12 @@ public class AccountSessionManager{
 					public void onSuccess(Account result){
 						session.self=result;
 						session.infoLastUpdated=System.currentTimeMillis();
+						if(session.preferences != null && session.preferences.postingDefaultVisibility != null){
+							session.preferences.postingDefaultVisibility = result.source.privacy;
+						}
+						if(session.preferences != null && session.preferences.postingDefaultLanguage != null){
+							session.preferences.postingDefaultLanguage = result.source.language;
+						}
 						writeAccountsFile();
 					}
 
@@ -297,7 +303,14 @@ public class AccountSessionManager{
 			}
 
 			@Override
-			public void onError(ErrorResponse error) {}
+			public void onError(ErrorResponse error) {
+				Preferences preferences = new Preferences();
+				if(session.self != null){
+					preferences.postingDefaultVisibility = session.self.source.privacy;
+					preferences.postingDefaultLanguage = session.self.source.language;
+				}
+				session.preferences = preferences;
+			}
 		}).exec(session.getID());
 	}
 
