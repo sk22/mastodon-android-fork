@@ -66,6 +66,9 @@ public class Status extends BaseModel implements DisplayItemsParent{
 
 	@Override
 	public void postprocess() throws ObjectValidationException{
+		if(spoilerText!=null && !spoilerText.isEmpty() && !sensitive)
+			sensitive=true;
+
 		super.postprocess();
 		if(application!=null)
 			application.postprocess();
