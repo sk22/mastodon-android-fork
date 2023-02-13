@@ -5,15 +5,12 @@ import android.app.ProgressDialog;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.LocaleList;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowInsets;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 import org.joinmastodon.android.R;
@@ -23,7 +20,6 @@ import org.joinmastodon.android.api.requests.instance.GetInstance;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.catalog.CatalogInstance;
 import org.joinmastodon.android.ui.M3AlertDialogBuilder;
-import org.joinmastodon.android.ui.utils.UiUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -31,6 +27,8 @@ import org.xml.sax.InputSource;
 
 import java.io.IOException;
 import java.net.IDN;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -50,7 +48,6 @@ import me.grishka.appkit.fragments.BaseRecyclerFragment;
 import me.grishka.appkit.utils.BindableViewHolder;
 import me.grishka.appkit.utils.MergeRecyclerAdapter;
 import me.grishka.appkit.utils.V;
-import me.grishka.appkit.views.UsableRecyclerView;
 import okhttp3.Call;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -92,7 +89,7 @@ abstract class InstanceCatalogFragment extends BaseRecyclerFragment<CatalogInsta
 	protected boolean onSearchEnterPressed(TextView v, int actionId, KeyEvent event){
 		if(event!=null && event.getAction()!=KeyEvent.ACTION_DOWN)
 			return true;
-		currentSearchQuery=searchEdit.getText().toString().toLowerCase();
+		currentSearchQuery=searchEdit.getText().toString().toLowerCase().trim();
 		updateFilteredList();
 		searchEdit.removeCallbacks(searchDebouncer);
 		Instance instance=instancesCache.get(normalizeInstanceDomain(currentSearchQuery));
@@ -106,52 +103,16 @@ abstract class InstanceCatalogFragment extends BaseRecyclerFragment<CatalogInsta
 	}
 
 	protected void onSearchChangedDebounced(){
-		currentSearchQuery=searchEdit.getText().toString().toLowerCase();
+		currentSearchQuery=searchEdit.getText().toString().toLowerCase().trim();
 		updateFilteredList();
 		loadInstanceInfo(currentSearchQuery, false);
 	}
 
 	protected List<CatalogInstance> sortInstances(List<CatalogInstance> result){
-		Map<String, List<CatalogInstance>> byLang=result.stream().collect(Collectors.groupingBy(ci->ci.language));
-		for(List<CatalogInstance> group:byLang.values()){
-			Collections.sort(group, (a, b)->{
-				double aa=Math.abs(DUNBAR-Math.log(a.lastWeekUsers));
-				double bb=Math.abs(DUNBAR-Math.log(b.lastWeekUsers));
-				return Double.compare(aa, bb);
-			});
-		}
-		// get the list of user-configured system languages
-		List<String> userLangs;
-		if(Build.VERSION.SDK_INT<24){
-			userLangs=Collections.singletonList(getResources().getConfiguration().locale.getLanguage());
-		}else{
-			LocaleList ll=getResources().getConfiguration().getLocales();
-			userLangs=new ArrayList<>(ll.size());
-			for(int i=0;i<ll.size();i++){
-				userLangs.add(ll.get(i).getLanguage());
-			}
-		}
-		// add instances in preferred languages to the top of the list, in the order of preference
+		Map<Boolean, List<CatalogInstance>> byLang=result.stream().sorted(Comparator.comparingInt((CatalogInstance ci)->ci.lastWeekUsers).reversed()).collect(Collectors.groupingBy(ci->ci.approvalRequired));
 		ArrayList<CatalogInstance> sortedList=new ArrayList<>();
-		for(String lang:userLangs){
-			List<CatalogInstance> langInstances=byLang.remove(lang);
-			if(langInstances!=null){
-				sortedList.addAll(langInstances);
-			}
-		}
-		// sort the remaining language groups by aggregate lastWeekUsers
-		class InstanceGroup{
-			public int activeUsers;
-			public List<CatalogInstance> instances;
-		}
-		byLang.values().stream().map(il->{
-			InstanceGroup group=new InstanceGroup();
-			group.instances=il;
-			for(CatalogInstance instance:il){
-				group.activeUsers+=instance.lastWeekUsers;
-			}
-			return group;
-		}).sorted(Comparator.comparingInt((InstanceGroup g)->g.activeUsers).reversed()).forEachOrdered(ig->sortedList.addAll(ig.instances));
+		sortedList.addAll(byLang.getOrDefault(false, Collections.emptyList()));
+		sortedList.addAll(byLang.getOrDefault(true, Collections.emptyList()));
 		return sortedList;
 	}
 
@@ -207,6 +168,20 @@ abstract class InstanceCatalogFragment extends BaseRecyclerFragment<CatalogInsta
 			}else{
 				cancelLoadingInstanceInfo();
 			}
+		}
+		try{
+			new URI("https://"+domain+"/api/v1/instance"); // Validate the host by trying to parse the URI
+		}catch(URISyntaxException x){
+			showInstanceInfoLoadError(domain, x);
+			if(fakeInstance!=null){
+				fakeInstance.description=getString(R.string.error);
+				if(filteredData.size()>0 && filteredData.get(0)==fakeInstance){
+					if(list.findViewHolderForAdapterPosition(1) instanceof BindableViewHolder<?> ivh){
+						ivh.rebind();
+					}
+				}
+			}
+			return;
 		}
 		loadingInstanceDomain=domain;
 		loadingInstanceRequest=new GetInstance();

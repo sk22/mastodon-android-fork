@@ -1,14 +1,8 @@
 package org.joinmastodon.android.fragments.onboarding;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -20,7 +14,6 @@ import android.view.WindowInsets;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.RadioButton;
@@ -38,6 +31,7 @@ import org.joinmastodon.android.ui.BetterItemAnimator;
 import org.joinmastodon.android.ui.M3AlertDialogBuilder;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.ui.views.FilterChipView;
+import org.joinmastodon.android.utils.ElevationOnScrollListener;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -56,11 +50,7 @@ import me.grishka.appkit.Nav;
 import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
 import me.grishka.appkit.fragments.OnBackPressedListener;
-import me.grishka.appkit.imageloader.ImageLoaderRecyclerAdapter;
-import me.grishka.appkit.imageloader.ImageLoaderViewHolder;
-import me.grishka.appkit.imageloader.requests.ImageLoaderRequest;
 import me.grishka.appkit.utils.BindableViewHolder;
-import me.grishka.appkit.utils.CubicBezierInterpolator;
 import me.grishka.appkit.utils.MergeRecyclerAdapter;
 import me.grishka.appkit.utils.SingleViewRecyclerAdapter;
 import me.grishka.appkit.utils.V;
@@ -74,7 +64,7 @@ public class InstanceCatalogSignupFragment extends InstanceCatalogFragment imple
 
 	private List<String> languages=Collections.emptyList();
 	private PopupMenu langFilterMenu, speedFilterMenu;
-	private SignupSpeedFilter currentSignupSpeedFilter=SignupSpeedFilter.INSTANT;
+	private SignupSpeedFilter currentSignupSpeedFilter=SignupSpeedFilter.ANY;
 	private String currentLanguage=null;
 	private boolean searchQueryMode;
 	private LinearLayout filtersWrap;
@@ -85,7 +75,7 @@ public class InstanceCatalogSignupFragment extends InstanceCatalogFragment imple
 	private FilterChipView categoryGeneral, categorySpecialInterests;
 	private List<FilterChipView> regionalFilters;
 	private CatalogInstance.Region chosenRegion;
-	private CategoryChoice categoryChoice;
+	private CategoryChoice categoryChoice=CategoryChoice.GENERAL;
 
 	public InstanceCatalogSignupFragment(){
 		super(R.layout.fragment_onboarding_common, 10);
@@ -215,47 +205,7 @@ public class InstanceCatalogSignupFragment extends InstanceCatalogFragment imple
 		setStatusBarColor(0);
 		topBar=view.findViewById(R.id.top_bar);
 
-		LayerDrawable topBg=(LayerDrawable) topBar.getBackground().mutate();
-		topBar.setBackground(topBg);
-		Drawable topOverlay=topBg.findDrawableByLayerId(R.id.color_overlay);
-		topOverlay.setAlpha(0);
-
-		LayerDrawable btmBg=(LayerDrawable) buttonBar.getBackground().mutate();
-		buttonBar.setBackground(btmBg);
-		Drawable btmOverlay=btmBg.findDrawableByLayerId(R.id.color_overlay);
-		btmOverlay.setAlpha(0);
-
-		list.addOnScrollListener(new RecyclerView.OnScrollListener(){
-			private boolean isAtTop=true;
-			private Animator currentPanelsAnim;
-			@Override
-			public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy){
-				boolean newAtTop=recyclerView.getChildCount()==0 || (recyclerView.getChildAdapterPosition(recyclerView.getChildAt(0))==0 && recyclerView.getChildAt(0).getTop()==recyclerView.getPaddingTop());
-				if(newAtTop!=isAtTop){
-					isAtTop=newAtTop;
-					if(currentPanelsAnim!=null)
-						currentPanelsAnim.cancel();
-
-					AnimatorSet set=new AnimatorSet();
-					set.playTogether(
-							ObjectAnimator.ofInt(topOverlay, "alpha", isAtTop ? 0 : 20),
-							ObjectAnimator.ofInt(btmOverlay, "alpha", isAtTop ? 0 : 20),
-							ObjectAnimator.ofFloat(topBar, View.TRANSLATION_Z, isAtTop ? 0 : V.dp(3)),
-							ObjectAnimator.ofFloat(buttonBar, View.TRANSLATION_Z, isAtTop ? 0 : V.dp(3))
-					);
-					set.setDuration(150);
-					set.setInterpolator(CubicBezierInterpolator.DEFAULT);
-					set.addListener(new AnimatorListenerAdapter(){
-						@Override
-						public void onAnimationEnd(Animator animation){
-							currentPanelsAnim=null;
-						}
-					});
-					set.start();
-					currentPanelsAnim=set;
-				}
-			}
-		});
+		list.addOnScrollListener(new ElevationOnScrollListener(null, topBar, buttonBar));
 
 		searchEdit=view.findViewById(R.id.search_edit);
 		searchEdit.setOnEditorActionListener(this::onSearchEnterPressed);
@@ -366,6 +316,9 @@ public class InstanceCatalogSignupFragment extends InstanceCatalogFragment imple
 		}).collect(Collectors.toList());
 		focusThing=view.findViewById(R.id.focus_thing);
 		focusThing.requestFocus();
+
+		view.findViewById(R.id.btn_random_instance).setOnClickListener(this::onPickRandomInstanceClick);
+		nextButton.setEnabled(chosenInstance!=null);
 	}
 
 	private void onRegionFilterClick(View v){
@@ -397,22 +350,6 @@ public class InstanceCatalogSignupFragment extends InstanceCatalogFragment imple
 	}
 
 	@Override
-	protected void onNextClick(View v){
-		if(chosenInstance==null){
-			String lang=Locale.getDefault().getLanguage();
-			List<CatalogInstance> instances=data.stream().filter(ci->!ci.approvalRequired && ("general".equals(ci.category) || (ci.categories!=null && ci.categories.contains("general"))) && (lang.equals(ci.language) || (ci.languages!=null && ci.languages.contains(lang)))).collect(Collectors.toList());
-			if(instances.isEmpty()){
-				instances=data.stream().filter(ci->!ci.approvalRequired && ("general".equals(ci.category) || (ci.categories!=null && ci.categories.contains("general")))).collect(Collectors.toList());
-			}
-			if(instances.isEmpty()){
-				return;
-			}
-			chosenInstance=instances.get(new Random().nextInt(instances.size()));
-		}
-		super.onNextClick(v);
-	}
-
-	@Override
 	protected void proceedWithAuthOrSignup(Instance instance){
 		getActivity().getSystemService(InputMethodManager.class).hideSoftInputFromWindow(contentView.getWindowToken(), 0);
 		if(!instance.registrations){
@@ -426,6 +363,22 @@ public class InstanceCatalogSignupFragment extends InstanceCatalogFragment imple
 		Bundle args=new Bundle();
 		args.putParcelable("instance", Parcels.wrap(instance));
 		Nav.go(getActivity(), InstanceRulesFragment.class, args);
+	}
+
+	private void onPickRandomInstanceClick(View v){
+		String lang=Locale.getDefault().getLanguage();
+		List<CatalogInstance> instances=data.stream().filter(ci->!ci.approvalRequired && ("general".equals(ci.category) || (ci.categories!=null && ci.categories.contains("general"))) && (lang.equals(ci.language) || (ci.languages!=null && ci.languages.contains(lang)))).collect(Collectors.toList());
+		if(instances.isEmpty()){
+			instances=data.stream().filter(ci->!ci.approvalRequired && ("general".equals(ci.category) || (ci.categories!=null && ci.categories.contains("general")))).collect(Collectors.toList());
+		}
+		if(instances.isEmpty()){
+			instances=data.stream().filter(ci->("general".equals(ci.category) || (ci.categories!=null && ci.categories.contains("general")))).collect(Collectors.toList());
+		}
+		if(instances.isEmpty()){
+			return;
+		}
+		chosenInstance=instances.get(new Random().nextInt(instances.size()));
+		onNextClick(v);
 	}
 
 //	private String getEmojiForCategory(String category){
@@ -577,7 +530,16 @@ public class InstanceCatalogSignupFragment extends InstanceCatalogFragment imple
 		updateFilteredList();
 	}
 
-	private class InstancesAdapter extends UsableRecyclerView.Adapter<InstanceCatalogSignupFragment.InstanceViewHolder> implements ImageLoaderRecyclerAdapter{
+	@Override
+	protected void onShown(){
+		super.onShown();
+		if(!searchQueryMode){
+			// Prevent search view automatically getting focused when the user returns to this fragment
+			focusThing.requestFocus();
+		}
+	}
+
+	private class InstancesAdapter extends UsableRecyclerView.Adapter<InstanceCatalogSignupFragment.InstanceViewHolder>{
 		public InstancesAdapter(){
 			super(imgLoader);
 		}
@@ -603,22 +565,11 @@ public class InstanceCatalogSignupFragment extends InstanceCatalogFragment imple
 		public int getItemViewType(int position){
 			return -1;
 		}
-
-		@Override
-		public int getImageCountForItem(int position){
-			return filteredData.get(position).thumbnailRequest!=null ? 1 : 0;
-		}
-
-		@Override
-		public ImageLoaderRequest getImageRequest(int position, int image){
-			return filteredData.get(position).thumbnailRequest;
-		}
 	}
 
-	private class InstanceViewHolder extends BindableViewHolder<CatalogInstance> implements UsableRecyclerView.DisableableClickable, ImageLoaderViewHolder{
+	private class InstanceViewHolder extends BindableViewHolder<CatalogInstance> implements UsableRecyclerView.DisableableClickable{
 		private final TextView title, description;
 		private final RadioButton radioButton;
-		private final ImageView thumbnail;
 		private boolean enabled;
 
 		public InstanceViewHolder(){
@@ -626,15 +577,12 @@ public class InstanceCatalogSignupFragment extends InstanceCatalogFragment imple
 			title=findViewById(R.id.title);
 			description=findViewById(R.id.description);
 			radioButton=findViewById(R.id.radiobtn);
-			thumbnail=findViewById(R.id.image);
 		}
 
 		@Override
 		public void onBind(CatalogInstance item){
 			title.setText(item.normalizedDomain);
 			radioButton.setChecked(chosenInstance==item);
-			if(item.thumbnailRequest==null)
-				thumbnail.setImageDrawable(null);
 			Instance realInstance=instancesCache.get(item.normalizedDomain);
 			float alpha;
 			if(realInstance!=null && !realInstance.registrations){
@@ -649,7 +597,6 @@ public class InstanceCatalogSignupFragment extends InstanceCatalogFragment imple
 			title.setAlpha(alpha);
 			description.setAlpha(alpha);
 			radioButton.setAlpha(alpha);
-			thumbnail.setAlpha(alpha);
 		}
 
 		@Override
@@ -672,21 +619,14 @@ public class InstanceCatalogSignupFragment extends InstanceCatalogFragment imple
 						adapter.notifyItemChanged(idx);
 				}
 			}
+			if(!nextButton.isEnabled()){
+				nextButton.setEnabled(true);
+			}
 			radioButton.setChecked(true);
 			if(chosenInstance==null)
 				nextButton.setEnabled(true);
 			chosenInstance=item;
 			loadInstanceInfo(chosenInstance.domain, false);
-		}
-
-		@Override
-		public void setImage(int index, Drawable image){
-			thumbnail.setImageDrawable(image);
-		}
-
-		@Override
-		public void clearImage(int index){
-			setImage(index, null);
 		}
 
 		@Override
@@ -710,4 +650,5 @@ public class InstanceCatalogSignupFragment extends InstanceCatalogFragment imple
 			return (this==GENERAL)==isGeneral;
 		}
 	}
+
 }
