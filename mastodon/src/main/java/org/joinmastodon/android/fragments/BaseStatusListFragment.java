@@ -296,7 +296,7 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 				if(currentPhotoViewer!=null)
 					currentPhotoViewer.offsetView(-dx, -dy);
 
-				if (fab!=null) {
+				if (fab!=null && GlobalUserPreferences.autoHideFab) {
 					if (dy > 0 && fab.getVisibility() == View.VISIBLE) {
 						TranslateAnimation animate = new TranslateAnimation(
 								0,
@@ -362,7 +362,6 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 		updateToolbar();
 
 		if (withComposeButton()) {
-			fab = view.findViewById(R.id.fab);
 			fab.setVisibility(View.VISIBLE);
 			fab.setOnClickListener(this::onFabClick);
 			fab.setOnLongClickListener(this::onFabLongClick);

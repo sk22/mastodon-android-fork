@@ -43,6 +43,7 @@ public class GlobalUserPreferences{
 	public static boolean bottomEncoding;
 	public static boolean collapseLongPosts;
 	public static boolean spectatorMode;
+	public static boolean autoHideFab;
 	public static String publishButtonText;
 	public static ThemePreference theme;
 	public static ColorPreference color;
@@ -91,6 +92,7 @@ public class GlobalUserPreferences{
 		bottomEncoding=prefs.getBoolean("bottomEncoding", false);
 		collapseLongPosts=prefs.getBoolean("collapseLongPosts", true);
 		spectatorMode=prefs.getBoolean("spectatorMode", false);
+		autoHideFab=prefs.getBoolean("autoHideFab", true);
 		publishButtonText=prefs.getString("publishButtonText", "");
 		theme=ThemePreference.values()[prefs.getInt("theme", 0)];
 		recentLanguages=fromJson(prefs.getString("recentLanguages", null), recentLanguagesType, new HashMap<>());
@@ -131,6 +133,7 @@ public class GlobalUserPreferences{
 				.putBoolean("prefixRepliesWithRe", prefixRepliesWithRe)
 				.putBoolean("collapseLongPosts", collapseLongPosts)
 				.putBoolean("spectatorMode", spectatorMode)
+				.putBoolean("autoHideFab", autoHideFab)
 				.putString("publishButtonText", publishButtonText)
 				.putBoolean("bottomEncoding", bottomEncoding)
 				.putInt("theme", theme.ordinal())

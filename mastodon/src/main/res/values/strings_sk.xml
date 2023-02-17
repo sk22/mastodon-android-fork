@@ -261,4 +261,5 @@
     <string name="sk_settings_hide_interaction">Hide interaction buttons</string>
     <string name="sk_follow_as">Follow from other account</string>
     <string name="sk_followed_as">Followed from %s</string>
+    <string name="sk_settings_hide_fab">Auto-hide Compose button</string>
 </resources>

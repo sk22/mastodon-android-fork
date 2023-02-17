@@ -789,33 +789,34 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			currentPhotoViewer.offsetView(0, oldScrollY-scrollY);
 		}
 
-		int dy = scrollY - oldScrollY;
-
-		if (dy > 0 && fab.getVisibility() == View.VISIBLE) {
-			TranslateAnimation animate = new TranslateAnimation(
-					0,
-					0,
-					0,
-					fab.getHeight() * 2);
-			animate.setDuration(300);
-			animate.setFillAfter(true);
-			fab.startAnimation(animate);
-			fab.setVisibility(View.INVISIBLE);
-			scrollDiff = 0;
-		} else if (dy < 0 && fab.getVisibility() != View.VISIBLE) {
-			if (v.getScrollY() == 0 || scrollDiff > 400) {
-				fab.setVisibility(View.VISIBLE);
+		if (GlobalUserPreferences.autoHideFab) {
+			int dy = scrollY - oldScrollY;
+			if (dy > 0 && fab.getVisibility() == View.VISIBLE) {
 				TranslateAnimation animate = new TranslateAnimation(
 						0,
 						0,
-						fab.getHeight() * 2,
-						0);
+						0,
+						fab.getHeight() * 2);
 				animate.setDuration(300);
 				animate.setFillAfter(true);
 				fab.startAnimation(animate);
+				fab.setVisibility(View.INVISIBLE);
 				scrollDiff = 0;
-			} else {
-				scrollDiff += Math.abs(dy);
+			} else if (dy < 0 && fab.getVisibility() != View.VISIBLE) {
+				if (v.getScrollY() == 0 || scrollDiff > 400) {
+					fab.setVisibility(View.VISIBLE);
+					TranslateAnimation animate = new TranslateAnimation(
+							0,
+							0,
+							fab.getHeight() * 2,
+							0);
+					animate.setDuration(300);
+					animate.setFillAfter(true);
+					fab.startAnimation(animate);
+					scrollDiff = 0;
+				} else {
+					scrollDiff += Math.abs(dy);
+				}
 			}
 		}
 	}
