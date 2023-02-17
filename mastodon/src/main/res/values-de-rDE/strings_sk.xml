@@ -250,4 +250,12 @@
     <string name="sk_settings_see_new_posts_button">“Neue Beiträge anzeigen”-Button</string>
     <string name="sk_settings_server_version">Server-Version: %s</string>
     <string name="sk_notify_poll_results">Umfrage-Ergebnisse</string>
+    <string name="sk_settings_prefix_reply_cw_with_re">CWs beim Antworten “re:” voranstellen</string>
+    <string name="sk_filtered">Gefiltert: %s</string>
+    <string name="sk_expand">Erweitern</string>
+    <string name="sk_collapse">Einklappen</string>
+    <string name="sk_settings_collapse_long_posts">Sehr lange Beiträge einklappen</string>
+    <string name="sk_unfinished_attachments">Anhänge richtig stellen\?</string>
+    <string name="sk_settings_hide_interaction">Interaktions-Buttons verstecken</string>
+    <string name="sk_unfinished_attachments_message">Einige Anhänge sind nicht fertig hochgeladen.</string>
 </resources>

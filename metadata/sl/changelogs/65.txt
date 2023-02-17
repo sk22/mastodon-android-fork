@@ -1,0 +1,10 @@
+- Osnutki in načrtovane objave
+- Pri odgovoru prikaži izvirno objavo
+- Filtri, združljivi z Mastodon 4.0 (še ni funkcije "skrij z opozorilom")
+- Dolgi klik za interakcijo z objavami (odgovori, spodbude, všečkanje, zaznamki) iz drugih prijavljenih računov
+- Ikone v vseh menijih
+- Preklop za posredovanje poročil
+- Dodajte omembo pri uporabi funkcije »Objavi o tem«.
+- Možnost uporabe enotne ikone za obvestila namesto ločenih ikon
+- Možnost dostopa do seznama pravil iz nastavitev
+- Popravki napak

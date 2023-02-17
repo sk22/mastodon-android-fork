@@ -90,7 +90,7 @@
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_toEndOf="@id/self_avatar"
-						android:layout_marginTop="2sp"
+						android:paddingTop="4sp"
 						android:minHeight="24sp"
 						android:ellipsize="end"
 						android:singleLine="true"

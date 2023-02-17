@@ -149,7 +149,7 @@
     <string name="sk_alt_text_missing">Przynajmniej jeden z załączników nie posiada opisu.</string>
     <string name="sk_alt_text_missing_title">Brakujący tekst alternatywny</string>
     <string name="sk_publish_anyway">Opublikuj mimo tego</string>
-    <string name="sk_settings_disable_alt_text_reminder">Wyłącz przypomnienie o dodawaniu opisu</string>
+    <string name="sk_settings_disable_alt_text_reminder">Wyłącz przypomnienie o dodaniu opisu</string>
     <string name="sk_edit_timelines">Edytuj osi czasu</string>
     <string name="sk_alt_button">OPIS</string>
     <string name="sk_post_edited">edytowano</string>
@@ -248,4 +248,13 @@
     <string name="sk_settings_see_new_posts_button">Przycisk \"Pokaż nowe wpisy\"</string>
     <string name="sk_instance_features">Funkcje instancji</string>
     <string name="sk_settings_local_only_explanation">Twoja instancja domowa musi wspierać publikowanie w trybie lokalnym. Większość zmodyfikowanych wersji Mastodona to wspiera, ale podstawowy Mastodon nie.</string>
+    <string name="sk_settings_server_version">Wersja serwera: %s</string>
+    <string name="sk_notify_poll_results">Wyniki ankiety</string>
+    <string name="sk_filtered">Wyfiltrowano: %s</string>
+    <string name="sk_expand">Rozwiń</string>
+    <string name="sk_collapse">Zwiń</string>
+    <string name="sk_unfinished_attachments">Naprawić załączniki\?</string>
+    <string name="sk_unfinished_attachments_message">Niektóre załączniki jeszcze nie zostały przesłane.</string>
+    <string name="sk_settings_prefix_reply_cw_with_re">Zaczynaj CW odpowiedzi od “re:”</string>
+    <string name="sk_settings_collapse_long_posts">Zwijaj bardzo długie posty</string>
 </resources>

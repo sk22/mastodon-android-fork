@@ -4,8 +4,8 @@ Megalodon jest zmodyfikowaną wersją <a href="https://github.com/mastodon/masto
 
 - <b>Publikowanie w trybie ukrytym</b>: Publikuj publicznie, równocześnie zapobiegając wyświetlaniu się twojego wpisu w trendach, hashtagach oraz publicznych osiach czasu.
 - <b>Federacyjna oś czasu</b>: Zobacz wszystkie wpisy publiczne na innych instancjach w Fediwersum do których podłączona jest twoja własna instancja.
+- <b>Własne osie czasu</b>: Przypnij jakąkolwiek listę lub hasztag do widoku głównego w Megalodonie, aby szybko i wygodnie przeskakiwać pomiędzy twoimi ulubionymi tematami i ludźmi!
 - <b>Wersje robocze i planowanie czasu publikacji</b>: Przygotuj wpis i zaplanuj jego publikację o określonym czasie.
-- <b>Sprawdzanie opisu obrazu</b>: Szybko sprawdź czy obrazek bądź wideo mają przypisany opis.
 - <b>Przypinanie wpisów</b>: Przypnij najważniejsze wpisy do swojego profilu i zobacz co przypięli inni do swoich w zakładce "Przypięte".
 - <b>Obserwuj hashtagi</b>:Zobacz nowe wpisy z konkretnych hashtagów bezpośrednio w swojej głównej osi czasu.
 - <b>Zarządzanie prośbami o obserwację</b>: Akceptuj bądź odmawiaj na prośby o obserwację twojego konta bezpośrednio w widoku notyfikacji bądź w dedykowanej liście.

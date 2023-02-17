@@ -1,0 +1,5 @@
+- Nya färgteman: Material You och Röd
+- Nya mörkgrå toner för alla teman
+- Mer distinkt fylld boostikon
+- Animationer för interaktionsknappar
+- Bugg-fixar (krasch på vissa inlägg, "Listor med", standardspråk för inlägg)

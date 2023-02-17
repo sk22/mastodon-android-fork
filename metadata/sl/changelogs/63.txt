@@ -1,0 +1,6 @@
+- Možnost ponovnega bloganja s posebno vidnostjo ob dolgem kliku
+- Prikaži vidnost lastnih ponovnih blogov
+- Dodajte seznam spremljanih ključnikov
+- Dolgi klik za kopiranje povezav
+- Možnost odpiranja objav z drugim računom
+- Popravki napak in manjše prilagoditve

@@ -1,0 +1,6 @@
+- Lägg till språkväljare
+- Lägg till översättningsfunktion
+- Förbättra semantiken för att rösta i omröstningar (radioknappar och kryssrutor)
+- Lägg till alternativ för att tillåta röstning för flera alternativ på omröstningar
+- Ny inloggningsskärm
+- Bugg-fixar

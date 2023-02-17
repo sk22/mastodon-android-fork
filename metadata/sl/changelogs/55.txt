@@ -1,0 +1,4 @@
+- Popravek nepravilnega prikaza oznak HTML ter omogočeno Markdown oblikovanje
+- Inicializacija <a href="https://translate.codeberg.org/projects/megalodon">prevajalskega projekta na Weblate</a>
+- Preklop Federated časovnice
+- Različice 52-54 so bile samo majnše prilagoditve za izdajo Google Play

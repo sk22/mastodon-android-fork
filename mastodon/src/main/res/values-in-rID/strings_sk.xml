@@ -155,7 +155,7 @@
     <string name="sk_alt_text_missing_title">Tidak ada teks alternatif</string>
     <string name="sk_alt_text_missing">Setidaknya satu lampiran tidak memilki deskripsi.</string>
     <string name="sk_publish_anyway">Terbitkan saja</string>
-    <string name="sk_settings_disable_alt_text_reminder">Nonaktifkan pengingat teks alternatif</string>
+    <string name="sk_settings_disable_alt_text_reminder">Nonaktifkan pengingat untuk menambahkan teks alternatif</string>
     <string name="sk_timeline_posts">Kiriman</string>
     <string name="sk_timelines">Lini Masa</string>
     <string name="sk_timelines_add">Tambahkan</string>
@@ -250,4 +250,6 @@
     <string name="sk_settings_see_new_posts_button">Tombol “Lihat kiriman baru”</string>
     <string name="sk_settings_local_only_explanation">Server rumah Anda harus mendukung pengiriman hanya lokal untuk ini bekerja. Kebanyakan versi Mastodon yang dimodifikasi bisa, tetapi Mastodon tidak.</string>
     <string name="sk_settings_support_local_only">Server hanya mendukung pengiriman hanya lokal</string>
+    <string name="sk_settings_server_version">Versi server: %s</string>
+    <string name="sk_notify_poll_results">Hasil japat</string>
 </resources>

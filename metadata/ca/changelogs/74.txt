@@ -1,0 +1,9 @@
+- Les línies de temps es poden fixar i reordenar
+- Suporta publicacions locals
+- Indicador per als textos alternatius que manquen
+- Editor de text alternatiu millorat
+- Capçalera a la línia de temps per a les etiquetes seguides
+- Més categories de notificacions
+- Afegeix l'obridor de fitxers «back»
+- Pregunta en desar l'esborrany editat
+- Opció per desactivar el botó «Publicacions noves»

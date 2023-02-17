@@ -172,7 +172,7 @@
     <string name="sk_post_edited">édité</string>
     <string name="sk_edit_timeline">Modifier la timeline</string>
     <string name="sk_notify_update">Modifie un article reposté</string>
-    <string name="sk_settings_disable_alt_text_reminder">Désactiver le rappel de texte alternatif</string>
+    <string name="sk_settings_disable_alt_text_reminder">Désactiver le rappel pour ajouter du texte alternatif</string>
     <string name="sk_notification_type_update">Messages modifiés</string>
     <string name="sk_icon_code">Code</string>
     <string name="sk_icon_city">Ville</string>
@@ -249,4 +249,15 @@
     <string name="sk_settings_see_new_posts_button">Bouton \"Afficher les nouveaux messages\"</string>
     <string name="sk_instance_features">Fonctionnalités des instances</string>
     <string name="sk_settings_local_only_explanation">Votre instance locale doit prendre en charge la publication locale uniquement pour que cela fonctionne. La plupart des versions modifiées de Mastodon le font, mais pas Mastodon.</string>
+    <string name="sk_notify_poll_results">Résultats du sondage</string>
+    <string name="sk_settings_server_version">Version du serveur : %s</string>
+    <string name="sk_expand">Développer</string>
+    <string name="sk_collapse">Réduire</string>
+    <string name="sk_settings_collapse_long_posts">Réduire les messages très longs</string>
+    <string name="sk_settings_prefix_reply_cw_with_re">Préfixe \"re :\" lors d\'une réponse avec AC</string>
+    <string name="sk_filtered">Filtré : %s</string>
+    <string name="sk_unfinished_attachments">Corriger les pièces jointes \?</string>
+    <string name="sk_unfinished_attachments_message">Certaines pièces jointes n\'ont pas fini de se télécharger.</string>
+    <string name="sk_spectator_mode">Mode spectateur</string>
+    <string name="sk_settings_hide_interaction">Masquer les boutons d\'interaction</string>
 </resources>

@@ -1,0 +1,10 @@
+- Zavihek "Domov" z javnimi časovnicami
+- Prikaz obvestil strežnika
+- Besedilo je prilagojeno glede na sistemske nastavitve
+- Izboljšano filtriranje ("Skrij z opozorilom" še ne deluje) @thiagojedi
+- Seznam značilnosti upravljanja
+- Odstranite sledilce tako, da jih "mehko" blokirate
+- Onemogočene povezave s fašisti
+- Popravek nenalaganja slik, ko ste povezani z instanco Akkoma
+- Popravki napak in prilagoditve uporabniškega vmesnika
+- Dodan dnevnik sprememb v posodobitveni program @LucasGGamerM

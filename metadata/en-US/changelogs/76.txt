@@ -1,0 +1,6 @@
+- Improved filters, including “Hide with warning”-compatibility
+- Redesigned profile page with metadata directly below the bio
+- Collapse/expand function for very long posts
+- Option to automatically prefix replys CWs with “re:”
+- Option to hide interaction buttons in the timeline
+- Various bugfixes, tweaks and improvements

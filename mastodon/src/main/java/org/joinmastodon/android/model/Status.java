@@ -11,7 +11,7 @@ import java.time.Instant;
 import java.util.List;
 
 @Parcel
-public class Status extends BaseModel implements DisplayItemsParent{
+public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 	@RequiredField
 	public String id;
 	@RequiredField
@@ -162,5 +162,10 @@ public class Status extends BaseModel implements DisplayItemsParent{
 		s.emojis = List.of();
 		s.filtered = List.of();
 		return s;
+	}
+
+	@Override
+	public String getQuery() {
+		return url;
 	}
 }

@@ -258,5 +258,7 @@
     <string name="sk_settings_collapse_long_posts">Collapse very long posts</string>
     <string name="sk_unfinished_attachments">Fix attachments?</string>
     <string name="sk_unfinished_attachments_message">Some attachments haven’t finished uploading.</string>
-    <string name="sk_spectator_mode">Spectator mode</string>
+    <string name="sk_settings_hide_interaction">Hide interaction buttons</string>
+    <string name="sk_follow_as">Follow from other account</string>
+    <string name="sk_followed_as">Followed from %s</string>
 </resources>

@@ -4,10 +4,10 @@ Megalodon es una versión modificada de la <a href="https://github.com/mastodon/
 
 - <b>Publicación no listada</b>: publique públicamente sin mostrar la publicación en tendencias, hashtags o cronologías públicas.
 - <b>Línea de tiempo federada</b>: todas las publicaciones públicas de todos los demás vecindarios de Fediverse a los que está conectada su instancia de inicio.
+- <b>Cronologías personalizadas</b>: ¡Fija cualquier lista o hashtag a tu pestaña de Inicio de Megalodon para deslizarte entre tus temas y gente favorita!
 - <b>Borradores y publicaciones programadas</b>: permite preparar una publicación y programarla para que se envíe automáticamente a una hora específica.
-- <b>Mostrar descripciones de imágenes</b>: compruebe fácilmente si las imágenes y los vídeos contienen textos alternativos.
 - <b>Fijar publicaciones</b>: fije sus publicaciones más importantes a su perfil y vea lo que otros usuarios han fijado en la pestaña "Fijado".
-- <b>Follow Hashtags</b>: Trae nuevas publicaciones de hashtags específicos directamente a su línea de tiempo de inicio.
+- <b>Seguir Hashtags</b>: Trae nuevas publicaciones de hashtags específicos directamente a su línea de tiempo de inicio.
 - <b>Responder solicitudes de seguimiento</b>: las solicitudes de seguimiento ahora se pueden aceptar o rechazar directamente a través de la lista de notificaciones o mediante la lista de solicitudes de seguimiento.
 - <b>Eliminar publicaciones y crear nuevas</b>: la característica popular que hizo posible editar publicaciones sin editarlas realmente.
 - <b>Selector de idioma</b>: elija fácilmente el idioma de cada una de sus publicaciones para que puedan filtrarse y traducirse correctamente.

@@ -26,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
@@ -41,6 +42,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.Toolbar;
 
 import org.joinmastodon.android.GlobalUserPreferences;
@@ -303,6 +305,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		});
 
 		actionButton.setOnClickListener(this::onActionButtonClick);
+		actionButton.setOnLongClickListener(this::onActionButtonLongClick);
 		notifyButton.setOnClickListener(this::onNotifyButtonClick);
 		avatar.setOnClickListener(this::onAvatarClick);
 		cover.setOnClickListener(this::onCoverClick);
@@ -494,8 +497,10 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			for (Account.Role role : account.roles) {
 				TextView roleText = new TextView(getActivity(), null, 0, R.style.role_label);
 				roleText.setText(role.name);
-				GradientDrawable bg = (GradientDrawable) roleText.getBackground().mutate();
-				bg.setStroke(V.dp(2), Color.parseColor(role.color));
+				if (!TextUtils.isEmpty(role.color) && role.color.startsWith("#")) try {
+					GradientDrawable bg = (GradientDrawable) roleText.getBackground().mutate();
+					bg.setStroke(V.dp(2), Color.parseColor(role.color));
+				} catch (Exception ignored) {}
 				rolesView.addView(roleText);
 			}
 		}
@@ -604,6 +609,16 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			return;
 		inflater.inflate(isOwnProfile ? R.menu.profile_own : R.menu.profile, menu);
 		UiUtils.enableOptionsMenuIcons(getActivity(), menu, R.id.bookmarks, R.id.followed_hashtags);
+		boolean hasMultipleAccounts = AccountSessionManager.getInstance().getLoggedInAccounts().size() > 1;
+		MenuItem openWithAccounts = menu.findItem(R.id.open_with_account);
+		openWithAccounts.setVisible(hasMultipleAccounts);
+		SubMenu accountsMenu = openWithAccounts.getSubMenu();
+		if (hasMultipleAccounts) {
+			accountsMenu.clear();
+			UiUtils.populateAccountsMenu(accountID, accountsMenu, s-> UiUtils.openURL(
+					getActivity(), s.getID(), account.url, false
+			));
+		}
 		menu.findItem(R.id.share).setTitle(getString(R.string.share_user, account.getShortUsername()));
 		if(isOwnProfile)
 			return;
@@ -831,6 +846,31 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		}
 	}
 
+	private boolean onActionButtonLongClick(View v) {
+		if (isOwnProfile || AccountSessionManager.getInstance().getLoggedInAccounts().size() < 2) return false;
+		UiUtils.pickAccount(getActivity(), accountID, R.string.sk_follow_as, R.drawable.ic_fluent_person_add_28_regular, session -> {
+			UiUtils.lookupAccount(getActivity(), account, session.getID(), accountID, acc -> {
+				if (acc == null) return;
+				new SetAccountFollowed(acc.id, true, true).setCallback(new Callback<>() {
+					@Override
+					public void onSuccess(Relationship relationship) {
+						Toast.makeText(
+								getActivity(),
+								getString(R.string.sk_followed_as, session.self.getShortUsername()),
+								Toast.LENGTH_SHORT
+						).show();
+					}
+
+					@Override
+					public void onError(ErrorResponse error) {
+						error.showToast(getActivity());
+					}
+				}).exec(session.getID());
+			});
+		}, null);
+		return true;
+	}
+
 	private void setActionProgressVisible(boolean visible){
 		actionButton.setTextVisible(!visible);
 		actionProgress.setVisibility(visible ? View.VISIBLE : View.GONE);
@@ -877,7 +917,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		pager.setUserInputEnabled(false);
 		actionButton.setText(R.string.done);
 		ArrayList<Animator> animators=new ArrayList<>();
-		Drawable overlay=getResources().getDrawable(R.drawable.edit_avatar_overlay).mutate();
+		Drawable overlay=getResources().getDrawable(R.drawable.edit_avatar_overlay, getActivity().getTheme()).mutate();
 		avatar.setForeground(overlay);
 		animators.add(ObjectAnimator.ofInt(overlay, "alpha", 0, 255));
 

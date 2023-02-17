@@ -61,7 +61,7 @@
     <string name="sk_welcome_text">Lo squalo ti saluta! Per iniziare inserisci il dominio dell\'istanza a cui sei iscritto.</string>
     <string name="sk_color_palette_material3">Sistema</string>
     <string name="sk_timeline_local">Locale</string>
-    <string name="sk_timeline_federated">Federazione</string>
+    <string name="sk_timeline_federated">Federata</string>
     <string name="sk_bookmark_as">Salva con un altro account</string>
     <string name="sk_bookmarked_as">Salvato come %s</string>
     <string name="sk_favorite_as">Inserisci tra i preferiti con un altro account</string>
@@ -150,10 +150,10 @@
     <string name="sk_changelog">Registro delle modifiche</string>
     <string name="sk_alt_text_missing_title">Testo alternativo mancante</string>
     <string name="sk_publish_anyway">Pubblica comunque</string>
-    <string name="sk_timelines">Linee temporali</string>
+    <string name="sk_timelines">Timeline</string>
     <string name="sk_timeline_posts">Post</string>
     <string name="sk_timelines_add">Aggiungi</string>
-    <string name="sk_timeline">Linea temporale</string>
+    <string name="sk_timeline">Timeline</string>
     <string name="sk_list">Lista</string>
     <string name="sk_hashtag">Hashtag</string>
     <string name="sk_pin_timeline">Fissa timeline</string>
@@ -184,7 +184,7 @@
     <string name="sk_icon_pi">Pi</string>
     <string name="sk_icon_color_palette">Tavolozza di colori</string>
     <string name="sk_alt_text_missing">Almeno un allegato non contiene una descrizione.</string>
-    <string name="sk_settings_disable_alt_text_reminder">Disabilita gli avvertimenti per la descrizione</string>
+    <string name="sk_settings_disable_alt_text_reminder">Disabilita gli avvertimenti per aggiungere il testo alternativo</string>
     <string name="sk_notify_posts_info_banner">Se abiliti le notifiche per i post per alcune persone, i loro nuovi post appariranno qui.</string>
     <string name="sk_icon_academic_cap">Tocco universitario</string>
     <string name="sk_icon_tag">Etichetta</string>
@@ -219,7 +219,7 @@
     <string name="sk_icon_human">Umano</string>
     <string name="sk_icon_globe">Mappamondo</string>
     <string name="sk_edit_timeline">Modifica timeline</string>
-    <string name="sk_edit_timelines">Modifica timelines</string>
+    <string name="sk_edit_timelines">Modifica timeline</string>
     <string name="sk_notify_update">Modifica un post condiviso</string>
     <string name="sk_notification_type_update">Post modificati</string>
     <string name="sk_attach_file">Allega file</string>
@@ -234,4 +234,20 @@
     <string name="sk_settings_show_alt_indicator">Indicatore per le descrizioni</string>
     <string name="sk_settings_show_no_alt_indicator">Indicatore per descrizioni mancanti</string>
     <string name="sk_updater_enable_pre_releases">Abilita prerilasci</string>
+    <string name="sk_inline_local_only">solo locale</string>
+    <string name="sk_inline_direct">Solo menzioni</string>
+    <string name="sk_separator">·</string>
+    <string name="sk_local_only">Solo istanza locale</string>
+    <string name="sk_instance_features">Funzionalità dell\'istanza</string>
+    <string name="sk_settings_support_local_only">Il server supporta solo post locali</string>
+    <string name="sk_settings_local_only_explanation">La tua istanza deve supportare post solo locali per far funzionare questa opzione. Molte versioni modificate di Mastodon lo fanno, ma Mastodon no.</string>
+    <string name="sk_settings_glitch_instance">Modalità solo locale di Glitch</string>
+    <string name="sk_settings_glitch_mode_explanation">Abilita se la tua istanza utilizza Glitch. Non necessario per Hometown o Akkoma.</string>
+    <string name="sk_signed_up">iscritto</string>
+    <string name="sk_reported">segnalato</string>
+    <string name="sk_new_reports">Nuove segnalazioni</string>
+    <string name="sk_sign_ups">Utenti registrati</string>
+    <string name="sk_settings_see_new_posts_button">Pulsante \"Mostra nuovi post\"</string>
+    <string name="sk_settings_server_version">Versione server:%s</string>
+    <string name="sk_notify_poll_results">Risultati del sondaggio</string>
 </resources>

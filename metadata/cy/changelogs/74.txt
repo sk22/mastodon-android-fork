@@ -1,0 +1,9 @@
+- Gellir binio neu ail-drefnu ffrydiau
+- Cefnogi postiadau lleol yn unig
+- Dangosydd ar gyfer testunau alt coll
+- Gwell golygydd testun alt
+- Pennawd yn yr ffrydiau ar gyfer yr hashnodau a ddilynir
+- Mwy o gategorïau hysbysiadau
+- Ychwanegu agorwr ffeil yn ôl
+- Awgrymiad wrth arbed drafft wedi'i olygu
+- Opsiwn i analluogi botwm “Gweld negeseuon newydd”

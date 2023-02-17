@@ -190,6 +190,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 				String accountID = session.getID();
 				args.putString("account", accountID);
 				UiUtils.lookupStatus(v.getContext(), item.status, accountID, item.accountID, status -> {
+					if (status == null) return;
 					args.putParcelable("replyTo", Parcels.wrap(status));
 					Nav.go(item.parentFragment.getActivity(), ComposeFragment.class, args);
 				});

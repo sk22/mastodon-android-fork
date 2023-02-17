@@ -1,0 +1,6 @@
+- Verbesserte Filter, inkl. “Mit Warnung ausblenden”-Kompatibilität
+- Neue Profil-Seite mit Metadaten direkt unter der BIo
+- Sehr lange Beiträge lassen sich nun aus- und einklappen
+- CWs in Antworten kann automatisch “re:” vorangestellt werden
+- Option, um Interaktions-Buttons in der Timeline auszublenden
+- Einige Fehlerbehebungen und Verbesserungen
