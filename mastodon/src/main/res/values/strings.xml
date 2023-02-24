@@ -14,6 +14,7 @@
 	<string name="finishing_auth">Finishing authentication…</string>
 	<string name="user_boosted">%s reblogged</string>
 	<string name="in_reply_to">In reply to %s</string>
+	<string name="quoting_user">Quoting %s</string>
 	<string name="notifications">Notifications</string>
 
 	<string name="user_followed_you">followed you</string>

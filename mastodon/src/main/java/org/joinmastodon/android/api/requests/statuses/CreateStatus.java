@@ -45,6 +45,8 @@ public class CreateStatus extends MastodonAPIRequest<Status>{
 		public Instant scheduledAt;
 		public String language;
 
+		public String quoteId;
+
 		public static class Poll{
 			public ArrayList<String> options=new ArrayList<>();
 			public int expiresIn;

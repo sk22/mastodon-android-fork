@@ -204,6 +204,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	private List<EmojiCategory> customEmojis;
 	private CustomEmojiPopupKeyboard emojiKeyboard;
 	private Status replyTo;
+	private Status quote;
 	private String initialText;
 	private String uuid;
 	private int pollDuration=24*3600;
@@ -252,6 +253,8 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			editingStatus=Parcels.unwrap(getArguments().getParcelable("editStatus"));
 		if(getArguments().containsKey("replyTo"))
 			replyTo=Parcels.unwrap(getArguments().getParcelable("replyTo"));
+		if(getArguments().containsKey("quote"))
+			quote=Parcels.unwrap(getArguments().getParcelable("quote"));
 		if(instance==null){
 			Nav.finish(this);
 			return;
@@ -605,7 +608,8 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			}
 		});
 		spoilerEdit.addTextChangedListener(new SimpleTextWatcher(e->updateCharCounter()));
-		if(replyTo!=null){
+		if(replyTo!=null || quote!=null){
+			Status status = quote!=null ? quote : replyTo;
 			View replyWrap = view.findViewById(R.id.reply_wrap);
 			scrollView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
 				int scrollHeight = scrollView.getHeight();
@@ -631,13 +635,13 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			originalPost.setOnClickListener(v->{
 				Bundle args=new Bundle();
 				args.putString("account", accountID);
-				args.putParcelable("status", Parcels.wrap(replyTo));
+				args.putParcelable("status", Parcels.wrap(status));
 				imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 				Nav.go(getActivity(), ThreadFragment.class, args);
 			});
 
 			ImageView avatar = view.findViewById(R.id.avatar);
-			ViewImageLoader.load(avatar, null, new UrlImageLoaderRequest(replyTo.account.avatar));
+			ViewImageLoader.load(avatar, null, new UrlImageLoaderRequest(status.account.avatar));
 			ViewOutlineProvider roundCornersOutline=new ViewOutlineProvider(){
 				@Override
 				public void getOutline(View view, Outline outline){
@@ -649,15 +653,15 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			avatar.setOnClickListener(v->{
 				Bundle args=new Bundle();
 				args.putString("account", accountID);
-				args.putParcelable("profileAccount", Parcels.wrap(replyTo.account));
+				args.putParcelable("profileAccount", Parcels.wrap(status.account));
 				imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 				Nav.go(getActivity(), ProfileFragment.class, args);
 			});
 
-			((TextView) view.findViewById(R.id.name)).setText(replyTo.account.displayName);
-			((TextView) view.findViewById(R.id.username)).setText(replyTo.account.getDisplayUsername());
+			((TextView) view.findViewById(R.id.name)).setText(status.account.displayName);
+			((TextView) view.findViewById(R.id.username)).setText(status.account.getDisplayUsername());
 			view.findViewById(R.id.visibility).setVisibility(View.GONE);
-			Drawable visibilityIcon = getActivity().getDrawable(switch(replyTo.visibility){
+			Drawable visibilityIcon = getActivity().getDrawable(switch(status.visibility){
 				case PUBLIC -> R.drawable.ic_fluent_earth_20_regular;
 				case UNLISTED -> R.drawable.ic_fluent_lock_open_20_regular;
 				case PRIVATE -> R.drawable.ic_fluent_lock_closed_20_filled;
@@ -668,36 +672,36 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			moreBtn.setImageDrawable(visibilityIcon);
 			moreBtn.setBackground(null);
 			TextView timestamp = view.findViewById(R.id.timestamp);
-			if (replyTo.editedAt==null) timestamp.setText(UiUtils.formatRelativeTimestamp(getContext(), replyTo.createdAt));
-			else timestamp.setText(getString(R.string.edited_timestamp, UiUtils.formatRelativeTimestamp(getContext(), replyTo.editedAt)));
-			if (replyTo.spoilerText != null && !replyTo.spoilerText.isBlank()) {
+			if (status.editedAt==null) timestamp.setText(UiUtils.formatRelativeTimestamp(getContext(), status.createdAt));
+			else timestamp.setText(getString(R.string.edited_timestamp, UiUtils.formatRelativeTimestamp(getContext(), status.editedAt)));
+			if (status.spoilerText != null && !status.spoilerText.isBlank()) {
 				view.findViewById(R.id.spoiler_header).setVisibility(View.VISIBLE);
-				((TextView) view.findViewById(R.id.spoiler_title_inline)).setText(replyTo.spoilerText);
+				((TextView) view.findViewById(R.id.spoiler_title_inline)).setText(status.spoilerText);
 			}
 
-			SpannableStringBuilder content = HtmlParser.parse(replyTo.content, replyTo.emojis, replyTo.mentions, replyTo.tags, accountID);
+			SpannableStringBuilder content = HtmlParser.parse(status.content, status.emojis, status.mentions, status.tags, accountID);
 			LinkedTextView text = view.findViewById(R.id.text);
 			if (content.length() > 0) text.setText(content);
 			else view.findViewById(R.id.display_item_text).setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, V.dp(16)));
 
-			replyText.setText(getString(R.string.in_reply_to, replyTo.account.displayName));
-			int visibilityNameRes = switch (replyTo.visibility) {
+			replyText.setText(getString(quote!=null? R.string.quoting_user : R.string.in_reply_to, status.account.displayName));
+			int visibilityNameRes = switch (status.visibility) {
 				case PUBLIC -> R.string.visibility_public;
 				case UNLISTED -> R.string.sk_visibility_unlisted;
 				case PRIVATE -> R.string.visibility_followers_only;
 				case DIRECT -> R.string.visibility_private;
 				case LOCAL -> R.string.sk_local_only;
 			};
-			replyText.setContentDescription(getString(R.string.in_reply_to, replyTo.account.displayName) + ". " + getString(R.string.post_visibility) + ": " + getString(visibilityNameRes));
+			replyText.setContentDescription(getString(R.string.in_reply_to, status.account.displayName) + ". " + getString(R.string.post_visibility) + ": " + getString(visibilityNameRes));
 			replyText.setOnClickListener(v->{
 				scrollView.smoothScrollTo(0, 0);
 			});
 
 			ArrayList<String> mentions=new ArrayList<>();
 			String ownID=AccountSessionManager.getInstance().getAccount(accountID).self.id;
-			if(!replyTo.account.id.equals(ownID))
-				mentions.add('@'+replyTo.account.acct);
-			for(Mention mention:replyTo.mentions){
+			if(!status.account.id.equals(ownID))
+				mentions.add('@'+status.account.acct);
+			for(Mention mention:status.mentions){
 				if(mention.id.equals(ownID))
 					continue;
 				String m='@'+mention.acct;
@@ -710,17 +714,17 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				ignoreSelectionChanges=true;
 				mainEditText.setSelection(mainEditText.length());
 				ignoreSelectionChanges=false;
-				if(!TextUtils.isEmpty(replyTo.spoilerText)){
+				if(!TextUtils.isEmpty(status.spoilerText)){
 					hasSpoiler=true;
 					spoilerEdit.setVisibility(View.VISIBLE);
-					if(GlobalUserPreferences.prefixRepliesWithRe && !replyTo.spoilerText.startsWith("re: ")){
-						spoilerEdit.setText("re: " + replyTo.spoilerText);
+					if(GlobalUserPreferences.prefixRepliesWithRe && !status.spoilerText.startsWith("re: ")){
+						spoilerEdit.setText("re: " + status.spoilerText);
 					}else{
-						spoilerEdit.setText(replyTo.spoilerText);
+						spoilerEdit.setText(status.spoilerText);
 					}
 					spoilerBtn.setSelected(true);
 				}
-				if (replyTo.language != null && !replyTo.language.isEmpty()) updateLanguage(replyTo.language);
+				if (status.language != null && !status.language.isEmpty()) updateLanguage(status.language);
 			}
 		}else if (editingStatus==null || editingStatus.inReplyToId==null){
 			// TODO: remove workaround after https://github.com/mastodon/mastodon-android/issues/341 gets fixed
@@ -1084,6 +1088,9 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		}
 		if(hasSpoiler && spoilerEdit.length()>0){
 			req.spoilerText=spoilerEdit.getText().toString();
+		}
+		if(quote != null){
+			req.quoteId=quote.id;
 		}
 		if(uuid==null)
 			uuid=UUID.randomUUID().toString();

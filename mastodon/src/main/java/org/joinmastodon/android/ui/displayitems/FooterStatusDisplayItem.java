@@ -26,6 +26,7 @@ import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.fragments.ComposeFragment;
+import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.model.StatusPrivacy;
 import org.joinmastodon.android.ui.M3AlertDialogBuilder;
@@ -280,12 +281,18 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 				v.startAnimation(opacityIn);
 				Bundle args=new Bundle();
 				args.putString("account", item.accountID);
-				StringBuilder prefilledText = new StringBuilder().append("\n\n");
-				String ownID = AccountSessionManager.getInstance().getAccount(item.accountID).self.id;
-				if (!item.status.account.id.equals(ownID)) prefilledText.append('@').append(item.status.account.acct).append(' ');
-				prefilledText.append(item.status.url);
-				args.putString("prefilledText", prefilledText.toString());
-				args.putInt("selectionStart", 0);
+				AccountSession accountSession=AccountSessionManager.getInstance().getAccount(item.accountID);
+				Instance instance=AccountSessionManager.getInstance().getInstanceInfo(accountSession.domain);
+				if(instance.pleroma == null){
+					StringBuilder prefilledText = new StringBuilder().append("\n\n");
+					String ownID = AccountSessionManager.getInstance().getAccount(item.accountID).self.id;
+					if (!item.status.account.id.equals(ownID)) prefilledText.append('@').append(item.status.account.acct).append(' ');
+					prefilledText.append(item.status.url);
+					args.putString("prefilledText", prefilledText.toString());
+					args.putInt("selectionStart", 0);
+				}else{
+					args.putParcelable("quote", Parcels.wrap(item.status));
+				}
 				Nav.go(item.parentFragment.getActivity(), ComposeFragment.class, args);
 			});
 
