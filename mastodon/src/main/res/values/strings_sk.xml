@@ -344,4 +344,13 @@
 	<string name="sk_tab_notifications">Notifications</string>
 	<string name="sk_tab_profile">Profile</string>
 	<string name="sk_settings_show_labels_in_navigation_bar">Show tab labels in the navigation bar</string>
+	<string name="sk_mute_label">Duration:</string>
+	<string name="sk_duration_indefinite">Indefinite</string>
+	<string name="sk_duration_minutes_5">5 minutes</string>
+	<string name="sk_duration_minutes_30">30 minutes</string>
+	<string name="sk_duration_hours_1">1 hour</string>
+	<string name="sk_duration_hours_6">6 hours</string>
+	<string name="sk_duration_days_1">1 day</string>
+	<string name="sk_duration_days_3">3 days</string>
+	<string name="sk_duration_days_7">7 days</string>
 </resources>
