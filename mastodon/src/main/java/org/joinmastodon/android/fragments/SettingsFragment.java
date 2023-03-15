@@ -220,11 +220,13 @@ public class SettingsFragment extends MastodonToolbarFragment{
 				popupMenu.setOnMenuItemClickListener(item -> this.onReplyVisibilityChanged(item, b));
 				b.setOnTouchListener(popupMenu.getDragToOpenListener());
 				b.setOnClickListener(v->popupMenu.show());
-				b.setText(switch(GlobalUserPreferences.replyVisibility){
-					case "following" -> R.string.sk_settings_reply_visibility_following;
-					case "self" -> R.string.sk_settings_reply_visibility_self;
-					default -> R.string.sk_settings_reply_visibility_all;
-				});
+				b.setText(GlobalUserPreferences.replyVisibility == null ?
+						R.string.sk_settings_reply_visibility_all :
+						switch(GlobalUserPreferences.replyVisibility){
+							case "following" -> R.string.sk_settings_reply_visibility_following;
+							case "self" -> R.string.sk_settings_reply_visibility_self;
+							default -> R.string.sk_settings_reply_visibility_all;
+						});
 			}));
 		}
 		items.add(new SwitchItem(R.string.sk_settings_show_boosts, R.drawable.ic_fluent_arrow_repeat_all_24_regular, GlobalUserPreferences.showBoosts, i->{
@@ -503,11 +505,13 @@ public class SettingsFragment extends MastodonToolbarFragment{
 
 		GlobalUserPreferences.replyVisibility=pref;
 		GlobalUserPreferences.save();
-		btn.setText(switch(GlobalUserPreferences.replyVisibility){
-			case "following" -> R.string.sk_settings_reply_visibility_following;
-			case "self" -> R.string.sk_settings_reply_visibility_self;
-			default -> R.string.sk_settings_reply_visibility_all;
-		});
+		btn.setText(GlobalUserPreferences.replyVisibility == null ?
+				R.string.sk_settings_reply_visibility_all :
+				switch(GlobalUserPreferences.replyVisibility){
+					case "following" -> R.string.sk_settings_reply_visibility_following;
+					case "self" -> R.string.sk_settings_reply_visibility_self;
+					default -> R.string.sk_settings_reply_visibility_all;
+				});
 		return true;
 	}
 
