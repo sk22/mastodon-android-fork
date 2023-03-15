@@ -18,7 +18,7 @@
     <string name="sk_settings_show_replies">Show replies</string>
     <string name="sk_quoting_user">Quoting %s</string>
     <string name="sk_settings_reply_visibility">Reply visibility</string>
-    <string name="sk_settings_reply_visibility_all">All</string>
+    <string name="sk_settings_reply_visibility_all">All replies</string>
     <string name="sk_settings_reply_visibility_following">Directed at me or users I\'m following</string>
     <string name="sk_settings_reply_visibility_self">Directed at me</string>
     <string name="sk_settings_show_boosts">Show boosts</string>
