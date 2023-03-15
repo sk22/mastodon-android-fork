@@ -686,7 +686,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			if (content.length() > 0) text.setText(content);
 			else view.findViewById(R.id.display_item_text).setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, V.dp(16)));
 
-			replyText.setText(getString(quote!=null? R.string.quoting_user : R.string.in_reply_to, status.account.displayName));
+			replyText.setText(getString(quote!=null? R.string.sk_quoting_user : R.string.in_reply_to, status.account.displayName));
 			int visibilityNameRes = switch (status.visibility) {
 				case PUBLIC -> R.string.visibility_public;
 				case UNLISTED -> R.string.sk_visibility_unlisted;
