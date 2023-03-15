@@ -14,7 +14,7 @@ import java.util.List;
  * Represents a user of Mastodon and their associated profile.
  */
 @Parcel
-public class Account extends BaseModel{
+public class Account extends BaseModel implements Searchable{
 	// Base attributes
 
 	/**
@@ -134,6 +134,11 @@ public class Account extends BaseModel{
 	public Instant muteExpiresAt;
 
 	public List<Role> roles;
+
+	@Override
+	public String getQuery() {
+		return url;
+	}
 
 	@Parcel
 	public static class Role {

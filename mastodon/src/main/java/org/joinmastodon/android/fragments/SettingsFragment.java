@@ -80,7 +80,7 @@ public class SettingsFragment extends MastodonToolbarFragment{
 	private ArrayList<Item> items=new ArrayList<>();
 	private ThemeItem themeItem;
 	private NotificationPolicyItem notificationPolicyItem;
-	private SwitchItem showNewPostsButtonItem, glitchModeItem;
+	private SwitchItem showNewPostsButtonItem, glitchModeItem, compactReblogReplyLineItem;
 	private String accountID;
 	private boolean needUpdateNotificationSettings;
 	private boolean needAppRestart;
@@ -253,15 +253,35 @@ public class SettingsFragment extends MastodonToolbarFragment{
 			GlobalUserPreferences.showNoAltIndicator=i.checked;
 			GlobalUserPreferences.save();
 		}));
-		items.add(new SwitchItem(R.string.sk_settings_collapse_long_posts, R.drawable.ic_fluent_chevron_down_24_filled, GlobalUserPreferences.collapseLongPosts, i->{
+		items.add(new SwitchItem(R.string.sk_settings_collapse_long_posts, R.drawable.ic_fluent_chevron_down_24_regular, GlobalUserPreferences.collapseLongPosts, i->{
 			GlobalUserPreferences.collapseLongPosts=i.checked;
 			GlobalUserPreferences.save();
 		}));
-		items.add(new SwitchItem(R.string.sk_spectator_mode, R.drawable.ic_fluent_eye_24_regular, GlobalUserPreferences.spectatorMode, i->{
+		items.add(new SwitchItem(R.string.sk_settings_hide_interaction, R.drawable.ic_fluent_eye_24_regular, GlobalUserPreferences.spectatorMode, i->{
 			GlobalUserPreferences.spectatorMode=i.checked;
 			GlobalUserPreferences.save();
 			needAppRestart=true;
 		}));
+		items.add(new SwitchItem(R.string.sk_settings_hide_fab, R.drawable.ic_fluent_edit_24_regular, GlobalUserPreferences.autoHideFab, i->{
+			GlobalUserPreferences.autoHideFab=i.checked;
+			GlobalUserPreferences.save();
+			needAppRestart=true;
+		}));
+		items.add(new SwitchItem(R.string.sk_reply_line_above_avatar, R.drawable.ic_fluent_arrow_reply_24_regular, GlobalUserPreferences.replyLineAboveHeader, i->{
+			GlobalUserPreferences.replyLineAboveHeader=i.checked;
+			GlobalUserPreferences.compactReblogReplyLine=i.checked;
+			compactReblogReplyLineItem.enabled=i.checked;
+			compactReblogReplyLineItem.checked= GlobalUserPreferences.replyLineAboveHeader;
+			if (list.findViewHolderForAdapterPosition(items.indexOf(compactReblogReplyLineItem)) instanceof SwitchViewHolder svh) svh.rebind();
+			GlobalUserPreferences.save();
+			needAppRestart=true;
+		}));
+		items.add(compactReblogReplyLineItem=new SwitchItem(R.string.sk_compact_reblog_reply_line, R.drawable.ic_fluent_re_order_24_regular, GlobalUserPreferences.compactReblogReplyLine, i->{
+			GlobalUserPreferences.compactReblogReplyLine=i.checked;
+			GlobalUserPreferences.save();
+			needAppRestart=true;
+		}));
+		compactReblogReplyLineItem.enabled=GlobalUserPreferences.replyLineAboveHeader;
 		items.add(new SwitchItem(R.string.sk_settings_translate_only_opened, R.drawable.ic_fluent_translate_24_regular, GlobalUserPreferences.translateButtonOpenedOnly, i->{
 			GlobalUserPreferences.translateButtonOpenedOnly=i.checked;
 			GlobalUserPreferences.save();

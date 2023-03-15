@@ -8,24 +8,25 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.text.Layout;
 import android.text.Spanned;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
-import android.view.View;
-import android.view.ViewConfiguration;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+
+import org.joinmastodon.android.ui.utils.UiUtils;
 
 import me.grishka.appkit.utils.V;
 
 public class ClickableLinksDelegate {
 
-	private Paint hlPaint;
+	private final Paint hlPaint;
 	private Path hlPath;
 	private LinkSpan selectedSpan;
-	private TextView view;
+	private final TextView view;
 
-	private final Runnable longClickRunnable = () -> {
-		if (selectedSpan != null) selectedSpan.onLongClick(view);
-	};
+	private final GestureDetector gestureDetector;
 
 	public ClickableLinksDelegate(TextView view) {
 		this.view=view;
@@ -33,11 +34,45 @@ public class ClickableLinksDelegate {
 		hlPaint.setAntiAlias(true);
 		hlPaint.setPathEffect(new CornerPathEffect(V.dp(3)));
 //        view.setHighlightColor(view.getResources().getColor(android.R.color.holo_blue_light));
+		gestureDetector = new GestureDetector(view.getContext(), new LinkGestureListener(), view.getHandler());
 	}
 
 	public boolean onTouch(MotionEvent event) {
-		long eventDuration = event.getEventTime() - event.getDownTime();
-		if(event.getAction()==MotionEvent.ACTION_DOWN){
+		if(event.getAction()==MotionEvent.ACTION_CANCEL){
+			// the gestureDetector does not provide a callback for CANCEL, therefore:
+			// remove background color of view before passing event to gestureDetector
+			resetAndInvalidate();
+		}
+		return gestureDetector.onTouchEvent(event);
+	}
+
+	/**
+	 * remove highlighting from span and let the system redraw the view
+	 */
+	private void resetAndInvalidate() {
+		hlPath=null;
+		selectedSpan=null;
+		view.invalidate();
+	}
+
+	public void onDraw(Canvas canvas){
+		if(hlPath!=null){
+			canvas.save();
+			canvas.translate(0, view.getPaddingTop());
+			canvas.drawPath(hlPath, hlPaint);
+			canvas.restore();
+		}
+	}
+
+	/**
+	 * GestureListener for spans that represent URLs.
+	 * onDown: on start of touch event, set highlighting
+	 * onSingleTapUp: when there was a (short) tap, call onClick and reset highlighting
+	 * onLongPress: copy URL to clipboard, let user know, reset highlighting
+	 */
+	private class LinkGestureListener extends GestureDetector.SimpleOnGestureListener {
+		@Override
+		public boolean onDown(@NonNull MotionEvent event) {
 			int line=-1;
 			Rect rect=new Rect();
 			Layout l=view.getLayout();
@@ -52,8 +87,7 @@ public class ClickableLinksDelegate {
 				return false;
 			}
 			CharSequence text=view.getText();
-			if(text instanceof Spanned){
-				Spanned s=(Spanned)text;
+			if(text instanceof Spanned s){
 				LinkSpan[] spans=s.getSpans(0, s.length()-1, LinkSpan.class);
 				if(spans.length>0){
 					for(LinkSpan span:spans){
@@ -70,7 +104,6 @@ public class ClickableLinksDelegate {
 							}
 							hlPath=new Path();
 							selectedSpan=span;
-							view.postDelayed(longClickRunnable, ViewConfiguration.getLongPressTimeout());
 							hlPaint.setColor((span.getColor() & 0x00FFFFFF) | 0x33000000);
 							//l.getSelectionPath(start, end, hlPath);
 							for(int j=lstart;j<=lend;j++){
@@ -96,35 +129,26 @@ public class ClickableLinksDelegate {
 					}
 				}
 			}
+			return super.onDown(event);
 		}
-		if(event.getAction()==MotionEvent.ACTION_UP && selectedSpan!=null){
-			if (eventDuration <= ViewConfiguration.getLongPressTimeout()) {
+
+		@Override
+		public boolean onSingleTapUp(@NonNull MotionEvent event) {
+			if(selectedSpan!=null){
 				view.playSoundEffect(SoundEffectConstants.CLICK);
 				selectedSpan.onClick(view.getContext());
+				resetAndInvalidate();
+				return true;
 			}
-			view.removeCallbacks(longClickRunnable);
-			hlPath=null;
-			selectedSpan=null;
-			view.invalidate();
 			return false;
 		}
-		if(event.getAction()==MotionEvent.ACTION_CANCEL){
-			hlPath=null;
-			selectedSpan=null;
-			view.removeCallbacks(longClickRunnable);
-			view.invalidate();
-			return false;
-		}
-		return false;
-	}
-	
-	public void onDraw(Canvas canvas){
-		if(hlPath!=null){
-			canvas.save();
-			canvas.translate(0, view.getPaddingTop());
-			canvas.drawPath(hlPath, hlPaint);
-			canvas.restore();
-		}
-	}
 
+		@Override
+		public void onLongPress(@NonNull MotionEvent event) {
+			if (selectedSpan == null) return;
+			UiUtils.copyText(view, selectedSpan.getType() == LinkSpan.Type.URL ? selectedSpan.getLink() : selectedSpan.getText());
+			//reset view
+			resetAndInvalidate();
+		}
+	}
 }

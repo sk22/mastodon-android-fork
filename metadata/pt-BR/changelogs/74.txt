@@ -1,0 +1,9 @@
+- As linhas do tempo podem ser fixadas e reorganizadas
+- Suporte a postagens apenas locais
+- Indicador de falta de textos alternativos
+- Editor de texto alternativo aprimorado
+- Cabeçalho na linha do tempo para hashtags seguidas
+- Mais categorias de notificação
+- Adicionado abridor de arquivo de volta
+- Avisar ao salvar o rascunho editado
+- Opção para desabilitar o botão “Ver novos posts”

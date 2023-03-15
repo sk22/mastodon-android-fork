@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.Button;
 import android.widget.ScrollView;
@@ -227,13 +228,20 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 				readMore.setVisibility(View.GONE);
 			}
 
-			if (GlobalUserPreferences.collapseLongPosts) text.post(() -> {
-				boolean tooBig = text.getMeasuredHeight() > textMaxHeight;
-				boolean inTimeline = !item.textSelectable;
-				boolean hasSpoiler = !TextUtils.isEmpty(item.status.spoilerText);
-				boolean expandable = inTimeline && tooBig && !hasSpoiler;
-				item.parentFragment.onEnableExpandable(this, expandable);
-			});
+			if (GlobalUserPreferences.collapseLongPosts) {
+				text.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+					@Override
+					public boolean onPreDraw() {
+						text.getViewTreeObserver().removeOnPreDrawListener(this);
+						boolean tooBig = text.getMeasuredHeight() > textMaxHeight;
+						boolean inTimeline = !item.textSelectable;
+						boolean hasSpoiler = !TextUtils.isEmpty(item.status.spoilerText);
+						boolean expandable = inTimeline && tooBig && !hasSpoiler;
+						item.parentFragment.onEnableExpandable(Holder.this, expandable);
+						return true;
+					}
+				});
+			}
 
 			readMore.setVisibility(item.status.textExpandable && !item.status.textExpanded ? View.VISIBLE : View.GONE);
 			textScrollView.setLayoutParams(item.status.textExpandable && !item.status.textExpanded ? collapseParams : wrapParams);

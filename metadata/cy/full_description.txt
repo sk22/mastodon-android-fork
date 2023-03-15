@@ -4,8 +4,8 @@ Nodweddion allweddol
 
 - <b> postio heb ei restru </b>: Postiwch yn gyhoeddus heb gael eich neges yn ymddangos mewn pynciau trendio, hashnodau neu ffrydiau cyhoeddus.
 - <b>Ffrwd y ffederasiwn</b>: Gwelwch yr holl negeseuon cyhoeddus gan bobl ar bob gweinydd arall yn y fydysawd mae eich gweinydd cartref wedi'i gysylltu iddo.
+-<b>Ffrydiau personol</b>: Pinio unrhyw restr neu hashnod i dab cartref Megalodon er mwyn llithro rhwng eich hoff bynciau a phobl
 - <b>Drafftiau a negeseuon wedi'u trefnu</b>: Yn caniatáu paratoi neges a'i threfnu i'w anfon yn awtomatig ar adeg benodol.
-- <b>Disgrifiad o'r llun</b>: Gweld yn gyflym a oes gan ddelwedd neu fideo destun alt ynghlwm wrtho.
 - <b>Pinio negeseuon</b>: Piniwch eich negeseuon pwysicaf i'ch proffil a gweld beth mae eraill wedi pinio gan ddefnyddio'r tab "Pinned".
 - <b>Dilyn hashnodau</b>: Gweler negeseuon newydd gyda hashnodau penodol yn uniongyrchol yn eich llinell amser cartref trwy eu dilyn.
 - <b>Ateb ceisiadau dilyn</b>: Derbyn neu wrthod ceisiadau dilyn yn eich hysbysiadau neu'r rhestr ceisiadau Dilyn pwrpasol.

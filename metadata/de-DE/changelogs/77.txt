@@ -1,0 +1,4 @@
+- Folgen-Button lange drücken, um Profil von anderem Account zu folgen
+- Option, um Profile mit anderem Account zu öffnen
+- Verfassen-Button wird beim Scrollen automatisch ausgeblendet
+- Crash beim Öffnen von Admin-Accounts behoben

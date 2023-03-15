@@ -109,7 +109,7 @@ import org.joinmastodon.android.ui.text.ComposeAutocompleteSpan;
 import org.joinmastodon.android.ui.text.ComposeHashtagOrMentionSpan;
 import org.joinmastodon.android.ui.text.HtmlParser;
 import org.joinmastodon.android.ui.utils.SimpleTextWatcher;
-import org.joinmastodon.android.ui.utils.TransferSpeedTracker;
+import org.joinmastodon.android.utils.TransferSpeedTracker;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.ui.views.ComposeEditText;
 import org.joinmastodon.android.ui.views.ComposeMediaLayout;
@@ -336,7 +336,9 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		scheduleTimeBtn=view.findViewById(R.id.scheduled_time_btn);
 		sensitiveIcon=view.findViewById(R.id.sensitive_icon);
 		sensitiveItem=view.findViewById(R.id.sensitive_item);
-		replyText=view.findViewById(R.id.reply_text);
+		replyText=view.findViewById(GlobalUserPreferences.replyLineAboveHeader ? R.id.reply_text : R.id.reply_text_below);
+		view.findViewById(GlobalUserPreferences.replyLineAboveHeader ? R.id.reply_text_below : R.id.reply_text)
+				.setVisibility(View.GONE);
 
 		if (isPhotoPickerAvailable()) {
 			PopupMenu attachPopup = new PopupMenu(getContext(), mediaBtn);
@@ -975,9 +977,11 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	}
 
 	private void onCustomEmojiClick(Emoji emoji){
-		int start=mainEditText.getSelectionStart();
-		String prefix=start>0 && !Character.isWhitespace(mainEditText.getText().charAt(start-1)) ? " :" : ":";
-		mainEditText.getText().replace(start, mainEditText.getSelectionEnd(), prefix+emoji.shortcode+':');
+		if(getActivity().getCurrentFocus() instanceof EditText edit){
+			int start=edit.getSelectionStart();
+			String prefix=start>0 && !Character.isWhitespace(edit.getText().charAt(start-1)) ? " :" : ":";
+			edit.getText().replace(start, edit.getSelectionEnd(), prefix+emoji.shortcode+':');
+		}
 	}
 
 	@Override

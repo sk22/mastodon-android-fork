@@ -46,12 +46,12 @@ public class LinkSpan extends CharacterStyle {
 		}
 	}
 
-	public void onLongClick(View view) {
-		UiUtils.copyText(view, getType() == Type.URL ? link : text);
-	}
-
 	public String getLink(){
 		return link;
+	}
+
+	public String getText() {
+		return text;
 	}
 
 	public Type getType(){

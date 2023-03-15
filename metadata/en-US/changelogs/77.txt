@@ -1,0 +1,4 @@
+- Long-press follow button to follow profiles from other account
+- Option to open profiles in other account
+- Auto-hide compose button when scrolling down the timeline
+- Fix crash when opening server admin's profiles

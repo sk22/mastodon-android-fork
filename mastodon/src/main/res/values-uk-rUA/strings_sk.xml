@@ -162,7 +162,7 @@
     <string name="sk_icon_heart">Серце</string>
     <string name="sk_alt_text_missing_title">Пропущений альтернативний текст</string>
     <string name="sk_publish_anyway">Усе одно опублікувати</string>
-    <string name="sk_settings_disable_alt_text_reminder">Вимкнути нагадування про альтернативний текст</string>
+    <string name="sk_settings_disable_alt_text_reminder">Вимкнути нагадування додати альтернативний текст</string>
     <string name="sk_alt_text_missing">Принаймні одне вкладення не містить опису.</string>
     <string name="sk_notify_posts_info_banner">Якщо ви ввімкнули сповіщення про нові дописи для деяких користувачів, їхні нові дописи з\'являтимуться тут.</string>
     <string name="sk_pin_timeline">Закріпити стрічку</string>
@@ -248,4 +248,15 @@
     <string name="sk_settings_see_new_posts_button">Кнопка «Показати нові дописи»</string>
     <string name="sk_settings_support_local_only">Сервер підтримує лише локальні публікації</string>
     <string name="sk_settings_local_only_explanation">Щоб це спрацювало, ваш домашній сервер має підтримувати лише локальну публікацію. Більшість модифікованих версій Mastodon підтримують її, але Mastodon не підтримує.</string>
+    <string name="sk_notify_poll_results">Результати опитування</string>
+    <string name="sk_settings_server_version">Версія сервера: %s</string>
+    <string name="sk_filtered">Відфільтровано: %s</string>
+    <string name="sk_expand">Розгорнути</string>
+    <string name="sk_collapse">Згорнути</string>
+    <string name="sk_unfinished_attachments">Виправити вкладення\?</string>
+    <string name="sk_settings_prefix_reply_cw_with_re">Префікс «re:» під час відповіді CW</string>
+    <string name="sk_settings_collapse_long_posts">Згортати надто довгі дописи</string>
+    <string name="sk_unfinished_attachments_message">Деякі вкладення не повністю завантажилися.</string>
+    <string name="sk_spectator_mode">Режим глядача</string>
+    <string name="sk_settings_hide_interaction">Сховати кнопки взаємодії</string>
 </resources>

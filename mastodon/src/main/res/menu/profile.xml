@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:id="@+id/open_with_account" android:title="@string/sk_open_with_account" android:icon="@drawable/ic_fluent_person_swap_24_regular">
+		<menu android:id="@+id/accounts" />
+	</item>
 	<item android:id="@+id/share" android:title="@string/share_user" android:icon="@drawable/ic_fluent_share_24_regular"/>
 	<item android:id="@+id/mute" android:title="@string/mute_user" android:icon="@drawable/ic_fluent_speaker_off_24_regular"/>
 	<item android:id="@+id/block" android:title="@string/block_user" android:icon="@drawable/ic_fluent_person_prohibited_24_regular"/>

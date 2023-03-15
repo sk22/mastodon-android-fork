@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.RemoteInput;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,15 +17,24 @@ import android.util.Log;
 
 import org.joinmastodon.android.api.MastodonAPIController;
 import org.joinmastodon.android.api.requests.notifications.GetNotificationByID;
+import org.joinmastodon.android.api.requests.statuses.CreateStatus;
+import org.joinmastodon.android.api.requests.statuses.SetStatusBookmarked;
+import org.joinmastodon.android.api.requests.statuses.SetStatusFavorited;
+import org.joinmastodon.android.api.requests.statuses.SetStatusReblogged;
 import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.model.Account;
+import org.joinmastodon.android.model.NotificationAction;
+import org.joinmastodon.android.model.Preferences;
 import org.joinmastodon.android.model.PushNotification;
+import org.joinmastodon.android.model.StatusPrivacy;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.parceler.Parcels;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import me.grishka.appkit.api.Callback;
@@ -37,6 +47,9 @@ public class PushNotificationReceiver extends BroadcastReceiver{
 	private static final String TAG="PushNotificationReceive";
 
 	public static final int NOTIFICATION_ID=178;
+	private static final String ACTION_KEY_TEXT_REPLY = "ACTION_KEY_TEXT_REPLY";
+
+	private static final int SUMMARY_ID = 791;
 	private static int notificationId = 0;
 
 	@Override
@@ -91,6 +104,35 @@ public class PushNotificationReceiver extends BroadcastReceiver{
 				Log.w(TAG, "onReceive: invalid push notification format");
 			}
 		}
+		if(intent.getBooleanExtra("fromNotificationAction", false)){
+			String accountID=intent.getStringExtra("accountID");
+			int notificationId=intent.getIntExtra("notificationId", -1);
+
+			if (notificationId >= 0){
+				NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+				notificationManager.cancel(accountID, notificationId);
+			}
+
+			if(intent.hasExtra("notification")){
+				org.joinmastodon.android.model.Notification notification=Parcels.unwrap(intent.getParcelableExtra("notification"));
+				String statusID=notification.status.id;
+				if (statusID != null) {
+					AccountSessionManager accountSessionManager = AccountSessionManager.getInstance();
+					Preferences preferences = accountSessionManager.getAccount(accountID).preferences;
+
+					switch (NotificationAction.values()[intent.getIntExtra("notificationAction", 0)]) {
+						case FAVORITE -> new SetStatusFavorited(statusID, true).exec(accountID);
+						case BOOKMARK -> new SetStatusBookmarked(statusID, true).exec(accountID);
+						case BOOST -> new SetStatusReblogged(notification.status.id, true, preferences.postingDefaultVisibility).exec(accountID);
+						case UNBOOST -> new SetStatusReblogged(notification.status.id, false, preferences.postingDefaultVisibility).exec(accountID);
+						case REPLY -> handleReplyAction(context, accountID, intent, notification, notificationId, preferences);
+						default -> Log.w(TAG, "onReceive: Failed to get NotificationAction");
+					}
+				}
+			}else{
+				Log.e(TAG, "onReceive: Failed to load notification");
+			}
+		}
 	}
 
 	private void notify(Context context, PushNotification pn, String accountID, org.joinmastodon.android.model.Notification notification){
@@ -142,7 +184,7 @@ public class PushNotificationReceiver extends BroadcastReceiver{
 				.setShowWhen(true)
 				.setCategory(Notification.CATEGORY_SOCIAL)
 				.setAutoCancel(true)
-				.setColor(context.getColor(R.color.primary_700));
+				.setColor(context.getColor(R.color.shortcut_icon_background));
 
 		if (!GlobalUserPreferences.uniformNotificationIcon) {
 			builder.setSmallIcon(switch (pn.notificationType) {
@@ -164,6 +206,90 @@ public class PushNotificationReceiver extends BroadcastReceiver{
 		if(AccountSessionManager.getInstance().getLoggedInAccounts().size()>1){
 			builder.setSubText(accountName);
 		}
-		nm.notify(accountID, GlobalUserPreferences.keepOnlyLatestNotification ? NOTIFICATION_ID : notificationId++, builder.build());
+
+		int id = GlobalUserPreferences.keepOnlyLatestNotification ? NOTIFICATION_ID : notificationId++;
+
+		if (notification != null){
+			switch (pn.notificationType){
+				case MENTION, STATUS -> {
+					if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N){
+						builder.addAction(buildReplyAction(context, id, accountID, notification));
+					}
+					builder.addAction(buildNotificationAction(context, id, accountID, notification,  context.getString(R.string.sk_notification_action_favorite), NotificationAction.FAVORITE));
+					builder.addAction(buildNotificationAction(context, id, accountID, notification, context.getString(R.string.sk_notification_action_bookmark), NotificationAction.BOOKMARK));
+					if(notification.status.visibility != StatusPrivacy.DIRECT) {
+						builder.addAction(buildNotificationAction(context, id, accountID, notification,  context.getString(R.string.sk_notification_action_boost), NotificationAction.BOOST));
+					}
+				}
+				case UPDATE -> {
+					if(notification.status.reblogged)
+						builder.addAction(buildNotificationAction(context, id, accountID, notification,  context.getString(R.string.sk_notification_action_unboost), NotificationAction.UNBOOST));
+				}
+			}
+		}
+
+		nm.notify(accountID, id, builder.build());
+	}
+
+	private Notification.Action buildNotificationAction(Context context, int notificationId, String accountID, org.joinmastodon.android.model.Notification notification, String title, NotificationAction action){
+		Intent notificationIntent=new Intent(context, PushNotificationReceiver.class);
+		notificationIntent.putExtra("notificationId", notificationId);
+		notificationIntent.putExtra("fromNotificationAction", true);
+		notificationIntent.putExtra("accountID", accountID);
+		notificationIntent.putExtra("notificationAction", action.ordinal());
+		notificationIntent.putExtra("notification", Parcels.wrap(notification));
+		PendingIntent actionPendingIntent = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_ONE_SHOT);
+
+		return new Notification.Action.Builder(null, title, actionPendingIntent).build();
+	}
+
+	private Notification.Action buildReplyAction(Context context, int notificationId, String accountID, org.joinmastodon.android.model.Notification notification){
+		String replyLabel = context.getResources().getString(R.string.sk_notification_action_reply);
+		RemoteInput remoteInput = new RemoteInput.Builder(ACTION_KEY_TEXT_REPLY)
+				.setLabel(replyLabel)
+				.build();
+
+		Intent notificationIntent=new Intent(context, PushNotificationReceiver.class);
+		notificationIntent.putExtra("notificationId", notificationId);
+		notificationIntent.putExtra("fromNotificationAction", true);
+		notificationIntent.putExtra("accountID", accountID);
+		notificationIntent.putExtra("notificationAction", NotificationAction.REPLY.ordinal());
+		notificationIntent.putExtra("notification", Parcels.wrap(notification));
+
+		int flags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ? PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT : PendingIntent.FLAG_UPDATE_CURRENT;
+		PendingIntent replyPendingIntent = PendingIntent.getBroadcast(context, new Random().nextInt(), notificationIntent,flags);
+		return new Notification.Action.Builder(null, replyLabel, replyPendingIntent).addRemoteInput(remoteInput).build();
+	}
+
+	private void handleReplyAction(Context context, String accountID, Intent intent, org.joinmastodon.android.model.Notification notification, int notificationId, Preferences preferences) {
+		Bundle remoteInput = RemoteInput.getResultsFromIntent(intent);
+		if (remoteInput == null) {
+			Log.e(TAG, "handleReplyAction: Could not get reply input");
+			return;
+		}
+		CharSequence input = remoteInput.getCharSequence(ACTION_KEY_TEXT_REPLY);
+
+		CreateStatus.Request req=new CreateStatus.Request();
+		req.status = input.toString();
+		req.language = preferences.postingDefaultLanguage;
+		req.visibility = preferences.postingDefaultVisibility;
+		req.inReplyToId = notification.status.id;
+		if(!notification.status.spoilerText.isEmpty() && GlobalUserPreferences.prefixRepliesWithRe && !notification.status.spoilerText.startsWith("re: ")){
+			req.spoilerText = "re: " + notification.status.spoilerText;
+		}
+
+		new CreateStatus(req, UUID.randomUUID().toString()).exec(accountID);
+
+		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		Notification.Builder builder = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O ?
+				new Notification.Builder(context, accountID+"_"+notification.type) :
+				new Notification.Builder(context)
+					.setPriority(Notification.PRIORITY_DEFAULT)
+					.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
+
+		Notification repliedNotification = builder.setSmallIcon(R.drawable.ic_ntf_logo)
+				.setContentText(context.getString(R.string.sk_notification_action_replied, notification.status.account.getDisplayUsername()))
+				.build();
+		notificationManager.notify(accountID, notificationId, repliedNotification);
 	}
 }

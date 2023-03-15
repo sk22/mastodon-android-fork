@@ -27,6 +27,7 @@
 		android:visibility="gone"
 		android:background="?android:actionBarItemBackground"
 		android:contentDescription="@string/sk_delete_notification"
+		android:tooltipText="@string/sk_delete_notification"
 		android:scaleType="center"
 		android:src="@drawable/ic_fluent_dismiss_20_filled"
 		android:tint="?android:textColorSecondary" />

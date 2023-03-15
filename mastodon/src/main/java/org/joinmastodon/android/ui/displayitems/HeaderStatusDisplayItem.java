@@ -455,7 +455,9 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 			if (hasMultipleAccounts && accountsMenu != null) {
 				openWithAccounts.setVisible(true);
 				accountsMenu.clear();
-				populateAccountsMenu(accountsMenu);
+				UiUtils.populateAccountsMenu(item.accountID, accountsMenu, s-> UiUtils.openURL(
+						item.parentFragment.getActivity(), s.getID(), item.status.url, false
+				));
 			} else if (openWithAccounts != null) {
 				openWithAccounts.setVisible(false);
 			}

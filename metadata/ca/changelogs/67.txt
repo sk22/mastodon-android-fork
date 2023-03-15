@@ -1,0 +1,10 @@
+- Pestanya d'inici nova amb línies de temps públiques
+- Mostra els avisos del servidor
+- El text s'escala segons la configuració del sistema
+- Filtre millorat (no, «Amaga amb un avís» encara no funciona) per @thiagojedi
+- Gestió de llistes
+- Elimina els seguidors bloquejant-los suaument
+- Inhabilita les connexions amb feixistes
+- Soluciona les imatges que no carregaven de la instància Akkoma
+- Correccions d'errors i retocs de la interfície
+- Afegeix el registre de canvis a l'actualitzador per @LucasGGamerM

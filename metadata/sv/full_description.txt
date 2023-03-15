@@ -4,8 +4,8 @@ Megalodon är en modifierad version av den <a href="https://github.com/mastodon/
 
 - <b>Olistat inlägg</b>: Lägg upp offentligt utan att ditt inlägg visas i trender, hashtaggar eller offentliga tidslinjer.
 - <b>Federerad tidslinje</b>: Se alla offentliga inlägg från personer i alla andra Fediverse-kvarter som din heminstans är ansluten till.
+- <b>Anpassade tidslinjer</b>: Fäst valfri lista eller hashtagg på din Megalodons startflik för att enkelt svepa mellan dina favoritämnen och personer!
 - <b>Utkast och schemalagda inlägg</b>: Gör det möjligt att förbereda ett inlägg och schemalägga det så att det skickas automatiskt vid en viss tidpunkt.
-- <b>Visare för bildbeskrivningar</b>: Kontrollera snabbt om en bild eller video har en alternativ text bifogad.
 - <b>Fästa inlägg</b>: Fäst dina viktigaste inlägg i din profil och se vad andra har fäst med fliken "Fäst".
 - <b>Följ hashtags</b>: Se nya inlägg från specifika hashtaggar direkt på din hemtidslinje genom att följa dem.
 - <b>Besvara följförfrågningar</b>: Acceptera eller avvisa följförfrågningar från dina meddelanden eller den dedikerade listan med följförfrågningar.

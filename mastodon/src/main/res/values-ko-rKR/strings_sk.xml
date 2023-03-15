@@ -52,7 +52,7 @@
     <string name="sk_translate_show_original">원본 보기</string>
     <string name="sk_post_language">언어: %s</string>
     <string name="sk_language_name">%s (%s)</string>
-    <string name="sk_translated_using">%s에서 번역함</string>
+    <string name="sk_translated_using">%s를 통해 번역함</string>
     <string name="sk_available_languages">모든 언어</string>
     <string name="sk_clear_recent_languages">최근 사용한 언어 지우기</string>
     <string name="sk_confirm_clear_recent_languages">정말로 최근 사용한 언어를 지우시겠습니까\?</string>
@@ -65,7 +65,7 @@
     <string name="sk_settings_posting">게시물 설정</string>
     <string name="sk_settings_filters">필터 설정</string>
     <string name="sk_settings_auth">보안 설정</string>
-    <string name="sk_settings_rules">인스턴스 규칙</string>
+    <string name="sk_settings_rules">규칙</string>
     <string name="sk_settings_about">이 앱에 관하여</string>
     <string name="sk_settings_donate">기부</string>
     <string name="sk_delete_notification_confirm_action">알림 삭제</string>
@@ -73,7 +73,7 @@
     <string name="sk_enable_delete_notifications">알림 삭제 활성화</string>
     <string name="sk_settings_publish_button_text">게시 버튼 텍스트</string>
     <string name="sk_settings_publish_button_text_title">게시 버튼 사용자화</string>
-    <string name="sk_settings_translate_only_opened">열린 게시글만 번역</string>
+    <string name="sk_settings_translate_only_opened">열린 게시물만 번역하기</string>
     <string name="sk_delete_notification">알림 삭제</string>
     <string name="sk_settings_translation_availability_note_available">%s 인스턴스는 번역을 지원합니다!</string>
     <string name="sk_settings_translation_availability_note_unavailable">%s 인스턴스는 번역을 지원하지 않는 것 같습니다.</string>
@@ -150,7 +150,7 @@
     <string name="sk_remove_follower_confirm">%s 님을 차단하고 바로 차단 해제하여 팔로워에서 제거하시겠습니까\?</string>
     <string name="sk_alt_text_missing">하나 이상의 첨부 파일이 대체 텍스트를 포함하지 않고 있습니다.</string>
     <string name="sk_publish_anyway">그래도 게시</string>
-    <string name="sk_settings_disable_alt_text_reminder">대체 텍스트 리마인더 해제</string>
+    <string name="sk_settings_disable_alt_text_reminder">대체 텍스트 추가 리마인더 해제</string>
     <string name="sk_alt_text_missing_title">대체 텍스트 누락</string>
     <string name="sk_timeline_posts">게시물</string>
     <string name="sk_notify_posts_info_banner">특정 계정의 게시물 알림을 켜 둔 경우, 이 곳에 해당 계정의 새로운 게시물이 나타납니다.</string>
@@ -234,4 +234,29 @@
     <string name="sk_save_draft_message">변경 사항을 초안으로 저장하거나 지금 게시하시겠습니까\?</string>
     <string name="sk_settings_show_no_alt_indicator">대체 텍스트 누락 여부 표시</string>
     <string name="sk_settings_show_alt_indicator">대체 텍스트 설정 여부 표시</string>
+    <string name="sk_notify_poll_results">투표 결과</string>
+    <string name="sk_settings_local_only_explanation">옵션이 동작하려면 사용하시는 인스턴스가 로컬에만 게시하는 것을 지원해야 합니다. 대부분의 수정된 Mastodon 버전에서 지원하지만, 공식 Mastodon은 지원하지 않습니다.</string>
+    <string name="sk_separator">·</string>
+    <string name="sk_settings_glitch_instance">Glitch 로컬에만 게시 모드</string>
+    <string name="sk_settings_support_local_only">서버가 로컬에만 게시하는 것을 지원함</string>
+    <string name="sk_inline_local_only">로컬에만 게시</string>
+    <string name="sk_inline_direct">멘션한 사람에게만 게시</string>
+    <string name="sk_instance_features">인스턴스 기능 목록</string>
+    <string name="sk_settings_glitch_mode_explanation">사용하시는 인스턴스가 Glitch에서 실행 중인 경우 활성화하세요. Hometown이나 Akkoma의 경우 활성화할 필요가 없습니다.</string>
+    <string name="sk_settings_see_new_posts_button">\"새 게시물 보기\" 버튼</string>
+    <string name="sk_settings_server_version">서버 버전: %s</string>
+    <string name="sk_settings_prefix_reply_cw_with_re">열람주의 게시물 답글에 “re:” 추가</string>
+    <string name="sk_filtered">%s 필터로 걸러짐</string>
+    <string name="sk_collapse">접기</string>
+    <string name="sk_expand">펼치기</string>
+    <string name="sk_unfinished_attachments">첨부 파일을 수정하시겠습니까\?</string>
+    <string name="sk_unfinished_attachments_message">일부 첨부 파일의 업로드가 완료되지 않았습니다.</string>
+    <string name="sk_new_reports">새로운 신고</string>
+    <string name="sk_signed_up">가입했습니다</string>
+    <string name="sk_reported">신고했습니다</string>
+    <string name="sk_sign_ups">유저가 가입 중</string>
+    <string name="sk_local_only">로컬 인스턴스 전용</string>
+    <string name="sk_settings_collapse_long_posts">아주 긴 게시물 접기</string>
+    <string name="sk_spectator_mode">관객 모드</string>
+    <string name="sk_settings_hide_interaction">상호작용 버튼 가리기</string>
 </resources>

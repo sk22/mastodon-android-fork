@@ -358,7 +358,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 		addListsToOverflowMenu();
 		addHashtagsToOverflowMenu();
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !UiUtils.isEMUI()) {
 			m.setGroupDividerEnabled(true);
 		}
 	}

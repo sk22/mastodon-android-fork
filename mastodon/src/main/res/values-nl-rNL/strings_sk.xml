@@ -233,4 +233,19 @@
     <string name="sk_separator">·</string>
     <string name="sk_sign_ups">Gebruikers die zich aanmelden</string>
     <string name="sk_settings_see_new_posts_button">\"Zie nieuwe berichten\" knop</string>
+    <string name="sk_inline_local_only">alleen-lokaal</string>
+    <string name="sk_local_only">Alleen lokale instance</string>
+    <string name="sk_settings_glitch_instance">Glitch alleen-lokaal modus</string>
+    <string name="sk_instance_features">Instance mogelijkheden</string>
+    <string name="sk_settings_support_local_only">Server ondersteunt alleen-lokaal berichten plaatsing</string>
+    <string name="sk_settings_server_version">Serverversie: %s</string>
+    <string name="sk_notify_poll_results">Peiling uitslagen</string>
+    <string name="sk_pinned_timeline">Vastgemaakt aan Home</string>
+    <string name="sk_unpinned_timeline">Losgemaakt van Home</string>
+    <string name="sk_expand">Uitvouwen</string>
+    <string name="sk_collapse">Inklappen</string>
+    <string name="sk_filtered">Gefilterd: %s</string>
+    <string name="sk_settings_collapse_long_posts">Lange berichten inklappen</string>
+    <string name="sk_unfinished_attachments_message">Enkele bijlagen zijn nog niet klaar met uploaden.</string>
+    <string name="sk_compose_no_draft">Niet opslaan als concept</string>
 </resources>

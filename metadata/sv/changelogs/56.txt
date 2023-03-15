@@ -1,0 +1,6 @@
+- Anpassade färgteman av @LucasGGamerM
+- Ny "megalodon" textlogotyp inlämnad av @LucasGGamerM
+- Bättre emoji-sökning medan du komponerar
+- Justerade röstning (visa egen röst, visa alltid röstknapp, klipp inte bort långa svar)
+- Lägg till push-aviseringsinställning för inläggsaviseringar
+- Bugg-fixar

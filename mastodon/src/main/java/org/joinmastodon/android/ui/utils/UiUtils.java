@@ -87,6 +87,7 @@ import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.Relationship;
 import org.joinmastodon.android.model.ScheduledStatus;
 import org.joinmastodon.android.model.SearchResults;
+import org.joinmastodon.android.model.Searchable;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.model.StatusPrivacy;
 import org.joinmastodon.android.ui.M3AlertDialogBuilder;
@@ -107,8 +108,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -692,10 +695,7 @@ public class UiUtils {
 		button.setBackground(ta.getDrawable(0));
 		ta.recycle();
 		ta=button.getContext().obtainStyledAttributes(styleRes, new int[]{android.R.attr.textColor});
-		if(relationship.blocking)
-			button.setTextColor(button.getResources().getColorStateList(R.color.error_600));
-		else
-			button.setTextColor(ta.getColorStateList(0));
+		button.setTextColor(ta.getColorStateList(0));
 		ta.recycle();
 	}
 
@@ -988,6 +988,8 @@ public class UiUtils {
 	public static void pickInteractAs(Context context, String accountID, Status sourceStatus, Predicate<Status> checkInteracted, InteractionPerformer interactionPerformer, @StringRes int interactAsRes, @StringRes int interactedAsAccountRes, @StringRes int alreadyInteractedRes, @DrawableRes int iconRes) {
 		pickAccount(context, accountID, interactAsRes, iconRes, session -> {
 			lookupStatus(context, sourceStatus, session.getID(), accountID, status -> {
+				if (status == null) return;
+
 				if (checkInteracted.test(status)) {
 					Toast.makeText(context, alreadyInteractedRes, Toast.LENGTH_SHORT).show();
 					return;
@@ -1003,18 +1005,33 @@ public class UiUtils {
 		}, null);
 	}
 
-	public static void lookupStatus(Context context, Status queryStatus, String targetAccountID, @Nullable String sourceAccountID, Consumer<Status> statusConsumer) {
+	public static void lookupStatus(Context context, Status queryStatus, String targetAccountID, @Nullable String sourceAccountID, Consumer<Status> resultConsumer) {
+		lookup(context, queryStatus, targetAccountID, sourceAccountID, GetSearchResults.Type.STATUSES, resultConsumer, results ->
+			!results.statuses.isEmpty() ? Optional.of(results.statuses.get(0)) : Optional.empty()
+		);
+	}
+
+	public static void lookupAccount(Context context, Account queryAccount, String targetAccountID, @Nullable String sourceAccountID, Consumer<Account> resultConsumer) {
+		lookup(context, queryAccount, targetAccountID, sourceAccountID, GetSearchResults.Type.ACCOUNTS, resultConsumer, results ->
+				!results.accounts.isEmpty() ? Optional.of(results.accounts.get(0)) : Optional.empty()
+		);
+	}
+
+	public static <T extends Searchable> void lookup(Context context, T query, String targetAccountID, @Nullable String sourceAccountID, @Nullable GetSearchResults.Type type, Consumer<T> resultConsumer, Function<SearchResults, Optional<T>> extractResult) {
 		if (sourceAccountID != null && targetAccountID.startsWith(sourceAccountID.substring(0, sourceAccountID.indexOf('_')))) {
-			statusConsumer.accept(queryStatus);
+			resultConsumer.accept(query);
 			return;
 		}
 
-		new GetSearchResults(queryStatus.url, GetSearchResults.Type.STATUSES, true).setCallback(new Callback<>() {
+		new GetSearchResults(query.getQuery(), type, true).setCallback(new Callback<>() {
 					@Override
 					public void onSuccess(SearchResults results) {
-						if (!results.statuses.isEmpty()) statusConsumer.accept(results.statuses.get(0));
-						else
+						Optional<T> result = extractResult.apply(results);
+						if (result.isPresent()) resultConsumer.accept(result.get());
+						else {
 							Toast.makeText(context, R.string.sk_resource_not_found, Toast.LENGTH_SHORT).show();
+							resultConsumer.accept(null);
+						}
 					}
 
 					@Override
@@ -1127,6 +1144,10 @@ public class UiUtils {
 
 	public static boolean isMIUI() {
 		return !TextUtils.isEmpty(getSystemProperty("ro.miui.ui.version.code"));
+	}
+
+	public static boolean isEMUI() {
+		return !TextUtils.isEmpty(getSystemProperty("ro.build.version.emui"));
 	}
 
 	public static int alphaBlendColors(int color1, int color2, float alpha) {
@@ -1249,6 +1270,17 @@ public class UiUtils {
 		if(maxCount>1)
 			intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
 		return intent;
+	}
+
+	public static void populateAccountsMenu(String excludeAccountID, Menu menu, Consumer<AccountSession> onClick) {
+		List<AccountSession> sessions=AccountSessionManager.getInstance().getLoggedInAccounts();
+		sessions.stream().filter(s -> !s.getID().equals(excludeAccountID)).forEach(s -> {
+			String username = "@"+s.self.username+"@"+s.domain;
+			menu.add(username).setOnMenuItemClickListener((c) -> {
+				onClick.accept(s);
+				return true;
+			});
+		});
 	}
 
 	/**

@@ -1,0 +1,6 @@
+- Filtros mellorados, incluíndo a compatibilidade co filtro "Ocultar con aviso"
+- Páxina de perfil redeseñada coa metadata diretamente debaixo da biografía
+- Función de contraer/expander publicacións moi longas
+- Opción de prefixar con "re:" automaticamente as respostas a ACs (avisos de contido)
+- Opción para ocultar automáticamente os botóns de interación na cronolixía
+- Varias correccións de erros, axustes e melloras

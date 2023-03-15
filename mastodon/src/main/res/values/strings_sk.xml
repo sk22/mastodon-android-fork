@@ -262,5 +262,18 @@
     <string name="sk_settings_collapse_long_posts">Collapse very long posts</string>
     <string name="sk_unfinished_attachments">Fix attachments?</string>
     <string name="sk_unfinished_attachments_message">Some attachments haven’t finished uploading.</string>
-    <string name="sk_spectator_mode">Spectator mode</string>
+    <string name="sk_settings_hide_interaction">Hide interaction buttons</string>
+    <string name="sk_follow_as">Follow from other account</string>
+    <string name="sk_followed_as">Followed from %s</string>
+    <string name="sk_settings_hide_fab">Auto-hide Compose button</string>
+    <string name="sk_notification_action_favorite">Favorite</string>
+    <string name="sk_notification_action_bookmark">Bookmark</string>
+    <string name="sk_notification_action_boost">Boost</string>
+    <string name="sk_notification_action_unboost">Unboost</string>
+    <string name="sk_notification_action_reply">Reply</string>
+    <string name="sk_notification_action_replied">Successfully replied to the post by %s</string>
+    <string name="sk_in_reply">In reply</string>
+    <string name="sk_reply_line_above_avatar">“In reply to” line above avatar</string>
+    <string name="sk_show_thread">Show thread</string>
+    <string name="sk_compact_reblog_reply_line">Compact reblog/reply line</string>
 </resources>

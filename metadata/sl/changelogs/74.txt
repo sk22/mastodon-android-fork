@@ -1,0 +1,9 @@
+- Časovnice je mogoče pripeti in preurediti
+- Podprite samo lokalne objave
+- Indikator manjkajočih nadomestnih besedil
+- Izboljšan urejevalnik nadomestnega besedila
+- Glava na časovnici za spremljane hashtage
+- Več kategorij obvestil
+- Nazaj dodana funkcija odpiranja datotek
+- Poziv pri shranjevanju urejenega osnutka
+- Možnost onemogočanja gumba »Ogled novih objav«

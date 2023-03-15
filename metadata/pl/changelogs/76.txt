@@ -1,0 +1,6 @@
+- Ulepszone filtry, w tym kompatybilność z "Ukryj z ostrzeżeniem"
+- Przeprojektowana strona profilu z metadanymi bezpośrednio pod bio
+- Funkcja zwijania/rozwijania dla bardzo długich postów
+- Opcja automatycznego prefiksowania odpowiedzi CW z "re:"
+- Opcja ukrywania przycisków interakcji na osi czasu
+- Różne poprawki błędów, usprawnienia i ulepszenia

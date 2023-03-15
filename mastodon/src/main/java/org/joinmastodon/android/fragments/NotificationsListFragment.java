@@ -19,9 +19,7 @@ import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.PaginatedResponse;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.displayitems.AccountCardStatusDisplayItem;
-import org.joinmastodon.android.ui.displayitems.AccountStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.HeaderStatusDisplayItem;
-import org.joinmastodon.android.ui.displayitems.ImageStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.StatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.TextStatusDisplayItem;
 import org.joinmastodon.android.ui.utils.DiscoverInfoBannerHelper;
@@ -40,7 +38,6 @@ import java.util.stream.Stream;
 import androidx.recyclerview.widget.RecyclerView;
 import me.grishka.appkit.Nav;
 import me.grishka.appkit.api.SimpleCallback;
-import me.grishka.appkit.utils.V;
 
 public class NotificationsListFragment extends BaseStatusListFragment<Notification>{
 	private boolean onlyMentions;
@@ -98,13 +95,6 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 		HeaderStatusDisplayItem titleItem=extraText!=null ? new HeaderStatusDisplayItem(n.id, n.account, n.createdAt, this, accountID, n.status, extraText, n, null) : null;
 		if(n.status!=null){
 			ArrayList<StatusDisplayItem> items=StatusDisplayItem.buildItems(this, n.status, accountID, n, knownAccounts, titleItem!=null, titleItem==null, n, false, Filter.FilterContext.NOTIFICATIONS);
-			if(titleItem!=null){
-				for(StatusDisplayItem item:items){
-					if(item instanceof ImageStatusDisplayItem imgItem){
-						imgItem.horizontalInset=V.dp(32);
-					}
-				}
-			}
 			if(titleItem!=null)
 				items.add(0, titleItem);
 			return items;
@@ -127,6 +117,8 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 			knownAccounts.put(s.account.id, s.account);
 		if(s.status!=null && !knownAccounts.containsKey(s.status.account.id))
 			knownAccounts.put(s.status.account.id, s.status.account);
+		if(s.status!=null && s.status.reblog!=null && !knownAccounts.containsKey(s.status.reblog.account.id))
+			knownAccounts.put(s.status.reblog.account.id, s.status.reblog.account);
 	}
 
 	@Override

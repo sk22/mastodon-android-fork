@@ -1,0 +1,11 @@
+- Prilagodljiv gumb Objavi
+- Povezave Fediverse v aplikaciji
+- Dolgo kliknite gumb spodbude, da "citirate" objavo
+- Kopirajte URL objave, ko dolgo pritisnete gumb za deljenje
+- Izvedite brisanje obvestil (privzeto onemogočeno)
+- Namenske ikone za različne vrste obvestil
+- Nove sive barve
+- Dodajte nastavitev za onemogočanje drsenja med zavihki
+- Dodajte različne povezave do nastavitev računa
+- Preklopite za prikaz/skrivanje gumba za prevajanje na časovnici
+- Popravki napak in izboljšave

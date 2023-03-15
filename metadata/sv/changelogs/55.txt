@@ -1,0 +1,4 @@
+- Åtgärda trasig rendering av HTML-taggar och aktivera rendering av Markdown-formatering
+- Initiera <a href="https://translate.codeberg.org/projects/megalodon">Weblate översättningsprojekt</a>
+- Lägg till växel för den federerade tidslinjen
+- Versioner 52-54 var små justeringar för en release på Google Play

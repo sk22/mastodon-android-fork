@@ -1,0 +1,6 @@
+- Filtros mejorados, incluida la compatibilidad con la opción "Ocultar con advertencia"
+- Página de perfil rediseñada con los metadatos directamente debajo de la biografía.
+- Función de contraer/expandir para mensajes muy largos.
+- Opción de anteponer automáticamente el prefijo "re:" a los mensajes de respuesta.
+- Opción de ocultar los botones de interacción en la línea de tiempo
+- Varias correcciones de errores, ajustes y mejoras

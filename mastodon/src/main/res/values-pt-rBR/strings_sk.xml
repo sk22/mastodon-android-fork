@@ -72,7 +72,7 @@
     <string name="sk_delete_notification_confirm_action">Excluir notificação</string>
     <string name="sk_enable_delete_notifications">Habilitar a exclusão de notificações</string>
     <string name="sk_settings_publish_button_text_title">Customizar texto do botão publicar</string>
-    <string name="sk_settings_translate_only_opened">Esconder botão de tradução na linha do tempo</string>
+    <string name="sk_settings_translate_only_opened">Traduzir apenas publicações abertas</string>
     <string name="sk_settings_translation_availability_note_available">%s suporta tradução!</string>
     <string name="sk_settings_translation_availability_note_unavailable">%s parece não suportar tradução.</string>
     <string name="sk_clear_all_notifications">Limpar todas as notificações</string>
@@ -192,11 +192,11 @@
     <string name="sk_attach_file">Anexar arquivo</string>
     <string name="sk_post_edited">editado</string>
     <string name="sk_notification_type_update">Publicações editadas</string>
-    <string name="sk_notify_update">Edita uma publicação reblogada</string>
+    <string name="sk_notify_update">Editarem uma publicação reblogada</string>
     <string name="sk_icon_train">Trem</string>
     <string name="sk_alt_text_missing_title">Sem texto descritivo</string>
     <string name="sk_alt_text_missing">Pelo menos um anexo não contém uma descrição.</string>
-    <string name="sk_settings_disable_alt_text_reminder">Desativar lembrete de texto descritivo</string>
+    <string name="sk_settings_disable_alt_text_reminder">Desativar o lembrete para adicionar texto descritivo</string>
     <string name="sk_remove">Remover</string>
     <string name="sk_searching">Procurando…</string>
     <string name="sk_no_results">Sem resultados</string>
@@ -235,4 +235,22 @@
     <string name="sk_settings_show_alt_indicator">Indicador para textos descritivos</string>
     <string name="sk_settings_show_no_alt_indicator">Indicador para ausência de textos descritivos</string>
     <string name="sk_instance_features">Recursos da instância</string>
+    <string name="sk_separator">·</string>
+    <string name="sk_local_only">Apenas instância local</string>
+    <string name="sk_inline_local_only">apenas local</string>
+    <string name="sk_inline_direct">apenas mencionado</string>
+    <string name="sk_settings_support_local_only">O servidor suporta publicação somente local</string>
+    <string name="sk_settings_local_only_explanation">A sua instância inicial deve oferecer suporte a publicações somente locais para que isso funcione. A maioria das versões modificadas do Mastodon suporta, mas o próprio Mastodon não.</string>
+    <string name="sk_settings_glitch_instance">Publicação somente local compatível com Glitch</string>
+    <string name="sk_settings_see_new_posts_button">Botão “Ver novas publicações”</string>
+    <string name="sk_settings_server_version">Versão do servidor: %s</string>
+    <string name="sk_notify_poll_results">Resultados de enquetes</string>
+    <string name="sk_filtered">Filtrado: %s</string>
+    <string name="sk_expand">Mostrar mais</string>
+    <string name="sk_unfinished_attachments_message">Alguns anexos ainda não foram enviados.</string>
+    <string name="sk_unfinished_attachments">Corrigir anexos\?</string>
+    <string name="sk_settings_glitch_mode_explanation">Habilite isso se sua instância inicial for executada no Glitch. Não é necessário para Hometown ou Akkoma.</string>
+    <string name="sk_collapse">Mostrar menos</string>
+    <string name="sk_settings_prefix_reply_cw_with_re">Adicionar \"re:\" nas respostas com Avisos de Conteúdo</string>
+    <string name="sk_spectator_mode">Modo espectador</string>
 </resources>

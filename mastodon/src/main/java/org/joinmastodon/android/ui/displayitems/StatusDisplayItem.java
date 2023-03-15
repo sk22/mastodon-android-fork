@@ -7,12 +7,12 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.fragments.HashtagTimelineFragment;
 import org.joinmastodon.android.fragments.HomeTabFragment;
-import org.joinmastodon.android.fragments.HomeTimelineFragment;
 import org.joinmastodon.android.fragments.ListTimelineFragment;
 import org.joinmastodon.android.fragments.ProfileFragment;
 import org.joinmastodon.android.fragments.ThreadFragment;
@@ -20,7 +20,6 @@ import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Attachment;
 import org.joinmastodon.android.model.DisplayItemsParent;
 import org.joinmastodon.android.model.Filter;
-import org.joinmastodon.android.model.Hashtag;
 import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.Poll;
 import org.joinmastodon.android.model.ScheduledStatus;
@@ -33,7 +32,6 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -68,10 +66,7 @@ public abstract class StatusDisplayItem{
 			case HEADER -> new HeaderStatusDisplayItem.Holder(activity, parent);
 			case REBLOG_OR_REPLY_LINE -> new ReblogOrReplyLineStatusDisplayItem.Holder(activity, parent);
 			case TEXT -> new TextStatusDisplayItem.Holder(activity, parent);
-			case PHOTO -> new PhotoStatusDisplayItem.Holder(activity, parent);
-			case GIFV -> new GifVStatusDisplayItem.Holder(activity, parent);
 			case AUDIO -> new AudioStatusDisplayItem.Holder(activity, parent);
-			case VIDEO -> new VideoStatusDisplayItem.Holder(activity, parent);
 			case POLL_OPTION -> new PollOptionStatusDisplayItem.Holder(activity, parent);
 			case POLL_FOOTER -> new PollFooterStatusDisplayItem.Holder(activity, parent);
 			case CARD -> new LinkCardStatusDisplayItem.Holder(activity, parent);
@@ -81,6 +76,7 @@ public abstract class StatusDisplayItem{
 			case HASHTAG -> new HashtagStatusDisplayItem.Holder(activity, parent);
 			case GAP -> new GapStatusDisplayItem.Holder(activity, parent);
 			case EXTENDED_FOOTER -> new ExtendedFooterStatusDisplayItem.Holder(activity, parent);
+			case MEDIA_GRID -> new MediaGridStatusDisplayItem.Holder(activity, parent);
 			case WARNING -> new WarningFilteredStatusDisplayItem.Holder(activity, parent);
 		};
 	}
@@ -114,24 +110,36 @@ public abstract class StatusDisplayItem{
 			statusForContent.filterRevealed = filterPredicate.testWithWarning(status);
 		}
 
+		ReblogOrReplyLineStatusDisplayItem replyLine = null;
+		boolean threadReply = statusForContent.inReplyToAccountId != null &&
+				statusForContent.inReplyToAccountId.equals(statusForContent.account.id);
+
+		if(statusForContent.inReplyToAccountId!=null && !(threadReply && fragment instanceof ThreadFragment)){
+			Account account = knownAccounts.get(statusForContent.inReplyToAccountId);
+			String text = threadReply ? fragment.getString(R.string.sk_show_thread)
+					: account == null ? fragment.getString(R.string.sk_in_reply)
+					: GlobalUserPreferences.compactReblogReplyLine && status.reblog != null ? account.displayName
+					: fragment.getString(R.string.in_reply_to, account.displayName);
+			replyLine = new ReblogOrReplyLineStatusDisplayItem(
+					parentID, fragment, text, account == null ? List.of() : account.emojis,
+					R.drawable.ic_fluent_arrow_reply_20_filled, null, null
+			);
+		}
+
 		if(status.reblog!=null){
 			boolean isOwnPost = AccountSessionManager.getInstance().isSelf(fragment.getAccountID(), status.account);
-			items.add(new ReblogOrReplyLineStatusDisplayItem(parentID, fragment, fragment.getString(R.string.user_boosted, status.account.displayName), status.account.emojis, R.drawable.ic_fluent_arrow_repeat_all_20_filled, isOwnPost ? status.visibility : null, i->{
+			String text = GlobalUserPreferences.compactReblogReplyLine && replyLine != null
+					? status.account.displayName
+					: fragment.getString(R.string.user_boosted, status.account.displayName);
+
+			items.add(new ReblogOrReplyLineStatusDisplayItem(parentID, fragment, text, status.account.emojis, R.drawable.ic_fluent_arrow_repeat_all_20_filled, isOwnPost ? status.visibility : null, i->{
 				args.putParcelable("profileAccount", Parcels.wrap(status.account));
 				Nav.go(fragment.getActivity(), ProfileFragment.class, args);
 			}));
-		}else if(status.inReplyToAccountId!=null && knownAccounts.containsKey(status.inReplyToAccountId)){
-			Account account=Objects.requireNonNull(knownAccounts.get(status.inReplyToAccountId));
-			items.add(new ReblogOrReplyLineStatusDisplayItem(parentID, fragment, fragment.getString(R.string.in_reply_to, account.displayName), account.emojis, R.drawable.ic_fluent_arrow_reply_20_filled, null, i->{
-				args.putParcelable("profileAccount", Parcels.wrap(account));
-				Nav.go(fragment.getActivity(), ProfileFragment.class, args);
-			}));
-		} else if (
-				!(status.tags.isEmpty() ||
-						fragment instanceof HashtagTimelineFragment ||
-						fragment instanceof ListTimelineFragment
-				) && fragment.getParentFragment() instanceof HomeTabFragment home
-		) {
+		} else if (!(status.tags.isEmpty() ||
+				fragment instanceof HashtagTimelineFragment ||
+				fragment instanceof ListTimelineFragment
+		) && fragment.getParentFragment() instanceof HomeTabFragment home) {
 			home.getHashtags().stream()
 					.filter(followed -> status.tags.stream()
 							.anyMatch(hashtag -> followed.name.equalsIgnoreCase(hashtag.name)))
@@ -146,28 +154,38 @@ public abstract class StatusDisplayItem{
 							}
 					)));
 		}
+
+		if (replyLine != null && GlobalUserPreferences.replyLineAboveHeader) {
+			Optional<ReblogOrReplyLineStatusDisplayItem> primaryLine = items.stream()
+					.filter(i -> i instanceof ReblogOrReplyLineStatusDisplayItem)
+					.map(ReblogOrReplyLineStatusDisplayItem.class::cast)
+					.findFirst();
+
+			if (primaryLine.isPresent() && GlobalUserPreferences.compactReblogReplyLine) {
+				primaryLine.get().extra = replyLine;
+			} else {
+				items.add(replyLine);
+			}
+		}
+
 		HeaderStatusDisplayItem header;
 		items.add(header=new HeaderStatusDisplayItem(parentID, statusForContent.account, statusForContent.createdAt, fragment, accountID, statusForContent, null, notification, scheduledStatus));
+
+		if (replyLine != null && !GlobalUserPreferences.replyLineAboveHeader) {
+			replyLine.belowHeader = true;
+			items.add(replyLine);
+		}
+
 		if(!TextUtils.isEmpty(statusForContent.content))
 			items.add(new TextStatusDisplayItem(parentID, HtmlParser.parse(statusForContent.content, statusForContent.emojis, statusForContent.mentions, statusForContent.tags, accountID), fragment, statusForContent, disableTranslate));
+		else if (!GlobalUserPreferences.replyLineAboveHeader && replyLine != null)
+			replyLine.needBottomPadding=true;
 		else
 			header.needBottomPadding=true;
 		List<Attachment> imageAttachments=statusForContent.mediaAttachments.stream().filter(att->att.type.isImage()).collect(Collectors.toList());
 		if(!imageAttachments.isEmpty()){
-			int photoIndex=0;
-			PhotoLayoutHelper.TiledLayoutResult layout=PhotoLayoutHelper.processThumbs(1000, 1910, imageAttachments);
-			for(Attachment attachment:imageAttachments){
-				if(attachment.type==Attachment.Type.IMAGE){
-					items.add(new PhotoStatusDisplayItem(parentID, statusForContent, attachment, fragment, photoIndex, imageAttachments.size(), layout, layout.tiles[photoIndex]));
-				}else if(attachment.type==Attachment.Type.GIFV){
-					items.add(new GifVStatusDisplayItem(parentID, statusForContent, attachment, fragment, photoIndex, imageAttachments.size(), layout, layout.tiles[photoIndex]));
-				}else if(attachment.type==Attachment.Type.VIDEO){
-					items.add(new VideoStatusDisplayItem(parentID, statusForContent, attachment, fragment, photoIndex, imageAttachments.size(), layout, layout.tiles[photoIndex]));
-				}else{
-					throw new IllegalStateException("This isn't supposed to happen, type is "+attachment.type);
-				}
-				photoIndex++;
-			}
+			PhotoLayoutHelper.TiledLayoutResult layout=PhotoLayoutHelper.processThumbs(imageAttachments);
+			items.add(new MediaGridStatusDisplayItem(parentID, fragment, layout, imageAttachments, statusForContent));
 		}
 		for(Attachment att:statusForContent.mediaAttachments){
 			if(att.type==Attachment.Type.AUDIO){
@@ -211,9 +229,6 @@ public abstract class StatusDisplayItem{
 		HEADER,
 		REBLOG_OR_REPLY_LINE,
 		TEXT,
-		PHOTO,
-		VIDEO,
-		GIFV,
 		AUDIO,
 		POLL_OPTION,
 		POLL_FOOTER,
@@ -223,8 +238,9 @@ public abstract class StatusDisplayItem{
 		ACCOUNT,
 		HASHTAG,
 		GAP,
-		WARNING,
-		EXTENDED_FOOTER
+		EXTENDED_FOOTER,
+		MEDIA_GRID,
+		WARNING
 	}
 
 	public static abstract class Holder<T extends StatusDisplayItem> extends BindableViewHolder<T> implements UsableRecyclerView.DisableableClickable{

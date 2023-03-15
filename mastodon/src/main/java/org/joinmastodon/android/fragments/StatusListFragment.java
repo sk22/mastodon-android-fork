@@ -41,6 +41,8 @@ public abstract class StatusListFragment extends BaseStatusListFragment<Status>{
 	protected void addAccountToKnown(Status s){
 		if(!knownAccounts.containsKey(s.account.id))
 			knownAccounts.put(s.account.id, s.account);
+		if(s.reblog!=null && !knownAccounts.containsKey(s.reblog.account.id))
+			knownAccounts.put(s.reblog.account.id, s.reblog.account);
 	}
 
 	@Override
