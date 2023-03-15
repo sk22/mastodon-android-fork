@@ -19,7 +19,7 @@ public class GetHomeTimeline extends MastodonAPIRequest<List<Status>>{
 			addQueryParameter("since_id", sinceID);
 		if(limit>0)
 			addQueryParameter("limit", ""+limit);
-		if(!GlobalUserPreferences.replyVisibility.isEmpty())
+		if(GlobalUserPreferences.replyVisibility != null)
 			addQueryParameter("reply_visibility", GlobalUserPreferences.replyVisibility);
 	}
 }

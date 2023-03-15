@@ -108,7 +108,7 @@ public class GlobalUserPreferences{
 		pinnedTimelines=fromJson(prefs.getString("pinnedTimelines", null), pinnedTimelinesType, new HashMap<>());
 		accountsWithLocalOnlySupport=prefs.getStringSet("accountsWithLocalOnlySupport", new HashSet<>());
 		accountsInGlitchMode=prefs.getStringSet("accountsInGlitchMode", new HashSet<>());
-		replyVisibility=prefs.getString("replyVisibility", "");
+		replyVisibility=prefs.getString("replyVisibility", null);
 
 		try {
 			color=ColorPreference.valueOf(prefs.getString("color", ColorPreference.PINK.name()));

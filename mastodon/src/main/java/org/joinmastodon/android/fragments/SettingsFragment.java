@@ -495,7 +495,7 @@ public class SettingsFragment extends MastodonToolbarFragment{
 	}
 
 	private boolean onReplyVisibilityChanged(MenuItem item, Button btn){
-		String pref = "";
+		String pref = null;
 		int id = item.getItemId();
 
 		if (id == R.id.reply_visibility_following) pref = "following";
