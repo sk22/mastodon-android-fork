@@ -252,6 +252,7 @@
     <string name="sk_settings_glitch_mode_explanation">Enable this if your home instance runs on Glitch. Not needed for Hometown or Akkoma.</string>
     <string name="sk_signed_up">signed up</string>
     <string name="sk_reported">reported</string>
+    <string name="sk_reacted">reacted with %s</string>
     <string name="sk_sign_ups">Users signing up</string>
     <string name="sk_new_reports">New reports</string>
     <string name="sk_settings_server_version">Server version: %s</string>
