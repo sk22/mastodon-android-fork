@@ -719,6 +719,33 @@ public class UiUtils {
 	}
 
 	public static void performAccountAction(Activity activity, Account account, String accountID, Relationship relationship, Button button, Consumer<Boolean> progressCallback, Consumer<Relationship> resultCallback) {
+		if(relationship == null){
+			UiUtils.lookupAccount(button.getContext(), account, accountID, null, account1 -> {
+				if(account1 == null){
+					return;
+				}
+				progressCallback.accept(true);
+				new SetAccountFollowed(account1.id, true, true, false)
+						.setCallback(new Callback<>(){
+							@Override
+							public void onSuccess(Relationship result){
+								resultCallback.accept(result);
+								progressCallback.accept(false);
+								if(!result.following && !result.requested){
+									E.post(new RemoveAccountPostsEvent(accountID, account.id, true));
+								}
+							}
+
+							@Override
+							public void onError(ErrorResponse error){
+								error.showToast(activity);
+								progressCallback.accept(false);
+							}
+						})
+						.exec(accountID);
+			});
+			return;
+		}
 		if (relationship.blocking) {
 			confirmToggleBlockUser(activity, accountID, account, true, resultCallback);
 		} else if (relationship.muting) {

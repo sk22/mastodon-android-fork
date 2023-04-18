@@ -77,7 +77,10 @@ public abstract class BaseAccountListFragment extends RecyclerFragment<BaseAccou
 		if(refreshing){
 			relationships.clear();
 		}
-		loadRelationships(d);
+		if(!d.isEmpty() && !d.get(0).account.reloadWhenClicked){
+			loadRelationships(d);
+		}
+
 		super.onDataLoaded(d, more);
 	}
 
@@ -240,7 +243,12 @@ public abstract class BaseAccountListFragment extends RecyclerFragment<BaseAccou
 		public void bindRelationship(){
 			Relationship rel=relationships.get(item.account.id);
 			if(rel==null || AccountSessionManager.getInstance().isSelf(accountID, item.account)){
-				button.setVisibility(View.GONE);
+				if(item.account.reloadWhenClicked){
+					button.setVisibility(View.VISIBLE);
+					button.setText(R.string.button_follow);
+				} else {
+					button.setVisibility(View.GONE);
+				}
 			}else{
 				button.setVisibility(View.VISIBLE);
 				UiUtils.setRelationshipToActionButton(rel, button);
