@@ -5,8 +5,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.joinmastodon.android.R;
-
 import me.grishka.appkit.api.ErrorResponse;
 
 public class MastodonErrorResponse extends ErrorResponse{

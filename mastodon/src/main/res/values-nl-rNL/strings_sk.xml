@@ -53,7 +53,7 @@
     <string name="sk_bookmarked_as">Bookmark opgeslagen als %s</string>
     <string name="sk_already_bookmarked">Al als bookmark opgeslagen</string>
     <string name="sk_favorited_as">Als favoriet opgeslagen als %s</string>
-    <string name="sk_language_name">%s (%s)</string>
+    <string name="sk_language_name">%1$s (%2$s)</string>
     <string name="sk_example_domain">example.social</string>
     <string name="sk_reply_as">Antwoord met ander account</string>
     <string name="sk_settings_uniform_icon_for_notifications">Zelfde icoon voor alle meldingen</string>

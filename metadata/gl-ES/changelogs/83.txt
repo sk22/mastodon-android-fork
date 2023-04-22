@@ -1,0 +1,5 @@
+- Dalle a gústame / garda en marcadores / responde directamente desde o ton de notificación
+- Encabezados máis bonitos e consistentes para promocionar e respostar na cronoloxía
+- Punto de notificación (que en realidade non carga las notificaciones todavía)
+- Para os usuarios de Akkoma: Visibilidade de respostas, respostas de chío ordenadas, citacións, ... 
+- Correccións de erros e axustes menores

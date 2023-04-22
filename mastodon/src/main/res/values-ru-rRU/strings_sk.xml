@@ -25,7 +25,7 @@
     <string name="sk_translate_show_original">Показать оригинал</string>
     <string name="sk_translated_using">Переведено через %s</string>
     <string name="sk_available_languages">Доступные языки</string>
-    <string name="sk_language_name">%s (%s)</string>
+    <string name="sk_language_name">%1$s (%2$s)</string>
     <string name="sk_welcome_title">Добро пожаловать!</string>
     <string name="sk_example_domain">example.social</string>
     <string name="sk_settings_load_new_posts">Автоматически загружать новые посты</string>
@@ -115,7 +115,7 @@
     <string name="sk_confirm_save_changes">Сохранить изменения\?</string>
     <string name="sk_mark_as_draft">Пометить как черновик</string>
     <string name="sk_schedule_post">Запланировать публикацию</string>
-    <string name="sk_forward_report_to">"Переслать пользователю  %s"</string>
+    <string name="sk_forward_report_to">Переслать пользователю %s</string>
     <string name="sk_confirm_delete_draft_title">Удалить черновик</string>
     <string name="sk_confirm_delete_scheduled_post_title">Удалить запланированную публикацию</string>
     <string name="sk_compose_draft">Публикация будет сохранена в черновики.</string>
