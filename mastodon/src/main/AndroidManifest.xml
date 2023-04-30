@@ -50,6 +50,10 @@
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
+		<activity
+			android:name=".ExitActivity"
+			android:exported="false"
+			android:theme="@android:style/Theme.NoDisplay" />
 		<activity android:name=".OAuthActivity" android:exported="true" android:configChanges="orientation|screenSize" android:launchMode="singleTask">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW"/>

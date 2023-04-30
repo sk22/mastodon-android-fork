@@ -21,6 +21,7 @@ public class PanicResponderActivity extends Activity {
         final Intent intent = getIntent();
         if (intent != null && PANIC_TRIGGER_ACTION.equals(intent.getAction())) {
             AccountSessionManager.getInstance().getLoggedInAccounts().forEach(accountSession -> logOut(accountSession.getID()));
+            ExitActivity.exit(this);
         }
         finishAndRemoveTask();
     }
