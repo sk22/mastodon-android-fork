@@ -197,11 +197,6 @@ public class AccountSessionManager{
 		maybeUpdateShortcuts();
 	}
 
-	/// Removes all logged in accounts.
-	public void nuke() {
-		sessions.keySet().forEach(this::removeAccount);
-	}
-
 	@NonNull
 	public MastodonAPIController getUnauthenticatedApiController(){
 		return unauthenticatedApiController;
