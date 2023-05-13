@@ -154,8 +154,9 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 						if(offset==0 && !result.items.isEmpty() && !result.isFromCache()){
 							E.post(new AllNotificationsSeenEvent());
 							new SaveMarkers(null, result.items.get(0).id).exec(accountID);
-							AccountSessionManager.getInstance().getAccount(accountID).markers
-									.notifications.lastReadId = result.items.get(0).id;
+							if (AccountSessionManager.getInstance().getAccount(accountID).markers != null)
+								AccountSessionManager.getInstance().getAccount(accountID).markers
+										.notifications.lastReadId = result.items.get(0).id;
 							AccountSessionManager.getInstance().writeAccountsFile();
 						}
 					}

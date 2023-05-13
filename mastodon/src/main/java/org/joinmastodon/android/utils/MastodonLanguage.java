@@ -85,7 +85,7 @@ public class MastodonLanguage {
 		private final MastodonLanguage fallbackLanguage;
 
 		public LanguageResolver(Instance instanceInfo) {
-			String fallbackLanguageTag = !instanceInfo.languages.isEmpty() ? instanceInfo.languages.get(0) : ENGLISH.languageTag;
+			String fallbackLanguageTag = (instanceInfo.languages != null && !instanceInfo.languages.isEmpty()) ? instanceInfo.languages.get(0) : ENGLISH.languageTag;
 			fallbackLanguage = allLanguages.stream()
 					.filter(l->l.languageTag.equalsIgnoreCase(fallbackLanguageTag)).findAny()
 					.orElse(ENGLISH);
