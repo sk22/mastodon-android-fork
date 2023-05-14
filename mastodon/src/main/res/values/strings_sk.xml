@@ -275,4 +275,9 @@
     <string name="sk_show_thread">Show thread</string>
     <string name="sk_compact_reblog_reply_line">Compact boost/reply line</string>
     <string name="sk_settings_confirm_before_reblog">Confirm before boosting</string>
+    <string name="sk_text_plain">Plain text</string>
+    <string name="sk_html">HTML</string>
+    <string name="sk_markdown">Markdown</string>
+    <string name="sk_bbcode">BBCode</string>
+    <string name="sk_mfm">MFM</string>
 </resources>

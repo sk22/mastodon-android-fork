@@ -157,6 +157,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	private static final String GLITCH_LOCAL_ONLY_SUFFIX = "👁";
 	private static final Pattern GLITCH_LOCAL_ONLY_PATTERN = Pattern.compile("[\\s\\S]*" + GLITCH_LOCAL_ONLY_SUFFIX + "[\uFE00-\uFE0F]*");
 	private static final String TAG="ComposeFragment";
+	private static final String[] contentTypes = new String[] {"text/plain","text/html","text/markdown","text/bbcode","text/x.misskeymarkdown"};
 
 	public static final Pattern MENTION_PATTERN=Pattern.compile("(^|[^\\/\\w])@(([a-z0-9_]+)@[a-z0-9\\.\\-]+[a-z0-9]+)", Pattern.CASE_INSENSITIVE);
 
@@ -178,8 +179,8 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	private String accountID;
 	private int charCount, charLimit, trimmedCharCount;
 
-	private Button publishButton, languageButton, scheduleTimeBtn, draftsBtn;
-	private PopupMenu languagePopup, visibilityPopup, draftOptionsPopup;
+	private Button publishButton, languageButton, contentTypeButton, scheduleTimeBtn, draftsBtn;
+	private PopupMenu languagePopup, contentTypePopup, visibilityPopup, draftOptionsPopup;
 	private ImageButton mediaBtn, pollBtn, emojiBtn, spoilerBtn, visibilityBtn, scheduleDraftDismiss;
 	private ImageView sensitiveIcon;
 	private ComposeMediaLayout attachmentsView;
@@ -234,6 +235,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	private Runnable updateUploadEtaRunnable;
 
 	private String language, encoding;
+	private String contentType = "text/plain";
 	private MastodonLanguage.LanguageResolver languageResolver;
 
 	@Override
@@ -813,6 +815,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 
 		publishButton = wrap.findViewById(R.id.publish_btn);
 		languageButton = wrap.findViewById(R.id.language_btn);
+		contentTypeButton = wrap.findViewById(R.id.content_type_btn);
 		sendProgress = wrap.findViewById(R.id.send_progress);
 		sendError = wrap.findViewById(R.id.send_error);
 
@@ -821,6 +824,11 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		draftsBtn.setOnTouchListener(draftOptionsPopup.getDragToOpenListener());
 		updateScheduledAt(scheduledAt != null ? scheduledAt : scheduledStatus != null ? scheduledStatus.scheduledAt : null);
 		buildLanguageSelector(languageButton);
+		if (instance.pleroma != null)
+			buildContentTypeSelector(contentTypeButton);
+		else{
+			contentTypeButton.setVisibility(View.GONE);
+		}
 
 		if (editingStatus != null && scheduledStatus == null) {
 			// editing an already published post
@@ -903,6 +911,37 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				updateLanguage(allLanguages.get(i.getItemId()));
 				encoding = null;
 			}
+			return true;
+		});
+	}
+
+	@SuppressLint("ClickableViewAccessibility")
+	private void buildContentTypeSelector(Button btn) {
+		contentTypePopup=new PopupMenu(getActivity(), contentTypeButton);
+		btn.setOnTouchListener(contentTypePopup.getDragToOpenListener());
+		btn.setOnClickListener(v->contentTypePopup.show());
+		contentTypeButton.setText(getString(R.string.sk_text_plain));
+
+		Menu contentTypeMenu = contentTypePopup.getMenu();
+		for (int i=0;i<contentTypes.length;i++) {
+			contentTypeMenu.add(0, i , i, switch (contentTypes[i]) {
+				case "text/plain" -> getString(R.string.sk_text_plain);
+				case "text/html" -> getString(R.string.sk_html);
+				case "text/markdown" -> getString(R.string.sk_markdown);
+				case "text/bbcode" -> getString(R.string.sk_bbcode);
+				case "text/x.misskeymarkdown" -> getString(R.string.sk_mfm);
+				default -> throw new IllegalArgumentException("Invalid content type");
+			});
+		}
+
+		btn.setOnLongClickListener(v->{
+			btn.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+			return false;
+		});
+
+		contentTypePopup.setOnMenuItemClickListener(i->{
+			contentType=contentTypes[i.getItemId()];
+			contentTypeButton.setText(i.getTitle().toString());
 			return true;
 		});
 	}
@@ -1053,6 +1092,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		req.visibility=localOnly && instance.pleroma != null ? StatusPrivacy.LOCAL : statusVisibility;
 		req.sensitive=sensitive;
 		req.language=language;
+		req.contentType=contentType;
 		req.scheduledAt = scheduledAt;
 		if(!attachments.isEmpty()){
 			req.mediaIds=attachments.stream().map(a->a.serverAttachment.id).collect(Collectors.toList());
