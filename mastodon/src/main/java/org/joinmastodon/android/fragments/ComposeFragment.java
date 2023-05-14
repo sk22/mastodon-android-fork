@@ -235,7 +235,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	private Runnable updateUploadEtaRunnable;
 
 	private String language, encoding;
-	private String contentType = "text/plain";
+	private String contentType = GlobalUserPreferences.defaultContentType;
 	private MastodonLanguage.LanguageResolver languageResolver;
 
 	@Override
@@ -915,23 +915,27 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		});
 	}
 
+	private int getContentTypeName(String id) {
+		return switch (id) {
+			case "text/plain" -> R.string.sk_text_plain;
+			case "text/html" -> R.string.sk_html;
+			case "text/markdown" -> R.string.sk_markdown;
+			case "text/bbcode" -> R.string.sk_bbcode;
+			case "text/x.misskeymarkdown" -> R.string.sk_mfm;
+			default -> throw new IllegalArgumentException("Invalid content type");
+		};
+	}
+
 	@SuppressLint("ClickableViewAccessibility")
 	private void buildContentTypeSelector(Button btn) {
 		contentTypePopup=new PopupMenu(getActivity(), contentTypeButton);
 		btn.setOnTouchListener(contentTypePopup.getDragToOpenListener());
 		btn.setOnClickListener(v->contentTypePopup.show());
-		contentTypeButton.setText(getString(R.string.sk_text_plain));
+		contentTypeButton.setText(getContentTypeName(GlobalUserPreferences.defaultContentType));
 
 		Menu contentTypeMenu = contentTypePopup.getMenu();
 		for (int i=0;i<contentTypes.length;i++) {
-			contentTypeMenu.add(0, i , i, switch (contentTypes[i]) {
-				case "text/plain" -> getString(R.string.sk_text_plain);
-				case "text/html" -> getString(R.string.sk_html);
-				case "text/markdown" -> getString(R.string.sk_markdown);
-				case "text/bbcode" -> getString(R.string.sk_bbcode);
-				case "text/x.misskeymarkdown" -> getString(R.string.sk_mfm);
-				default -> throw new IllegalArgumentException("Invalid content type");
-			});
+			contentTypeMenu.add(0, i , i, getContentTypeName(contentTypes[i]));
 		}
 
 		btn.setOnLongClickListener(v->{

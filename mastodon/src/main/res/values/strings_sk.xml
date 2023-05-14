@@ -280,4 +280,5 @@
     <string name="sk_markdown">Markdown</string>
     <string name="sk_bbcode">BBCode</string>
     <string name="sk_mfm">MFM</string>
+    <string name="sk_default_content_type">Default post content type</string>
 </resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/text_plain" android:title="@string/sk_text_plain"/>
+    <item android:id="@+id/html" android:title="@string/sk_html"/>
+    <item android:id="@+id/markdown" android:title="@string/sk_markdown"/>
+    <item android:id="@+id/bbcode" android:title="@string/sk_bbcode"/>
+    <item android:id="@+id/mfm" android:title="@string/sk_mfm"/>
+</menu>

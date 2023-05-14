@@ -62,6 +62,7 @@ public class GlobalUserPreferences{
 	 * Pleroma
 	 */
 	public static String replyVisibility;
+	public static String defaultContentType;
 
 	private static SharedPreferences getPrefs(){
 		return MastodonApp.context.getSharedPreferences("global", Context.MODE_PRIVATE);
@@ -111,6 +112,7 @@ public class GlobalUserPreferences{
 		accountsWithLocalOnlySupport=prefs.getStringSet("accountsWithLocalOnlySupport", new HashSet<>());
 		accountsInGlitchMode=prefs.getStringSet("accountsInGlitchMode", new HashSet<>());
 		replyVisibility=prefs.getString("replyVisibility", null);
+		defaultContentType=prefs.getString("defaultContentType", "text/plain");
 
 		try {
 			color=ColorPreference.valueOf(prefs.getString("color", ColorPreference.PINK.name()));
@@ -158,6 +160,7 @@ public class GlobalUserPreferences{
 				.putStringSet("accountsWithLocalOnlySupport", accountsWithLocalOnlySupport)
 				.putStringSet("accountsInGlitchMode", accountsInGlitchMode)
 				.putString("replyVisibility", replyVisibility)
+				.putString("defaultContentType", defaultContentType)
 				.apply();
 	}
 

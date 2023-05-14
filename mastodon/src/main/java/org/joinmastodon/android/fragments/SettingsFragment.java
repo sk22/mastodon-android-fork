@@ -207,6 +207,22 @@ public class SettingsFragment extends MastodonToolbarFragment{
 			GlobalUserPreferences.prefixRepliesWithRe=i.checked;
 			GlobalUserPreferences.save();
 		}));
+		if (instance.pleroma != null) {
+			items.add(new ButtonItem(R.string.sk_default_content_type, R.drawable.ic_fluent_code_24_regular, b->{
+				PopupMenu popupMenu=new PopupMenu(getActivity(), b, Gravity.CENTER_HORIZONTAL);
+				popupMenu.inflate(R.menu.content_type);
+				popupMenu.setOnMenuItemClickListener(item -> this.onContentTypeChanged(item, b));
+				b.setOnTouchListener(popupMenu.getDragToOpenListener());
+				b.setOnClickListener(v->popupMenu.show());
+				b.setText(switch(GlobalUserPreferences.defaultContentType){
+							case "text/html" -> R.string.sk_html;
+							case "text/markdown" -> R.string.sk_markdown;
+							case "text/bbcode" -> R.string.sk_bbcode;
+							case "text/x.misskeymarkdown" -> R.string.sk_mfm;
+							default -> R.string.sk_text_plain;
+						});
+			}));
+		}
 		items.add(new SwitchItem(R.string.sk_settings_confirm_before_reblog, R.drawable.ic_fluent_checkmark_circle_24_regular, GlobalUserPreferences.confirmBeforeReblog, i->{
 			GlobalUserPreferences.confirmBeforeReblog=i.checked;
 			GlobalUserPreferences.save();
@@ -498,6 +514,27 @@ public class SettingsFragment extends MastodonToolbarFragment{
 		if(UiUtils.isDarkTheme()){
 			restartActivityToApplyNewTheme();
 		}
+	}
+
+	private boolean onContentTypeChanged(MenuItem item, Button btn){
+		int id = item.getItemId();
+
+		GlobalUserPreferences.defaultContentType= switch (id) {
+			case R.id.html -> "text/html";
+			case R.id.markdown -> "text/markdown";
+			case R.id.bbcode -> "text/bbcode";
+			case R.id.mfm -> "text/x.misskeymarkdown";
+			default -> "text/plain";
+		};
+		GlobalUserPreferences.save();
+		btn.setText(switch(GlobalUserPreferences.defaultContentType){
+						case "text/html" -> R.string.sk_html;
+						case "text/markdown" -> R.string.sk_markdown;
+						case "text/bbcode" -> R.string.sk_bbcode;
+						case "text/x.misskeymarkdown" -> R.string.sk_mfm;
+						default -> R.string.sk_text_plain;
+					});
+		return true;
 	}
 
 	private boolean onReplyVisibilityChanged(MenuItem item, Button btn){
