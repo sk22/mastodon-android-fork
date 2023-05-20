@@ -1,6 +1,7 @@
 package org.joinmastodon.android.api.requests.statuses;
 
 import org.joinmastodon.android.api.MastodonAPIRequest;
+import org.joinmastodon.android.model.ContentType;
 import org.joinmastodon.android.model.ScheduledStatus;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.model.StatusPrivacy;
@@ -46,7 +47,7 @@ public class CreateStatus extends MastodonAPIRequest<Status>{
 		public String language;
 
 		public String quoteId;
-		public String contentType;
+		public ContentType contentType;
 
 		public static class Poll{
 			public ArrayList<String> options=new ArrayList<>();

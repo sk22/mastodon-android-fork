@@ -28,17 +28,6 @@
         android:visibility="gone" />
 
     <Button
-        android:id="@+id/content_type_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="8dp"
-        android:drawableStart="@drawable/ic_fluent_code_24_regular"
-        android:drawablePadding="8dp"
-        android:drawableTint="?android:textColorSecondary"
-        android:textColor="?android:textColorSecondary"
-        android:background="@drawable/bg_text_button" />
-
-    <Button
         android:id="@+id/language_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

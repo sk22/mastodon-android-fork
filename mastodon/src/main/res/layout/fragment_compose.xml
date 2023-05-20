@@ -416,6 +416,19 @@
 				android:tooltipText="@string/post_visibility"
 				android:src="@drawable/ic_fluent_earth_24_regular"/>
 
+			<ImageButton
+				android:id="@+id/btn_content_type"
+				android:layout_width="36dp"
+				android:layout_height="36dp"
+				android:layout_marginEnd="12dp"
+				android:background="?android:attr/actionBarItemBackground"
+				android:padding="0px"
+				android:tint="@color/compose_button"
+				android:tintMode="src_in"
+				android:contentDescription="@string/sk_content_type"
+				android:tooltipText="@string/sk_content_type"
+				android:src="@drawable/ic_fluent_code_24_regular"/>
+
 			<Space
 				android:layout_width="0px"
 				android:layout_height="1px"

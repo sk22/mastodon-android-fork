@@ -275,10 +275,13 @@
     <string name="sk_show_thread">Show thread</string>
     <string name="sk_compact_reblog_reply_line">Compact boost/reply line</string>
     <string name="sk_settings_confirm_before_reblog">Confirm before boosting</string>
-    <string name="sk_text_plain">Plain text</string>
-    <string name="sk_html">HTML</string>
-    <string name="sk_markdown">Markdown</string>
-    <string name="sk_bbcode">BBCode</string>
-    <string name="sk_mfm">MFM</string>
-    <string name="sk_default_content_type">Default post content type</string>
+    <string name="sk_content_type">Content type</string>
+    <string name="sk_content_type_unspecified">Unspecified</string>
+    <string name="sk_content_type_plain">Plain text</string>
+    <string name="sk_content_type_html">HTML</string>
+    <string name="sk_content_type_markdown">Markdown</string>
+    <string name="sk_content_type_bbcode">BBCode</string>
+    <string name="sk_content_type_mfm">MFM</string>
+    <string name="sk_default_content_type">Default content type</string>
+    <string name="sk_default_content_type_explanation">This lets you override the default content type for new posts. Keep in mind that compatibility depends on your home instance.</string>
 </resources>

@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
+import org.joinmastodon.android.model.ContentType;
 import org.joinmastodon.android.model.TimelineDefinition;
 
 import java.lang.reflect.Type;
@@ -53,6 +54,7 @@ public class GlobalUserPreferences{
 
 	private final static Type recentLanguagesType = new TypeToken<Map<String, List<String>>>() {}.getType();
 	private final static Type pinnedTimelinesType = new TypeToken<Map<String, List<TimelineDefinition>>>() {}.getType();
+	private final static Type defaultContentTypesType = new TypeToken<Map<String, ContentType>>() {}.getType();
 	public static Map<String, List<String>> recentLanguages;
 	public static Map<String, List<TimelineDefinition>> pinnedTimelines;
 	public static Set<String> accountsWithLocalOnlySupport;
@@ -62,7 +64,7 @@ public class GlobalUserPreferences{
 	 * Pleroma
 	 */
 	public static String replyVisibility;
-	public static String defaultContentType;
+	public static Map<String, ContentType> defaultContentTypes;
 
 	private static SharedPreferences getPrefs(){
 		return MastodonApp.context.getSharedPreferences("global", Context.MODE_PRIVATE);
@@ -112,7 +114,7 @@ public class GlobalUserPreferences{
 		accountsWithLocalOnlySupport=prefs.getStringSet("accountsWithLocalOnlySupport", new HashSet<>());
 		accountsInGlitchMode=prefs.getStringSet("accountsInGlitchMode", new HashSet<>());
 		replyVisibility=prefs.getString("replyVisibility", null);
-		defaultContentType=prefs.getString("defaultContentType", "text/plain");
+		defaultContentTypes=fromJson(prefs.getString("defaultContentTypes", null), defaultContentTypesType, new HashMap<>());
 
 		try {
 			color=ColorPreference.valueOf(prefs.getString("color", ColorPreference.PINK.name()));
@@ -160,7 +162,7 @@ public class GlobalUserPreferences{
 				.putStringSet("accountsWithLocalOnlySupport", accountsWithLocalOnlySupport)
 				.putStringSet("accountsInGlitchMode", accountsInGlitchMode)
 				.putString("replyVisibility", replyVisibility)
-				.putString("defaultContentType", defaultContentType)
+				.putString("defaultContentTypes", gson.toJson(defaultContentTypes))
 				.apply();
 	}
 

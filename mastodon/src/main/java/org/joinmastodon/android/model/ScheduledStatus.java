@@ -39,6 +39,7 @@ public class ScheduledStatus extends BaseModel implements DisplayItemsParent{
         public String idempotency;
         public String applicationId;
         public List<String> mediaIds;
+        public ContentType contentType;
     }
 
     @Parcel

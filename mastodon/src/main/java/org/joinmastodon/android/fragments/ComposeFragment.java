@@ -91,6 +91,7 @@ import org.joinmastodon.android.events.StatusCreatedEvent;
 import org.joinmastodon.android.events.StatusUpdatedEvent;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Attachment;
+import org.joinmastodon.android.model.ContentType;
 import org.joinmastodon.android.model.Emoji;
 import org.joinmastodon.android.model.EmojiCategory;
 import org.joinmastodon.android.model.Instance;
@@ -157,7 +158,6 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	private static final String GLITCH_LOCAL_ONLY_SUFFIX = "👁";
 	private static final Pattern GLITCH_LOCAL_ONLY_PATTERN = Pattern.compile("[\\s\\S]*" + GLITCH_LOCAL_ONLY_SUFFIX + "[\uFE00-\uFE0F]*");
 	private static final String TAG="ComposeFragment";
-	private static final String[] contentTypes = new String[] {"text/plain","text/html","text/markdown","text/bbcode","text/x.misskeymarkdown"};
 
 	public static final Pattern MENTION_PATTERN=Pattern.compile("(^|[^\\/\\w])@(([a-z0-9_]+)@[a-z0-9\\.\\-]+[a-z0-9]+)", Pattern.CASE_INSENSITIVE);
 
@@ -179,9 +179,9 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	private String accountID;
 	private int charCount, charLimit, trimmedCharCount;
 
-	private Button publishButton, languageButton, contentTypeButton, scheduleTimeBtn, draftsBtn;
+	private Button publishButton, languageButton, scheduleTimeBtn, draftsBtn;
 	private PopupMenu languagePopup, contentTypePopup, visibilityPopup, draftOptionsPopup;
-	private ImageButton mediaBtn, pollBtn, emojiBtn, spoilerBtn, visibilityBtn, scheduleDraftDismiss;
+	private ImageButton mediaBtn, pollBtn, emojiBtn, spoilerBtn, visibilityBtn, scheduleDraftDismiss, contentTypeBtn;
 	private ImageView sensitiveIcon;
 	private ComposeMediaLayout attachmentsView;
 	private TextView replyText;
@@ -235,7 +235,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	private Runnable updateUploadEtaRunnable;
 
 	private String language, encoding;
-	private String contentType = GlobalUserPreferences.defaultContentType;
+	private ContentType contentType;
 	private MastodonLanguage.LanguageResolver languageResolver;
 
 	@Override
@@ -244,6 +244,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		setRetainInstance(true);
 
 		accountID=getArguments().getString("account");
+		contentType = GlobalUserPreferences.defaultContentTypes.get(accountID);
 		AccountSession session=AccountSessionManager.getInstance().getAccount(accountID);
 		self=session.self;
 		instanceDomain=session.domain;
@@ -332,6 +333,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		emojiBtn=view.findViewById(R.id.btn_emoji);
 		spoilerBtn=view.findViewById(R.id.btn_spoiler);
 		visibilityBtn=view.findViewById(R.id.btn_visibility);
+		contentTypeBtn=view.findViewById(R.id.btn_content_type);
 		scheduleDraftView=view.findViewById(R.id.schedule_draft_view);
 		scheduleDraftText=view.findViewById(R.id.schedule_draft_text);
 		scheduleDraftDismiss=view.findViewById(R.id.schedule_draft_dismiss);
@@ -365,6 +367,10 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		buildVisibilityPopup(visibilityBtn);
 		visibilityBtn.setOnClickListener(v->visibilityPopup.show());
 		visibilityBtn.setOnTouchListener(visibilityPopup.getDragToOpenListener());
+
+		buildContentTypePopup(contentTypeBtn);
+		contentTypeBtn.setOnClickListener(v->contentTypePopup.show());
+		contentTypeBtn.setOnTouchListener(contentTypePopup.getDragToOpenListener());
 
 		scheduleDraftDismiss.setOnClickListener(v->updateScheduledAt(null));
 		scheduleTimeBtn.setOnClickListener(v->pickScheduledDateTime());
@@ -483,6 +489,15 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			case LOCAL -> R.id.vis_local;
 		}).setChecked(true);
 		visibilityPopup.getMenu().findItem(R.id.local_only).setChecked(localOnly);
+
+		try {
+			if (getArguments().containsKey("sourceContentType")) {
+				ContentType sourceContentType = ContentType.valueOf(getArguments().getString("sourceContentType"));
+				if (sourceContentType != null) contentType = sourceContentType;
+			}
+		} catch (IllegalArgumentException ignored) {}
+
+		contentTypePopup.getMenu().findItem(ContentType.getContentTypeRes(contentType)).setChecked(true);
 
 		autocompleteViewController=new ComposeAutocompleteViewController(getActivity(), accountID);
 		autocompleteViewController.setCompletionSelectedListener(this::onAutocompleteOptionSelected);
@@ -815,7 +830,6 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 
 		publishButton = wrap.findViewById(R.id.publish_btn);
 		languageButton = wrap.findViewById(R.id.language_btn);
-		contentTypeButton = wrap.findViewById(R.id.content_type_btn);
 		sendProgress = wrap.findViewById(R.id.send_progress);
 		sendError = wrap.findViewById(R.id.send_error);
 
@@ -824,11 +838,6 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		draftsBtn.setOnTouchListener(draftOptionsPopup.getDragToOpenListener());
 		updateScheduledAt(scheduledAt != null ? scheduledAt : scheduledStatus != null ? scheduledStatus.scheduledAt : null);
 		buildLanguageSelector(languageButton);
-		if (instance.pleroma != null)
-			buildContentTypeSelector(contentTypeButton);
-		else{
-			contentTypeButton.setVisibility(View.GONE);
-		}
 
 		if (editingStatus != null && scheduledStatus == null) {
 			// editing an already published post
@@ -917,37 +926,13 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 
 	private int getContentTypeName(String id) {
 		return switch (id) {
-			case "text/plain" -> R.string.sk_text_plain;
-			case "text/html" -> R.string.sk_html;
-			case "text/markdown" -> R.string.sk_markdown;
-			case "text/bbcode" -> R.string.sk_bbcode;
-			case "text/x.misskeymarkdown" -> R.string.sk_mfm;
+			case "text/plain" -> R.string.sk_content_type_plain;
+			case "text/html" -> R.string.sk_content_type_html;
+			case "text/markdown" -> R.string.sk_content_type_markdown;
+			case "text/bbcode" -> R.string.sk_content_type_bbcode;
+			case "text/x.misskeymarkdown" -> R.string.sk_content_type_mfm;
 			default -> throw new IllegalArgumentException("Invalid content type");
 		};
-	}
-
-	@SuppressLint("ClickableViewAccessibility")
-	private void buildContentTypeSelector(Button btn) {
-		contentTypePopup=new PopupMenu(getActivity(), contentTypeButton);
-		btn.setOnTouchListener(contentTypePopup.getDragToOpenListener());
-		btn.setOnClickListener(v->contentTypePopup.show());
-		contentTypeButton.setText(getContentTypeName(GlobalUserPreferences.defaultContentType));
-
-		Menu contentTypeMenu = contentTypePopup.getMenu();
-		for (int i=0;i<contentTypes.length;i++) {
-			contentTypeMenu.add(0, i , i, getContentTypeName(contentTypes[i]));
-		}
-
-		btn.setOnLongClickListener(v->{
-			btn.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-			return false;
-		});
-
-		contentTypePopup.setOnMenuItemClickListener(i->{
-			contentType=contentTypes[i.getItemId()];
-			contentTypeButton.setText(i.getTitle().toString());
-			return true;
-		});
 	}
 
 	private void addBottomLanguage(Menu menu) {
@@ -1936,6 +1921,27 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				updateHeaders();
 				return true;
 			}
+		});
+	}
+
+	@SuppressLint("ClickableViewAccessibility")
+	private void buildContentTypePopup(View btn) {
+		contentTypePopup=new PopupMenu(getActivity(), btn);
+		contentTypePopup.inflate(R.menu.compose_content_type);
+		Menu m = contentTypePopup.getMenu();
+		ContentType.adaptMenuToInstance(m, instance);
+
+		contentTypePopup.setOnMenuItemClickListener(i->{
+			int id=i.getItemId();
+			if (id == R.id.content_type_null) contentType = null;
+			else if (id == R.id.content_type_plain) contentType = ContentType.PLAIN;
+			else if (id == R.id.content_type_html) contentType = ContentType.HTML;
+			else if (id == R.id.content_type_markdown) contentType = ContentType.MARKDOWN;
+			else if (id == R.id.content_type_bbcode) contentType = ContentType.BBCODE;
+			else if (id == R.id.content_type_misskey_markdown) contentType = ContentType.MISSKEY_MARKDOWN;
+			else return false;
+			i.setChecked(true);
+			return true;
 		});
 	}
 

@@ -44,6 +44,7 @@ import org.joinmastodon.android.fragments.report.ReportReasonChoiceFragment;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Announcement;
 import org.joinmastodon.android.model.Attachment;
+import org.joinmastodon.android.model.ContentType;
 import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.Relationship;
 import org.joinmastodon.android.model.ScheduledStatus;
@@ -217,6 +218,9 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 									public void onSuccess(GetStatusSourceText.Response result){
 										args.putString("sourceText", result.text);
 										args.putString("sourceSpoiler", result.spoilerText);
+										if (result.contentType != null) {
+											args.putString("sourceContentType", result.contentType.name());
+										}
 										if (redraft) {
 											UiUtils.confirmDeletePost(item.parentFragment.getActivity(), item.parentFragment.getAccountID(), item.status, s->{
 												Nav.go(item.parentFragment.getActivity(), ComposeFragment.class, args);

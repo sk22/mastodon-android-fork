@@ -48,6 +48,7 @@ import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.SelfUpdateStateChangedEvent;
 import org.joinmastodon.android.fragments.onboarding.InstanceRulesFragment;
+import org.joinmastodon.android.model.ContentType;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.fragments.onboarding.AccountActivationFragment;
 import org.joinmastodon.android.model.PushNotification;
@@ -64,6 +65,7 @@ import java.util.function.Consumer;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -90,6 +92,7 @@ public class SettingsFragment extends MastodonToolbarFragment{
 	private TextItem checkForUpdateItem, clearImageCacheItem;
 	private ImageCache imageCache;
 
+	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -207,22 +210,6 @@ public class SettingsFragment extends MastodonToolbarFragment{
 			GlobalUserPreferences.prefixRepliesWithRe=i.checked;
 			GlobalUserPreferences.save();
 		}));
-		if (instance.pleroma != null) {
-			items.add(new ButtonItem(R.string.sk_default_content_type, R.drawable.ic_fluent_code_24_regular, b->{
-				PopupMenu popupMenu=new PopupMenu(getActivity(), b, Gravity.CENTER_HORIZONTAL);
-				popupMenu.inflate(R.menu.content_type);
-				popupMenu.setOnMenuItemClickListener(item -> this.onContentTypeChanged(item, b));
-				b.setOnTouchListener(popupMenu.getDragToOpenListener());
-				b.setOnClickListener(v->popupMenu.show());
-				b.setText(switch(GlobalUserPreferences.defaultContentType){
-							case "text/html" -> R.string.sk_html;
-							case "text/markdown" -> R.string.sk_markdown;
-							case "text/bbcode" -> R.string.sk_bbcode;
-							case "text/x.misskeymarkdown" -> R.string.sk_mfm;
-							default -> R.string.sk_text_plain;
-						});
-			}));
-		}
 		items.add(new SwitchItem(R.string.sk_settings_confirm_before_reblog, R.drawable.ic_fluent_checkmark_circle_24_regular, GlobalUserPreferences.confirmBeforeReblog, i->{
 			GlobalUserPreferences.confirmBeforeReblog=i.checked;
 			GlobalUserPreferences.save();
@@ -346,6 +333,18 @@ public class SettingsFragment extends MastodonToolbarFragment{
 		if (!TextUtils.isEmpty(instance.version)) items.add(new SmallTextItem(getString(R.string.sk_settings_server_version, instance.version)));
 
 		items.add(new HeaderItem(R.string.sk_instance_features));
+		items.add(new ButtonItem(R.string.sk_default_content_type, 0, b->{
+			PopupMenu popupMenu=new PopupMenu(getActivity(), b, Gravity.CENTER_HORIZONTAL);
+			popupMenu.inflate(R.menu.compose_content_type);
+			popupMenu.setOnMenuItemClickListener(item -> this.onContentTypeChanged(item, b));
+			b.setOnTouchListener(popupMenu.getDragToOpenListener());
+			b.setOnClickListener(v->popupMenu.show());
+			ContentType contentType = GlobalUserPreferences.defaultContentTypes.get(accountID);
+			b.setText(getContentTypeString(contentType));
+			popupMenu.getMenu().findItem(ContentType.getContentTypeRes(contentType)).setChecked(true);
+			ContentType.adaptMenuToInstance(popupMenu.getMenu(), instance);
+		}));
+		items.add(new SmallTextItem(getString(R.string.sk_default_content_type_explanation)));
 		items.add(new SwitchItem(R.string.sk_settings_support_local_only, 0, GlobalUserPreferences.accountsWithLocalOnlySupport.contains(accountID), i->{
 			glitchModeItem.enabled = i.checked;
 			if (i.checked) {
@@ -516,24 +515,31 @@ public class SettingsFragment extends MastodonToolbarFragment{
 		}
 	}
 
+	private @StringRes int getContentTypeString(@Nullable ContentType contentType) {
+		if (contentType == null) return R.string.sk_content_type_unspecified;
+		return switch (contentType) {
+			case PLAIN -> R.string.sk_content_type_plain;
+			case HTML -> R.string.sk_content_type_html;
+			case MARKDOWN -> R.string.sk_content_type_markdown;
+			case BBCODE -> R.string.sk_content_type_bbcode;
+			case MISSKEY_MARKDOWN -> R.string.sk_content_type_mfm;
+		};
+	}
+
 	private boolean onContentTypeChanged(MenuItem item, Button btn){
 		int id = item.getItemId();
-
-		GlobalUserPreferences.defaultContentType= switch (id) {
-			case R.id.html -> "text/html";
-			case R.id.markdown -> "text/markdown";
-			case R.id.bbcode -> "text/bbcode";
-			case R.id.mfm -> "text/x.misskeymarkdown";
-			default -> "text/plain";
+		ContentType contentType = switch (id) {
+			case R.id.content_type_plain -> ContentType.PLAIN;
+			case R.id.content_type_html -> ContentType.HTML;
+			case R.id.content_type_markdown -> ContentType.MARKDOWN;
+			case R.id.content_type_bbcode -> ContentType.BBCODE;
+			case R.id.content_type_misskey_markdown -> ContentType.MISSKEY_MARKDOWN;
+			default -> null;
 		};
+		GlobalUserPreferences.defaultContentTypes.put(accountID, contentType);
 		GlobalUserPreferences.save();
-		btn.setText(switch(GlobalUserPreferences.defaultContentType){
-						case "text/html" -> R.string.sk_html;
-						case "text/markdown" -> R.string.sk_markdown;
-						case "text/bbcode" -> R.string.sk_bbcode;
-						case "text/x.misskeymarkdown" -> R.string.sk_mfm;
-						default -> R.string.sk_text_plain;
-					});
+		btn.setText(getContentTypeString(contentType));
+		item.setChecked(true);
 		return true;
 	}
 
@@ -1044,7 +1050,11 @@ public class SettingsFragment extends MastodonToolbarFragment{
 		@Override
 		public void onBind(ButtonItem item){
 			text.setText(item.text);
-			icon.setImageResource(item.icon);
+			if (item.icon == 0) {
+				icon.setVisibility(View.GONE);
+			} else {
+				icon.setImageResource(item.icon);
+			}
 			item.buttonConsumer.accept(button);
 		}
 	}
