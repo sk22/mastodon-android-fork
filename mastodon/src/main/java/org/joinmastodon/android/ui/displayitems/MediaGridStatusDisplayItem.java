@@ -7,6 +7,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.View;
@@ -31,6 +32,7 @@ import org.joinmastodon.android.utils.TypedObjectPool;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import me.grishka.appkit.imageloader.ImageLoaderViewHolder;
 import me.grishka.appkit.imageloader.requests.ImageLoaderRequest;
@@ -98,6 +100,8 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 		private int altTextIndex=-1;
 		private Animator altTextAnimator;
 
+		private List<Attachment> imageAttachments;
+
 		public Holder(Activity activity, ViewGroup parent){
 			super(new FrameLayoutThatOnlyMeasuresFirstChild(activity));
 			wrapper=(FrameLayout)itemView;
@@ -126,6 +130,9 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 			}
 			layout.removeAllViews();
 			controllers.clear();
+
+			this.imageAttachments=item.attachments;
+
 			int i=0;
 			for(Attachment att:item.attachments){
 				MediaAttachmentViewController c=item.viewPool.obtain(switch(att.type){
@@ -158,6 +165,30 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 
 		@Override
 		public void setImage(int index, Drawable drawable){
+			Rect bounds=drawable.getBounds();
+			drawable.setBounds(bounds.left, bounds.top, bounds.left+drawable.getIntrinsicWidth(), bounds.top+drawable.getIntrinsicHeight());
+			if(imageAttachments.get(index).meta==null){
+				Attachment.Metadata metadata = new Attachment.Metadata();
+				metadata.width=drawable.getIntrinsicWidth();
+				metadata.height=drawable.getIntrinsicHeight();
+				imageAttachments.get(index).meta=metadata;
+			}
+
+			if(index==imageAttachments.size()-1){
+				PhotoLayoutHelper.TiledLayoutResult tiledLayout=PhotoLayoutHelper.processThumbs(imageAttachments);
+				layout.setTiledLayout(tiledLayout);
+
+				int i=0;
+				for(MediaAttachmentViewController c:controllers){
+					if(c.view.getLayoutParams()==null)
+						c.view.setLayoutParams(new MediaGridLayout.LayoutParams(item.tiledLayout.tiles[i]));
+					else
+						((MediaGridLayout.LayoutParams) c.view.getLayoutParams()).tile=item.tiledLayout.tiles[i];
+					c.bind(imageAttachments.get(index), item.status);
+					i++;
+				}
+			}
+
 			controllers.get(index).setImage(drawable);
 		}
 
