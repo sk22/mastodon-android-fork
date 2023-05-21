@@ -427,7 +427,7 @@
 				android:tintMode="src_in"
 				android:contentDescription="@string/sk_content_type"
 				android:tooltipText="@string/sk_content_type"
-				android:src="@drawable/ic_fluent_code_24_regular"/>
+				android:src="@drawable/ic_fluent_text_edit_style_24_selector"/>
 
 			<Space
 				android:layout_width="0px"

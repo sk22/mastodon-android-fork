@@ -276,12 +276,14 @@
     <string name="sk_compact_reblog_reply_line">Compact boost/reply line</string>
     <string name="sk_settings_confirm_before_reblog">Confirm before boosting</string>
     <string name="sk_content_type">Content type</string>
-    <string name="sk_content_type_unspecified">Unspecified</string>
+    <string name="sk_content_type_unspecified">Not specified</string>
     <string name="sk_content_type_plain">Plain text</string>
     <string name="sk_content_type_html">HTML</string>
     <string name="sk_content_type_markdown">Markdown</string>
     <string name="sk_content_type_bbcode">BBCode</string>
     <string name="sk_content_type_mfm">MFM</string>
-    <string name="sk_default_content_type">Default content type</string>
-    <string name="sk_default_content_type_explanation">This lets you override the default content type for new posts. Keep in mind that compatibility depends on your home instance.</string>
+    <string name="sk_settings_content_types">Enable post formatting</string>
+    <string name="sk_settings_content_types_explanation">Allows setting another content type when creating a post. Keep in mind that Mastodon servers might not support content types.</string>
+    <string name="sk_settings_default_content_type">Default content type</string>
+    <string name="sk_settings_default_content_type_explanation">This lets you set the default content type for new posts, overriding the value set in “Posting preferences”.</string>
 </resources>

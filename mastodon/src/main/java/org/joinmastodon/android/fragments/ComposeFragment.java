@@ -244,7 +244,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		setRetainInstance(true);
 
 		accountID=getArguments().getString("account");
-		contentType = GlobalUserPreferences.defaultContentTypes.get(accountID);
+		contentType = GlobalUserPreferences.accountsDefaultContentTypes.get(accountID);
 		AccountSession session=AccountSessionManager.getInstance().getAccount(accountID);
 		self=session.self;
 		instanceDomain=session.domain;
@@ -492,12 +492,14 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 
 		try {
 			if (getArguments().containsKey("sourceContentType")) {
-				ContentType sourceContentType = ContentType.valueOf(getArguments().getString("sourceContentType"));
-				if (sourceContentType != null) contentType = sourceContentType;
+				String val = getArguments().getString("sourceContentType");
+				contentType = val == null ? null : ContentType.valueOf(val);
 			}
 		} catch (IllegalArgumentException ignored) {}
 
-		contentTypePopup.getMenu().findItem(ContentType.getContentTypeRes(contentType)).setChecked(true);
+		int contentTypeId = ContentType.getContentTypeRes(contentType);
+		contentTypePopup.getMenu().findItem(contentTypeId).setChecked(true);
+		contentTypeBtn.setSelected(contentTypeId != R.id.content_type_null && contentTypeId != R.id.content_type_plain);
 
 		autocompleteViewController=new ComposeAutocompleteViewController(getActivity(), accountID);
 		autocompleteViewController.setCompletionSelectedListener(this::onAutocompleteOptionSelected);
@@ -1940,9 +1942,14 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			else if (id == R.id.content_type_bbcode) contentType = ContentType.BBCODE;
 			else if (id == R.id.content_type_misskey_markdown) contentType = ContentType.MISSKEY_MARKDOWN;
 			else return false;
+			btn.setSelected(id != R.id.content_type_null && id != R.id.content_type_plain);
 			i.setChecked(true);
 			return true;
 		});
+
+		if (!GlobalUserPreferences.accountsSupportingContentTypes.contains(accountID)) {
+			btn.setVisibility(View.GONE);
+		}
 	}
 
 	private void loadDefaultStatusVisibility(Bundle savedInstanceState) {

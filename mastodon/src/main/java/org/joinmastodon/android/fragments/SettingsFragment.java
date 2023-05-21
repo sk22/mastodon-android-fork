@@ -333,18 +333,24 @@ public class SettingsFragment extends MastodonToolbarFragment{
 		if (!TextUtils.isEmpty(instance.version)) items.add(new SmallTextItem(getString(R.string.sk_settings_server_version, instance.version)));
 
 		items.add(new HeaderItem(R.string.sk_instance_features));
-		items.add(new ButtonItem(R.string.sk_default_content_type, 0, b->{
+		items.add(new SwitchItem(R.string.sk_settings_content_types, 0, GlobalUserPreferences.accountsSupportingContentTypes.contains(accountID), (i)->{
+			if (i.checked) GlobalUserPreferences.accountsSupportingContentTypes.add(accountID);
+			else GlobalUserPreferences.accountsSupportingContentTypes.remove(accountID);
+			GlobalUserPreferences.save();
+		}));
+		items.add(new SmallTextItem(getString(R.string.sk_settings_content_types_explanation)));
+		items.add(new ButtonItem(R.string.sk_settings_default_content_type, 0, b->{
 			PopupMenu popupMenu=new PopupMenu(getActivity(), b, Gravity.CENTER_HORIZONTAL);
 			popupMenu.inflate(R.menu.compose_content_type);
 			popupMenu.setOnMenuItemClickListener(item -> this.onContentTypeChanged(item, b));
 			b.setOnTouchListener(popupMenu.getDragToOpenListener());
 			b.setOnClickListener(v->popupMenu.show());
-			ContentType contentType = GlobalUserPreferences.defaultContentTypes.get(accountID);
+			ContentType contentType = GlobalUserPreferences.accountsDefaultContentTypes.get(accountID);
 			b.setText(getContentTypeString(contentType));
 			popupMenu.getMenu().findItem(ContentType.getContentTypeRes(contentType)).setChecked(true);
 			ContentType.adaptMenuToInstance(popupMenu.getMenu(), instance);
 		}));
-		items.add(new SmallTextItem(getString(R.string.sk_default_content_type_explanation)));
+		items.add(new SmallTextItem(getString(R.string.sk_settings_default_content_type_explanation)));
 		items.add(new SwitchItem(R.string.sk_settings_support_local_only, 0, GlobalUserPreferences.accountsWithLocalOnlySupport.contains(accountID), i->{
 			glitchModeItem.enabled = i.checked;
 			if (i.checked) {
@@ -536,7 +542,7 @@ public class SettingsFragment extends MastodonToolbarFragment{
 			case R.id.content_type_misskey_markdown -> ContentType.MISSKEY_MARKDOWN;
 			default -> null;
 		};
-		GlobalUserPreferences.defaultContentTypes.put(accountID, contentType);
+		GlobalUserPreferences.accountsDefaultContentTypes.put(accountID, contentType);
 		GlobalUserPreferences.save();
 		btn.setText(getContentTypeString(contentType));
 		item.setChecked(true);

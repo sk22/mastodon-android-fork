@@ -96,9 +96,8 @@ public class ScheduledStatusListFragment extends BaseStatusListFragment<Schedule
 		args.putString("sourceText", status.text);
 		args.putString("sourceSpoiler", status.spoilerText);
 		args.putBoolean("redraftStatus", true);
-		if (scheduledStatus.params.contentType != null) {
-			args.putString("sourceContentType", scheduledStatus.params.contentType.name());
-		}
+		args.putString("sourceContentType", scheduledStatus.params.contentType != null ?
+				scheduledStatus.params.contentType.name() : null);
 		setResult(true, null);
 
 		// closing this scheduled status list if another status list is opened from compose fragment

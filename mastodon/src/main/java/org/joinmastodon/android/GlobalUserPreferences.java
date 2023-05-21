@@ -54,17 +54,18 @@ public class GlobalUserPreferences{
 
 	private final static Type recentLanguagesType = new TypeToken<Map<String, List<String>>>() {}.getType();
 	private final static Type pinnedTimelinesType = new TypeToken<Map<String, List<TimelineDefinition>>>() {}.getType();
-	private final static Type defaultContentTypesType = new TypeToken<Map<String, ContentType>>() {}.getType();
+	private final static Type accountsDefaultContentTypesType = new TypeToken<Map<String, ContentType>>() {}.getType();
 	public static Map<String, List<String>> recentLanguages;
 	public static Map<String, List<TimelineDefinition>> pinnedTimelines;
 	public static Set<String> accountsWithLocalOnlySupport;
 	public static Set<String> accountsInGlitchMode;
+	public static Set<String> accountsSupportingContentTypes;
+	public static Map<String, ContentType> accountsDefaultContentTypes;
 
 	/**
 	 * Pleroma
 	 */
 	public static String replyVisibility;
-	public static Map<String, ContentType> defaultContentTypes;
 
 	private static SharedPreferences getPrefs(){
 		return MastodonApp.context.getSharedPreferences("global", Context.MODE_PRIVATE);
@@ -114,7 +115,8 @@ public class GlobalUserPreferences{
 		accountsWithLocalOnlySupport=prefs.getStringSet("accountsWithLocalOnlySupport", new HashSet<>());
 		accountsInGlitchMode=prefs.getStringSet("accountsInGlitchMode", new HashSet<>());
 		replyVisibility=prefs.getString("replyVisibility", null);
-		defaultContentTypes=fromJson(prefs.getString("defaultContentTypes", null), defaultContentTypesType, new HashMap<>());
+		accountsSupportingContentTypes=prefs.getStringSet("accountsSupportingContentTypes", new HashSet<>());
+		accountsDefaultContentTypes=fromJson(prefs.getString("accountsDefaultContentTypes", null), accountsDefaultContentTypesType, new HashMap<>());
 
 		try {
 			color=ColorPreference.valueOf(prefs.getString("color", ColorPreference.PINK.name()));
@@ -162,7 +164,8 @@ public class GlobalUserPreferences{
 				.putStringSet("accountsWithLocalOnlySupport", accountsWithLocalOnlySupport)
 				.putStringSet("accountsInGlitchMode", accountsInGlitchMode)
 				.putString("replyVisibility", replyVisibility)
-				.putString("defaultContentTypes", gson.toJson(defaultContentTypes))
+				.putStringSet("accountsSupportingContentTypes", accountsSupportingContentTypes)
+				.putString("accountsDefaultContentTypes", gson.toJson(accountsDefaultContentTypes))
 				.apply();
 	}
 
