@@ -16,6 +16,8 @@ import android.view.ViewOutlineProvider;
 import android.view.WindowInsets;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -68,12 +70,15 @@ public class InstanceInfoFragment extends LoaderFragment {
 	private Instance instance;
 	private String extendedDescription;
 	private CoverImageView cover;
-	private TextView uri, description;
+	private TextView uri, description, readMore;
 
 	private Button timelineButton, pinButton, rulesButton, serversButton;
+
+	private View spaceBelowText;
 	private final CoverOverlayGradientDrawable coverGradient=new CoverOverlayGradientDrawable();
+
+	private ScrollView textScrollView;
 	private float titleTransY;
-	private int statusBarHeight;
 
 	private String accountID;
 	private Account account;
@@ -81,6 +86,7 @@ public class InstanceInfoFragment extends LoaderFragment {
 	private final ArrayList<AccountField> fields=new ArrayList<>();
 
 	private boolean refreshing;
+	private boolean isExpanded = false;
 	private boolean updatedTimelines = false;
 
 	private static final int MAX_FIELDS=4;
@@ -90,6 +96,9 @@ public class InstanceInfoFragment extends LoaderFragment {
 	private List<AccountField> metadataListData=Collections.emptyList();
 	private MetadataAdapter adapter;
 	private ListImageLoaderWrapper imgLoader;
+
+	private float textMaxHeight, textCollapsedHeight;
+	private LinearLayout.LayoutParams collapseParams, wrapParams;
 
 	public InstanceInfoFragment(){
 		super(R.layout.loader_fragment_overlay_toolbar);
@@ -126,6 +135,13 @@ public class InstanceInfoFragment extends LoaderFragment {
 		rulesButton=content.findViewById(R.id.rules_btn);
 		serversButton=content.findViewById(R.id.servers_btn);
 		list=content.findViewById(R.id.metadata);
+		textScrollView=content.findViewById(R.id.text_scroll_view);
+		readMore=content.findViewById(R.id.read_more);
+		spaceBelowText=content.findViewById(R.id.space_below_text);
+		textMaxHeight=getActivity().getResources().getDimension(R.dimen.text_max_height);
+		textCollapsedHeight=getActivity().getResources().getDimension(R.dimen.text_collapsed_height);
+		collapseParams=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) textCollapsedHeight);
+		wrapParams=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
 		cover.setForeground(coverGradient);
 		cover.setOutlineProvider(new ViewOutlineProvider(){
@@ -140,6 +156,7 @@ public class InstanceInfoFragment extends LoaderFragment {
 		rulesButton.setOnClickListener(this::onRulesButtonClick);
 		serversButton.setOnClickListener(this::onSeversButtonClick);
 		cover.setOnClickListener(this::onCoverClick);
+		readMore.setOnClickListener(this::onReadMoreClick);
 
 		if(loaded){
 			bindHeaderView();
@@ -245,9 +262,9 @@ public class InstanceInfoFragment extends LoaderFragment {
 
 	@Override
 	public void onApplyWindowInsets(WindowInsets insets){
-		statusBarHeight=insets.getSystemWindowInsetTop();
+		int statusBarHeight = insets.getSystemWindowInsetTop();
 		if(contentView!=null){
-			((ViewGroup.MarginLayoutParams) getToolbar().getLayoutParams()).topMargin=statusBarHeight;
+			((ViewGroup.MarginLayoutParams) getToolbar().getLayoutParams()).topMargin= statusBarHeight;
 		}
 		super.onApplyWindowInsets(insets.replaceSystemWindowInsets(insets.getSystemWindowInsetLeft(), 0, insets.getSystemWindowInsetRight(), insets.getSystemWindowInsetBottom()));
 	}
@@ -259,7 +276,17 @@ public class InstanceInfoFragment extends LoaderFragment {
 		uri.setText(instance.title);
 		setTitle(instance.title);
 
+		//set description text and collapse
 		updateDescription();
+
+		textScrollView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+		readMore.setText(isExpanded ? R.string.sk_collapse : R.string.sk_expand);
+		description.post(() -> {
+			readMore.setVisibility(View.VISIBLE);
+			textScrollView.setLayoutParams(isExpanded ? wrapParams : collapseParams);
+			spaceBelowText.setVisibility(View.VISIBLE);
+		});
 
 		fields.clear();
 
@@ -311,6 +338,10 @@ public class InstanceInfoFragment extends LoaderFragment {
 	@Override
 	protected int getToolbarResource(){
 		return R.layout.profile_toolbar;
+	}
+	private void onReadMoreClick(View view) {
+		isExpanded = !isExpanded;
+		bindHeaderView();
 	}
 
 	private void onTimelineButtonClick(View view) {

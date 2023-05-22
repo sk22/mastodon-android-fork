@@ -22,35 +22,70 @@
                 android:contentDescription="@string/profile_header"
                 android:scaleType="centerCrop" />
 
-
-            <TextView
-                android:id="@+id/uri"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/text_wrap"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/cover"
                 android:layout_alignParentStart="true"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="12dp"
-                android:textAlignment="viewStart"
-                android:textAppearance="@style/m3_headline_small"
-                tools:text="floss.social" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/uri"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="12dp"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="@style/m3_headline_small"
+                    tools:text="floss.social" />
 
 
-            <org.joinmastodon.android.ui.views.LinkedTextView
-                android:id="@+id/description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/uri"
-                android:layout_marginHorizontal="16dp"
-                android:textAppearance="@style/m3_body_large"
-                android:textSize="16sp"
-                tools:text="Founder, CEO and lead developer @Mastodon, Germany." />
+                <org.joinmastodon.android.ui.views.UntouchableScrollView
+                    android:id="@+id/text_scroll_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fadingEdgeLength="36dp"
+                    android:requiresFadingEdge="vertical"
+                    android:scrollbars="none">
+
+                    <org.joinmastodon.android.ui.views.LinkedTextView
+                        android:id="@+id/description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:textAppearance="@style/m3_body_large"
+                        android:textSize="16sp" />
+
+                </org.joinmastodon.android.ui.views.UntouchableScrollView>
+
+                <Space
+                    android:id="@+id/space_below_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/read_more"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:background="@drawable/bg_text_button"
+                    android:importantForAccessibility="no"
+                    android:paddingHorizontal="8dp"
+                    android:text="@string/sk_expand"
+                    android:textAllCaps="true"
+                    android:textAppearance="@style/m3_label_medium"
+                    android:textColor="?android:textColorSecondary"
+                    android:visibility="gone" />
+
+            </LinearLayout>
 
             <View
                 android:id="@+id/border_top"
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:layout_below="@id/description"
+                android:layout_below="@id/text_wrap"
                 android:layout_marginTop="16dp"
                 android:background="?attr/colorPollVoted" />
 
