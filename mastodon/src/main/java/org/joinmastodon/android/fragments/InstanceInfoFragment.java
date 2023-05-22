@@ -88,11 +88,7 @@ public class InstanceInfoFragment extends LoaderFragment {
 
 	private boolean refreshing;
 	private boolean isExpanded = false;
-	private boolean updatedTimelines = false;
 
-	private static final int MAX_FIELDS=4;
-
-	// from ProfileAboutFragment
 	public UsableRecyclerView list;
 	private List<AccountField> metadataListData=Collections.emptyList();
 	private MetadataAdapter adapter;
@@ -227,24 +223,11 @@ public class InstanceInfoFragment extends LoaderFragment {
 	public void onViewCreated(View view, Bundle savedInstanceState){
 		super.onViewCreated(view, savedInstanceState);
 		updateToolbar();
-		// To avoid the callback triggering on first layout with position=0 before anything is instantiated
-
 		titleTransY=getToolbar().getLayoutParams().height;
 		if(toolbarTitleView!=null){
 			toolbarTitleView.setTranslationY(titleTransY);
 			toolbarSubtitleView.setTranslationY(titleTransY);
 		}
-	}
-
-	@Override
-	public void onDestroyView(){
-		super.onDestroyView();
-	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		if (updatedTimelines) UiUtils.restartApp();
 	}
 
 	@Override
@@ -401,13 +384,12 @@ public class InstanceInfoFragment extends LoaderFragment {
 
 
 
-	// from ProfileAboutFragment
 	public void setFields(ArrayList<AccountField> fields){
 		metadataListData=fields;
 		if (adapter != null) adapter.notifyDataSetChanged();
 	}
 
-	private class MetadataAdapter extends UsableRecyclerView.Adapter<BaseViewHolder> implements ImageLoaderRecyclerAdapter {
+	private class MetadataAdapter extends UsableRecyclerView.Adapter<BaseViewHolder> {
 		public MetadataAdapter(){
 			super(imgLoader);
 		}
@@ -415,12 +397,7 @@ public class InstanceInfoFragment extends LoaderFragment {
 		@NonNull
 		@Override
 		public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType){
-			return switch(viewType){
-				case 0 -> new AboutViewHolder();
-				case 1 -> new EditableAboutViewHolder();
-				case 2 -> new AddRowViewHolder();
-				default -> throw new IllegalStateException("Unexpected value: "+viewType);
-			};
+			return new AboutViewHolder();
 		}
 
 		@Override
@@ -443,16 +420,6 @@ public class InstanceInfoFragment extends LoaderFragment {
 			return 0;
 		}
 
-		@Override
-		public int getImageCountForItem(int position){
-//			return metadataListData.get(position).emojiRequests.size();
-			return 0;
-		}
-
-		@Override
-		public ImageLoaderRequest getImageRequest(int position, int image){
-			return metadataListData.get(position).emojiRequests.get(image);
-		}
 	}
 
 	private abstract class BaseViewHolder extends BindableViewHolder<AccountField> {
@@ -461,9 +428,9 @@ public class InstanceInfoFragment extends LoaderFragment {
 		}
 	}
 
-	private class AboutViewHolder extends BaseViewHolder implements ImageLoaderViewHolder {
-		private TextView title;
-		private LinkedTextView value;
+	private class AboutViewHolder extends BaseViewHolder {
+		private final TextView title;
+		private final LinkedTextView value;
 
 		public AboutViewHolder(){
 			super(R.layout.item_profile_about);
@@ -475,83 +442,9 @@ public class InstanceInfoFragment extends LoaderFragment {
 		public void onBind(AccountField item){
 			title.setText(item.parsedName);
 			value.setText(item.parsedValue);
-			if(item.verifiedAt!=null){
-				int textColor=UiUtils.isDarkTheme() ? 0xFF89bb9c : 0xFF5b8e63;
-				value.setTextColor(textColor);
-				value.setLinkTextColor(textColor);
-				Drawable check=getResources().getDrawable(R.drawable.ic_fluent_checkmark_24_regular, getActivity().getTheme()).mutate();
-				check.setTint(textColor);
-				value.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, check, null);
-			}else{
-				value.setTextColor(UiUtils.getThemeColor(getActivity(), android.R.attr.textColorPrimary));
-				value.setLinkTextColor(UiUtils.getThemeColor(getActivity(), android.R.attr.colorAccent));
-				value.setCompoundDrawables(null, null, null, null);
-			}
-		}
-
-		@Override
-		public void setImage(int index, Drawable image){
-			CustomEmojiSpan span=index>=item.nameEmojis.length ? item.valueEmojis[index-item.nameEmojis.length] : item.nameEmojis[index];
-			span.setDrawable(image);
-			title.invalidate();
-			value.invalidate();
-		}
-
-		@Override
-		public void clearImage(int index){
-			setImage(index, null);
+			value.setTextColor(UiUtils.getThemeColor(getActivity(), android.R.attr.textColorPrimary));
+			value.setLinkTextColor(UiUtils.getThemeColor(getActivity(), android.R.attr.colorAccent));
+			value.setCompoundDrawables(null, null, null, null);
 		}
 	}
-
-	private class EditableAboutViewHolder extends BaseViewHolder {
-		private EditText title;
-		private EditText value;
-
-		public EditableAboutViewHolder(){
-			super(R.layout.item_profile_about_editable);
-			title=findViewById(R.id.title);
-			value=findViewById(R.id.value);
-			findViewById(R.id.dragger_thingy).setOnLongClickListener(v-> true);
-			title.addTextChangedListener(new SimpleTextWatcher(e->item.name=e.toString()));
-			value.addTextChangedListener(new SimpleTextWatcher(e->item.value=e.toString()));
-			findViewById(R.id.remove_row_btn).setOnClickListener(this::onRemoveRowClick);
-		}
-
-		@Override
-		public void onBind(AccountField item){
-			title.setText(item.name);
-			value.setText(item.value);
-		}
-
-		private void onRemoveRowClick(View v){
-			int pos=getAbsoluteAdapterPosition();
-			metadataListData.remove(pos);
-			adapter.notifyItemRemoved(pos);
-			for(int i=0;i<list.getChildCount();i++){
-				BaseViewHolder vh=(BaseViewHolder) list.getChildViewHolder(list.getChildAt(i));
-				vh.rebind();
-			}
-		}
-	}
-
-	private class AddRowViewHolder extends BaseViewHolder implements UsableRecyclerView.Clickable{
-		public AddRowViewHolder(){
-			super(R.layout.item_profile_about_add_row);
-		}
-
-		@Override
-		public void onClick(){
-			metadataListData.add(new AccountField());
-			if(metadataListData.size()==MAX_FIELDS){ // replace this row with new row
-				adapter.notifyItemChanged(metadataListData.size()-1);
-			}else{
-				adapter.notifyItemInserted(metadataListData.size()-1);
-				rebind();
-			}
-		}
-
-		@Override
-		public void onBind(AccountField item) {}
-	}
-
 }

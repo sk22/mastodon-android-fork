@@ -9,7 +9,6 @@ import java.util.List;
 public class ExtendedDescription extends BaseModel{
 	@RequiredField
 	public String content;
-	@RequiredField
 	public String updatedAt;
 
 	@Override
