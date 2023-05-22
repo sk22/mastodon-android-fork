@@ -474,8 +474,10 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			}
 		}
 
-		if(editingStatus!=null && editingStatus.visibility!=null) {
-			statusVisibility=editingStatus.visibility;
+		if (savedInstanceState != null) {
+			statusVisibility = (StatusPrivacy) savedInstanceState.getSerializable("visibility");
+		} else if (editingStatus != null && editingStatus.visibility != null) {
+			statusVisibility = editingStatus.visibility;
 		} else {
 			loadDefaultStatusVisibility(savedInstanceState);
 		}
@@ -496,6 +498,10 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				contentType = val == null ? null : ContentType.valueOf(val);
 			}
 		} catch (IllegalArgumentException ignored) {}
+
+		if (savedInstanceState != null && savedInstanceState.containsKey("contentType")) {
+			contentType = (ContentType) savedInstanceState.getSerializable("contentType");
+		}
 
 		int contentTypeId = ContentType.getContentTypeRes(contentType);
 		contentTypePopup.getMenu().findItem(contentTypeId).setChecked(true);
@@ -537,6 +543,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			outState.putParcelableArrayList("attachments", serializedAttachments);
 		}
 		outState.putSerializable("visibility", statusVisibility);
+		outState.putSerializable("contentType", contentType);
 		if (scheduledAt != null) outState.putSerializable("scheduledAt", scheduledAt);
 		if (scheduledStatus != null) outState.putParcelable("scheduledStatus", Parcels.wrap(scheduledStatus));
 	}
@@ -1954,11 +1961,6 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 
 	private void loadDefaultStatusVisibility(Bundle savedInstanceState) {
 		if(replyTo != null) statusVisibility = replyTo.visibility;
-
-		// A saved privacy setting from a previous compose session wins over the reply visibility
-		if(savedInstanceState !=null){
-			statusVisibility = (StatusPrivacy) savedInstanceState.getSerializable("visibility");
-		}
 
 		AccountSessionManager asm = AccountSessionManager.getInstance();
 		Preferences prefs = asm.getAccount(accountID).preferences;
