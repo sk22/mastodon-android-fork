@@ -23,12 +23,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
+import org.joinmastodon.android.api.requests.instance.GetExtendedDescription;
 import org.joinmastodon.android.api.requests.instance.GetInstance;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.onboarding.InstanceRulesFragment;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.AccountField;
 import org.joinmastodon.android.model.Attachment;
+import org.joinmastodon.android.model.ExtendedDescription;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.TimelineDefinition;
 import org.joinmastodon.android.ui.BetterItemAnimator;
@@ -64,6 +66,7 @@ import me.grishka.appkit.views.UsableRecyclerView;
 public class InstanceInfoFragment extends LoaderFragment {
 
 	private Instance instance;
+	private String extendedDescription;
 	private CoverImageView cover;
 	private TextView uri, description;
 
@@ -102,6 +105,7 @@ public class InstanceInfoFragment extends LoaderFragment {
 		account= AccountSessionManager.getInstance().getAccount(accountID).self;
 		targetDomain=getArguments().getString("instanceDomain");
 		loadData();
+		loadExtendedDescription();
 	}
 
 	@Override
@@ -166,8 +170,31 @@ public class InstanceInfoFragment extends LoaderFragment {
 
 					}
 				})
-				//hack to get instance url for local and remote accounts
 				.execNoAuth(targetDomain);
+	}
+
+	private void loadExtendedDescription() {
+		new GetExtendedDescription()
+				.setCallback(new SimpleCallback<>(this){
+					@Override
+					public void onSuccess(ExtendedDescription result){
+						if (getActivity() == null || result == null || TextUtils.isEmpty(result.content)) return;
+						extendedDescription = result.content;
+						updateDescription();
+
+					}
+				})
+				.execNoAuth(targetDomain);
+	}
+
+	private void updateDescription() {
+		if (instance == null || description == null)
+			return;
+
+		description.setText(HtmlParser.parse(TextUtils.isEmpty(extendedDescription) ?
+				TextUtils.isEmpty(instance.description) ? instance.shortDescription : instance.description
+				: extendedDescription,
+				account.emojis, Collections.emptyList(), Collections.emptyList(), accountID));
 	}
 
 	@Override
@@ -232,8 +259,7 @@ public class InstanceInfoFragment extends LoaderFragment {
 		uri.setText(instance.title);
 		setTitle(instance.title);
 
-		CharSequence parsedDescription = HtmlParser.parse(TextUtils.isEmpty(instance.description) ? instance.shortDescription : instance.description, account.emojis, Collections.emptyList(), Collections.emptyList(), accountID);
-		description.setText(parsedDescription);
+		updateDescription();
 
 		fields.clear();
 
