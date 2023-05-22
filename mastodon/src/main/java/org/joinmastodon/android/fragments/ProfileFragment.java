@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -332,6 +333,13 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 
 		followersBtn.setOnClickListener(this::onFollowersOrFollowingClick);
 		followingBtn.setOnClickListener(this::onFollowersOrFollowingClick);
+
+		username.setOnClickListener(v -> {
+			Bundle args=new Bundle();
+			args.putString("account", accountID);
+			args.putString("instanceDomain", Uri.parse(account.url).getHost());
+			Nav.go(getActivity(), InstanceInfoFragment.class, args);
+		});
 
 		username.setOnLongClickListener(v->{
 			String usernameString=account.acct;

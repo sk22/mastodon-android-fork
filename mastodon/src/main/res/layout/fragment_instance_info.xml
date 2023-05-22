@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<me.grishka.appkit.views.RecursiveSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/refresh_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false">
+
+            <org.joinmastodon.android.ui.views.CoverImageView
+                android:id="@+id/cover"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="?profileHeaderBackground"
+                android:contentDescription="@string/profile_header"
+                android:scaleType="centerCrop" />
+
+
+            <TextView
+                android:id="@+id/uri"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/cover"
+                android:layout_alignParentStart="true"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="12dp"
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/m3_headline_small"
+                tools:text="floss.social" />
+
+
+            <org.joinmastodon.android.ui.views.LinkedTextView
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/uri"
+                android:layout_marginHorizontal="16dp"
+                android:textAppearance="@style/m3_body_large"
+                android:textSize="16sp"
+                tools:text="Founder, CEO and lead developer @Mastodon, Germany." />
+
+            <View
+                android:id="@+id/border_top"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_below="@id/description"
+                android:layout_marginTop="16dp"
+                android:background="?attr/colorPollVoted" />
+
+            <me.grishka.appkit.views.UsableRecyclerView
+                android:id="@+id/metadata"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/border_top"
+                android:background="?colorBackgroundLightest"
+                android:paddingTop="4dp" />
+
+            <org.joinmastodon.android.ui.views.AutoOrientationLinearLayout
+                android:id="@+id/profile_counters"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/metadata"
+                android:background="?colorBackgroundLightest"
+                android:paddingHorizontal="8dp"
+                android:paddingTop="8dp">
+
+                <LinearLayout
+                    android:id="@+id/posts_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:minHeight="36dp"
+                    android:orientation="horizontal">
+
+
+                    <Button
+                        android:id="@+id/timeline_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_weight="0"
+                        android:background="@drawable/bg_inline_button"
+                        android:elevation="0dp"
+                        android:ellipsize="middle"
+                        android:fontFamily="sans-serif-medium"
+                        android:maxWidth="140dp"
+                        android:singleLine="true"
+                        android:stateListAnimator="@null"
+                        android:text="View local timeline"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="16sp" />
+
+                    <Button
+                        android:id="@+id/timeline_pin_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end|center_vertical"
+                        android:layout_marginEnd="8dp"
+                        android:backgroundTint="?colorBackgroundLightest"
+                        android:contentDescription="@string/mo_personal_note_confirm"
+                        android:drawableStart="@drawable/ic_fluent_pin_24_regular"
+                        android:paddingHorizontal="8dp" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/rules_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_weight="0"
+                    android:background="@drawable/bg_inline_button"
+                    android:elevation="0dp"
+                    android:ellipsize="middle"
+                    android:fontFamily="sans-serif-medium"
+                    android:maxWidth="140dp"
+                    android:singleLine="true"
+                    android:stateListAnimator="@null"
+                    android:text="@string/instance_rules_title"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="16sp" />
+
+                <Button
+                    android:id="@+id/servers_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_weight="0"
+                    android:background="@drawable/bg_inline_button"
+                    android:elevation="0dp"
+                    android:ellipsize="middle"
+                    android:fontFamily="sans-serif-medium"
+                    android:maxWidth="140dp"
+                    android:singleLine="true"
+                    android:stateListAnimator="@null"
+                    android:text="Moderated servers"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="16sp" />
+
+
+            </org.joinmastodon.android.ui.views.AutoOrientationLinearLayout>
+        </RelativeLayout>
+    </ScrollView>
+
+</me.grishka.appkit.views.RecursiveSwipeRefreshLayout>
