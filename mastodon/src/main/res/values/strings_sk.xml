@@ -283,7 +283,7 @@
     <string name="sk_content_type_bbcode">BBCode</string>
     <string name="sk_content_type_mfm">MFM</string>
     <string name="sk_settings_content_types">Enable post formatting</string>
-    <string name="sk_settings_content_types_explanation">Allows setting another content type when creating a post. Keep in mind that Mastodon servers might not support content types.</string>
+    <string name="sk_settings_content_types_explanation">Allows setting a content type like Markdown when creating a post. Keep in mind that not all instances support this.</string>
     <string name="sk_settings_default_content_type">Default content type</string>
-    <string name="sk_settings_default_content_type_explanation">This lets you set the default content type for new posts, overriding the value set in “Posting preferences”.</string>
+    <string name="sk_settings_default_content_type_explanation">This lets you have a content type be pre-selected when creating new posts, overriding the value set in “Posting preferences”.</string>
 </resources>
