@@ -136,8 +136,8 @@ public class InstanceInfoFragment extends LoaderFragment {
 		textScrollView=content.findViewById(R.id.text_scroll_view);
 		readMore=content.findViewById(R.id.read_more);
 		spaceBelowText=content.findViewById(R.id.space_below_text);
-		textMaxHeight=getActivity().getResources().getDimension(R.dimen.text_max_height);
-		textCollapsedHeight=getActivity().getResources().getDimension(R.dimen.text_collapsed_height);
+		textMaxHeight=getActivity().getResources().getDimension(R.dimen.description_max_height);
+		textCollapsedHeight=getActivity().getResources().getDimension(R.dimen.description_collapsed_height);
 		collapseParams=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) textCollapsedHeight);
 		wrapParams=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 

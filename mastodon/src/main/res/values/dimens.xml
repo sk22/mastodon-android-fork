@@ -4,4 +4,6 @@
     <dimen name="text_collapsed_height">145dp</dimen>
     <dimen name="layout_max_width">450dp</dimen>
     <dimen name="scroll_to_top_delta">300dp</dimen>
+    <dimen name="description_max_height">1000dp</dimen>
+    <dimen name="description_collapsed_height">445dp</dimen>
 </resources>
