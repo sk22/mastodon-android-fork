@@ -2,5 +2,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 	<item android:id="@+id/open_timeline" android:title="@string/mo_instance_info_open_timeline" android:icon="@drawable/ic_fluent_timeline_24_regular"/>
 	<item android:id="@+id/rules" android:title="@string/instance_rules_title" android:icon="@drawable/ic_fluent_task_list_ltr_24_regular"/>
-	<item android:id="@+id/moderated_servers" android:title="@string/mo_instance_info_moderated_servers" android:icon="@drawable/ic_fluent_book_exclamation_mark_24_filled"/>
+	<item android:id="@+id/moderated_servers" android:title="@string/mo_instance_info_moderated_servers" android:icon="@drawable/ic_fluent_book_exclamation_mark_24_regular"/>
 </menu>
