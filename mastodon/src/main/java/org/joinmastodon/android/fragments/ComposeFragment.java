@@ -245,6 +245,11 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 
 		accountID=getArguments().getString("account");
 		contentType = GlobalUserPreferences.accountsDefaultContentTypes.get(accountID);
+		if (contentType == null && GlobalUserPreferences.accountsWithContentTypesEnabled.contains(accountID)) {
+			// if formatting is enabled, use plain to avoid confusing unspecified default setting
+			contentType = ContentType.PLAIN;
+		}
+
 		AccountSession session=AccountSessionManager.getInstance().getAccount(accountID);
 		self=session.self;
 		instanceDomain=session.domain;
@@ -492,15 +497,14 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		}).setChecked(true);
 		visibilityPopup.getMenu().findItem(R.id.local_only).setChecked(localOnly);
 
-		try {
-			if (getArguments().containsKey("sourceContentType")) {
-				String val = getArguments().getString("sourceContentType");
-				contentType = val == null ? null : ContentType.valueOf(val);
-			}
-		} catch (IllegalArgumentException ignored) {}
 
 		if (savedInstanceState != null && savedInstanceState.containsKey("contentType")) {
 			contentType = (ContentType) savedInstanceState.getSerializable("contentType");
+		} else if (getArguments().containsKey("sourceContentType")) {
+			try {
+				String val = getArguments().getString("sourceContentType");
+				contentType = val == null ? null : ContentType.valueOf(val);
+			} catch (IllegalArgumentException ignored) {}
 		}
 
 		int contentTypeId = ContentType.getContentTypeRes(contentType);
@@ -1939,6 +1943,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		contentTypePopup.inflate(R.menu.compose_content_type);
 		Menu m = contentTypePopup.getMenu();
 		ContentType.adaptMenuToInstance(m, instance);
+		if (contentType != null) m.findItem(R.id.content_type_null).setVisible(false);
 
 		contentTypePopup.setOnMenuItemClickListener(i->{
 			int id=i.getItemId();
@@ -1954,7 +1959,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			return true;
 		});
 
-		if (!GlobalUserPreferences.accountsSupportingContentTypes.contains(accountID)) {
+		if (!GlobalUserPreferences.accountsWithContentTypesEnabled.contains(accountID)) {
 			btn.setVisibility(View.GONE);
 		}
 	}

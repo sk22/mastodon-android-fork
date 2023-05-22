@@ -59,7 +59,7 @@ public class GlobalUserPreferences{
 	public static Map<String, List<TimelineDefinition>> pinnedTimelines;
 	public static Set<String> accountsWithLocalOnlySupport;
 	public static Set<String> accountsInGlitchMode;
-	public static Set<String> accountsSupportingContentTypes;
+	public static Set<String> accountsWithContentTypesEnabled;
 	public static Map<String, ContentType> accountsDefaultContentTypes;
 
 	/**
@@ -115,7 +115,7 @@ public class GlobalUserPreferences{
 		accountsWithLocalOnlySupport=prefs.getStringSet("accountsWithLocalOnlySupport", new HashSet<>());
 		accountsInGlitchMode=prefs.getStringSet("accountsInGlitchMode", new HashSet<>());
 		replyVisibility=prefs.getString("replyVisibility", null);
-		accountsSupportingContentTypes=prefs.getStringSet("accountsSupportingContentTypes", new HashSet<>());
+		accountsWithContentTypesEnabled=prefs.getStringSet("accountsWithContentTypesEnabled", new HashSet<>());
 		accountsDefaultContentTypes=fromJson(prefs.getString("accountsDefaultContentTypes", null), accountsDefaultContentTypesType, new HashMap<>());
 
 		try {
@@ -164,7 +164,7 @@ public class GlobalUserPreferences{
 				.putStringSet("accountsWithLocalOnlySupport", accountsWithLocalOnlySupport)
 				.putStringSet("accountsInGlitchMode", accountsInGlitchMode)
 				.putString("replyVisibility", replyVisibility)
-				.putStringSet("accountsSupportingContentTypes", accountsSupportingContentTypes)
+				.putStringSet("accountsWithContentTypesEnabled", accountsWithContentTypesEnabled)
 				.putString("accountsDefaultContentTypes", gson.toJson(accountsDefaultContentTypes))
 				.apply();
 	}
