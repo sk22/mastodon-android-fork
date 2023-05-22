@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="horizontal"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:paddingTop="12dp"
+	android:paddingEnd="24dp"
+	android:paddingBottom="12dp"
+	android:paddingStart="12dp"
+	android:baselineAligned="false">
+
+	<RelativeLayout
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_marginEnd="6dip"
+		android:layout_marginTop="6dip"
+		android:layout_marginBottom="6dip"
+		android:layout_weight="1">
+
+		<TextView android:id="@+id/instance"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:singleLine="true"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:textColor="?android:attr/textColorPrimary"
+			android:ellipsize="marquee"
+			android:fadingEdge="horizontal" />
+
+		<TextView android:id="@+id/reason"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/instance"
+			android:layout_alignStart="@id/instance"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="?android:attr/textColorSecondary"
+			android:maxLines="4" />
+
+	</RelativeLayout>
+
+
+	<ImageView
+		android:id="@+id/severity"
+		android:src="@drawable/ic_fluent_speaker_mute_28_regular"
+		android:contentDescription="@string/mo_severity_silence"
+		android:minHeight="32dp"
+		android:layout_gravity="center"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"/>
+
+</LinearLayout>

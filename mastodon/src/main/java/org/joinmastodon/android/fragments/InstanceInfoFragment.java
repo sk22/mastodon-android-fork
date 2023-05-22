@@ -178,7 +178,6 @@ public class InstanceInfoFragment extends LoaderFragment {
 						instance = result;
 						bindHeaderView();
 						dataLoaded();
-
 					}
 				})
 				.execNoAuth(targetDomain);
@@ -349,7 +348,9 @@ public class InstanceInfoFragment extends LoaderFragment {
 			args.putParcelable("instance", Parcels.wrap(instance));
 			Nav.go(getActivity(), InstanceRulesFragment.class, args);
 		} else if (id==R.id.moderated_servers) {
-
+			Bundle args=new Bundle();
+			args.putParcelable("instance", Parcels.wrap(instance));
+			Nav.go(getActivity(), InstanceBlockListFragment.class, args);
 		}
 		return true;
 	}
