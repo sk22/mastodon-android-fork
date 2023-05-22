@@ -10,6 +10,9 @@ import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
@@ -72,12 +75,10 @@ public class InstanceInfoFragment extends LoaderFragment {
 	private CoverImageView cover;
 	private TextView uri, description, readMore;
 
-	private Button timelineButton, pinButton, rulesButton, serversButton;
-
 	private View spaceBelowText;
 	private final CoverOverlayGradientDrawable coverGradient=new CoverOverlayGradientDrawable();
 
-	private ScrollView textScrollView;
+	private ScrollView scrollView, textScrollView;
 	private float titleTransY;
 
 	private String accountID;
@@ -127,13 +128,10 @@ public class InstanceInfoFragment extends LoaderFragment {
 	public View onCreateContentView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		View content=inflater.inflate(R.layout.fragment_instance_info, container, false);
 
+		scrollView=content.findViewById(R.id.scroll_view);
 		cover=content.findViewById(R.id.cover);
 		uri =content.findViewById(R.id.uri);
 		description=content.findViewById(R.id.description);
-		timelineButton=content.findViewById(R.id.timeline_btn);
-		pinButton=content.findViewById(R.id.timeline_pin_btn);
-		rulesButton=content.findViewById(R.id.rules_btn);
-		serversButton=content.findViewById(R.id.servers_btn);
 		list=content.findViewById(R.id.metadata);
 		textScrollView=content.findViewById(R.id.text_scroll_view);
 		readMore=content.findViewById(R.id.read_more);
@@ -151,10 +149,6 @@ public class InstanceInfoFragment extends LoaderFragment {
 			}
 		});
 
-		timelineButton.setOnClickListener(this::onTimelineButtonClick);
-		pinButton.setOnClickListener(this::onPinButtonClick);
-		rulesButton.setOnClickListener(this::onRulesButtonClick);
-		serversButton.setOnClickListener(this::onSeversButtonClick);
 		cover.setOnClickListener(this::onCoverClick);
 		readMore.setOnClickListener(this::onReadMoreClick);
 
@@ -327,14 +321,44 @@ public class InstanceInfoFragment extends LoaderFragment {
 			toolbarTitleView.setTranslationY(titleTransY);
 			toolbarSubtitleView.setTranslationY(titleTransY);
 		}
+		getToolbar().setOnClickListener(v->scrollToTop());
 		getToolbar().setNavigationContentDescription(R.string.back);
 	}
+
+	public void scrollToTop(){
+		scrollView.smoothScrollTo(0, 0);
+	}
+
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+		inflater.inflate(R.menu.instance_info, menu);
+		UiUtils.enableOptionsMenuIcons(getActivity(), menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item){
+		int id=item.getItemId();
+		if (id==R.id.open_timeline) {
+			Bundle args=new Bundle();
+			args.putString("account", accountID);
+			args.putString("domain", instance.uri);
+			Nav.go(getActivity(), CustomLocalTimelineFragment.class, args);
+		}else if (id==R.id.rules) {
+			Bundle args=new Bundle();
+			args.putParcelable("instance", Parcels.wrap(instance));
+			Nav.go(getActivity(), InstanceRulesFragment.class, args);
+		} else if (id==R.id.moderated_servers) {
+
+		}
+		return true;
+	}
+
 
 	@Override
 	public boolean wantsLightStatusBar(){
 		return false;
 	}
-
 	@Override
 	protected int getToolbarResource(){
 		return R.layout.profile_toolbar;
@@ -342,32 +366,6 @@ public class InstanceInfoFragment extends LoaderFragment {
 	private void onReadMoreClick(View view) {
 		isExpanded = !isExpanded;
 		bindHeaderView();
-	}
-
-	private void onTimelineButtonClick(View view) {
-		Bundle args=new Bundle();
-		args.putString("account", accountID);
-		args.putString("domain", instance.uri);
-		Nav.go(getActivity(), CustomLocalTimelineFragment.class, args);
-	}
-
-	private void onPinButtonClick(View view) {
-		List<TimelineDefinition> timelines = GlobalUserPreferences.pinnedTimelines.get(accountID);
-		if (timelines == null) {
-			timelines = List.of(TimelineDefinition.HOME_TIMELINE);
-		}
-		timelines.add(TimelineDefinition.ofCustomLocalTimeline(instance.uri));
-		GlobalUserPreferences.pinnedTimelines.put(accountID, timelines);
-		GlobalUserPreferences.save();
-		updatedTimelines = true;
-	}
-
-	private void onRulesButtonClick(View view) {
-		Bundle args=new Bundle();
-		args.putParcelable("instance", Parcels.wrap(instance));
-		Nav.go(getActivity(), InstanceRulesFragment.class, args);
-	}
-	private void onSeversButtonClick(View view) {
 	}
 
 

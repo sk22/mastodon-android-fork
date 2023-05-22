@@ -334,6 +334,9 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		followersBtn.setOnClickListener(this::onFollowersOrFollowingClick);
 		followingBtn.setOnClickListener(this::onFollowersOrFollowingClick);
 
+
+		//this currently takes up the whole username
+		//in the future it might need to be change to only the instance uri
 		username.setOnClickListener(v -> {
 			Bundle args=new Bundle();
 			args.putString("account", accountID);

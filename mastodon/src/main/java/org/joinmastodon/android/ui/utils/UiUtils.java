@@ -849,6 +849,8 @@ public class UiUtils {
 		}
 	}
 
+	/// Add icons to the menu.
+	/// Passing in items will be colored to be visible on the background.
 	public static void enableOptionsMenuIcons(Context context, Menu menu, @IdRes int... asAction) {
 		if (menu.getClass().getSimpleName().equals("MenuBuilder")) {
 			try {

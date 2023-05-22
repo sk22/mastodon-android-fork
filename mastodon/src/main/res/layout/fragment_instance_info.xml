@@ -6,6 +6,7 @@
     android:layout_height="match_parent">
 
     <ScrollView
+        android:id="@id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -96,90 +97,6 @@
                 android:layout_below="@id/border_top"
                 android:background="?colorBackgroundLightest"
                 android:paddingTop="4dp" />
-
-            <org.joinmastodon.android.ui.views.AutoOrientationLinearLayout
-                android:id="@+id/profile_counters"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/metadata"
-                android:background="?colorBackgroundLightest"
-                android:paddingHorizontal="8dp"
-                android:paddingTop="8dp">
-
-                <LinearLayout
-                    android:id="@+id/posts_btn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:minHeight="36dp"
-                    android:orientation="horizontal">
-
-
-                    <Button
-                        android:id="@+id/timeline_btn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="32dp"
-                        android:layout_marginEnd="16dp"
-                        android:layout_weight="0"
-                        android:background="@drawable/bg_inline_button"
-                        android:elevation="0dp"
-                        android:ellipsize="middle"
-                        android:fontFamily="sans-serif-medium"
-                        android:maxWidth="140dp"
-                        android:singleLine="true"
-                        android:stateListAnimator="@null"
-                        android:text="View local timeline"
-                        android:textColor="?android:textColorPrimary"
-                        android:textSize="16sp" />
-
-                    <Button
-                        android:id="@+id/timeline_pin_btn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end|center_vertical"
-                        android:layout_marginEnd="8dp"
-                        android:backgroundTint="?colorBackgroundLightest"
-                        android:contentDescription="@string/mo_personal_note_confirm"
-                        android:drawableStart="@drawable/ic_fluent_pin_24_regular"
-                        android:paddingHorizontal="8dp" />
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/rules_btn"
-                    android:layout_width="match_parent"
-                    android:layout_height="32dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_weight="0"
-                    android:background="@drawable/bg_inline_button"
-                    android:elevation="0dp"
-                    android:ellipsize="middle"
-                    android:fontFamily="sans-serif-medium"
-                    android:maxWidth="140dp"
-                    android:singleLine="true"
-                    android:stateListAnimator="@null"
-                    android:text="@string/instance_rules_title"
-                    android:textColor="?android:textColorPrimary"
-                    android:textSize="16sp" />
-
-                <Button
-                    android:id="@+id/servers_btn"
-                    android:layout_width="match_parent"
-                    android:layout_height="32dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_weight="0"
-                    android:background="@drawable/bg_inline_button"
-                    android:elevation="0dp"
-                    android:ellipsize="middle"
-                    android:fontFamily="sans-serif-medium"
-                    android:maxWidth="140dp"
-                    android:singleLine="true"
-                    android:stateListAnimator="@null"
-                    android:text="Moderated servers"
-                    android:textColor="?android:textColorPrimary"
-                    android:textSize="16sp" />
-
-
-            </org.joinmastodon.android.ui.views.AutoOrientationLinearLayout>
         </RelativeLayout>
     </ScrollView>
 
