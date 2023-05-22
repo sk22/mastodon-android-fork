@@ -286,24 +286,34 @@ public class InstanceInfoFragment extends LoaderFragment {
 
 		if (instance.contactAccount != null) {
 			AccountField admin = new AccountField();
-			admin.parsedName=admin.name= "Administered by";
+			admin.parsedName=admin.name=getContext().getString(R.string.mo_instance_admin);
 			admin.parsedValue=buildLinkText(instance.contactAccount.url, instance.contactAccount.getDisplayUsername() + "@" + instance.uri);
 			fields.add(admin);
 		}
 
 		if (instance.email != null) {
 			AccountField contact = new AccountField();
-			contact.parsedName = contact.name = "Contact";
+			contact.parsedName=getContext().getString(R.string.mo_instance_contact);
 			contact.parsedValue=buildLinkText("mailto:" + instance.email, instance.email);
 			fields.add(contact);
 		}
 
 		if (instance.stats != null) {
 			AccountField activeUsers = new AccountField();
-			activeUsers.parsedName = activeUsers.name = "users";
+			activeUsers.parsedName=getContext().getString(R.string.mo_instance_users);
 			activeUsers.parsedValue= NumberFormat.getInstance().format(instance.stats.userCount);
 			fields.add(activeUsers);
+
+			AccountField statusCount = new AccountField();
+			statusCount.parsedName=getContext().getString(R.string.mo_instance_status);
+			statusCount.parsedValue= NumberFormat.getInstance().format(instance.stats.statusCount);
+			fields.add(statusCount);
 		}
+
+		AccountField registration = new AccountField();
+		registration.parsedName=getContext().getString(R.string.mo_instance_registration);
+		registration.parsedValue=getContext().getString(instance.registrations ? instance.approvalRequired ? R.string.mo_instance_registration_approval : R.string.mo_instance_registration_open : R.string.instance_signup_closed);
+		fields.add(registration);
 
 
 		setFields(fields);
