@@ -25,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import org.joinmastodon.android.DomainManager;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.instance.GetExtendedDescription;
 import org.joinmastodon.android.api.requests.instance.GetInstance;
@@ -104,6 +105,7 @@ public class InstanceInfoFragment extends LoaderFragment {
 		targetDomain=getArguments().getString("instanceDomain");
 		loadData();
 		loadExtendedDescription();
+		DomainManager.getInstance().setCurrentDomain(targetDomain + "/about");
 	}
 
 	@Override
