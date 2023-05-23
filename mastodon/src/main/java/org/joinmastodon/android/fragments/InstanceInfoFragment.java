@@ -178,7 +178,7 @@ public class InstanceInfoFragment extends LoaderFragment {
 						if (getActivity() == null || result == null || TextUtils.isEmpty(result.content)) return;
 						extendedDescription = result.content;
 						updateDescription();
-
+						collapseDescription();
 					}
 				})
 				.execNoAuth(targetDomain);
@@ -196,7 +196,6 @@ public class InstanceInfoFragment extends LoaderFragment {
 		description.measure(
 					View.MeasureSpec.makeMeasureSpec(textWrap.getWidth(), View.MeasureSpec.EXACTLY),
 					View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-
 	}
 
 	@Override
@@ -249,21 +248,8 @@ public class InstanceInfoFragment extends LoaderFragment {
 		uri.setText(instance.title);
 		setTitle(instance.title);
 
-		//set description text and collapse
 		updateDescription();
-
-		textScrollView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-
-		description.measure(
-					View.MeasureSpec.makeMeasureSpec(textWrap.getWidth(), View.MeasureSpec.EXACTLY),
-					View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-
-		readMore.setText(isExpanded ? R.string.sk_collapse : R.string.sk_expand);
-		description.post(() -> {
-			boolean tooBig = description.getMeasuredHeight() > textMaxHeight;
-			readMore.setVisibility(tooBig ? View.VISIBLE : View.GONE);
-			textScrollView.setLayoutParams(tooBig && !isExpanded ? collapseParams : wrapParams);
-		});
+		collapseDescription();
 
 		fields.clear();
 
@@ -305,6 +291,21 @@ public class InstanceInfoFragment extends LoaderFragment {
 	private SpannableStringBuilder buildLinkText(String link, String text) {
 		String value = "<span class=\"h-card\"><a href=" + link + " class=\"u-url mention\" rel=\"nofollow noopener noreferrer\" target=\"_blank\">" + text + "</a></span>";
 		return HtmlParser.parse(value, account.emojis, Collections.emptyList(), Collections.emptyList(), accountID);
+	}
+
+	private void collapseDescription() {
+		textScrollView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+		description.measure(
+				View.MeasureSpec.makeMeasureSpec(textWrap.getWidth(), View.MeasureSpec.EXACTLY),
+				View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+
+		readMore.setText(isExpanded ? R.string.sk_collapse : R.string.sk_expand);
+		description.post(() -> {
+			boolean tooBig = description.getMeasuredHeight() > textMaxHeight;
+			readMore.setVisibility(tooBig ? View.VISIBLE : View.GONE);
+			textScrollView.setLayoutParams(tooBig && !isExpanded ? collapseParams : wrapParams);
+		});
 	}
 
 	private void updateToolbar(){
