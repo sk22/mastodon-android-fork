@@ -260,6 +260,8 @@ public class InstanceInfoFragment extends LoaderFragment {
 		//set description text and collapse
 		updateDescription();
 
+		textScrollView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
 		description.measure(
 					View.MeasureSpec.makeMeasureSpec(textWrap.getWidth(), View.MeasureSpec.EXACTLY),
 					View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
@@ -267,7 +269,6 @@ public class InstanceInfoFragment extends LoaderFragment {
 		readMore.setText(isExpanded ? R.string.sk_collapse : R.string.sk_expand);
 		description.post(() -> {
 			boolean tooBig = description.getMeasuredHeight() > textMaxHeight;
-			Log.e("toobig", "bindHeaderView: " + tooBig );
 			readMore.setVisibility(tooBig ? View.VISIBLE : View.GONE);
 			textScrollView.setLayoutParams(tooBig && !isExpanded ? collapseParams : wrapParams);
 		});
