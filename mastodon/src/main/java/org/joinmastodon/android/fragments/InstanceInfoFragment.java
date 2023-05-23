@@ -365,22 +365,10 @@ public class InstanceInfoFragment extends LoaderFragment {
 			Drawable drawable=cover.getDrawable();
 			if(drawable==null || drawable instanceof ColorDrawable)
 				return;
-		new PhotoViewer(getActivity(), createFakeAttachments(instance.thumbnail, drawable), 0,
+		new PhotoViewer(getActivity(), Attachment.createFakeAttachments(instance.thumbnail, drawable), 0,
 				new SingleImagePhotoViewerListener(cover, cover, null, this, () -> {
 				}, () -> drawable, null, null));
 	}
-
-	private List<Attachment> createFakeAttachments(String url, Drawable drawable){
-		Attachment att=new Attachment();
-		att.type=Attachment.Type.IMAGE;
-		att.url=url;
-		att.meta=new Attachment.Metadata();
-		att.meta.width=drawable.getIntrinsicWidth();
-		att.meta.height=drawable.getIntrinsicHeight();
-		return Collections.singletonList(att);
-	}
-
-
 
 	public void setFields(ArrayList<AccountField> fields){
 		metadataListData=fields;
@@ -400,11 +388,7 @@ public class InstanceInfoFragment extends LoaderFragment {
 
 		@Override
 		public void onBindViewHolder(BaseViewHolder holder, int position){
-			if(position<metadataListData.size()){
-				holder.bind(metadataListData.get(position));
-			}else{
-				holder.bind(null);
-			}
+			holder.bind(metadataListData.get(position));
 			super.onBindViewHolder(holder, position);
 		}
 

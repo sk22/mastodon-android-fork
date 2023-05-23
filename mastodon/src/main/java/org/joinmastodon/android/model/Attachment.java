@@ -14,6 +14,8 @@ import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 import org.parceler.ParcelProperty;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 @Parcel
@@ -44,6 +46,16 @@ public class Attachment extends BaseModel{
 				blurhashPlaceholder=new BlurHashDrawable(placeholder, getWidth(), getHeight());
 		}
 	}
+	public static List<Attachment> createFakeAttachments(String url, Drawable drawable){
+		Attachment att=new Attachment();
+		att.type=Attachment.Type.IMAGE;
+		att.url=url;
+		att.meta=new Attachment.Metadata();
+		att.meta.width=drawable.getIntrinsicWidth();
+		att.meta.height=drawable.getIntrinsicHeight();
+		return Collections.singletonList(att);
+	}
+
 
 	public int getWidth(){
 		if(meta==null)
