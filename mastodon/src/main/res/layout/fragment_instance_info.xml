@@ -60,12 +60,6 @@
 
                 </org.joinmastodon.android.ui.views.UntouchableScrollView>
 
-                <Space
-                    android:id="@+id/space_below_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="8dp"
-                    android:visibility="gone" />
-
                 <Button
                     android:id="@+id/read_more"
                     android:layout_width="match_parent"

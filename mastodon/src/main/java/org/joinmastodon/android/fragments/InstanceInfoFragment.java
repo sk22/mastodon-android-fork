@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -74,9 +75,8 @@ public class InstanceInfoFragment extends LoaderFragment {
 	private String extendedDescription;
 	private CoverImageView cover;
 	private TextView uri, description, readMore;
-
-	private View spaceBelowText;
 	private final CoverOverlayGradientDrawable coverGradient=new CoverOverlayGradientDrawable();
+	private LinearLayout textWrap;
 
 	private ScrollView scrollView, textScrollView;
 	private float titleTransY;
@@ -130,8 +130,8 @@ public class InstanceInfoFragment extends LoaderFragment {
 		description=content.findViewById(R.id.description);
 		list=content.findViewById(R.id.metadata);
 		textScrollView=content.findViewById(R.id.text_scroll_view);
+		textWrap=content.findViewById(R.id.text_wrap);
 		readMore=content.findViewById(R.id.read_more);
-		spaceBelowText=content.findViewById(R.id.space_below_text);
 		textMaxHeight=getActivity().getResources().getDimension(R.dimen.description_max_height);
 		textCollapsedHeight=getActivity().getResources().getDimension(R.dimen.description_collapsed_height);
 		collapseParams=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) textCollapsedHeight);
@@ -201,6 +201,11 @@ public class InstanceInfoFragment extends LoaderFragment {
 				TextUtils.isEmpty(instance.description) ? instance.shortDescription : instance.description
 				: extendedDescription,
 				account.emojis, Collections.emptyList(), Collections.emptyList(), accountID));
+
+		description.measure(
+					View.MeasureSpec.makeMeasureSpec(textWrap.getWidth(), View.MeasureSpec.EXACTLY),
+					View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+
 	}
 
 	@Override
@@ -255,13 +260,16 @@ public class InstanceInfoFragment extends LoaderFragment {
 		//set description text and collapse
 		updateDescription();
 
-		textScrollView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+		description.measure(
+					View.MeasureSpec.makeMeasureSpec(textWrap.getWidth(), View.MeasureSpec.EXACTLY),
+					View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
 
 		readMore.setText(isExpanded ? R.string.sk_collapse : R.string.sk_expand);
 		description.post(() -> {
-			readMore.setVisibility(View.VISIBLE);
-			textScrollView.setLayoutParams(isExpanded ? wrapParams : collapseParams);
-			spaceBelowText.setVisibility(View.VISIBLE);
+			boolean tooBig = description.getMeasuredHeight() > textMaxHeight;
+			Log.e("toobig", "bindHeaderView: " + tooBig );
+			readMore.setVisibility(tooBig ? View.VISIBLE : View.GONE);
+			textScrollView.setLayoutParams(tooBig && !isExpanded ? collapseParams : wrapParams);
 		});
 
 		fields.clear();
