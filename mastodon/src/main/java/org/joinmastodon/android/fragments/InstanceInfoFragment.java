@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.instance.GetExtendedDescription;
@@ -65,6 +66,7 @@ public class InstanceInfoFragment extends LoaderFragment {
 	private String extendedDescription;
 	private CoverImageView cover;
 	private TextView uri, description, readMore;
+	private SwipeRefreshLayout refreshLayout;
 	private final CoverOverlayGradientDrawable coverGradient=new CoverOverlayGradientDrawable();
 	private LinearLayout textWrap;
 
@@ -114,6 +116,7 @@ public class InstanceInfoFragment extends LoaderFragment {
 	public View onCreateContentView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		View content=inflater.inflate(R.layout.fragment_instance_info, container, false);
 
+		refreshLayout=content.findViewById(R.id.refresh_layout);
 		scrollView=content.findViewById(R.id.scroll_view);
 		cover=content.findViewById(R.id.cover);
 		uri =content.findViewById(R.id.uri);
@@ -128,22 +131,16 @@ public class InstanceInfoFragment extends LoaderFragment {
 		wrapParams=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
 		cover.setForeground(coverGradient);
-		cover.setOutlineProvider(new ViewOutlineProvider(){
-			@Override
-			public void getOutline(View view, Outline outline){
-				outline.setEmpty();
-			}
-		});
-
 		cover.setOnClickListener(this::onCoverClick);
 		readMore.setOnClickListener(this::onReadMoreClick);
+		refreshLayout.setOnRefreshListener(this);
+
 
 		if(loaded){
-			bindHeaderView();
+			bindViews();
 			dataLoaded();
 		}
 
-		// from ProfileAboutFragment
 		list.setItemAnimator(new BetterItemAnimator());
 		list.setDrawSelectorOnTop(true);
 		list.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -162,8 +159,12 @@ public class InstanceInfoFragment extends LoaderFragment {
 					public void onSuccess(Instance result){
 						if (getActivity() == null) return;
 						instance = result;
-						bindHeaderView();
+						bindViews();
 						dataLoaded();
+						if(refreshing) {
+							refreshing = false;
+							refreshLayout.setRefreshing(false);
+						}
 					}
 				})
 				.execNoAuth(targetDomain);
@@ -204,6 +205,7 @@ public class InstanceInfoFragment extends LoaderFragment {
 			return;
 		refreshing=true;
 		doLoadData();
+		loadExtendedDescription();
 	}
 
 	@Override
@@ -242,7 +244,7 @@ public class InstanceInfoFragment extends LoaderFragment {
 
 
 
-	private void bindHeaderView(){
+	private void bindViews(){
 		ViewImageLoader.load(cover, null, new UrlImageLoaderRequest(instance.thumbnail, 1000, 1000));
 		uri.setText(instance.title);
 		setTitle(instance.title);
@@ -357,7 +359,7 @@ public class InstanceInfoFragment extends LoaderFragment {
 	}
 	private void onReadMoreClick(View view) {
 		isExpanded = !isExpanded;
-		bindHeaderView();
+		bindViews();
 	}
 
 
