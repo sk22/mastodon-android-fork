@@ -99,6 +99,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -1113,7 +1114,16 @@ public class UiUtils {
 									args.putParcelable("status", Parcels.wrap(results.statuses.get(0)));
 									Nav.go((Activity) context, ThreadFragment.class, args);
 								} else if (!results.accounts.isEmpty()) {
-									args.putParcelable("profileAccount", Parcels.wrap(results.accounts.get(0)));
+									Account acc = results.accounts.get(0);
+									try {
+										if (acc.getDomain() != new URL(url).getHost()) {
+											if (launchBrowser) launchWebBrowser(context, url);
+											else
+												Toast.makeText(context, R.string.sk_resource_not_found, Toast.LENGTH_SHORT).show();
+											return;
+										}
+									} catch (Exception ignored) {}
+									args.putParcelable("profileAccount", Parcels.wrap(acc));
 									Nav.go((Activity) context, ProfileFragment.class, args);
 								} else {
 									if (launchBrowser) launchWebBrowser(context, url);
