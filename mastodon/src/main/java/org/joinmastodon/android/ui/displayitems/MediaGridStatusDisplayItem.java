@@ -18,7 +18,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.model.Attachment;
@@ -32,7 +31,6 @@ import org.joinmastodon.android.utils.TypedObjectPool;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import me.grishka.appkit.imageloader.ImageLoaderViewHolder;
 import me.grishka.appkit.imageloader.requests.ImageLoaderRequest;
@@ -99,6 +97,8 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 
 		private int altTextIndex=-1;
 		private Animator altTextAnimator;
+
+		private boolean sizeUpdating = false;
 
 		public Holder(Activity activity, ViewGroup parent){
 			super(new FrameLayoutThatOnlyMeasuresFirstChild(activity));
@@ -170,7 +170,8 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 				item.attachments.get(index).meta=metadata;
 
 				item.tiledLayout=PhotoLayoutHelper.processThumbs(item.attachments);
-				rebind();
+				sizeUpdating = true;
+				item.parentFragment.onImageUpdated(this, index);
 			}
 
 			controllers.get(index).setImage(drawable);
@@ -328,6 +329,14 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 		public void setClipChildren(boolean clip){
 			layout.setClipChildren(clip);
 			wrapper.setClipChildren(clip);
+		}
+
+		public boolean isSizeUpdating() {
+			return sizeUpdating;
+		}
+
+		public void sizeUpdated() {
+			sizeUpdating = false;
 		}
 	}
 }
