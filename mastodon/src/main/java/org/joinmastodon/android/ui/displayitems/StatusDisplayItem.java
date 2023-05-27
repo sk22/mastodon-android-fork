@@ -2,6 +2,7 @@ package org.joinmastodon.android.ui.displayitems;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
+import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.fragments.HashtagTimelineFragment;
@@ -20,12 +22,14 @@ import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Attachment;
 import org.joinmastodon.android.model.DisplayItemsParent;
 import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.Poll;
 import org.joinmastodon.android.model.ScheduledStatus;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.PhotoLayoutHelper;
 import org.joinmastodon.android.ui.text.HtmlParser;
+import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.utils.StatusFilterPredicate;
 import org.parceler.Parcels;
 
@@ -82,11 +86,11 @@ public abstract class StatusDisplayItem{
 		};
 	}
 
-	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, Notification notification, Filter.FilterContext filterContext){
-		return buildItems(fragment, status, accountID, parentObject, knownAccounts, inset, addFooter, notification, false, filterContext);
+	public static ArrayList<StatusDisplayItem> buildItems(Context context, BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, Notification notification, Filter.FilterContext filterContext){
+		return buildItems(context, fragment, status, accountID, parentObject, knownAccounts, inset, addFooter, notification, false, filterContext);
 	}
 
-	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, Notification notification, boolean disableTranslate, Filter.FilterContext filterContext){
+	public static ArrayList<StatusDisplayItem> buildItems(Context context, BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, Notification notification, boolean disableTranslate, Filter.FilterContext filterContext){
 		String parentID=parentObject.getID();
 		ArrayList<StatusDisplayItem> items=new ArrayList<>();
 
@@ -173,6 +177,14 @@ public abstract class StatusDisplayItem{
 				.filter(att->att.type.isImage() && !att.type.equals(Attachment.Type.UNKNOWN))
 				.collect(Collectors.toList());
 		if(!imageAttachments.isEmpty()){
+			AccountSession accountSession = AccountSessionManager.getInstance().getAccount(accountID);
+			Instance instance = AccountSessionManager.getInstance().getInstanceInfo(accountSession.domain);
+			if (instance.pleroma != null) {
+				int color = UiUtils.getThemeColor(context, R.attr.colorAccentLightest);
+				for (Attachment att : imageAttachments) {
+					att.blurhashPlaceholder = new ColorDrawable(color);
+				}
+			}
 			PhotoLayoutHelper.TiledLayoutResult layout=PhotoLayoutHelper.processThumbs(imageAttachments);
 			items.add(new MediaGridStatusDisplayItem(parentID, fragment, layout, imageAttachments, statusForContent));
 		}
