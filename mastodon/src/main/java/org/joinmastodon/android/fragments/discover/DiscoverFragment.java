@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
+import org.joinmastodon.android.fragments.HomeFragment;
 import org.joinmastodon.android.fragments.IsOnTop;
 import org.joinmastodon.android.fragments.ScrollableToTop;
 import org.joinmastodon.android.ui.SimpleViewHolder;
@@ -238,7 +239,7 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 		else scrollToTop();
 	}
 
-	private void selectSearch() {
+	public void selectSearch() {
 		searchEdit.requestFocus();
 		onSearchEditFocusChanged(searchEdit, true);
 		getActivity().getSystemService(InputMethodManager.class).showSoftInput(searchEdit, 0);
@@ -272,6 +273,8 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 		searchBack.setEnabled(false);
 		searchBack.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
 		getActivity().getSystemService(InputMethodManager.class).hideSoftInputFromWindow(searchEdit.getWindowToken(), 0);
+		if (getArguments().getBoolean("isPleroma"))
+			((HomeFragment) getParentFragment()).onBackPressed();
 	}
 
 	@Override

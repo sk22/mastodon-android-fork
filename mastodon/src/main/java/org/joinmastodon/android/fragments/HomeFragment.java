@@ -66,12 +66,16 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 	private int currentTab=R.id.tab_home;
 
 	private String accountID;
+	private boolean isPleroma;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		E.register(this);
 		accountID=getArguments().getString("account");
+		AccountSession accountSession = AccountSessionManager.getInstance().getAccount(accountID);
+		Instance instance = AccountSessionManager.getInstance().getInstanceInfo(accountSession.domain);
+		isPleroma=instance.pleroma!=null;
 		setTitle(R.string.sk_app_name);
 
 		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N)
@@ -83,6 +87,7 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 			homeTabFragment=new HomeTabFragment();
 			homeTabFragment.setArguments(args);
 			args=new Bundle(args);
+			args.putBoolean("isPleroma", isPleroma);
 			args.putBoolean("noAutoLoad", true);
 			searchFragment=new DiscoverFragment();
 			searchFragment.setArguments(args);
@@ -231,6 +236,8 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 		if (newFragment instanceof HasFab fabulous) fabulous.showFab();
 		currentTab=tab;
 		((FragmentStackActivity)getActivity()).invalidateSystemBarColors(this);
+		if (tab == R.id.tab_search)
+			searchFragment.selectSearch();
 	}
 
 	private void maybeTriggerLoading(Fragment newFragment){
