@@ -86,11 +86,11 @@ public abstract class StatusDisplayItem{
 		};
 	}
 
-	public static ArrayList<StatusDisplayItem> buildItems(Context context, BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, Notification notification, Filter.FilterContext filterContext){
-		return buildItems(context, fragment, status, accountID, parentObject, knownAccounts, inset, addFooter, notification, false, filterContext);
+	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, Notification notification, Filter.FilterContext filterContext){
+		return buildItems(fragment, status, accountID, parentObject, knownAccounts, inset, addFooter, notification, false, filterContext);
 	}
 
-	public static ArrayList<StatusDisplayItem> buildItems(Context context, BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, Notification notification, boolean disableTranslate, Filter.FilterContext filterContext){
+	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, Notification notification, boolean disableTranslate, Filter.FilterContext filterContext){
 		String parentID=parentObject.getID();
 		ArrayList<StatusDisplayItem> items=new ArrayList<>();
 
@@ -177,7 +177,7 @@ public abstract class StatusDisplayItem{
 				.filter(att->att.type.isImage() && !att.type.equals(Attachment.Type.UNKNOWN))
 				.collect(Collectors.toList());
 		if(!imageAttachments.isEmpty()){
-			int color = UiUtils.getThemeColor(context, R.attr.colorAccentLightest);
+			int color = UiUtils.getThemeColor(fragment.getContext(), R.attr.colorAccentLightest);
 			for (Attachment att : imageAttachments) {
 				if (att.blurhashPlaceholder == null) {
 					att.blurhashPlaceholder = new ColorDrawable(color);

@@ -106,7 +106,7 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 		};
 		HeaderStatusDisplayItem titleItem=extraText!=null ? new HeaderStatusDisplayItem(n.id, n.account, n.createdAt, this, accountID, n.status, n.emojiUrl!=null ? HtmlParser.parseCustomEmoji(extraText, Collections.singletonList(emoji)) : extraText, n, null) : null;
 		if(n.status!=null){
-			ArrayList<StatusDisplayItem> items=StatusDisplayItem.buildItems(getContext(), this, n.status, accountID, n, knownAccounts, titleItem!=null, titleItem==null, n, false, Filter.FilterContext.NOTIFICATIONS);
+			ArrayList<StatusDisplayItem> items=StatusDisplayItem.buildItems(this, n.status, accountID, n, knownAccounts, titleItem!=null, titleItem==null, n, false, Filter.FilterContext.NOTIFICATIONS);
 			if(titleItem!=null)
 				items.add(0, titleItem);
 			return items;
