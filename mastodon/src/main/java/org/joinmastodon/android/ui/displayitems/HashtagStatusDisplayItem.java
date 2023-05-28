@@ -41,6 +41,7 @@ public class HashtagStatusDisplayItem extends StatusDisplayItem{
 			if (item.history == null || item.history.isEmpty()) {
 				subtitle.setText(null);
 				chart.setVisibility(View.GONE);
+				title.setPadding(0, 18, 0, 0);
 				return;
 			}
 			chart.setVisibility(View.VISIBLE);

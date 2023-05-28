@@ -166,6 +166,15 @@ public abstract class StatusDisplayItem{
 			items.add(replyLine);
 		}
 
+		if (statusForContent.quote != null) {
+			boolean hasQuoteInlineTag = statusForContent.content.contains("<span class=\"quote-inline\">");
+			if (!hasQuoteInlineTag) {
+				String quoteUrl = statusForContent.quote.url;
+				String quoteInline = String.format("<span class=\"quote-inline\">%sRE: <a href=\"%s\">%s</a></span>",
+						statusForContent.content.endsWith("</p>") ? "" : "<br/><br/>", quoteUrl, quoteUrl);
+				statusForContent.content += quoteInline;
+			}
+		}
 		if(!TextUtils.isEmpty(statusForContent.content))
 			items.add(new TextStatusDisplayItem(parentID, HtmlParser.parse(statusForContent.content, statusForContent.emojis, statusForContent.mentions, statusForContent.tags, accountID), fragment, statusForContent, disableTranslate));
 		else if (!GlobalUserPreferences.replyLineAboveHeader && replyLine != null)
