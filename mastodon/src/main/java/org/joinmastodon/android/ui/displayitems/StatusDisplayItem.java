@@ -177,11 +177,9 @@ public abstract class StatusDisplayItem{
 				.filter(att->att.type.isImage() && !att.type.equals(Attachment.Type.UNKNOWN))
 				.collect(Collectors.toList());
 		if(!imageAttachments.isEmpty()){
-			AccountSession accountSession = AccountSessionManager.getInstance().getAccount(accountID);
-			Instance instance = AccountSessionManager.getInstance().getInstanceInfo(accountSession.domain);
-			if (instance.pleroma != null) {
-				int color = UiUtils.getThemeColor(context, R.attr.colorAccentLightest);
-				for (Attachment att : imageAttachments) {
+			int color = UiUtils.getThemeColor(context, R.attr.colorAccentLightest);
+			for (Attachment att : imageAttachments) {
+				if (att.blurhashPlaceholder == null) {
 					att.blurhashPlaceholder = new ColorDrawable(color);
 				}
 			}
