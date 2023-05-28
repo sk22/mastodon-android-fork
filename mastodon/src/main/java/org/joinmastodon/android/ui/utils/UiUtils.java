@@ -1113,23 +1113,20 @@ public class UiUtils {
 								if (!results.statuses.isEmpty()) {
 									args.putParcelable("status", Parcels.wrap(results.statuses.get(0)));
 									Nav.go((Activity) context, ThreadFragment.class, args);
-								} else if (!results.accounts.isEmpty()) {
-									Account acc = results.accounts.get(0);
-									try {
-										if (acc.getDomain() != new URL(url).getHost()) {
-											if (launchBrowser) launchWebBrowser(context, url);
-											else
-												Toast.makeText(context, R.string.sk_resource_not_found, Toast.LENGTH_SHORT).show();
-											return;
-										}
-									} catch (Exception ignored) {}
-									args.putParcelable("profileAccount", Parcels.wrap(acc));
-									Nav.go((Activity) context, ProfileFragment.class, args);
-								} else {
-									if (launchBrowser) launchWebBrowser(context, url);
-									else
-										Toast.makeText(context, R.string.sk_resource_not_found, Toast.LENGTH_SHORT).show();
+									return;
 								}
+								Optional<Account> account = results.accounts.stream()
+										.filter(a -> uri.equals(Uri.parse(a.url))).findAny();
+								if (account.isPresent()) {
+									args.putParcelable("profileAccount", Parcels.wrap(account.get()));
+									Nav.go((Activity) context, ProfileFragment.class, args);
+									return;
+								}
+								if (launchBrowser) {
+									launchWebBrowser(context, url);
+									return;
+								}
+								Toast.makeText(context, R.string.sk_resource_not_found, Toast.LENGTH_SHORT).show();
 							}
 
 							@Override
