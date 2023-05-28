@@ -31,7 +31,6 @@ import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
 import android.view.WindowInsets;
 import android.view.inputmethod.InputMethodManager;
-import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -51,6 +50,7 @@ import org.joinmastodon.android.api.requests.accounts.GetAccountStatuses;
 import org.joinmastodon.android.api.requests.accounts.GetOwnAccount;
 import org.joinmastodon.android.api.requests.accounts.SetAccountFollowed;
 import org.joinmastodon.android.api.requests.accounts.UpdateAccountCredentials;
+import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.account_list.FollowerListFragment;
 import org.joinmastodon.android.fragments.account_list.FollowingListFragment;
@@ -58,6 +58,7 @@ import org.joinmastodon.android.fragments.report.ReportReasonChoiceFragment;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.AccountField;
 import org.joinmastodon.android.model.Attachment;
+import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Relationship;
 import org.joinmastodon.android.ui.BetterItemAnimator;
 import org.joinmastodon.android.ui.SimpleViewHolder;
@@ -137,6 +138,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 
 	private Account account;
 	private String accountID;
+	private String domain;
 	private Relationship relationship;
 	private int statusBarHeight;
 	private boolean isOwnProfile;
@@ -151,7 +153,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 	private PhotoViewer currentPhotoViewer;
 	private boolean editModeLoading;
 
-	private static final int MAX_FIELDS=4;
+	private int maxFields = 4;
 
 	// from ProfileAboutFragment
 	public UsableRecyclerView list;
@@ -172,6 +174,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			setRetainInstance(true);
 
 		accountID=getArguments().getString("account");
+		domain=AccountSessionManager.getInstance().getAccount(accountID).domain;
 		if(getArguments().containsKey("profileAccount")){
 			account=Parcels.unwrap(getArguments().getParcelable("profileAccount"));
 			profileAccountID=account.id;
@@ -179,6 +182,12 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			loaded=true;
 			if(!isOwnProfile)
 				loadRelationship();
+			else {
+				Instance.Pleroma pleroma = AccountSessionManager.getInstance().getInstanceInfo(domain).pleroma;
+				if (pleroma != null) {
+					maxFields = pleroma.metadata.fieldsLimits.maxFields;
+				}
+			}
 		}else{
 			profileAccountID=getArguments().getString("profileAccountID");
 			if(!getArguments().getBoolean("noAutoLoad", false))
@@ -324,7 +333,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		username.setOnLongClickListener(v->{
 			String usernameString=account.acct;
 			if(!usernameString.contains("@")){
-				usernameString+="@"+AccountSessionManager.getInstance().getAccount(accountID).domain;
+				usernameString+="@"+domain;
 			}
 			UiUtils.copyText(username, '@'+usernameString);
 			return true;
@@ -510,7 +519,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			ssb.append(account.acct);
 			if(isSelf){
 				ssb.append('@');
-				ssb.append(AccountSessionManager.getInstance().getAccount(accountID).domain);
+				ssb.append(domain);
 			}
 			ssb.append(" ");
 			Drawable lock=username.getResources().getDrawable(R.drawable.ic_lock, getActivity().getTheme()).mutate();
@@ -520,7 +529,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			username.setText(ssb);
 		}else{
 			// noinspection SetTextI18n
-			username.setText('@'+account.acct+(isSelf ? ('@'+AccountSessionManager.getInstance().getAccount(accountID).domain) : ""));
+			username.setText('@'+account.acct+(isSelf ? ('@'+domain) : ""));
 		}
 		CharSequence parsedBio=HtmlParser.parse(account.note, account.emojis, Collections.emptyList(), Collections.emptyList(), accountID);
 		if(TextUtils.isEmpty(parsedBio)){
@@ -1189,7 +1198,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		public int getItemCount(){
 			if(isInEditMode){
 				int size=metadataListData.size();
-				if(size<MAX_FIELDS)
+				if(size<maxFields)
 					size++;
 				return size;
 			}
@@ -1306,7 +1315,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		@Override
 		public void onClick(){
 			metadataListData.add(new AccountField());
-			if(metadataListData.size()==MAX_FIELDS){ // replace this row with new row
+			if(metadataListData.size()==maxFields){ // replace this row with new row
 				adapter.notifyItemChanged(metadataListData.size()-1);
 			}else{
 				adapter.notifyItemInserted(metadataListData.size()-1);

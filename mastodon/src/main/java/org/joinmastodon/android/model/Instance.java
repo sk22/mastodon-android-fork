@@ -198,6 +198,19 @@ public class Instance extends BaseModel{
 
 	@Parcel
 	public static class Pleroma extends BaseModel {
-		// metadata etc
+		public Pleroma.Metadata metadata;
+
+		@Parcel
+		public static class Metadata {
+			public Pleroma.Metadata.FieldsLimits fieldsLimits;
+
+			@Parcel
+			public static class FieldsLimits {
+				public int maxFields;
+				public int maxRemoteFields;
+				public int nameLength;
+				public int valueLength;
+			}
+		}
 	}
 }
