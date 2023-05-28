@@ -30,6 +30,7 @@
     <string name="sk_user_post_notifications_off">Turned off post notifications for %s</string>
     <string name="sk_federated_timeline">Federation</string>
     <string name="sk_federated_timeline_info_banner">These are the most recent posts by the people in your federation.</string>
+    <string name="sk_bubble_timeline_info_banner">These are the most recent posts by the people in your Akkoma server\'s bubble.</string>
     <string name="sk_update_available">Megalodon %s is ready to download.</string>
     <string name="sk_update_ready">Megalodon %s is downloaded and ready to install.</string>
     <string name="sk_check_for_update">Check for update</string>
@@ -148,6 +149,7 @@
     <string name="sk_timeline_home">Home</string>
     <string name="sk_timeline_local">Local</string>
     <string name="sk_timeline_federated">Federation</string>
+    <string name="sk_timeline_bubble">Bubble</string>
     <string name="sk_recent_searches_placeholder">Type to start searching</string>
     <string name="sk_remove_follower">Remove as follower</string>
     <string name="sk_remove_follower_confirm">Remove %s as a follower by blocking and immediately unblocking them?</string>

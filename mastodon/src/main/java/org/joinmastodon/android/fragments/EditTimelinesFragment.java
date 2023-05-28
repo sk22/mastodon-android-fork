@@ -30,8 +30,11 @@ import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.lists.GetLists;
 import org.joinmastodon.android.api.requests.tags.GetFollowedHashtags;
+import org.joinmastodon.android.api.session.AccountSession;
+import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.model.Hashtag;
 import org.joinmastodon.android.model.HeaderPaginationList;
+import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.ListTimeline;
 import org.joinmastodon.android.model.TimelineDefinition;
 import org.joinmastodon.android.ui.DividerItemDecoration;
@@ -165,6 +168,10 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
         makeBackItem(hashtagsMenu);
 
         TimelineDefinition.ALL_TIMELINES.forEach(tl -> addTimelineToOptions(tl, timelinesMenu));
+        AccountSession accountSession = AccountSessionManager.getInstance().getAccount(accountID);
+        Instance instance = AccountSessionManager.getInstance().getInstanceInfo(accountSession.domain);
+        if (instance.pleroma != null && instance.pleroma.metadata.features.contains("bubble_timeline"))
+            addTimelineToOptions(TimelineDefinition.BUBBLE_TIMELINE, timelinesMenu);
         listTimelines.stream().map(TimelineDefinition::ofList).forEach(tl -> addTimelineToOptions(tl, listsMenu));
         hashtags.stream().map(TimelineDefinition::ofHashtag).forEach(tl -> addTimelineToOptions(tl, hashtagsMenu));
 

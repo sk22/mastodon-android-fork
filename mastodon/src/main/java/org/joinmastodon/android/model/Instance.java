@@ -204,6 +204,7 @@ public class Instance extends BaseModel{
 
 		@Parcel
 		public static class Metadata {
+			public List<String> features;
 			public Pleroma.Metadata.FieldsLimits fieldsLimits;
 
 			@Parcel

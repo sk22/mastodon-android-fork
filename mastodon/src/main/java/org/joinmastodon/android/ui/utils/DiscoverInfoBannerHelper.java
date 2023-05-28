@@ -38,6 +38,7 @@ public class DiscoverInfoBannerHelper{
 				case LOCAL_TIMELINE -> R.string.local_timeline_info_banner;
 				case FEDERATED_TIMELINE -> R.string.sk_federated_timeline_info_banner;
 				case POST_NOTIFICATIONS -> R.string.sk_notify_posts_info_banner;
+				case BUBBLE_TIMELINE -> R.string.sk_bubble_timeline_info_banner;
 			});
 		}
 	}
@@ -63,6 +64,7 @@ public class DiscoverInfoBannerHelper{
 		LOCAL_TIMELINE,
 		FEDERATED_TIMELINE,
 		POST_NOTIFICATIONS,
-//		ACCOUNTS
+//		ACCOUNTS,
+		BUBBLE_TIMELINE
 	}
 }

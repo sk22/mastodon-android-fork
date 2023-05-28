@@ -14,6 +14,7 @@ import org.joinmastodon.android.fragments.HashtagTimelineFragment;
 import org.joinmastodon.android.fragments.HomeTimelineFragment;
 import org.joinmastodon.android.fragments.ListTimelineFragment;
 import org.joinmastodon.android.fragments.NotificationsListFragment;
+import org.joinmastodon.android.fragments.discover.BubbleTimelineFragment;
 import org.joinmastodon.android.fragments.discover.FederatedTimelineFragment;
 import org.joinmastodon.android.fragments.discover.LocalTimelineFragment;
 
@@ -78,6 +79,7 @@ public class TimelineDefinition {
             case POST_NOTIFICATIONS -> ctx.getString(R.string.sk_timeline_posts);
             case LIST -> listTitle;
             case HASHTAG -> hashtagName;
+            case BUBBLE -> ctx.getString(R.string.sk_timeline_bubble);
         };
     }
 
@@ -89,6 +91,7 @@ public class TimelineDefinition {
             case POST_NOTIFICATIONS -> Icon.POST_NOTIFICATIONS;
             case LIST -> Icon.LIST;
             case HASHTAG -> Icon.HASHTAG;
+            case BUBBLE -> Icon.BUBBLE;
         };
     }
 
@@ -100,6 +103,7 @@ public class TimelineDefinition {
             case LIST -> new ListTimelineFragment();
             case HASHTAG -> new HashtagTimelineFragment();
             case POST_NOTIFICATIONS -> new NotificationsListFragment();
+            case BUBBLE -> new BubbleTimelineFragment();
         };
     }
 
@@ -156,7 +160,7 @@ public class TimelineDefinition {
         return args;
     }
 
-    public enum TimelineType { HOME, LOCAL, FEDERATED, POST_NOTIFICATIONS, LIST, HASHTAG }
+    public enum TimelineType { HOME, LOCAL, FEDERATED, POST_NOTIFICATIONS, LIST, HASHTAG, BUBBLE }
 
     public enum Icon {
         HEART(R.drawable.ic_fluent_heart_24_regular, R.string.sk_icon_heart),
@@ -219,7 +223,8 @@ public class TimelineDefinition {
         FEDERATED(R.drawable.ic_fluent_earth_24_regular, R.string.sk_timeline_federated, true),
         POST_NOTIFICATIONS(R.drawable.ic_fluent_chat_24_regular, R.string.sk_timeline_posts, true),
         LIST(R.drawable.ic_fluent_people_24_regular, R.string.sk_list, true),
-        HASHTAG(R.drawable.ic_fluent_number_symbol_24_regular, R.string.sk_hashtag, true);
+        HASHTAG(R.drawable.ic_fluent_number_symbol_24_regular, R.string.sk_hashtag, true),
+        BUBBLE(R.drawable.ic_fluent_circle_24_regular, R.string.sk_timeline_bubble, true);
 
         public final int iconRes, nameRes;
         public final boolean hidden;
@@ -239,6 +244,7 @@ public class TimelineDefinition {
     public static final TimelineDefinition LOCAL_TIMELINE = new TimelineDefinition(TimelineType.LOCAL);
     public static final TimelineDefinition FEDERATED_TIMELINE = new TimelineDefinition(TimelineType.FEDERATED);
     public static final TimelineDefinition POSTS_TIMELINE = new TimelineDefinition(TimelineType.POST_NOTIFICATIONS);
+    public static final TimelineDefinition BUBBLE_TIMELINE = new TimelineDefinition(TimelineType.BUBBLE);
 
     public static final List<TimelineDefinition> DEFAULT_TIMELINES = BuildConfig.BUILD_TYPE.equals("playRelease")
             ? List.of(HOME_TIMELINE.copy(), LOCAL_TIMELINE.copy())
