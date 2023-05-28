@@ -86,6 +86,8 @@ public class Instance extends BaseModel{
 
 	public Pleroma pleroma;
 
+	public PleromaPollLimits pollLimits;
+
 	@Override
 	public void postprocess() throws ObjectValidationException{
 		super.postprocess();
@@ -212,5 +214,13 @@ public class Instance extends BaseModel{
 				public int valueLength;
 			}
 		}
+	}
+
+	@Parcel
+	public static class PleromaPollLimits {
+		public int maxExpiration;
+		public int maxOptionChars;
+		public int maxOptions;
+		public int minExpiration;
 	}
 }
