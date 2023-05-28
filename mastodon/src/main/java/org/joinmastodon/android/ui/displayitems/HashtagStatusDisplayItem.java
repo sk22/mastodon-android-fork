@@ -3,6 +3,7 @@ package org.joinmastodon.android.ui.displayitems;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.joinmastodon.android.R;
@@ -26,6 +27,13 @@ public class HashtagStatusDisplayItem extends StatusDisplayItem{
 	public static class Holder extends StatusDisplayItem.Holder<HashtagStatusDisplayItem>{
 		private final TextView title, subtitle;
 		private final HashtagChartView chart;
+		public static final RelativeLayout.LayoutParams
+				withHistoryParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT),
+				withoutHistoryParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+		static {
+			withoutHistoryParams.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
+		}
 
 		public Holder(Context context, ViewGroup parent){
 			super(context, R.layout.item_trending_hashtag, parent);
@@ -41,10 +49,11 @@ public class HashtagStatusDisplayItem extends StatusDisplayItem{
 			if (item.history == null || item.history.isEmpty()) {
 				subtitle.setText(null);
 				chart.setVisibility(View.GONE);
-				title.setPadding(0, 18, 0, 0);
+				title.setLayoutParams(withoutHistoryParams);
 				return;
 			}
 			chart.setVisibility(View.VISIBLE);
+			title.setLayoutParams(withHistoryParams);
 			int numPeople=item.history.get(0).accounts;
 			if(item.history.size()>1)
 				numPeople+=item.history.get(1).accounts;

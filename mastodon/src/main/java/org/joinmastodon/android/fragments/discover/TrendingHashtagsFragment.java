@@ -1,5 +1,8 @@
 package org.joinmastodon.android.fragments.discover;
 
+import static org.joinmastodon.android.ui.displayitems.HashtagStatusDisplayItem.Holder.withHistoryParams;
+import static org.joinmastodon.android.ui.displayitems.HashtagStatusDisplayItem.Holder.withoutHistoryParams;
+
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -108,9 +111,11 @@ public class TrendingHashtagsFragment extends RecyclerFragment<Hashtag> implemen
 			if (item.history == null || item.history.isEmpty()) {
 				subtitle.setText(null);
 				chart.setVisibility(View.GONE);
+				title.setLayoutParams(withoutHistoryParams);
 				return;
 			}
 			chart.setVisibility(View.VISIBLE);
+			title.setLayoutParams(withHistoryParams);
 			int numPeople=item.history.get(0).accounts;
 			if(item.history.size()>1)
 				numPeople+=item.history.get(1).accounts;
