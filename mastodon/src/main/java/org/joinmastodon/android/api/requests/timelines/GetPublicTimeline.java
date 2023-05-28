@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.google.gson.reflect.TypeToken;
 
+import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.api.MastodonAPIRequest;
 import org.joinmastodon.android.model.Status;
 
@@ -20,5 +21,7 @@ public class GetPublicTimeline extends MastodonAPIRequest<List<Status>>{
 			addQueryParameter("max_id", maxID);
 		if(limit>0)
 			addQueryParameter("limit", limit+"");
+		if(GlobalUserPreferences.replyVisibility != null)
+			addQueryParameter("reply_visibility", GlobalUserPreferences.replyVisibility);
 	}
 }
