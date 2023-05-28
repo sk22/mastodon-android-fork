@@ -9,7 +9,10 @@ import com.squareup.otto.Subscribe;
 
 import org.joinmastodon.android.E;
 import org.joinmastodon.android.R;
+import org.joinmastodon.android.api.MastodonErrorResponse;
 import org.joinmastodon.android.api.requests.markers.SaveMarkers;
+import org.joinmastodon.android.api.requests.notifications.PleromaMarkNotificationsRead;
+import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.AllNotificationsSeenEvent;
 import org.joinmastodon.android.events.PollUpdatedEvent;
@@ -18,6 +21,7 @@ import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.CacheablePaginatedResponse;
 import org.joinmastodon.android.model.Emoji;
 import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.displayitems.AccountCardStatusDisplayItem;
@@ -40,6 +44,7 @@ import java.util.stream.Stream;
 
 import androidx.recyclerview.widget.RecyclerView;
 import me.grishka.appkit.Nav;
+import me.grishka.appkit.api.ErrorResponse;
 import me.grishka.appkit.api.SimpleCallback;
 
 public class NotificationsListFragment extends BaseStatusListFragment<Notification>{
@@ -158,6 +163,11 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 								AccountSessionManager.getInstance().getAccount(accountID).markers
 										.notifications.lastReadId = result.items.get(0).id;
 							AccountSessionManager.getInstance().writeAccountsFile();
+
+							AccountSession accountSession = AccountSessionManager.getInstance().getAccount(accountID);
+							Instance instance = AccountSessionManager.getInstance().getInstanceInfo(accountSession.domain);
+							if (instance.pleroma != null)
+								new PleromaMarkNotificationsRead(result.items.get(0).id).exec(accountID);
 						}
 					}
 				});
