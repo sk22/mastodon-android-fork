@@ -18,13 +18,15 @@ package org.joinmastodon.android.ui;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.TimeInterpolator;
-import android.animation.ValueAnimator;
 import android.view.View;
 import android.view.ViewPropertyAnimator;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
+
+import org.joinmastodon.android.ui.displayitems.MediaGridStatusDisplayItem;
+
 import me.grishka.appkit.utils.CubicBezierInterpolator;
 
 import java.util.ArrayList;
@@ -358,7 +360,14 @@ public class BetterItemAnimator extends SimpleItemAnimator{
             mChangeAnimations.add(changeInfo.oldHolder);
             oldViewAnim.translationX(changeInfo.toX - changeInfo.fromX);
             oldViewAnim.translationY(changeInfo.toY - changeInfo.fromY);
-            oldViewAnim.alpha(0).setListener(new AnimatorListenerAdapter() {
+            float alpha = 0;
+            if (holder instanceof MediaGridStatusDisplayItem.Holder mediaItemHolder) {
+                if (mediaItemHolder.isSizeUpdating()) {
+                    alpha = 1; // Image will flicker out and then in if alpha is 0
+                    mediaItemHolder.sizeUpdated();
+                }
+            }
+            oldViewAnim.alpha(alpha).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationStart(Animator animator) {
                     dispatchChangeStarting(changeInfo.oldHolder, true);

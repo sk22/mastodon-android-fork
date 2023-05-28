@@ -362,8 +362,6 @@ public class SettingsFragment extends MastodonToolbarFragment{
 			contentTypeMenu = popupMenu.getMenu();
 			contentTypeMenu.findItem(ContentType.getContentTypeRes(contentType)).setChecked(true);
 			ContentType.adaptMenuToInstance(contentTypeMenu, instance);
-			contentTypeMenu.findItem(R.id.content_type_null).setVisible(
-					!GlobalUserPreferences.accountsWithContentTypesEnabled.contains(accountID));
 		}));
 		items.add(new SmallTextItem(getString(R.string.sk_settings_default_content_type_explanation)));
 		items.add(new SwitchItem(R.string.sk_settings_support_local_only, 0, GlobalUserPreferences.accountsWithLocalOnlySupport.contains(accountID), i->{

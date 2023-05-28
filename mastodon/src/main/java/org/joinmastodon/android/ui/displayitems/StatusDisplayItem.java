@@ -2,6 +2,7 @@ package org.joinmastodon.android.ui.displayitems;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
+import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.fragments.HashtagTimelineFragment;
@@ -20,12 +22,14 @@ import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Attachment;
 import org.joinmastodon.android.model.DisplayItemsParent;
 import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.Poll;
 import org.joinmastodon.android.model.ScheduledStatus;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.PhotoLayoutHelper;
 import org.joinmastodon.android.ui.text.HtmlParser;
+import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.utils.StatusFilterPredicate;
 import org.parceler.Parcels;
 
@@ -182,6 +186,12 @@ public abstract class StatusDisplayItem{
 				.filter(att->att.type.isImage() && !att.type.equals(Attachment.Type.UNKNOWN))
 				.collect(Collectors.toList());
 		if(!imageAttachments.isEmpty()){
+			int color = UiUtils.getThemeColor(fragment.getContext(), R.attr.colorAccentLightest);
+			for (Attachment att : imageAttachments) {
+				if (att.blurhashPlaceholder == null) {
+					att.blurhashPlaceholder = new ColorDrawable(color);
+				}
+			}
 			PhotoLayoutHelper.TiledLayoutResult layout=PhotoLayoutHelper.processThumbs(imageAttachments);
 			items.add(new MediaGridStatusDisplayItem(parentID, fragment, layout, imageAttachments, statusForContent));
 		}

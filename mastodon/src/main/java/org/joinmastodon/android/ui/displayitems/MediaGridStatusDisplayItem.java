@@ -7,6 +7,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.View;
@@ -17,7 +18,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.model.Attachment;
@@ -40,7 +40,7 @@ import me.grishka.appkit.utils.CubicBezierInterpolator;
 public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 	private static final String TAG="MediaGridDisplayItem";
 
-	private final PhotoLayoutHelper.TiledLayoutResult tiledLayout;
+	private PhotoLayoutHelper.TiledLayoutResult tiledLayout;
 	private final TypedObjectPool<GridItemType, MediaAttachmentViewController> viewPool;
 	private final List<Attachment> attachments;
 	private final ArrayList<ImageLoaderRequest> requests=new ArrayList<>();
@@ -98,6 +98,8 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 		private int altTextIndex=-1;
 		private Animator altTextAnimator;
 
+		private boolean sizeUpdating = false;
+
 		public Holder(Activity activity, ViewGroup parent){
 			super(new FrameLayoutThatOnlyMeasuresFirstChild(activity));
 			wrapper=(FrameLayout)itemView;
@@ -126,6 +128,7 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 			}
 			layout.removeAllViews();
 			controllers.clear();
+
 			int i=0;
 			for(Attachment att:item.attachments){
 				MediaAttachmentViewController c=item.viewPool.obtain(switch(att.type){
@@ -158,6 +161,19 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 
 		@Override
 		public void setImage(int index, Drawable drawable){
+			Rect bounds=drawable.getBounds();
+			drawable.setBounds(bounds.left, bounds.top, bounds.left+drawable.getIntrinsicWidth(), bounds.top+drawable.getIntrinsicHeight());
+			if(item.attachments.get(index).meta==null){
+				Attachment.Metadata metadata = new Attachment.Metadata();
+				metadata.width=drawable.getIntrinsicWidth();
+				metadata.height=drawable.getIntrinsicHeight();
+				item.attachments.get(index).meta=metadata;
+
+				item.tiledLayout=PhotoLayoutHelper.processThumbs(item.attachments);
+				sizeUpdating = true;
+				item.parentFragment.onImageUpdated(this, index);
+			}
+
 			controllers.get(index).setImage(drawable);
 		}
 
@@ -313,6 +329,14 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 		public void setClipChildren(boolean clip){
 			layout.setClipChildren(clip);
 			wrapper.setClipChildren(clip);
+		}
+
+		public boolean isSizeUpdating() {
+			return sizeUpdating;
+		}
+
+		public void sizeUpdated() {
+			sizeUpdating = false;
 		}
 	}
 }

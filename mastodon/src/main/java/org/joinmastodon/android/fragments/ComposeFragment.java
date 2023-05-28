@@ -245,10 +245,6 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 
 		accountID=getArguments().getString("account");
 		contentType = GlobalUserPreferences.accountsDefaultContentTypes.get(accountID);
-		if (contentType == null && GlobalUserPreferences.accountsWithContentTypesEnabled.contains(accountID)) {
-			// if formatting is enabled, use plain to avoid confusing unspecified default setting
-			contentType = ContentType.PLAIN;
-		}
 
 		AccountSession session=AccountSessionManager.getInstance().getAccount(accountID);
 		self=session.self;
