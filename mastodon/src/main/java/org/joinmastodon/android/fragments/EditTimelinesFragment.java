@@ -167,11 +167,7 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
         makeBackItem(listsMenu);
         makeBackItem(hashtagsMenu);
 
-        TimelineDefinition.ALL_TIMELINES.forEach(tl -> addTimelineToOptions(tl, timelinesMenu));
-        AccountSession accountSession = AccountSessionManager.getInstance().getAccount(accountID);
-        Instance instance = AccountSessionManager.getInstance().getInstanceInfo(accountSession.domain);
-        if (instance.pleroma != null && instance.pleroma.metadata.features.contains("bubble_timeline"))
-            addTimelineToOptions(TimelineDefinition.BUBBLE_TIMELINE, timelinesMenu);
+        TimelineDefinition.getAllTimelines(accountID).forEach(tl -> addTimelineToOptions(tl, timelinesMenu));
         listTimelines.stream().map(TimelineDefinition::ofList).forEach(tl -> addTimelineToOptions(tl, listsMenu));
         hashtags.stream().map(TimelineDefinition::ofHashtag).forEach(tl -> addTimelineToOptions(tl, hashtagsMenu));
 
@@ -197,7 +193,7 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
 
     @Override
     protected void doLoadData(int offset, int count){
-        onDataLoaded(GlobalUserPreferences.pinnedTimelines.getOrDefault(accountID, TimelineDefinition.DEFAULT_TIMELINES), false);
+        onDataLoaded(GlobalUserPreferences.pinnedTimelines.getOrDefault(accountID, TimelineDefinition.getDefaultTimelines(accountID)), false);
         updateOptionsMenu();
     }
 

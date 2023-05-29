@@ -106,7 +106,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 		super.onCreate(savedInstanceState);
 		E.register(this);
 		accountID = getArguments().getString("account");
-		timelineDefinitions = GlobalUserPreferences.pinnedTimelines.getOrDefault(accountID, TimelineDefinition.DEFAULT_TIMELINES);
+		timelineDefinitions = GlobalUserPreferences.pinnedTimelines.getOrDefault(accountID, TimelineDefinition.getDefaultTimelines(accountID));
 		assert timelineDefinitions != null;
 		if (timelineDefinitions.size() == 0) timelineDefinitions = List.of(TimelineDefinition.HOME_TIMELINE);
 		count = timelineDefinitions.size();
