@@ -19,7 +19,6 @@ import org.joinmastodon.android.model.CacheablePaginatedResponse;
 import org.joinmastodon.android.model.Filter;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Notification;
-import org.joinmastodon.android.model.PaginatedResponse;
 import org.joinmastodon.android.model.SearchResult;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.utils.StatusFilterPredicate;
@@ -160,7 +159,7 @@ public class CacheController{
 					}
 				}
 				Instance instance=AccountSessionManager.getInstance().getInstanceInfo(accountSession.domain);
-				new GetNotifications(maxID, count, onlyPosts ? EnumSet.of(Notification.Type.STATUS) : onlyMentions ? EnumSet.of(Notification.Type.MENTION): EnumSet.allOf(Notification.Type.class), instance.pleroma != null)
+				new GetNotifications(maxID, count, onlyPosts ? EnumSet.of(Notification.Type.STATUS) : onlyMentions ? EnumSet.of(Notification.Type.MENTION): EnumSet.allOf(Notification.Type.class), instance.isPleroma())
 						.setCallback(new Callback<>(){
 							@Override
 							public void onSuccess(List<Notification> result){

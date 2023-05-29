@@ -74,7 +74,7 @@ public class ThreadFragment extends StatusListFragment{
 						}
 						AccountSession account=AccountSessionManager.getInstance().getAccount(accountID);
 						Instance instance=AccountSessionManager.getInstance().getInstanceInfo(account.domain);
-						if(instance.pleroma != null){
+						if(instance.isPleroma()){
 							List<String> threadIds=new ArrayList<>();
 							threadIds.add(mainStatus.id);
 							for(Status s:result.descendants){

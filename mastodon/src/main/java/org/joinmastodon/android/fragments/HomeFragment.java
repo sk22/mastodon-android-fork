@@ -66,16 +66,12 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 	private int currentTab=R.id.tab_home;
 
 	private String accountID;
-	private boolean isPleroma;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		E.register(this);
 		accountID=getArguments().getString("account");
-		AccountSession accountSession = AccountSessionManager.getInstance().getAccount(accountID);
-		Instance instance = AccountSessionManager.getInstance().getInstanceInfo(accountSession.domain);
-		isPleroma=instance.pleroma!=null;
 		setTitle(R.string.sk_app_name);
 
 		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N)
@@ -87,7 +83,8 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 			homeTabFragment=new HomeTabFragment();
 			homeTabFragment.setArguments(args);
 			args=new Bundle(args);
-			args.putBoolean("isPleroma", isPleroma);
+			Instance instance = AccountSessionManager.getInstance().getAccount(accountID).getInstance();
+			args.putBoolean("isPleroma", instance.isPleroma());
 			args.putBoolean("noAutoLoad", true);
 			searchFragment=new DiscoverFragment();
 			searchFragment.setArguments(args);
@@ -297,10 +294,10 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 
 	public void updateNotificationBadge() {
 		AccountSession session = AccountSessionManager.getInstance().getAccount(accountID);
-		Instance instance = AccountSessionManager.getInstance().getInstanceInfo(session.domain);
+		Instance instance = session.getInstance();
 		if (instance == null) return;
 
-		new GetNotifications(null, 1, EnumSet.allOf(Notification.Type.class), instance != null && instance.pleroma != null)
+		new GetNotifications(null, 1, EnumSet.allOf(Notification.Type.class), instance != null && instance.isPleroma())
 				.setCallback(new Callback<>() {
 					@Override
 					public void onSuccess(List<Notification> notifications) {

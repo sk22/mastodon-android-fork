@@ -164,9 +164,7 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 										.notifications.lastReadId = result.items.get(0).id;
 							AccountSessionManager.getInstance().writeAccountsFile();
 
-							AccountSession accountSession = AccountSessionManager.getInstance().getAccount(accountID);
-							Instance instance = AccountSessionManager.getInstance().getInstanceInfo(accountSession.domain);
-							if (instance.pleroma != null)
+							if (AccountSessionManager.getInstance().getAccount(accountID).getInstance().isPleroma())
 								new PleromaMarkNotificationsRead(result.items.get(0).id).exec(accountID);
 						}
 					}

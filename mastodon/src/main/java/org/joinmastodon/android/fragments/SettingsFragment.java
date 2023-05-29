@@ -105,7 +105,7 @@ public class SettingsFragment extends MastodonToolbarFragment{
 		imageCache = ImageCache.getInstance(getActivity());
 		accountID=getArguments().getString("account");
 		AccountSession session=AccountSessionManager.getInstance().getAccount(accountID);
-		Instance instance = AccountSessionManager.getInstance().getInstanceInfo(session.domain);
+		Instance instance = session.getInstance();
 		String instanceName = UiUtils.getInstanceName(accountID);
 
 		if(GithubSelfUpdater.needSelfUpdating()){
@@ -223,7 +223,7 @@ public class SettingsFragment extends MastodonToolbarFragment{
 			GlobalUserPreferences.showReplies=i.checked;
 			GlobalUserPreferences.save();
 		}));
-		if (instance.pleroma != null) {
+		if (instance.isPleroma()) {
 			items.add(new ButtonItem(R.string.sk_settings_reply_visibility, R.drawable.ic_fluent_chat_24_regular, b->{
 				PopupMenu popupMenu=new PopupMenu(getActivity(), b, Gravity.CENTER_HORIZONTAL);
 				popupMenu.inflate(R.menu.reply_visibility);

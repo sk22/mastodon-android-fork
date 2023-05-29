@@ -7,6 +7,7 @@ import org.joinmastodon.android.api.StatusInteractionController;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Application;
 import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Markers;
 import org.joinmastodon.android.model.Preferences;
 import org.joinmastodon.android.model.PushSubscription;
@@ -86,5 +87,9 @@ public class AccountSession{
 		if(pushSubscriptionManager==null)
 			pushSubscriptionManager=new PushSubscriptionManager(getID());
 		return pushSubscriptionManager;
+	}
+
+	public Instance getInstance() {
+		return AccountSessionManager.getInstance().getInstanceInfo(domain);
 	}
 }

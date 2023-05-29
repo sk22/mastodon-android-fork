@@ -136,6 +136,10 @@ public class Instance extends BaseModel{
 		return ci;
 	}
 
+	public boolean isPleroma() {
+		return pleroma != null;
+	}
+
 	@Parcel
 	public static class Rule{
 		public String id;

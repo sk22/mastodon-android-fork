@@ -947,7 +947,7 @@ public class UiUtils {
 
 	public static String getInstanceName(String accountID) {
 		AccountSession session = AccountSessionManager.getInstance().getAccount(accountID);
-		Instance instance = AccountSessionManager.getInstance().getInstanceInfo(session.domain);
+		Instance instance = session.getInstance();
 		return instance != null && !instance.title.isBlank() ? instance.title : session.domain;
 	}
 
