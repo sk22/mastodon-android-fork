@@ -39,7 +39,7 @@ public abstract class PaginatedAccountListFragment extends BaseAccountListFragme
 	}
 
 	private boolean shouldLoadRemote() {
-		if (this instanceof FollowingListFragment || this instanceof FollowerListFragment) {
+		if (!(this instanceof FollowingListFragment || this instanceof FollowerListFragment)) {
 			return false;
 		}
 		return targetAccount != null && targetAccount.getDomain() != null;
