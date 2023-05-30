@@ -135,6 +135,12 @@ public class Account extends BaseModel implements Searchable{
 
 	public List<Role> roles;
 
+	/**
+	 * Indicate that account data may be wrong and needs to be re-fetched .
+	 * This is the case for accounts from other instances, which contain false (local) ids.
+	 */
+	public boolean remoteAccount;
+
 	@Override
 	public String getQuery() {
 		return url;
