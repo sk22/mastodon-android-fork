@@ -54,6 +54,7 @@ import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.MastodonApp;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.StatusInteractionController;
+import org.joinmastodon.android.api.requests.accounts.GetAccountByHandle;
 import org.joinmastodon.android.api.requests.accounts.SetAccountBlocked;
 import org.joinmastodon.android.api.requests.accounts.SetAccountFollowed;
 import org.joinmastodon.android.api.requests.accounts.SetAccountMuted;
@@ -114,6 +115,8 @@ import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import androidx.annotation.AttrRes;
@@ -1033,6 +1036,12 @@ public class UiUtils {
 		);
 	}
 
+    public static void lookupRemoteAccount(Context context, Account queryAccount, String targetAccountID, @Nullable String sourceAccountID, Consumer<Account> resultConsumer) {
+		remoteLookup(context, queryAccount, targetAccountID, sourceAccountID, GetSearchResults.Type.ACCOUNTS, resultConsumer, results ->
+				!results.accounts.isEmpty() ? Optional.of(results.accounts.get(0)) : Optional.empty()
+		);
+	}
+
 	public static <T extends Searchable> void lookup(Context context, T query, String targetAccountID, @Nullable String sourceAccountID, @Nullable GetSearchResults.Type type, Consumer<T> resultConsumer, Function<SearchResults, Optional<T>> extractResult) {
 		if (sourceAccountID != null && targetAccountID.startsWith(sourceAccountID.substring(0, sourceAccountID.indexOf('_')))) {
 			resultConsumer.accept(query);
@@ -1060,13 +1069,94 @@ public class UiUtils {
 				.exec(targetAccountID);
 	}
 
+
+
+    public static <T extends Searchable> void remoteLookup(Context context, T query, String targetAccountID, @Nullable String sourceAccountID, @Nullable GetSearchResults.Type type, Consumer<T> resultConsumer, Function<SearchResults, Optional<T>> extractResult) {
+        if (sourceAccountID != null && targetAccountID.startsWith(sourceAccountID.substring(0, sourceAccountID.indexOf('_')))) {
+            resultConsumer.accept(query);
+            return;
+        }
+
+        Pattern pattern = Pattern.compile("(?<=\\/\\/)([^\\/]+)(?=\\/@)");
+        Matcher matcher = pattern.matcher(query.getQuery());
+        String domain = null;
+        if(matcher.find()){
+            domain = matcher.group(1);
+        }
+
+        Pattern patternForQuery = Pattern.compile("https?:\\/\\/[^\\/]+\\/@(\\w+)");
+        Matcher matcherForQuery = patternForQuery.matcher(query.getQuery());
+        String trimmedQuery = null;
+
+        if(matcherForQuery.find()){
+            trimmedQuery = matcherForQuery.group(1);
+        }
+
+        if(query instanceof Account){
+            domain = ((Account) query).getDomain();
+            trimmedQuery = ((Account) query).username;
+        }
+
+        String finalDomain = domain;
+
+        if(query instanceof Account){
+            new GetAccountByHandle(((Account) query).acct)
+                .setCallback(new Callback<>() {
+					@Override
+					public void onSuccess(Account result) {
+						if (result != null) {
+							resultConsumer.accept((T) result);
+						} else {
+							Toast.makeText(context, R.string.sk_resource_not_found, Toast.LENGTH_SHORT).show();
+							resultConsumer.accept(null);
+						}
+					}
+
+					@Override
+					public void onError(ErrorResponse error) {
+						error.showToast(context);
+						resultConsumer.accept(null);
+					}
+				})
+            .wrapProgress((Activity)context, R.string.loading, true,
+					d -> transformDialogForLookup(context, targetAccountID, null, d, finalDomain))
+                .execNoAuth(domain);
+            return;
+        }
+        new GetSearchResults(trimmedQuery, type, false).setCallback(new Callback<>() {
+            @Override
+            public void onSuccess(SearchResults results) {
+                Optional<T> result = extractResult.apply(results);
+                if (result.isPresent()) resultConsumer.accept(result.get());
+                else {
+                    Toast.makeText(context, R.string.sk_resource_not_found, Toast.LENGTH_SHORT).show();
+                    resultConsumer.accept(null);
+                }
+            }
+
+            @Override
+            public void onError(ErrorResponse error) {
+                error.showToast(context);
+                resultConsumer.accept(null);
+            }
+        })
+        .wrapProgress((Activity)context, R.string.loading, true,
+                d -> transformDialogForLookup(context, targetAccountID, null, d, finalDomain))
+            .execNoAuth(domain);
+    }
+
+
 	public static void openURL(Context context, String accountID, String url) {
 		openURL(context, accountID, url, true);
 	}
 
-	private static void transformDialogForLookup(Context context, String accountID, @Nullable String url, ProgressDialog dialog) {
+	private static void transformDialogForLookup(Context context, String accountID, @Nullable String url, ProgressDialog dialog){
+		transformDialogForLookup(context, accountID, url, dialog, null);
+	}
+
+	private static void transformDialogForLookup(Context context, String accountID, @Nullable String url, ProgressDialog dialog, @Nullable String instanceName) {
 		if (accountID != null) {
-			dialog.setTitle(context.getString(R.string.sk_loading_resource_on_instance_title, getInstanceName(accountID)));
+			dialog.setTitle(context.getString(R.string.sk_loading_resource_on_instance_title, instanceName != null ? instanceName : getInstanceName(accountID)));
 		} else {
 			dialog.setTitle(R.string.sk_loading_fediverse_resource_title);
 		}
@@ -1078,7 +1168,6 @@ public class UiUtils {
 			});
 		}
 	}
-
 	public static void openURL(Context context, String accountID, String url, boolean launchBrowser) {
 		Uri uri = Uri.parse(url);
 		List<String> path = uri.getPathSegments();
