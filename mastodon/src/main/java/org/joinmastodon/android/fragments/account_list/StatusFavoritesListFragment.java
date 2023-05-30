@@ -18,4 +18,9 @@ public class StatusFavoritesListFragment extends StatusRelatedAccountListFragmen
 	public HeaderPaginationRequest<Account> onCreateRequest(String maxID, int count){
 		return new GetStatusFavorites(status.id, maxID, count);
 	}
+
+	@Override
+	public HeaderPaginationRequest<Account> onCreateRemoteRequest(String id, String maxID, int count) {
+		return null;
+	}
 }

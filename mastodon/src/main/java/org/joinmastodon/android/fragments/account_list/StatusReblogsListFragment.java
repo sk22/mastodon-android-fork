@@ -18,4 +18,9 @@ public class StatusReblogsListFragment extends StatusRelatedAccountListFragment{
 	public HeaderPaginationRequest<Account> onCreateRequest(String maxID, int count){
 		return new GetStatusReblogs(status.id, maxID, count);
 	}
+
+	@Override
+	public HeaderPaginationRequest<Account> onCreateRemoteRequest(String id, String maxID, int count) {
+		return null;
+	}
 }
