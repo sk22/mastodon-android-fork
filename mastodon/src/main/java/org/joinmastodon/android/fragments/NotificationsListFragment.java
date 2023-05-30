@@ -22,6 +22,7 @@ import org.joinmastodon.android.model.CacheablePaginatedResponse;
 import org.joinmastodon.android.model.Emoji;
 import org.joinmastodon.android.model.Filter;
 import org.joinmastodon.android.model.Instance;
+import org.joinmastodon.android.model.Markers;
 import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.displayitems.AccountCardStatusDisplayItem;
@@ -156,12 +157,12 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 						loadRelationships(needRelationships);
 						maxID=result.maxID;
 
-						if(offset==0 && !result.items.isEmpty() && !result.isFromCache() && AccountSessionManager.getInstance().getAccount(accountID).markers.notifications != null){
+						Markers markers = AccountSessionManager.getInstance().getAccount(accountID).markers;
+						if(offset==0 && !result.items.isEmpty() && !result.isFromCache() && markers != null && markers.notifications != null){
 							E.post(new AllNotificationsSeenEvent());
 							new SaveMarkers(null, result.items.get(0).id).exec(accountID);
-							if (AccountSessionManager.getInstance().getAccount(accountID).markers != null)
-								AccountSessionManager.getInstance().getAccount(accountID).markers
-										.notifications.lastReadId = result.items.get(0).id;
+							AccountSessionManager.getInstance().getAccount(accountID).markers
+									.notifications.lastReadId = result.items.get(0).id;
 							AccountSessionManager.getInstance().writeAccountsFile();
 
 							if (AccountSessionManager.getInstance().getAccount(accountID).getInstance().isPleroma())
