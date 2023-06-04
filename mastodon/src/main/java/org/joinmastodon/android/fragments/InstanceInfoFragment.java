@@ -1,6 +1,7 @@
 package org.joinmastodon.android.fragments;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -327,13 +328,20 @@ public class InstanceInfoFragment extends LoaderFragment {
 		if (instance != null) {
 			inflater.inflate(R.menu.instance_info, menu);
 			UiUtils.enableOptionsMenuIcons(getActivity(), menu);
+			menu.findItem(R.id.share).setTitle(getString(R.string.share_user, instance.uri));
+
 		}
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item){
 		int id=item.getItemId();
-		if (id==R.id.rules) {
+		if(id==R.id.share){
+			Intent intent = new Intent(Intent.ACTION_SEND);
+			intent.setType("text/plain");
+			intent.putExtra(Intent.EXTRA_TEXT, instance.uri);
+			startActivity(Intent.createChooser(intent, item.getTitle()));
+		}else if (id==R.id.rules) {
 			Bundle args=new Bundle();
 			args.putParcelable("instance", Parcels.wrap(instance));
 			Nav.go(getActivity(), InstanceRulesFragment.class, args);
