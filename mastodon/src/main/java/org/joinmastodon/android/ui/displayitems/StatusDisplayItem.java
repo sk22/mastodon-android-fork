@@ -89,6 +89,7 @@ public abstract class StatusDisplayItem{
 			case POLL_OPTION -> new PollOptionStatusDisplayItem.Holder(activity, parent);
 			case POLL_FOOTER -> new PollFooterStatusDisplayItem.Holder(activity, parent);
 			case CARD -> new LinkCardStatusDisplayItem.Holder(activity, parent);
+			case EMOJI_REACTIONS -> new EmojiReactionsStatusDisplayItem.Holder(activity, parent);
 			case FOOTER -> new FooterStatusDisplayItem.Holder(activity, parent);
 			case ACCOUNT_CARD -> new AccountCardStatusDisplayItem.Holder(activity, parent);
 			case ACCOUNT -> new AccountStatusDisplayItem.Holder(activity, parent);
@@ -232,6 +233,11 @@ public abstract class StatusDisplayItem{
 		if(statusForContent.card!=null && statusForContent.mediaAttachments.isEmpty() && TextUtils.isEmpty(statusForContent.spoilerText)){
 			items.add(new LinkCardStatusDisplayItem(parentID, fragment, statusForContent));
 		}
+
+		if(statusForContent.emojiReactions != null && !statusForContent.emojiReactions.isEmpty()){
+			items.add(new EmojiReactionsStatusDisplayItem(parentID, fragment, statusForContent.emojiReactions));
+		}
+
 		if(addFooter){
 			items.add(new FooterStatusDisplayItem(parentID, fragment, statusForContent, accountID));
 		}
@@ -275,6 +281,7 @@ public abstract class StatusDisplayItem{
 		POLL_OPTION,
 		POLL_FOOTER,
 		CARD,
+		EMOJI_REACTIONS,
 		FOOTER,
 		ACCOUNT_CARD,
 		ACCOUNT,

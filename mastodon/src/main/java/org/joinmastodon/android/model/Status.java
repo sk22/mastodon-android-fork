@@ -72,6 +72,8 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 
 	public Status quote; // can be boolean in calckey
 
+	public List<EmojiReaction> emojiReactions;
+
 	public transient boolean filterRevealed;
 	public transient boolean spoilerRevealed;
 	public transient boolean textExpanded, textExpandable;
