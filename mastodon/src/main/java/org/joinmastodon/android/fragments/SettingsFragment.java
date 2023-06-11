@@ -86,7 +86,7 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 	private ArrayList<Item> items=new ArrayList<>();
 	private ThemeItem themeItem;
 	private NotificationPolicyItem notificationPolicyItem;
-	private SwitchItem showNewPostsItem, glitchModeItem, compactReblogReplyLineItem, alwaysRevealSpoilersItem;
+	private SwitchItem showNewPostsItem, glitchModeItem, compactReblogReplyLineItem, alwaysRevealSpoilersItem, emojiReactionsInLists;
 	private ButtonItem defaultContentTypeButtonItem, autoRevealSpoilersItem;
 	private String accountID;
 	private boolean needUpdateNotificationSettings;
@@ -386,14 +386,28 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 		}));
 		items.add(new SmallTextItem(getString(R.string.sk_settings_default_content_type_explanation)));
 		items.add(new SwitchItem(R.string.sk_settings_emoji_reactions, 0, GlobalUserPreferences.accountsWithEmojiReactions.contains(accountID), (i)->{
+			emojiReactionsInLists.enabled = i.checked;
 			if (i.checked) {
 				GlobalUserPreferences.accountsWithEmojiReactions.add(accountID);
 			} else {
 				GlobalUserPreferences.accountsWithEmojiReactions.remove(accountID);
+				GlobalUserPreferences.accountsWithEmojiReactionsInLists.remove(accountID);
 			}
+			emojiReactionsInLists.checked = GlobalUserPreferences.accountsWithEmojiReactionsInLists.contains(accountID);
+			if (list.findViewHolderForAdapterPosition(items.indexOf(emojiReactionsInLists)) instanceof SwitchViewHolder svh) svh.rebind();
 			GlobalUserPreferences.save();
 		}));
 		items.add(new SmallTextItem(getString(R.string.sk_settings_emoji_reactions_explanation)));
+		items.add(emojiReactionsInLists = new SwitchItem(R.string.sk_settings_emoji_reactions_in_lists, 0, GlobalUserPreferences.accountsWithEmojiReactionsInLists.contains(accountID), i->{
+			if (i.checked) {
+				GlobalUserPreferences.accountsWithEmojiReactionsInLists.add(accountID);
+			} else {
+				GlobalUserPreferences.accountsWithEmojiReactionsInLists.remove(accountID);
+			}
+			GlobalUserPreferences.save();
+		}));
+		emojiReactionsInLists.enabled = GlobalUserPreferences.accountsWithEmojiReactions.contains(accountID);
+		items.add(new SmallTextItem(getString(R.string.sk_settings_emoji_reactions_in_lists_explanation)));
 		items.add(new SwitchItem(R.string.sk_settings_support_local_only, 0, GlobalUserPreferences.accountsWithLocalOnlySupport.contains(accountID), i->{
 			glitchModeItem.enabled = i.checked;
 			if (i.checked) {

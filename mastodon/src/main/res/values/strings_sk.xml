@@ -302,5 +302,7 @@
     <string name="sk_settings_auto_reveal_author">author</string>
     <string name="sk_settings_auto_reveal_anyone">everyone</string>
     <string name="sk_settings_emoji_reactions">Enable emoji reactions</string>
-    <string name="sk_settings_emoji_reactions_explanation">Displays emoji reactions to posts and lets you interact with them. Some modified versions of Mastodon support this, but Mastodon doesn\'t</string>
+    <string name="sk_settings_emoji_reactions_explanation">Displays emoji reactions to posts and lets you interact with them. Some modified versions of Mastodon support this, but Mastodon doesn\'t.</string>
+    <string name="sk_settings_emoji_reactions_in_lists">Show emoji reactions in timelines</string>
+    <string name="sk_settings_emoji_reactions_in_lists_explanation">Whether emoji reactions should be displayed on timelines. If this option is off, emoji reactions will only be displayed when viewing a thread.</string>
 </resources>

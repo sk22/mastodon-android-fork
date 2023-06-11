@@ -102,8 +102,8 @@ public abstract class StatusDisplayItem{
 		};
 	}
 
-	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, Notification notification, Filter.FilterContext filterContext){
-		return buildItems(fragment, status, accountID, parentObject, knownAccounts, inset, addFooter, notification, false, filterContext);
+	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean showReactions, boolean addFooter, Notification notification, Filter.FilterContext filterContext){
+		return buildItems(fragment, status, accountID, parentObject, knownAccounts, inset, showReactions, addFooter, notification, false, filterContext);
 	}
 
 	public static ReblogOrReplyLineStatusDisplayItem buildReplyLine(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parent, Account account, boolean threadReply) {
@@ -121,7 +121,7 @@ public abstract class StatusDisplayItem{
 		);
 	}
 
-	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, Notification notification, boolean disableTranslate, Filter.FilterContext filterContext){
+	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean showReactions, boolean addFooter, Notification notification, boolean disableTranslate, Filter.FilterContext filterContext){
 		String parentID=parentObject.getID();
 		ArrayList<StatusDisplayItem> items=new ArrayList<>();
 
@@ -234,7 +234,7 @@ public abstract class StatusDisplayItem{
 			items.add(new LinkCardStatusDisplayItem(parentID, fragment, statusForContent));
 		}
 
-		if(GlobalUserPreferences.accountsWithEmojiReactions.contains(accountID) && statusForContent.emojiReactions != null && !statusForContent.emojiReactions.isEmpty()){
+		if(showReactions && GlobalUserPreferences.accountsWithEmojiReactions.contains(accountID) && statusForContent.emojiReactions != null && !statusForContent.emojiReactions.isEmpty()){
 			items.add(new EmojiReactionsStatusDisplayItem(parentID, fragment, statusForContent));
 		}
 

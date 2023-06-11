@@ -33,9 +33,10 @@ public abstract class StatusListFragment extends BaseStatusListFragment<Status> 
 	protected EventListener eventListener=new EventListener();
 
 	protected List<StatusDisplayItem> buildDisplayItems(Status s){
-		boolean addFooter = !GlobalUserPreferences.spectatorMode ||
-				(this instanceof ThreadFragment t && s.id.equals(t.mainStatus.id));
-		return StatusDisplayItem.buildItems(this, s, accountID, s, knownAccounts, false, addFooter, null, getFilterContext());
+		boolean isMainThreadStatus = this instanceof ThreadFragment t && s.id.equals(t.mainStatus.id);
+		boolean showReactions = GlobalUserPreferences.accountsWithEmojiReactionsInLists.contains(accountID) || isMainThreadStatus;
+		boolean addFooter = !GlobalUserPreferences.spectatorMode || isMainThreadStatus;
+		return StatusDisplayItem.buildItems(this, s, accountID, s, knownAccounts, false, showReactions, addFooter, null, getFilterContext());
 	}
 
 	protected abstract Filter.FilterContext getFilterContext();
