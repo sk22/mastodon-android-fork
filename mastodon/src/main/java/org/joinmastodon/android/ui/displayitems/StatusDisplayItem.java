@@ -235,7 +235,7 @@ public abstract class StatusDisplayItem{
 		}
 
 		if(statusForContent.emojiReactions != null && !statusForContent.emojiReactions.isEmpty()){
-			items.add(new EmojiReactionsStatusDisplayItem(parentID, fragment, statusForContent.emojiReactions));
+			items.add(new EmojiReactionsStatusDisplayItem(parentID, fragment, statusForContent));
 		}
 
 		if(addFooter){
