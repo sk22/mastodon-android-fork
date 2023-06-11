@@ -385,6 +385,15 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 			instance.ifPresent(i -> ContentType.adaptMenuToInstance(contentTypeMenu, i));
 		}));
 		items.add(new SmallTextItem(getString(R.string.sk_settings_default_content_type_explanation)));
+		items.add(new SwitchItem(R.string.sk_settings_emoji_reactions, 0, GlobalUserPreferences.accountsWithEmojiReactions.contains(accountID), (i)->{
+			if (i.checked) {
+				GlobalUserPreferences.accountsWithEmojiReactions.add(accountID);
+			} else {
+				GlobalUserPreferences.accountsWithEmojiReactions.remove(accountID);
+			}
+			GlobalUserPreferences.save();
+		}));
+		items.add(new SmallTextItem(getString(R.string.sk_settings_emoji_reactions_explanation)));
 		items.add(new SwitchItem(R.string.sk_settings_support_local_only, 0, GlobalUserPreferences.accountsWithLocalOnlySupport.contains(accountID), i->{
 			glitchModeItem.enabled = i.checked;
 			if (i.checked) {

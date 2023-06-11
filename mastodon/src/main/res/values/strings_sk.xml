@@ -301,4 +301,6 @@
     <string name="sk_settings_auto_reveal_nobody">nobody</string>
     <string name="sk_settings_auto_reveal_author">author</string>
     <string name="sk_settings_auto_reveal_anyone">everyone</string>
+    <string name="sk_settings_emoji_reactions">Enable emoji reactions</string>
+    <string name="sk_settings_emoji_reactions_explanation">Displays emoji reactions to posts and lets you interact with them. Some modified versions of Mastodon support this, but Mastodon doesn\'t</string>
 </resources>

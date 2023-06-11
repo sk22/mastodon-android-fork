@@ -234,7 +234,7 @@ public abstract class StatusDisplayItem{
 			items.add(new LinkCardStatusDisplayItem(parentID, fragment, statusForContent));
 		}
 
-		if(statusForContent.emojiReactions != null && !statusForContent.emojiReactions.isEmpty()){
+		if(GlobalUserPreferences.accountsWithEmojiReactions.contains(accountID) && statusForContent.emojiReactions != null && !statusForContent.emojiReactions.isEmpty()){
 			items.add(new EmojiReactionsStatusDisplayItem(parentID, fragment, statusForContent));
 		}
 

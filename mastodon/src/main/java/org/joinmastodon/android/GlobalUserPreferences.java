@@ -63,6 +63,7 @@ public class GlobalUserPreferences{
 	public static Set<String> accountsInGlitchMode;
 	public static Set<String> accountsWithContentTypesEnabled;
 	public static Map<String, ContentType> accountsDefaultContentTypes;
+	public static Set<String> accountsWithEmojiReactions;
 
 	/**
 	 * Pleroma
@@ -86,6 +87,7 @@ public class GlobalUserPreferences{
 		accountsWithLocalOnlySupport.remove(accountId);
 		accountsWithContentTypesEnabled.remove(accountId);
 		accountsDefaultContentTypes.remove(accountId);
+		accountsWithEmojiReactions.remove(accountId);
 		save();
 	}
 
@@ -131,6 +133,7 @@ public class GlobalUserPreferences{
 		accountsDefaultContentTypes=fromJson(prefs.getString("accountsDefaultContentTypes", null), accountsDefaultContentTypesType, new HashMap<>());
 		allowRemoteLoading=prefs.getBoolean("allowRemoteLoading", true);
 		autoRevealEqualSpoilers=AutoRevealMode.valueOf(prefs.getString("autoRevealEqualSpoilers", AutoRevealMode.THREADS.name()));
+		accountsWithEmojiReactions=prefs.getStringSet("accountsWithEmojiReactions", new HashSet<>());
 
 		try {
 			color=ColorPreference.valueOf(prefs.getString("color", ColorPreference.PINK.name()));
@@ -182,6 +185,7 @@ public class GlobalUserPreferences{
 				.putString("accountsDefaultContentTypes", gson.toJson(accountsDefaultContentTypes))
 				.putBoolean("allowRemoteLoading", allowRemoteLoading)
 				.putString("autoRevealEqualSpoilers", autoRevealEqualSpoilers.name())
+				.putStringSet("accountsWithEmojiReactions", accountsWithEmojiReactions)
 				.apply();
 	}
 
