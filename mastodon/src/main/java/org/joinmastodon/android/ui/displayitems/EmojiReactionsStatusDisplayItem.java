@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
@@ -16,6 +17,7 @@ import org.joinmastodon.android.api.MastodonAPIRequest;
 import org.joinmastodon.android.api.requests.statuses.PleromaAddStatusReaction;
 import org.joinmastodon.android.api.requests.statuses.PleromaDeleteStatusReaction;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
+import org.joinmastodon.android.fragments.account_list.StatusEmojiReactionsListFragment;
 import org.joinmastodon.android.model.Emoji;
 import org.joinmastodon.android.model.EmojiReaction;
 import org.joinmastodon.android.model.Status;
@@ -30,9 +32,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import me.grishka.appkit.Nav;
 import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
-import me.grishka.appkit.imageloader.ImageCache;
 import me.grishka.appkit.imageloader.ImageLoaderViewHolder;
 import me.grishka.appkit.imageloader.requests.ImageLoaderRequest;
 
@@ -147,6 +149,18 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
                         }
                     })
                     .exec(item.parentFragment.getAccountID());
+                });
+
+                btn.setOnLongClickListener(e -> {
+                    EmojiReaction emojiReaction = item.reactions.get(reaction.reaction.name).reaction;
+                    Bundle args=new Bundle();
+                    args.putString("account", item.parentFragment.getAccountID());
+                    args.putString("statusID", item.status.id);
+                    int atSymbolIndex = emojiReaction.name.indexOf("@");
+                    args.putString("emoji", atSymbolIndex != -1 ? emojiReaction.name.substring(0, atSymbolIndex) : emojiReaction.name);
+                    args.putInt("count", emojiReaction.count);
+                    Nav.go(item.parentFragment.getActivity(), StatusEmojiReactionsListFragment.class, args);
+                    return true;
                 });
             }
         }
