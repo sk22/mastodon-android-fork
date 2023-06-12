@@ -272,7 +272,7 @@ Viðkomandi aðilar munu ekki vita að þaggað hefur verið niður í þeim.</s
 	<string name="hide_content">Fela efni</string>
 	<string name="new_post">Ný færsla</string>
 	<string name="button_reply">Svara</string>
-	<string name="button_reblog">Endurbirta</string>
+	<string name="button_reblog">Endurbirting</string>
 	<string name="button_favorite">Eftirlæti</string>
 	<string name="button_share">Deila</string>
 	<string name="media_no_description">Myndefni án lýsingar</string>
@@ -286,6 +286,7 @@ Viðkomandi aðilar munu ekki vita að þaggað hefur verið niður í þeim.</s
 	<string name="follow_user">Fylgjast með %s</string>
 	<string name="unfollowed_user">Hætti að fylgjast með %s</string>
 	<string name="followed_user">Þú fylgist núna með %s</string>
+	<string name="following_user_requested">Bað um að fylgjast með %s</string>
 	<string name="open_in_browser">Opna í vafra</string>
 	<string name="hide_boosts_from_user">Fela endurbirtingar frá %s</string>
 	<string name="show_boosts_from_user">Sýna endurbirtingar frá %s</string>
@@ -331,7 +332,7 @@ Viðkomandi aðilar munu ekki vita að þaggað hefur verið niður í þeim.</s
 		<item quantity="other">%,d eftirlæti</item>
 	</plurals>
 	<plurals name="x_reblogs">
-		<item quantity="one">%,d Eendurbirting</item>
+		<item quantity="one">%,d endurbirting</item>
 		<item quantity="other">%,d endurbirtingar</item>
 	</plurals>
 	<string name="timestamp_via_app">%1$s með %2$s</string>
@@ -395,12 +396,6 @@ Viðkomandi aðilar munu ekki vita að þaggað hefur verið niður í þeim.</s
 	<string name="login_title">Velkomin aftur</string>
 	<string name="login_subtitle">Skráðu þig inn á netþjóninn þar sem þú útbjóst notandaaðganginn þinn.</string>
 	<string name="server_url">Vefslóð netþjóns</string>
-	<string name="welcome_page1_title">Hvað er Mastodon?</string>
-	<string name="welcome_page1_text">Ímyndaðu þér að þú sért með tölvupóstfang sem endar á @lén.is.\n\nÞú getur alltaf tekið við og sent tölvupóst til allra, jafnvel þótt tölvupóstfangið þeirra endi á @gmail.com, @icloud.com eða @lén.is.</string>
-	<string name="welcome_page2_title">Mastodon er eins og þetta.</string>
-	<string name="welcome_page2_text">Auðkennið þitt gæti verið @gothgirl654@example.social, en þú getur samt fylgst með, endurbirt og spjallað við @fallout5ever@example.online.</string>
-	<string name="welcome_page3_title">Hvernig vel ég netþjón?</string>
-	<string name="welcome_page3_text">Mismunandi fólk velur sér mismunandi netþjóna af ýmsum ólíkum ástæðum. Netþjónninn art.example er frábær staður fyrir listafólk, á meðan glasgow.example gæti verið góður kostur fyrir suma skota.\n\nÞú getur eiginlega ekki lent á röngum stað á neinum að þeim netþjónum sem við mælum með, þannig að hvern þeirra sem þú velur (eða ef þú setur inn þinn eigin netþjón í leitarreitinn), þá ættirðu ekki að missa af neinu neinsstaðar.</string>
 	<string name="signup_random_server_explain">Við munum velja netþjón út frá tungumálinu þínu, ef þú heldur áfram án þess að velja neitt.</string>
 	<string name="server_filter_any_language">Hvaða tungumál sem er</string>
 	<string name="server_filter_instant_signup">Nýskráning á stundinni</string>
@@ -432,4 +427,23 @@ Viðkomandi aðilar munu ekki vita að þaggað hefur verið niður í þeim.</s
 	<!-- %1$s is server domain, %2$s is email domain. You can reorder these placeholders to fit your language better. -->
 	<string name="signup_email_domain_blocked">%1$s leyfir ekki nýskráningar frá %2$s. Veldu eitthvað annað lén eða &lt;a&gt;veldu annan netþjón&lt;/a&gt;.</string>
 	<string name="signup_username_taken">Þetta notandanafn er þegar í notkun.</string>
+	<string name="spoiler_show">Birta samt</string>
+	<string name="spoiler_hide">Fela aftur</string>
+	<string name="poll_multiple_choice">Veldu eitt eiða fleiri</string>
+	<string name="save_changes">Vista breytingar</string>
+	<string name="profile_featured">Með aukið vægi</string>
+	<string name="profile_timeline">Tímalína</string>
+	<string name="view_all">Skoða allt</string>
+	<string name="profile_endorsed_accounts">Notandaaðgangar</string>
+	<string name="verified_link">Sannreyndur tengill</string>
+	<string name="show">Sýna</string>
+	<string name="hide">Fela</string>
+	<string name="join_default_server">Taka þátt í %s</string>
+	<string name="pick_server">Veldu annan netþjón</string>
+	<string name="signup_or_login">eða</string>
+	<string name="learn_more">Kanna nánar</string>
+	<string name="welcome_to_mastodon">Velkomin í Mastodon</string>
+	<string name="welcome_paragraph1">Mastodon er dreyfhýst samfélagsnet, sem þýðir að ekkert eitt fyrirtæki ræður yfir því. Netið samanstendur af mörgum sjálfstætt reknum netþjónum sem tengjast innbyrðis.</string>
+	<string name="what_are_servers">Hvað eru netþjónar?</string>
+	<string name="welcome_paragraph2"><![CDATA[Hver einasti Mastodon-aðgangur er hýstur á sínum netþjóni — hver slíkur er með sín eigin gildi, reglur og stjórnendur. Það skiftir ekki máli hvern þeirra þú velur, þú getur fylgst fylgst með og átt í samskiptum við fólk á hvaða netþjóni sem er.]]></string>
 </resources>

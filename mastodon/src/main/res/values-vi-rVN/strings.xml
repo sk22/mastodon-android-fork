@@ -16,7 +16,7 @@
 	<string name="user_followed_you">đã theo dõi bạn</string>
 	<string name="user_sent_follow_request">đã yêu cầu theo dõi bạn</string>
 	<string name="user_favorited">thích tút của bạn</string>
-	<string name="notification_boosted">đăng lại tút của bạn</string>
+	<string name="notification_boosted">vừa đăng lại tút của bạn</string>
 	<string name="poll_ended">cuộc bình chọn kết thúc</string>
 	<string name="time_seconds">%ds</string>
 	<string name="time_minutes">%dm</string>
@@ -38,7 +38,7 @@
 		<item quantity="other">tút</item>
 	</plurals>
 	<string name="posts">Tút</string>
-	<string name="posts_and_replies">Tút kèm trả lời</string>
+	<string name="posts_and_replies">Lượt trả lời</string>
 	<string name="media">Media</string>
 	<string name="profile_about">Giới thiệu</string>
 	<string name="button_follow">Theo dõi</string>
@@ -270,6 +270,7 @@
 	<string name="follow_user">Theo dõi %s</string>
 	<string name="unfollowed_user">Ngưng theo dõi %s</string>
 	<string name="followed_user">Bạn đã theo dõi %s</string>
+	<string name="following_user_requested">Yêu cầu theo dõi %s</string>
 	<string name="open_in_browser">Mở trong trình duyệt</string>
 	<string name="hide_boosts_from_user">Ẩn đăng lại từ %s</string>
 	<string name="show_boosts_from_user">Hiện đăng lại từ %s</string>
@@ -312,7 +313,7 @@
 		<item quantity="other">%,d lượt thích</item>
 	</plurals>
 	<plurals name="x_reblogs">
-		<item quantity="other">%,d đăng lại</item>
+		<item quantity="other">%,đăng lại</item>
 	</plurals>
 	<string name="timestamp_via_app">%1$s qua %2$s</string>
 	<string name="time_now">vừa xong</string>
@@ -373,12 +374,6 @@
 	<string name="login_title">Chào mừng quay trở lại!</string>
 	<string name="login_subtitle">Đăng nhập với máy chủ nơi bạn tạo tài khoản.</string>
 	<string name="server_url">URL Máy chủ</string>
-	<string name="welcome_page1_title">Mastodon là gì?</string>
-	<string name="welcome_page1_text">Hãy tưởng tượng bạn có một địa chỉ email tên miền @example.com.\n\nBạn vẫn có thể gửi và nhận email từ bất kỳ ai, ngay cả khi email của họ là @gmail.com hoặc @icloud.com hoặc @example.com.</string>
-	<string name="welcome_page2_title">Mastodon tương tự vậy.</string>
-	<string name="welcome_page2_text">Địa chỉ của bạn có thể là @gothgirl654@example.social nhưng bạn vẫn có thể theo dõi, đăng lại tút và trò chuyện với @fallout5ever@example.online.</string>
-	<string name="welcome_page3_title">Làm thế nào để chọn một máy chủ?</string>
-	<string name="welcome_page3_text">Mọi người chọn các máy chủ khác nhau vì nhiều lý do. art.example là một nơi tuyệt vời cho các nghệ sĩ, trong khi glasgow.example có thể là một lựa chọn tốt cho người Scotland.\n\nBạn có thể chọn bất kỳ máy chủ đề xuất nào của chúng tôi, vì vậy, bất kể bạn chọn máy chủ nào (hoặc tự chọn trong thanh tìm kiếm của máy chủ), bạn sẽ không bao giờ bỏ lỡ một nhịp nào ở bất cứ đâu.</string>
 	<string name="signup_random_server_explain">Chúng tôi sẽ chọn một máy chủ dựa trên ngôn ngữ của bạn nếu bạn tiếp tục mà không lựa chọn.</string>
 	<string name="server_filter_any_language">Mọi ngôn ngữ</string>
 	<string name="server_filter_instant_signup">Đăng ký nhanh</string>
@@ -410,4 +405,23 @@
 	<!-- %1$s is server domain, %2$s is email domain. You can reorder these placeholders to fit your language better. -->
 	<string name="signup_email_domain_blocked">%1$s không cho phép đăng ký với %2$s. Dùng cái khác hoặc &lt;a&gt;chọn máy chủ khác&lt;/a&gt;.</string>
 	<string name="signup_username_taken">Tên này đã được sử dụng.</string>
+	<string name="spoiler_show">Vẫn cứ xem</string>
+	<string name="spoiler_hide">Ẩn lại</string>
+	<string name="poll_multiple_choice">Chọn một hoặc nhiều</string>
+	<string name="save_changes">Lưu thay đổi</string>
+	<string name="profile_featured">Nổi bật</string>
+	<string name="profile_timeline">Bảng tin</string>
+	<string name="view_all">Xem tất cả</string>
+	<string name="profile_endorsed_accounts">Tài khoản</string>
+	<string name="verified_link">Liên kết xác minh</string>
+	<string name="show">Hiện</string>
+	<string name="hide">Ẩn</string>
+	<string name="join_default_server">Tham gia %s</string>
+	<string name="pick_server">Tìm máy chủ khác</string>
+	<string name="signup_or_login">hoặc</string>
+	<string name="learn_more">Tìm hiểu thêm</string>
+	<string name="welcome_to_mastodon">Chào mừng đến với Mastodon</string>
+	<string name="welcome_paragraph1">Mastodon là một mạng xã hội phi tập trung, không có công ty nào kiểm soát. Nó bao gồm nhiều máy chủ độc lập được kết nối với nhau.</string>
+	<string name="what_are_servers">Máy chủ là gì?</string>
+	<string name="welcome_paragraph2"><![CDATA[Mỗi tài khoản Mastodon được lưu trữ trên một máy chủ — với nội quy và quản trị viên riêng. Bất kể bạn chọn máy chủ nào, bạn có thể theo dõi và tương tác với mọi người trên máy chủ khác.]]></string>
 </resources>

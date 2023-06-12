@@ -146,6 +146,13 @@
 		<item name="colorM3OnErrorContainer">#F9DEDC</item>
 	</style>
 
+	<style name="Theme.Mastodon.Dark.SplashFragment">
+		<item name="colorM3Primary">#563ACC</item>
+		<item name="colorM3OnPrimary">#FFF</item>
+		<item name="colorM3Outline">#FFF</item>
+		<item name="colorM3OnSurface">#FFF</item>
+	</style>
+
 	<style name="Theme.Mastodon.Dark.TrueBlack">
 		<item name="colorWindowBackground">#000</item>
 
@@ -314,6 +321,13 @@
 
 	<style name="Widget.Mastodon.M3.Button.Tonal">
 		<item name="android:background">@drawable/bg_button_m3_tonal</item>
+		<item name="android:textColor">@color/button_text_m3_text</item>
+		<item name="android:paddingLeft">24dp</item>
+		<item name="android:paddingRight">24dp</item>
+	</style>
+
+	<style name="Widget.Mastodon.M3.Button.Outlined">
+		<item name="android:background">@drawable/bg_button_m3_outlined</item>
 		<item name="android:textColor">@color/button_text_m3_text</item>
 		<item name="android:paddingLeft">24dp</item>
 		<item name="android:paddingRight">24dp</item>
