@@ -260,7 +260,7 @@
     <string name="sk_new_reports">New reports</string>
     <string name="sk_settings_server_version">Server version: %s</string>
     <string name="sk_notify_poll_results">Poll results</string>
-    <string name="sk_settings_prefix_reply_cw_with_re">Prefix reply CW with “re:”</string>
+    <string name="sk_settings_prefix_reply_cw_with_re">Prefix CW with “re:” on replies to</string>
     <string name="sk_filtered">Filtered: %s</string>
     <string name="sk_expand">Expand</string>
     <string name="sk_collapse">Collapse</string>
@@ -301,6 +301,10 @@
     <string name="sk_settings_auto_reveal_nobody">nobody</string>
     <string name="sk_settings_auto_reveal_author">author</string>
     <string name="sk_settings_auto_reveal_anyone">everyone</string>
+    <string name="sk_settings_prefix_replies_always">everyone</string>
+    <string name="sk_settings_prefix_replies_never">nobody</string>
+    <string name="sk_settings_prefix_replies_to_others">others</string>
+    <string name="sk_settings_forward_report_default">“Forward report” switch default</string>
     <string name="sk_settings_emoji_reactions">Enable emoji reactions</string>
     <string name="sk_settings_emoji_reactions_explanation">Displays emoji reactions to posts and lets you interact with them. Some modified versions of Mastodon support this, but Mastodon doesn\'t.</string>
     <string name="sk_settings_emoji_reactions_in_lists">Show emoji reactions in timelines</string>

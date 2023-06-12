@@ -298,4 +298,8 @@
     <string name="sk_settings_allow_remote_loading_explanation">Coba mendapatkan pendaftaran akurat untuk pengikut cr</string>
     <string name="sk_error_loading_profile">Gagal memuat profil melalui %s</string>
     <string name="sk_open_in_app_failed">Tidak dapat buka dalam aplikasi</string>
+    <string name="sk_settings_auto_reveal_equal_spoilers">Tampilkan peringatan konten yang sama dari</string>
+    <string name="sk_settings_auto_reveal_nobody">bukan siapa pun</string>
+    <string name="sk_settings_auto_reveal_author">pembuat</string>
+    <string name="sk_settings_auto_reveal_anyone">semuanya</string>
 </resources>

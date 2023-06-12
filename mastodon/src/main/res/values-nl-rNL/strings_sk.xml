@@ -254,4 +254,9 @@
     <string name="sk_quoting_user">Quoting %s</string>
     <string name="sk_settings_reply_visibility">Zichtbaarheid reactie</string>
     <string name="sk_settings_reply_visibility_all">Alle reacties</string>
+    <string name="sk_settings_auto_reveal_anyone">iedereen</string>
+    <string name="sk_settings_auto_reveal_author">auteur</string>
+    <string name="sk_settings_auto_reveal_nobody">niemand</string>
+    <string name="sk_settings_prefix_replies_never">niemand</string>
+    <string name="sk_settings_prefix_replies_always">iedereen</string>
 </resources>

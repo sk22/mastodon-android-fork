@@ -2,7 +2,16 @@
 <resources>
     <string name="sk_confirm_delete_and_redraft">هل أنت متأكد أنك تريد حذف وإعادة صياغة هذا المنشور؟</string>
     <string name="sk_pin_post">تثبيت في الملف الشخصي</string>
-    <string name="sk_pinned_posts">مثبت</string>
+    <string name="sk_pinned_posts">المُثَبَّتَة</string>
     <string name="sk_delete_and_redraft">حذف وإعادة صياغة</string>
     <string name="sk_confirm_delete_and_redraft_title">حذف وإعادة صياغة المنشور</string>
+    <string name="sk_visibility_unlisted">غير مدرج</string>
+    <string name="sk_list_timelines">القوائم</string>
+    <string name="sk_follow_requests">طلبات المتابعة</string>
+    <string name="sk_confirm_pin_post_title">تدبيس الرسالة على الصفحة الشخصية</string>
+    <string name="sk_settings_show_federated_timeline">إظهار الخيط الفديرالي</string>
+    <string name="sk_settings_contribute">المساهمة في Megalodon</string>
+    <string name="sk_accept_follow_request">قبول طلب المتابعة</string>
+    <string name="sk_reject_follow_request">رفض طلب المتابعة</string>
+    <string name="sk_lists_with_user">قوائم بها %s</string>
 </resources>

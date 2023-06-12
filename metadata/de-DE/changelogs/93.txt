@@ -1,0 +1,8 @@
+- Verbesserte, übersichtlichere Thread-Ansicht
+- Website an Megalodon teilen, um den Account/Beitrag zu öffnen
+- Laden von Follower*innen/Favorisierungen/… von der Ursprungs-Instanz
+- Verbesserte Kompatibilität mit Nicht-Mastodon-Servern
+- Option, um Inhaltstyp eines Beitrags festzulegen
+- URL kopieren in der Recent-Apps-Ansicht auf Pixel-Geräten
+- Automatisches Aufdecken von gleichen CWs in Threads
+- Fehlerbehebungen und UI-Verbesserungen

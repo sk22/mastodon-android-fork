@@ -10,44 +10,47 @@
 &nbsp;
 <a href="#installation"><img height="50" alt="Get it on IzzyOnDroid" src="img/izzy-badge.png"></a>
 
-> A fork of the [official Mastodon Android app](https://github.com/mastodon/mastodon-android) adding important features that are missing in the official app and possibly won’t ever be implemented, such as the federated timeline, unlisted posting and an image description viewer.
+> A fork of the [Mastodon Android app](https://github.com/mastodon/mastodon-android) adding important features that are missing in the official app, focusing on [Glitch](https://glitch-soc.github.io/docs) compatibility, a pretty UI and adding new features that I feel make using the Fediverse a more pleasent experience.
 
 
 ## Key features
 
 ### **Unlisted posting**
 
-**Allows you to post publicly without having your post show up in trends, hashtags or public timelines (i.e., in the tabs “Community”, “Federated” and “Posts”).**
+<details>
+<p><summary>Allows you to post publicly without having your post show up in trends, hashtags or public timelines (i.e., in the tabs “Community”, “Federated” and “Posts”).</summary></p>
 
 When posting with Unlisted visibility, your posts will still be publicly accessible in your profile. They will also be shown in people’s Home timelines, but only if they follow you or someone they follow reblogged/replied to your post.
-  
+
 The Mastodon documentation has some more information about [Unlisted posting](https://docs.joinmastodon.org/user/posting/#unlisted) and [Public timelines](https://docs.joinmastodon.org/user/network/#timelines).
+</details>
 
 ### **Federated timeline**
 
-**This allows you to chronologically see all Public posts from people on all other Fediverse neighborhoods your home instance is connected to.**
+<details>
+<p><summary>This allows you to chronologically see all Public posts from people on all other Fediverse neighborhoods your home instance is connected to.</summary></p>
 
 Despite being one of the main features of federated social media, the Federated timeline wasn’t included in the official Mastodon app – supposedly, because this conflicts with Google’s safety requirements for apps on the Play Store.
   
 That’s one of the reasons why choosing a small, **well-moderated instance is important**. Instance admins and moderators should always make sure to ban abusive users and stop federating with instances who platform them. On well-moderated instances, the Federated timeline can be a welcoming place to meet new people!
+</details>
+
+### **Customizable timelines**
+
+<details>
+<p><summary>You can customize Megalodon’s home tab and not only add local and federated timelines, but also pin lists and hashtags.</summary></p>
+
+Even better: You can rename every timeline however you please and pick a distinct icon for each timeline. This way, you can pin the hashtag “#Caturday”, rename your timeline to “CUTENESS OVERLOAD” and set <img src="img/ic_fluent_animal_cat_24_regular.svg" alt="Cat icon from Microsoft Fluent UI icons"> as its icon. :3 You can find the timelines editor by opening your home tab, tapping the `⋮` button in the top right and going to “Edit timelines”.
+</details>
 
 ### **Draft and schedule posts**
 
-**Allows for preparing a post and scheduling it to send it automatically at a specific time.**
+<details>
+<p><summary>
+Allows to prepare a post and schedule it to send it automatically at a specific time.</summary></p>
 
 You can create drafts, edit them, send them manually later or set a scheduled date. Drafts are technically saved as scheduled posts, so you can view and edit them from other apps that support scheduled posts. Scheduled posts are handled by your home instance, so they'll work even if you uninstall Megalodon.
-
-### **Image description viewer**
-
-**Allows you to quickly check whether an image or video has an alternative text attached to it.**
-
-This is important to **ensure the content you’re sharing is as accessible as possible** to people who can’t see the images and rely on software to read back the provided content descriptions. Thankfully, it’s quite common for people on the Fediverse to provide such alt texts, and hopefully things stay this way!
-
-### **Pinning posts**
-
-**This lets you can highlight important posts on your profile. A dedicated “Pinned” tab in people’s profiles shows all the posts they pinned.**
-
-On the Fediverse, it’s quite common for people to pin posts they want others to read before following them. You can pin/unpin posts yourself by clicking the `⋯` button in the top right corner of your posts.
+</details>
 
 ## Installation
 
@@ -88,7 +91,7 @@ Megalodon makes use of [Mastodon for Android](https://github.com/mastodon/mastod
 
 ## Release variants
 
-All downloads can be found on the [Releases](https://github.com/sk22/megalodon/releases) page.
+All downloads can be found on the [Releases](https://github.com/sk22/megalodon/releases) page. When downloading a pre-release, expect to see unfinished features and bugs. If you don’t want that, just download the [latest full release](https://github.com/sk22/megalodon/releases/latest/download/megalodon.apk).
 
 **`megalodon.apk`**
 
@@ -108,11 +111,11 @@ Variant without the integrated updater. This is the variant to be published to F
 
 ### Translation
 
-As with the source code, the translation is sourced from the official project, which you can contribute to on the official “**Mastodon for Android**” Crowdin project: https://crowdin.com/project/mastodon-for-android
+The translation for the base of the app is sourced from the upstream **Mastodon for Android** project, which you can contribute to on its Crowdin project: [https://crowdin.com/project/mastodon-for-android](https://crowdin.com/project/mastodon-for-android)
 
-There's also a handful of custom strings exclusive to this projects that would need to be translated. You can help translate **Megalodon** on Weblate: https://translate.codeberg.org/projects/megalodon/
+There's also a bunch of custom strings exclusive to this project that need to be translated. You can help translate **Megalodon** on Weblate: [https://translate.codeberg.org/projects/megalodon](https://translate.codeberg.org/projects/megalodon)
 
-[![Translation status](https://translate.codeberg.org/widgets/megalodon/-/horizontal-auto.svg)](https://translate.codeberg.org/engage/megalodon/)
+[![Translation status](https://translate.codeberg.org/widgets/megalodon/-/horizontal-auto.svg)](https://translate.codeberg.org/engage/megalodon)
 
 
 ---
@@ -154,6 +157,10 @@ There's also a handful of custom strings exclusive to this projects that would n
 * [Soft-blocking (by blocking and immediately unblocking)](https://github.com/sk22/megalodon/commit/e75d350b7a2709259e9fc5138e0e1f361bdb0972)
 * [Pinnable custom timelines](https://github.com/sk22/megalodon/pull/338/commits)
 * Support for local-only posts
+* Support for copying the URL to posts/accounts/… in Pixel launcher’s Recent apps view
+* Compatibility for Akkoma Bubble timeline
+* Listings of followers/following/favorites/boosts can be loaded from the origin instance (there’s an option to disable this in in the settings)
+* Allow opening posts/accounts in-app by sharing a URL/handle to Megalodon (Originally implemented in [Moshidon](https://github.com/LucasGGamerM/moshidon), [PR](https://github.com/sk22/megalodon/pull/531))
 
 
 ### Behavior
@@ -179,6 +186,8 @@ There's also a handful of custom strings exclusive to this projects that would n
 * Improved filtering using Mastodon 4.0 API: [#202](https://github.com/sk22/megalodon/pull/202), [#212](https://github.com/sk22/megalodon/pull/212), [#255](https://github.com/sk22/megalodon/pull/255) by [@thiagojedi](https://github.com/thiagojedi)
 * [Support admin notifications](https://github.com/sk22/megalodon/commit/c12a6eaee6b609bc53eb0a45d9199f37d5241801) and [notifications for edited reblogged posts](https://github.com/sk22/megalodon/commit/900e8fb2e9353002c16d15e06b78d2731e121601)
 * [Android file opener added back in addition to image picker](https://github.com/sk22/megalodon/commit/3a6ace53d5ab01e28077c9c930cb6ed487b78031)
+* [Replies are inserted below the replied-to post in thread view](https://github.com/sk22/megalodon/commit/87c37df370ec24aeea0d2dbaeb29468aa4fb5808)
+* Option to auto-reveal equal content warnings in threads
 
 
 ### Visual
@@ -196,6 +205,7 @@ There's also a handful of custom strings exclusive to this projects that would n
 * Scale text according to system settings
 * Header in timeline for followed hashtags
 * [Indicator for missing alt texts](https://github.com/sk22/megalodon/commit/c0c276f03e793b78c478c17dfdef24a66ef7cedb)
+* Visually grouped (by removing divider lines and reducing padding) threaded replies in thread view
 
 
 ## Building
@@ -205,6 +215,8 @@ As this app is using Java 17 features, you need JDK 17 or newer to build it. Oth
 ```
 ./gradlew assembleRelease
 ```
+
+Note that Megalodon might be depending on an in-development version of [AppKit](https://github.com/grishka/appkit) – a library by Mastodon for Android’s developer. In case the used AppKit version isn’t published to Maven Central yet, you might have to clone, build and publish it to your local Maven repository. For more information, see [this GitHub issue](https://github.com/mastodon/mastodon-android/issues/375#issuecomment-1507678585).
 
 ## License
 

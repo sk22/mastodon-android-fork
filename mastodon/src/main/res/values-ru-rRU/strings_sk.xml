@@ -257,7 +257,7 @@
     <string name="sk_settings_collapse_long_posts">Сворачивать очень длинные посты</string>
     <string name="sk_unfinished_attachments">Исправить вложения\?</string>
     <string name="sk_unfinished_attachments_message">Некоторые вложения еще не загрузились.</string>
-    <string name="sk_quoting_user">Цитирование%s</string>
+    <string name="sk_quoting_user">Цитирование %s</string>
     <string name="sk_settings_reply_visibility">Видимость ответа</string>
     <string name="sk_settings_hide_interaction">Скрыть кнопки взаимодействия</string>
     <string name="sk_follow_as">Подписаться с другого аккаунта</string>

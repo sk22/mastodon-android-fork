@@ -172,9 +172,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 			} else if (action == MotionEvent.ACTION_DOWN) {
 				longClickPerformed = false;
 				touchingView = v;
-				// 28dp to center in middle of icon, because:
-				// (icon width = 24dp) / 2 + (paddingStart = 8dp) + (paddingHorizontal = 8dp)
-				v.setPivotX(UiUtils.sp(v.getContext(), 28));
+				v.setPivotX(V.sp(28));
 				v.animate().scaleX(0.85f).scaleY(0.85f).setInterpolator(CubicBezierInterpolator.DEFAULT).setDuration(75).start();
 				if (disabled) return true;
 				v.postDelayed(longClickRunnable, ViewConfiguration.getLongPressTimeout());

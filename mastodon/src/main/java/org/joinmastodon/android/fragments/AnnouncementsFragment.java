@@ -94,12 +94,15 @@ public class AnnouncementsFragment extends BaseStatusListFragment<Announcement> 
 					@Override
 					public void onSuccess(List<Announcement> result){
 						if (getActivity() == null) return;
-						List<Announcement> unread = result.stream().filter(a -> !a.read).collect(toList());
-						List<Announcement> read = result.stream().filter(a -> a.read).collect(toList());
-						onDataLoaded(unread, true);
-						onDataLoaded(read, false);
-						if (unread.isEmpty()) setResult(true, null);
-						else unreadIDs = unread.stream().map(a -> a.id).collect(toList());
+
+						// get unread items first
+						List<Announcement> data = result.stream().filter(a -> !a.read).collect(toList());
+						if (data.isEmpty()) setResult(true, null);
+						else unreadIDs = data.stream().map(a -> a.id).collect(toList());
+
+						// append read items at the end
+						data.addAll(result.stream().filter(a -> a.read).collect(toList()));
+						onDataLoaded(data, false);
 					}
 				})
 				.exec(accountID);

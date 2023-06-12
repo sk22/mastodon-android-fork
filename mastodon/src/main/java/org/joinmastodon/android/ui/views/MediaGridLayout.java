@@ -13,7 +13,7 @@ import me.grishka.appkit.utils.V;
 public class MediaGridLayout extends ViewGroup{
 	private static final String TAG="MediaGridLayout";
 
-	private static final int GAP=1; // dp
+	private static final int GAP=2; // dp
 	private PhotoLayoutHelper.TiledLayoutResult tiledLayout;
 	private int[] columnStarts=new int[10], columnEnds=new int[10], rowStarts=new int[10], rowEnds=new int[10];
 
@@ -37,6 +37,9 @@ public class MediaGridLayout extends ViewGroup{
 		}
 		int width=Math.min(UiUtils.MAX_WIDTH, MeasureSpec.getSize(widthMeasureSpec));
 		int height=Math.round(width*(tiledLayout.height/(float)PhotoLayoutHelper.MAX_WIDTH));
+		if(tiledLayout.width<PhotoLayoutHelper.MAX_WIDTH){
+			width=Math.round(width*(tiledLayout.width/(float)PhotoLayoutHelper.MAX_WIDTH));
+		}
 
 		int offset=0;
 		for(int i=0;i<tiledLayout.columnSizes.length;i++){
@@ -73,9 +76,13 @@ public class MediaGridLayout extends ViewGroup{
 		if(tiledLayout==null)
 			return;
 
+		int maxWidth=UiUtils.MAX_WIDTH;
+		if(tiledLayout.width<PhotoLayoutHelper.MAX_WIDTH){
+			maxWidth=Math.round((r-l)*(tiledLayout.width/(float)PhotoLayoutHelper.MAX_WIDTH));
+		}
 		int xOffset=0;
-		if(r-l>UiUtils.MAX_WIDTH){
-			xOffset=(r-l)/2-UiUtils.MAX_WIDTH/2;
+		if(r-l>maxWidth){
+			xOffset=(r-l)/2-maxWidth/2;
 		}
 
 		for(int i=0;i<getChildCount();i++){

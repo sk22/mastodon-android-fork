@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -25,7 +26,9 @@ import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.PhotoLayoutHelper;
 import org.joinmastodon.android.ui.photoviewer.PhotoViewerHost;
 import org.joinmastodon.android.ui.utils.MediaAttachmentViewController;
+import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.ui.views.FrameLayoutThatOnlyMeasuresFirstChild;
+import org.joinmastodon.android.ui.views.MaxWidthFrameLayout;
 import org.joinmastodon.android.ui.views.MediaGridLayout;
 import org.joinmastodon.android.utils.TypedObjectPool;
 
@@ -88,6 +91,7 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 		private final View.OnClickListener clickListener=this::onViewClick, altTextClickListener=this::onAltTextClick;
 		private final ArrayList<MediaAttachmentViewController> controllers=new ArrayList<>();
 
+		private final MaxWidthFrameLayout overlays;
 		private final FrameLayout altTextWrapper;
 		private final TextView altTextButton;
 		private final ImageView noAltTextButton;
@@ -105,8 +109,13 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 			wrapper=(FrameLayout)itemView;
 			layout=new MediaGridLayout(activity);
 			wrapper.addView(layout);
+			wrapper.setClipToPadding(false);
 
-			activity.getLayoutInflater().inflate(R.layout.overlay_image_alt_text, wrapper);
+			overlays=new MaxWidthFrameLayout(activity);
+			overlays.setMaxWidth(UiUtils.MAX_WIDTH);
+			wrapper.addView(overlays, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER_HORIZONTAL));
+
+			activity.getLayoutInflater().inflate(R.layout.overlay_image_alt_text, overlays);
 			altTextWrapper=findViewById(R.id.alt_text_wrapper);
 			altTextButton=findViewById(R.id.alt_button);
 			noAltTextButton=findViewById(R.id.no_alt_button);
@@ -215,7 +224,7 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 					int[] loc={0, 0};
 					v.getLocationInWindow(loc);
 					int btnL=loc[0], btnT=loc[1];
-					wrapper.getLocationInWindow(loc);
+					overlays.getLocationInWindow(loc);
 					btnL-=loc[0];
 					btnT-=loc[1];
 
@@ -278,7 +287,7 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 			int[] loc={0, 0};
 			btn.getLocationInWindow(loc);
 			int btnL=loc[0], btnT=loc[1];
-			wrapper.getLocationInWindow(loc);
+			overlays.getLocationInWindow(loc);
 			btnL-=loc[0];
 			btnT-=loc[1];
 

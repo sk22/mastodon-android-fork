@@ -48,11 +48,13 @@ public class HomeTimelineFragment extends StatusListFragment {
 		loadData();
 	}
 
+	private boolean typeFilterPredicate(Status s) {
+		return (GlobalUserPreferences.showReplies || s.inReplyToId == null) &&
+				(GlobalUserPreferences.showBoosts || s.reblog == null);
+	}
+
 	private List<Status> filterPosts(List<Status> items) {
-		return items.stream().filter(i ->
-				(GlobalUserPreferences.showReplies || i.inReplyToId == null) &&
-				(GlobalUserPreferences.showBoosts || i.reblog == null)
-		).collect(Collectors.toList());
+		return items.stream().filter(this::typeFilterPredicate).collect(Collectors.toList());
 	}
 
 	@Override
@@ -232,7 +234,7 @@ public class HomeTimelineFragment extends StatusListFragment {
 							for(Status s:result){
 								if(idsBelowGap.contains(s.id))
 									break;
-								if(filterPredicate.test(s)){
+								if(typeFilterPredicate(s) && filterPredicate.test(s)){
 									targetList.addAll(buildDisplayItems(s));
 									insertedPosts.add(s);
 								}

@@ -6,79 +6,79 @@
 	android:paddingEnd="4dp"
 	android:paddingStart="16dp">
 
-	<ImageView
-		android:id="@+id/more"
-		android:layout_width="36dp"
-		android:layout_height="36dp"
+	<LinearLayout
+		android:id="@+id/buttons"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
 		android:layout_marginTop="13dp"
 		android:layout_alignParentTop="true"
-		android:layout_alignParentEnd="true"
-		android:background="?android:actionBarItemBackground"
-		android:contentDescription="@string/more_options"
-		android:scaleType="center"
-		android:src="@drawable/ic_fluent_more_vertical_20_filled"
-		android:tint="?android:textColorSecondary" />
-
-	<ImageView
-		android:id="@+id/delete_notification"
-		android:layout_width="36dp"
-		android:layout_height="36dp"
-		android:layout_marginTop="13dp"
-		android:layout_toStartOf="@id/more"
-		android:visibility="gone"
-		android:background="?android:actionBarItemBackground"
-		android:contentDescription="@string/sk_delete_notification"
-		android:tooltipText="@string/sk_delete_notification"
-		android:scaleType="center"
-		android:src="@drawable/ic_fluent_dismiss_20_filled"
-		android:tint="?android:textColorSecondary" />
-
-	<ImageView
-		android:id="@+id/visibility"
-		android:layout_width="36dp"
-		android:layout_height="36dp"
-		android:layout_marginTop="13dp"
-		android:layout_toStartOf="@id/delete_notification"
-		android:background="?android:actionBarItemBackground"
-		android:scaleType="center"
-		android:src="@drawable/ic_visibility"
-		android:tint="?android:textColorSecondary" />
-
-	<FrameLayout
-		android:id="@+id/collapse_btn"
-		android:layout_width="36dp"
-		android:layout_height="36dp"
-		android:layout_marginTop="13dp"
-		android:layout_toStartOf="@id/visibility"
-		android:background="?android:actionBarItemBackground"
-		android:visibility="gone"
-		android:importantForAccessibility="noHideDescendants">
-
-		<!-- wrapping this button so the flip animation doesn't flip the background and the tooltip
-		 	 isn't displaced by the -1 scale -->
+		android:layout_alignParentEnd="true">
 
 		<ImageView
-			android:id="@+id/collapse_btn_icon"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center"
-			android:importantForAccessibility="no"
+			android:id="@+id/unread_indicator"
+			android:layout_width="36dp"
+			android:layout_height="36dp"
+			android:visibility="gone"
+			android:tint="?android:colorAccent"
 			android:scaleType="center"
-			android:src="@drawable/ic_fluent_chevron_down_20_filled"
+			android:src="@drawable/ic_fluent_circle_small_20_filled" />
+
+		<FrameLayout
+			android:id="@+id/collapse_btn"
+			android:layout_width="36dp"
+			android:layout_height="36dp"
+			android:background="?android:actionBarItemBackground"
+			android:visibility="gone"
+			android:importantForAccessibility="noHideDescendants">
+
+			<!-- wrapping this button so the flip animation doesn't flip the background and the tooltip
+                  isn't displaced by the -1 scale -->
+
+			<ImageView
+				android:id="@+id/collapse_btn_icon"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:importantForAccessibility="no"
+				android:scaleType="center"
+				android:src="@drawable/ic_fluent_chevron_down_20_filled"
+				android:tint="?android:textColorSecondary" />
+
+		</FrameLayout>
+
+		<ImageView
+			android:id="@+id/visibility"
+			android:layout_width="36dp"
+			android:layout_height="36dp"
+			android:background="?android:actionBarItemBackground"
+			android:scaleType="center"
+			android:src="@drawable/ic_visibility"
 			android:tint="?android:textColorSecondary" />
 
-	</FrameLayout>
+		<ImageView
+			android:id="@+id/delete_notification"
+			android:layout_width="36dp"
+			android:layout_height="36dp"
+			android:visibility="gone"
+			android:background="?android:actionBarItemBackground"
+			android:contentDescription="@string/sk_delete_notification"
+			android:tooltipText="@string/sk_delete_notification"
+			android:scaleType="center"
+			android:src="@drawable/ic_fluent_dismiss_20_filled"
+			android:tint="?android:textColorSecondary" />
 
-	<ImageView
-		android:id="@+id/unread_indicator"
-		android:layout_width="36dp"
-		android:layout_height="36dp"
-		android:layout_marginTop="13dp"
-		android:layout_toStartOf="@id/collapse_btn"
-		android:visibility="gone"
-		android:tint="?android:colorAccent"
-		android:scaleType="center"
-		android:src="@drawable/ic_fluent_circle_small_20_filled" />
+		<ImageView
+			android:id="@+id/more"
+			android:layout_width="36dp"
+			android:layout_height="36dp"
+			android:background="?android:actionBarItemBackground"
+			android:contentDescription="@string/more_options"
+			android:scaleType="center"
+			android:src="@drawable/ic_fluent_more_vertical_20_filled"
+			android:tint="?android:textColorSecondary" />
+
+	</LinearLayout>
+
 
 	<ImageView
 		android:id="@+id/avatar"
@@ -94,7 +94,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginEnd="8dp"
-		android:layout_toStartOf="@id/unread_indicator"
+		android:layout_toStartOf="@id/buttons"
 		android:layout_toEndOf="@id/avatar"
 		android:layout_above="@+id/username_wrap">
 
@@ -127,7 +127,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginEnd="8dp"
-		android:layout_toStartOf="@id/unread_indicator"
+		android:layout_toStartOf="@id/buttons"
 		android:layout_toEndOf="@id/avatar"
 		android:layout_alignBottom="@id/avatar"
 		android:layoutDirection="locale"

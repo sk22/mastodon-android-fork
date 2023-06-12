@@ -40,7 +40,7 @@ public class GlobalUserPreferences{
 	public static boolean showAltIndicator;
 	public static boolean showNoAltIndicator;
 	public static boolean enablePreReleases;
-	public static boolean prefixRepliesWithRe;
+	public static PrefixRepliesMode prefixReplies;
 	public static boolean bottomEncoding;
 	public static boolean collapseLongPosts;
 	public static boolean spectatorMode;
@@ -49,14 +49,12 @@ public class GlobalUserPreferences{
 	public static boolean compactReblogReplyLine;
 	public static boolean confirmBeforeReblog;
 	public static boolean allowRemoteLoading;
+	public static boolean forwardReportDefault;
 	public static AutoRevealMode autoRevealEqualSpoilers;
 	public static String publishButtonText;
 	public static ThemePreference theme;
 	public static ColorPreference color;
 
-	private final static Type recentLanguagesType = new TypeToken<Map<String, List<String>>>() {}.getType();
-	private final static Type pinnedTimelinesType = new TypeToken<Map<String, List<TimelineDefinition>>>() {}.getType();
-	private final static Type accountsDefaultContentTypesType = new TypeToken<Map<String, ContentType>>() {}.getType();
 	public static Map<String, List<String>> recentLanguages;
 	public static Map<String, List<TimelineDefinition>> pinnedTimelines;
 	public static Set<String> accountsWithLocalOnlySupport;
@@ -65,6 +63,10 @@ public class GlobalUserPreferences{
 	public static Map<String, ContentType> accountsDefaultContentTypes;
 	public static Set<String> accountsWithEmojiReactions;
 	public static Set<String> accountsWithEmojiReactionsInLists;
+
+	private final static Type recentLanguagesType = new TypeToken<Map<String, List<String>>>() {}.getType();
+	private final static Type pinnedTimelinesType = new TypeToken<Map<String, List<TimelineDefinition>>>() {}.getType();
+	private final static Type accountsDefaultContentTypesType = new TypeToken<Map<String, ContentType>>() {}.getType();
 
 	/**
 	 * Pleroma
@@ -116,7 +118,7 @@ public class GlobalUserPreferences{
 		showAltIndicator=prefs.getBoolean("showAltIndicator", true);
 		showNoAltIndicator=prefs.getBoolean("showNoAltIndicator", true);
 		enablePreReleases=prefs.getBoolean("enablePreReleases", false);
-		prefixRepliesWithRe=prefs.getBoolean("prefixRepliesWithRe", false);
+		prefixReplies=PrefixRepliesMode.valueOf(prefs.getString("prefixReplies", PrefixRepliesMode.NEVER.name()));
 		bottomEncoding=prefs.getBoolean("bottomEncoding", false);
 		collapseLongPosts=prefs.getBoolean("collapseLongPosts", true);
 		spectatorMode=prefs.getBoolean("spectatorMode", false);
@@ -135,6 +137,16 @@ public class GlobalUserPreferences{
 		accountsDefaultContentTypes=fromJson(prefs.getString("accountsDefaultContentTypes", null), accountsDefaultContentTypesType, new HashMap<>());
 		allowRemoteLoading=prefs.getBoolean("allowRemoteLoading", true);
 		autoRevealEqualSpoilers=AutoRevealMode.valueOf(prefs.getString("autoRevealEqualSpoilers", AutoRevealMode.THREADS.name()));
+		forwardReportDefault=prefs.getBoolean("forwardReportDefault", true);
+
+		if (prefs.contains("prefixRepliesWithRe")) {
+			prefixReplies = prefs.getBoolean("prefixRepliesWithRe", false)
+					? PrefixRepliesMode.TO_OTHERS : PrefixRepliesMode.NEVER;
+			prefs.edit()
+					.putString("prefixReplies", prefixReplies.name())
+					.remove("prefixRepliesWithRe")
+					.apply();
+		}
 		accountsWithEmojiReactions=prefs.getStringSet("accountsWithEmojiReactions", new HashSet<>());
 		accountsWithEmojiReactionsInLists=prefs.getStringSet("accountsWithEmojiReactionsInLists", new HashSet<>());
 
@@ -168,7 +180,7 @@ public class GlobalUserPreferences{
 				.putBoolean("showAltIndicator", showAltIndicator)
 				.putBoolean("showNoAltIndicator", showNoAltIndicator)
 				.putBoolean("enablePreReleases", enablePreReleases)
-				.putBoolean("prefixRepliesWithRe", prefixRepliesWithRe)
+				.putString("prefixReplies", prefixReplies.name())
 				.putBoolean("collapseLongPosts", collapseLongPosts)
 				.putBoolean("spectatorMode", spectatorMode)
 				.putBoolean("autoHideFab", autoHideFab)
@@ -188,6 +200,7 @@ public class GlobalUserPreferences{
 				.putString("accountsDefaultContentTypes", gson.toJson(accountsDefaultContentTypes))
 				.putBoolean("allowRemoteLoading", allowRemoteLoading)
 				.putString("autoRevealEqualSpoilers", autoRevealEqualSpoilers.name())
+				.putBoolean("forwardReportDefault", forwardReportDefault)
 				.putStringSet("accountsWithEmojiReactions", accountsWithEmojiReactions)
 				.putStringSet("accountsWithEmojiReactionsInLists", accountsWithEmojiReactionsInLists)
 				.apply();
@@ -214,5 +227,11 @@ public class GlobalUserPreferences{
 		NEVER,
 		THREADS,
 		DISCUSSIONS
+	}
+
+	public enum PrefixRepliesMode {
+		NEVER,
+		ALWAYS,
+		TO_OTHERS
 	}
 }

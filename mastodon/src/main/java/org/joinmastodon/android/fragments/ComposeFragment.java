@@ -1,5 +1,6 @@
 package org.joinmastodon.android.fragments;
 
+import static org.joinmastodon.android.GlobalUserPreferences.PrefixRepliesMode.*;
 import static org.joinmastodon.android.GlobalUserPreferences.recentLanguages;
 import static org.joinmastodon.android.api.requests.statuses.CreateStatus.DRAFTS_AFTER_INSTANT;
 import static org.joinmastodon.android.api.requests.statuses.CreateStatus.getDraftInstant;
@@ -746,9 +747,11 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				if(!TextUtils.isEmpty(status.spoilerText)){
 					hasSpoiler=true;
 					spoilerEdit.setVisibility(View.VISIBLE);
-					if(GlobalUserPreferences.prefixRepliesWithRe && !status.spoilerText.startsWith("re: ")){
+					if ((GlobalUserPreferences.prefixReplies == ALWAYS
+							|| (GlobalUserPreferences.prefixReplies == TO_OTHERS && !ownID.equals(status.account.id)))
+							&& !status.spoilerText.startsWith("re: ")) {
 						spoilerEdit.setText("re: " + status.spoilerText);
-					}else{
+					} else {
 						spoilerEdit.setText(status.spoilerText);
 					}
 					spoilerBtn.setSelected(true);

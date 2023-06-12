@@ -1,0 +1,8 @@
+- Visualización de hilos mejorada y más clara
+- Abre cuentas/publicaciones compartiendo una web con Megalodon
+- Carga seguidores, favoritos etc. desde la instancia de origen
+- Mejoras de compatibilidad con servidores no-Mastodon
+- Opción para configurar el tipo de contenido en las publicaciones
+- Soporte para copiar una URL desde la vista de Apps recientes en dispositivos Pixel
+- Se muestran los Avisos de Contenido iguales automáticamente en hilos
+- Corrección de errores y mejoras en la interfaz

@@ -1,0 +1,8 @@
+- Improved, clearer thread view
+- Open accounts/posts by sharing a website to Megalodon
+- Load followers/favorites/… listings from origin instance
+- Compatibility improvements for non-Mastodon servers
+- Option to set post content type
+- Support for copying URL from Recent apps on Pixel devices
+- Auto-reveal equal CWs in threads
+- Bugfixes and UI improvements

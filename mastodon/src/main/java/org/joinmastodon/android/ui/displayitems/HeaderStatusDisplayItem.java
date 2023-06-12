@@ -399,6 +399,9 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 				else collapseBtnIcon.animate().scaleY(item.status.textExpanded ? -1 : 1).start();
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) collapseBtn.setTooltipText(collapseText);
 			}
+
+			itemView.setPaddingRelative(itemView.getPaddingStart(), itemView.getPaddingTop(),
+					item.inset ? V.dp(10) : V.dp(4), itemView.getPaddingBottom());
 		}
 
 		@Override

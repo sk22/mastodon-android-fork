@@ -1232,7 +1232,7 @@ public class UiUtils {
 									go.accept(ProfileFragment.class, args);
 									return;
 								}
-								go.accept(null, bundleError(context.getString(R.string.sk_resource_not_found)));
+								go.accept(null, null);
 							}
 
 							@Override
@@ -1422,16 +1422,6 @@ public class UiUtils {
 			extras.putParcelable("profileAccount", Parcels.wrap(n.account));
 			Nav.go((Activity) context, ProfileFragment.class, extras);
 		}
-	}
-
-	/**
-	 * Scale the input value according to the device's scaled display density
-	 * @param sp Input value in scale-independent pixels (sp)
-	 * @return Scaled value in physical pixels (px)
-	 */
-	public static int sp(Context context, float sp){
-		// TODO: replace with V.sp in next AppKit version
-		return Math.round(sp*context.getApplicationContext().getResources().getDisplayMetrics().scaledDensity);
 	}
 
 	/**

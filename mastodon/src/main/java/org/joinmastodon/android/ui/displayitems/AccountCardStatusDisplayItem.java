@@ -133,6 +133,10 @@ public class AccountCardStatusDisplayItem extends StatusDisplayItem{
 			followersLabel.setText(item.parentFragment.getResources().getQuantityString(R.plurals.followers, (int)Math.min(999, item.account.followersCount)));
 			followingLabel.setText(item.parentFragment.getResources().getQuantityString(R.plurals.following, (int)Math.min(999, item.account.followingCount)));
 			postsLabel.setText(item.parentFragment.getResources().getQuantityString(R.plurals.posts, (int)Math.min(999, item.account.statusesCount)));
+			followersCount.setVisibility(item.account.followersCount < 0 ? View.GONE : View.VISIBLE);
+			followersLabel.setVisibility(item.account.followersCount < 0 ? View.GONE : View.VISIBLE);
+			followingCount.setVisibility(item.account.followingCount < 0 ? View.GONE : View.VISIBLE);
+			followingLabel.setVisibility(item.account.followingCount < 0 ? View.GONE : View.VISIBLE);
 			relationship=item.parentFragment.getRelationship(item.account.id);
 			if(item.notification.type == Notification.Type.FOLLOW_REQUEST && (relationship == null || !relationship.followedBy)){
 				actionWrap.setVisibility(View.GONE);

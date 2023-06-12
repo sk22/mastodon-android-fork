@@ -52,7 +52,8 @@ import me.grishka.appkit.utils.V;
 public class ThreadFragment extends StatusListFragment implements ProvidesAssistContent {
 	protected Status mainStatus, updatedStatus;
 	private final HashMap<String, NeighborAncestryInfo> ancestryMap = new HashMap<>();
-	protected boolean contextInitiallyRendered;
+	private StatusContext result;
+	protected boolean contextInitiallyRendered, transitionFinished;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -114,78 +115,20 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 	}
 
 	@Override
+	public void onTransitionFinished() {
+		transitionFinished = true;
+		maybeApplyContext();
+	}
+
+	@Override
 	protected void doLoadData(int offset, int count){
 		if (refreshing) loadMainStatus();
 		currentRequest=new GetStatusContext(mainStatus.id)
 				.setCallback(new SimpleCallback<>(this){
 					@Override
 					public void onSuccess(StatusContext result){
-						if (getContext() == null) return;
-						Map<String, Status> oldData = null;
-						if(refreshing){
-							oldData = new HashMap<>(data.size());
-							for (Status s : data) oldData.put(s.id, s);
-							data.clear();
-							ancestryMap.clear();
-							displayItems.clear();
-							data.add(mainStatus);
-							onAppendItems(Collections.singletonList(mainStatus));
-						}
-
-						// TODO: figure out how this code works
-						if(isInstanceAkkoma()) sortStatusContext(mainStatus, result);
-
-						result.descendants=filterStatuses(result.descendants);
-						result.ancestors=filterStatuses(result.ancestors);
-
-						for (NeighborAncestryInfo i : mapNeighborhoodAncestry(mainStatus, result)) {
-							ancestryMap.put(i.status.id, i);
-						}
-
-						if(footerProgress!=null)
-							footerProgress.setVisibility(View.GONE);
-						data.addAll(result.descendants);
-						int prevCount=displayItems.size();
-						onAppendItems(result.descendants);
-						int count=displayItems.size();
-						if(!refreshing)
-							adapter.notifyItemRangeInserted(prevCount, count-prevCount);
-						int prependedCount = prependItems(result.ancestors, !refreshing);
-						if (prependedCount > 0 && displayItems.get(prependedCount) instanceof ReblogOrReplyLineStatusDisplayItem) {
-							displayItems.remove(prependedCount);
-							adapter.notifyItemRemoved(prependedCount);
-							count--;
-						}
-
-						for (Status s : data) {
-							Status oldStatus = oldData == null ? null : oldData.get(s.id);
-							// restore previous spoiler/filter revealed states when refreshing
-							if (oldStatus != null) {
-								s.spoilerRevealed = oldStatus.spoilerRevealed;
-								s.filterRevealed = oldStatus.filterRevealed;
-							} else if (GlobalUserPreferences.autoRevealEqualSpoilers != AutoRevealMode.NEVER &&
-									s.spoilerText != null &&
-									s.spoilerText.equals(mainStatus.spoilerText) &&
-									mainStatus.spoilerRevealed) {
-								if (GlobalUserPreferences.autoRevealEqualSpoilers == AutoRevealMode.DISCUSSIONS || Objects.equals(mainStatus.account.id, s.account.id)) {
-									s.spoilerRevealed = true;
-								}
-							}
-						}
-
-						dataLoaded();
-						if(refreshing){
-							refreshDone();
-							adapter.notifyDataSetChanged();
-						}
-						list.scrollToPosition(displayItems.size()-count);
-
-						// no animation is going to happen, so proceeding to apply right now
-						if (data.size() == 1) {
-							contextInitiallyRendered = true;
-							// for the case that the main status has already finished loading
-							maybeApplyMainStatus();
-						}
+						ThreadFragment.this.result = result;
+						maybeApplyContext();
 					}
 				})
 				.exec(accountID);
@@ -206,6 +149,77 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 					@Override
 					public void onError(ErrorResponse error) {}
 				}).exec(accountID);
+	}
+
+	protected void maybeApplyContext() {
+		if (!transitionFinished || result == null || getContext() == null) return;
+		Map<String, Status> oldData = null;
+		if(refreshing){
+			oldData = new HashMap<>(data.size());
+			for (Status s : data) oldData.put(s.id, s);
+			data.clear();
+			ancestryMap.clear();
+			displayItems.clear();
+			data.add(mainStatus);
+			onAppendItems(Collections.singletonList(mainStatus));
+		}
+
+		// TODO: figure out how this code works
+		if (isInstanceAkkoma()) sortStatusContext(mainStatus, result);
+
+		result.descendants=filterStatuses(result.descendants);
+		result.ancestors=filterStatuses(result.ancestors);
+
+		for (NeighborAncestryInfo i : mapNeighborhoodAncestry(mainStatus, result)) {
+			ancestryMap.put(i.status.id, i);
+		}
+
+		if(footerProgress!=null)
+			footerProgress.setVisibility(View.GONE);
+		data.addAll(result.descendants);
+		int prevCount=displayItems.size();
+		onAppendItems(result.descendants);
+		int count=displayItems.size();
+		if(!refreshing)
+			adapter.notifyItemRangeInserted(prevCount, count-prevCount);
+		int prependedCount = prependItems(result.ancestors, !refreshing);
+		if (prependedCount > 0 && displayItems.get(prependedCount) instanceof ReblogOrReplyLineStatusDisplayItem) {
+			displayItems.remove(prependedCount);
+			adapter.notifyItemRemoved(prependedCount);
+			count--;
+		}
+
+		for (Status s : data) {
+			Status oldStatus = oldData == null ? null : oldData.get(s.id);
+			// restore previous spoiler/filter revealed states when refreshing
+			if (oldStatus != null) {
+				s.spoilerRevealed = oldStatus.spoilerRevealed;
+				s.filterRevealed = oldStatus.filterRevealed;
+			} else if (GlobalUserPreferences.autoRevealEqualSpoilers != AutoRevealMode.NEVER &&
+					s.spoilerText != null &&
+					s.spoilerText.equals(mainStatus.spoilerText) &&
+					mainStatus.spoilerRevealed) {
+				if (GlobalUserPreferences.autoRevealEqualSpoilers == AutoRevealMode.DISCUSSIONS || Objects.equals(mainStatus.account.id, s.account.id)) {
+					s.spoilerRevealed = true;
+				}
+			}
+		}
+
+		dataLoaded();
+		if(refreshing){
+			refreshDone();
+			adapter.notifyDataSetChanged();
+		}
+		list.scrollToPosition(displayItems.size()-count);
+
+		// no animation is going to happen, so proceeding to apply right now
+		if (data.size() == 1) {
+			contextInitiallyRendered = true;
+			// for the case that the main status has already finished loading
+			maybeApplyMainStatus();
+		}
+
+		result = null;
 	}
 
 	protected Object maybeApplyMainStatus() {

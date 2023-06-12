@@ -69,7 +69,7 @@ public class ExternalShareActivity extends FragmentStackActivity{
 								.ifPresent(req ->
 										req.wrapProgress(this, R.string.loading, true, d -> {
 											UiUtils.transformDialogForLookup(this, accountId, isFediUrl ? text.get() : null, d);
-											d.setOnDismissListener((ev) -> finish());
+											d.setOnDismissListener((x) -> finish());
 										}));
 					} else {
 						openComposeFragment(accountId);

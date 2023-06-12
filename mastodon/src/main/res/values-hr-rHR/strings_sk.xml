@@ -181,7 +181,7 @@
     <string name="sk_settings_local_only_explanation">Vaša početna instanca mora podržavati isključivo-lokalno objavljivanje da bi ovo radilo. Većina modificiranih verzija Mastodona to radi, ali Mastodon ne.</string>
     <string name="sk_settings_hide_interaction">Sakrij gumbe za interakciju</string>
     <string name="sk_settings_hide_fab">Automatski sakrij gumb \"Nova objava\"</string>
-    <string name="sk_quoting_user">"Citiranje  %"</string>
+    <string name="sk_quoting_user">Citiranje %s</string>
     <string name="sk_settings_reply_visibility">Vidljivost odgovora</string>
     <string name="sk_settings_reply_visibility_all">Svi odgovori</string>
     <string name="sk_settings_reply_visibility_following">Odgovori onima koje pratim</string>

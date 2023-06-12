@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/prefix_replies_never" android:title="@string/sk_settings_prefix_replies_never" />
+    <item android:id="@+id/prefix_replies_to_others" android:title="@string/sk_settings_prefix_replies_to_others" />
+    <item android:id="@+id/prefix_replies_always" android:title="@string/sk_settings_prefix_replies_always" />
+</menu>

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.squareup.otto.Subscribe;
 
 import org.joinmastodon.android.E;
+import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.reports.SendReport;
 import org.joinmastodon.android.events.FinishReportFragmentsEvent;
@@ -39,7 +40,7 @@ public class ReportCommentFragment extends MastodonToolbarFragment{
 	private TextView forwardReportText;
 	private Switch forwardReportSwitch;
 	private EditText commentEdit;
-	private boolean forwardReport;
+	private boolean forwardReport = GlobalUserPreferences.forwardReportDefault;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -89,7 +90,7 @@ public class ReportCommentFragment extends MastodonToolbarFragment{
 		} else {
 			forwardReportItem.setOnClickListener(this::onForwardReportClick);
 			forwardReportText.setText(getActivity().getString(R.string.sk_forward_report_to, domain));
-			forwardReportSwitch.setChecked(forwardReport = true);
+			forwardReportSwitch.setChecked(forwardReport);
 		}
 		return view;
 	}

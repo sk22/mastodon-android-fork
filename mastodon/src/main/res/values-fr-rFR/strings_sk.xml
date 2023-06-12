@@ -254,7 +254,7 @@
     <string name="sk_expand">Développer</string>
     <string name="sk_collapse">Réduire</string>
     <string name="sk_settings_collapse_long_posts">Réduire les messages très longs</string>
-    <string name="sk_settings_prefix_reply_cw_with_re">Préfixe \"re :\" lors d\'une réponse avec AC</string>
+    <string name="sk_settings_prefix_reply_cw_with_re">Préfixe les AC avec \"re :\" sur les réponses à</string>
     <string name="sk_filtered">Filtré : %s</string>
     <string name="sk_unfinished_attachments">Corriger les pièces jointes \?</string>
     <string name="sk_unfinished_attachments_message">Certaines pièces jointes n\'ont pas fini de se télécharger.</string>
@@ -298,4 +298,12 @@
     <string name="sk_no_remote_info_hint">informations distantes indisponibles</string>
     <string name="sk_error_loading_profile">Échec du chargement du profil via %s</string>
     <string name="sk_settings_allow_remote_loading_explanation">Essayez de récupérer des listes plus précises pour les abonnés, les likes et les boosts en chargeant les informations à partir de l\'instance d\'origine.</string>
+    <string name="sk_settings_auto_reveal_equal_spoilers">Révéler les AC identiques dans les réponses de</string>
+    <string name="sk_settings_auto_reveal_nobody">personne</string>
+    <string name="sk_settings_auto_reveal_author">auteur</string>
+    <string name="sk_settings_auto_reveal_anyone">tout le monde</string>
+    <string name="sk_settings_prefix_replies_always">tout le monde</string>
+    <string name="sk_settings_prefix_replies_never">personne</string>
+    <string name="sk_settings_prefix_replies_to_others">autres</string>
+    <string name="sk_settings_forward_report_default">\"Transférer le rapport\" par défaut</string>
 </resources>
