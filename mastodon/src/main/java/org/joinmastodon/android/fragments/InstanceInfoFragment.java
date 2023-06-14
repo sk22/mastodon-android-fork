@@ -224,6 +224,7 @@ public class InstanceInfoFragment extends LoaderFragment {
 			toolbarTitleView.setTranslationY(titleTransY);
 			toolbarSubtitleView.setTranslationY(titleTransY);
 		}
+		RecyclerFragment.setRefreshLayoutColors(refreshLayout);
 	}
 
 	@Override
