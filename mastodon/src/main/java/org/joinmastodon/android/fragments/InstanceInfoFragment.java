@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
@@ -42,10 +43,9 @@ import org.joinmastodon.android.ui.text.HtmlParser;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.ui.views.CoverImageView;
 import org.joinmastodon.android.ui.views.LinkedTextView;
+import org.joinmastodon.android.utils.ProvidesAssistContent;
 import org.parceler.Parcels;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,7 +61,7 @@ import me.grishka.appkit.imageloader.requests.UrlImageLoaderRequest;
 import me.grishka.appkit.utils.BindableViewHolder;
 import me.grishka.appkit.views.UsableRecyclerView;
 
-public class InstanceInfoFragment extends LoaderFragment {
+public class InstanceInfoFragment extends LoaderFragment implements ProvidesAssistContent.ProvidesWebUri {
 
 	private Instance instance;
 	private String extendedDescription;
@@ -86,6 +86,8 @@ public class InstanceInfoFragment extends LoaderFragment {
 	private List<AccountField> metadataListData=Collections.emptyList();
 	private MetadataAdapter adapter;
 	private ListImageLoaderWrapper imgLoader;
+
+	private int statusBarHeight;
 
 	private float textMaxHeight, textCollapsedHeight;
 	private LinearLayout.LayoutParams collapseParams, wrapParams;
@@ -136,7 +138,6 @@ public class InstanceInfoFragment extends LoaderFragment {
 		readMore.setOnClickListener(this::onReadMoreClick);
 		refreshLayout.setOnRefreshListener(this);
 
-
 		if(loaded){
 			bindViews();
 			dataLoaded();
@@ -160,12 +161,6 @@ public class InstanceInfoFragment extends LoaderFragment {
 					public void onSuccess(Instance result){
 						if (getActivity() == null) return;
 						instance = result;
-						try {
-							// This is for akkoma instances where the instance URI contains the https header as well, so this is to get rid of it
-							instance.uri = new URI(instance.uri).getHost();
-						} catch (URISyntaxException e) {
-							throw new RuntimeException(e);
-						}
 						bindViews();
 						dataLoaded();
 						invalidateOptionsMenu();
@@ -227,6 +222,7 @@ public class InstanceInfoFragment extends LoaderFragment {
 	public void onViewCreated(View view, Bundle savedInstanceState){
 		super.onViewCreated(view, savedInstanceState);
 		updateToolbar();
+		scrollView.setOnScrollChangeListener(this::onScrollChanged);
 		titleTransY=getToolbar().getLayoutParams().height;
 		if(toolbarTitleView!=null){
 			toolbarTitleView.setTranslationY(titleTransY);
@@ -243,7 +239,7 @@ public class InstanceInfoFragment extends LoaderFragment {
 
 	@Override
 	public void onApplyWindowInsets(WindowInsets insets){
-		int statusBarHeight = insets.getSystemWindowInsetTop();
+		statusBarHeight = insets.getSystemWindowInsetTop();
 		if(contentView!=null){
 			((ViewGroup.MarginLayoutParams) getToolbar().getLayoutParams()).topMargin= statusBarHeight;
 		}
@@ -256,6 +252,7 @@ public class InstanceInfoFragment extends LoaderFragment {
 		ViewImageLoader.load(cover, null, new UrlImageLoaderRequest(instance.thumbnail, 1000, 1000));
 		uri.setText(instance.title);
 		setTitle(instance.title);
+		setSubtitle(targetDomain);
 
 		updateDescription();
 		collapseDescription();
@@ -266,7 +263,7 @@ public class InstanceInfoFragment extends LoaderFragment {
 		if (instance.contactAccount != null) {
 			AccountField admin = new AccountField();
 			admin.parsedName=admin.name=getContext().getString(R.string.sk_instance_admin);
-			admin.parsedValue=buildLinkText(instance.contactAccount.url, instance.contactAccount.getDisplayUsername() + "@" + instance.uri);
+			admin.parsedValue=buildLinkText(instance.contactAccount.url, instance.contactAccount.getDisplayUsername() + "@" + targetDomain);
 			fields.add(admin);
 		}
 
@@ -331,13 +328,36 @@ public class InstanceInfoFragment extends LoaderFragment {
 		scrollView.smoothScrollTo(0, 0);
 	}
 
+	private void onScrollChanged(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY){
+		int topBarsH=getToolbar().getHeight()+statusBarHeight;
+		if(scrollY>cover.getHeight()-topBarsH){
+			cover.setTranslationY(scrollY-(cover.getHeight()-topBarsH));
+			cover.setTranslationZ(V.dp(10));
+			cover.setTransform(cover.getHeight()/2f-topBarsH/2f, 1f);
+		}else{
+			cover.setTranslationY(0f);
+			cover.setTranslationZ(0f);
+			cover.setTransform(scrollY/2f, 1f);
+		}
+		coverGradient.setTopOffset(scrollY);
+		cover.invalidate();
+		titleTransY=getToolbar().getHeight();
+		if(scrollY>textWrap.getTop()-topBarsH){
+			titleTransY=Math.max(0f, titleTransY-(scrollY-(textWrap.getTop()-topBarsH)));
+		}
+		if(toolbarTitleView!=null){
+			toolbarTitleView.setTranslationY(titleTransY);
+			toolbarSubtitleView.setTranslationY(titleTransY);
+		}
+	}
+
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
 		if (instance != null) {
 			inflater.inflate(R.menu.instance_info, menu);
 			UiUtils.enableOptionsMenuIcons(getActivity(), menu);
-			menu.findItem(R.id.share).setTitle(getString(R.string.share_user, instance.uri));
+			menu.findItem(R.id.share).setTitle(getString(R.string.share_user, targetDomain));
 
 		}
 	}
@@ -353,7 +373,7 @@ public class InstanceInfoFragment extends LoaderFragment {
 		if(id==R.id.share){
 			Intent intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain");
-			intent.putExtra(Intent.EXTRA_TEXT, instance.uri);
+			intent.putExtra(Intent.EXTRA_TEXT, targetDomain);
 			startActivity(Intent.createChooser(intent, item.getTitle()));
 		}else if (id==R.id.rules) {
 			Bundle args=new Bundle();
@@ -394,6 +414,16 @@ public class InstanceInfoFragment extends LoaderFragment {
 	public void setFields(ArrayList<AccountField> fields){
 		metadataListData=fields;
 		if (adapter != null) adapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public String getAccountID() {
+		return accountID;
+	}
+
+	@Override
+	public Uri getWebUri(Uri.Builder base) {
+		return Uri.parse(targetDomain);
 	}
 
 	private class MetadataAdapter extends UsableRecyclerView.Adapter<BaseViewHolder> {
