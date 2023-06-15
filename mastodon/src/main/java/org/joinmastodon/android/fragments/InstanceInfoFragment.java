@@ -44,6 +44,8 @@ import org.joinmastodon.android.ui.views.CoverImageView;
 import org.joinmastodon.android.ui.views.LinkedTextView;
 import org.parceler.Parcels;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -158,6 +160,12 @@ public class InstanceInfoFragment extends LoaderFragment {
 					public void onSuccess(Instance result){
 						if (getActivity() == null) return;
 						instance = result;
+						try {
+							// This is for akkoma instances where the instance URI contains the https header as well, so this is to get rid of it
+							instance.uri = new URI(instance.uri).getHost();
+						} catch (URISyntaxException e) {
+							throw new RuntimeException(e);
+						}
 						bindViews();
 						dataLoaded();
 						invalidateOptionsMenu();
