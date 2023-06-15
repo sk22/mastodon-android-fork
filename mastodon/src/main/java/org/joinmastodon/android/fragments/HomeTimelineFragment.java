@@ -15,6 +15,7 @@ import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.StatusCreatedEvent;
 import org.joinmastodon.android.model.CacheablePaginatedResponse;
 import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.displayitems.GapStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.StatusDisplayItem;
@@ -285,8 +286,8 @@ public class HomeTimelineFragment extends StatusListFragment {
 	}
 
 	@Override
-	protected Filter.FilterContext getFilterContext() {
-		return Filter.FilterContext.HOME;
+	protected FilterContext getFilterContext() {
+		return FilterContext.HOME;
 	}
 
 	@Override

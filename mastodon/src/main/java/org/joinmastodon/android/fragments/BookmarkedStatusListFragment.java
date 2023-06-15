@@ -6,6 +6,7 @@ import android.net.Uri;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.statuses.GetBookmarkedStatuses;
 import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.HeaderPaginationList;
 import org.joinmastodon.android.model.Status;
 
@@ -39,8 +40,8 @@ public class BookmarkedStatusListFragment extends StatusListFragment{
 	}
 
 	@Override
-	protected Filter.FilterContext getFilterContext() {
-		return Filter.FilterContext.ACCOUNT;
+	protected FilterContext getFilterContext() {
+		return FilterContext.ACCOUNT;
 	}
 
 	@Override

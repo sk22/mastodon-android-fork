@@ -13,6 +13,7 @@ import org.joinmastodon.android.events.StatusCreatedEvent;
 import org.joinmastodon.android.events.StatusUnpinnedEvent;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.displayitems.HeaderStatusDisplayItem;
 import org.joinmastodon.android.utils.StatusFilterPredicate;
@@ -130,8 +131,8 @@ public class AccountTimelineFragment extends StatusListFragment{
 
 
 	@Override
-	protected Filter.FilterContext getFilterContext() {
-		return Filter.FilterContext.ACCOUNT;
+	protected FilterContext getFilterContext() {
+		return FilterContext.ACCOUNT;
 	}
 
 	@Override

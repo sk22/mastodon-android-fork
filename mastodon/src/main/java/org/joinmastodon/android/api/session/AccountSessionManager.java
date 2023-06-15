@@ -155,6 +155,10 @@ public class AccountSessionManager{
 		return session;
 	}
 
+	public static AccountSession get(String id){
+		return getInstance().getAccount(id);
+	}
+
 	@Nullable
 	public AccountSession tryGetAccount(String id){
 		return sessions.get(id);

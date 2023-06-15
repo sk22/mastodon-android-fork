@@ -22,6 +22,8 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.LayoutRes;
+
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.accounts.GetAccountRelationships;
@@ -152,7 +154,11 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 		};
 
 		public Holder(Activity activity, ViewGroup parent){
-			super(activity, R.layout.display_item_header, parent);
+			this(activity, R.layout.display_item_header, parent);
+		}
+
+		protected Holder(Activity activity, @LayoutRes int layout, ViewGroup parent){
+			super(activity, layout, parent);
 			name=findViewById(R.id.name);
 			username=findViewById(R.id.username);
 			separator=findViewById(R.id.separator);

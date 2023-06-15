@@ -1,7 +1,7 @@
 package org.joinmastodon.android.utils;
 
 import static org.joinmastodon.android.model.Filter.FilterAction.*;
-import static org.joinmastodon.android.model.Filter.FilterContext.*;
+import static org.joinmastodon.android.model.FilterContext.*;
 import static org.junit.Assert.*;
 
 import org.joinmastodon.android.model.Filter;

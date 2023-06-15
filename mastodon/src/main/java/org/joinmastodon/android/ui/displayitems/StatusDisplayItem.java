@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,8 @@ import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Attachment;
 import org.joinmastodon.android.model.DisplayItemsParent;
 import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.FilterContext;
+import org.joinmastodon.android.model.FilterResult;
 import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.Poll;
 import org.joinmastodon.android.model.ScheduledStatus;
@@ -34,10 +37,10 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import me.grishka.appkit.Nav;
 import me.grishka.appkit.imageloader.requests.ImageLoaderRequest;
 import me.grishka.appkit.utils.BindableViewHolder;
 import me.grishka.appkit.views.UsableRecyclerView;
@@ -52,6 +55,13 @@ public abstract class StatusDisplayItem{
 			hasAncestoringNeighbor = false,
 			isMainStatus = true,
 			isDirectDescendant = false;
+
+	public static final int FLAG_INSET=1;
+	public static final int FLAG_NO_FOOTER=1 << 1;
+	public static final int FLAG_CHECKABLE=1 << 2;
+	public static final int FLAG_MEDIA_FORCE_HIDDEN=1 << 3;
+	public static final int FLAG_NO_HEADER=1 << 4;
+	public static final int FLAG_NO_TRANSLATE=1 << 5;
 
 	public void setAncestryInfo(
 			boolean hasDescendantNeighbor,
@@ -83,6 +93,7 @@ public abstract class StatusDisplayItem{
 	public static BindableViewHolder<? extends StatusDisplayItem> createViewHolder(Type type, Activity activity, ViewGroup parent){
 		return switch(type){
 			case HEADER -> new HeaderStatusDisplayItem.Holder(activity, parent);
+			case HEADER_CHECKABLE -> new CheckableHeaderStatusDisplayItem.Holder(activity, parent);
 			case REBLOG_OR_REPLY_LINE -> new ReblogOrReplyLineStatusDisplayItem.Holder(activity, parent);
 			case TEXT -> new TextStatusDisplayItem.Holder(activity, parent);
 			case AUDIO -> new AudioStatusDisplayItem.Holder(activity, parent);
@@ -98,11 +109,21 @@ public abstract class StatusDisplayItem{
 			case MEDIA_GRID -> new MediaGridStatusDisplayItem.Holder(activity, parent);
 			case WARNING -> new WarningFilteredStatusDisplayItem.Holder(activity, parent);
 			case FILE -> new FileStatusDisplayItem.Holder(activity, parent);
+			case SPOILER, FILTER_SPOILER -> new SpoilerStatusDisplayItem.Holder(activity, parent, type);
+			case SECTION_HEADER -> null; // new SectionHeaderStatusDisplayItem.Holder(activity, parent);
+			case NOTIFICATION_HEADER -> null; // new NotificationHeaderStatusDisplayItem.Holder(activity, parent);
 		};
 	}
 
-	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, Notification notification, Filter.FilterContext filterContext){
-		return buildItems(fragment, status, accountID, parentObject, knownAccounts, inset, addFooter, notification, false, filterContext);
+	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, Notification notification, boolean disableTranslate, FilterContext filterContext) {
+		int flags=0;
+		if(inset)
+			flags|=FLAG_INSET;
+		if(!addFooter)
+			flags|=FLAG_NO_FOOTER;
+		if (disableTranslate)
+			flags|=FLAG_NO_TRANSLATE;
+		return buildItems(fragment, status, accountID, parentObject, knownAccounts, null, filterContext, flags);
 	}
 
 	public static ReblogOrReplyLineStatusDisplayItem buildReplyLine(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parent, Account account, boolean threadReply) {
@@ -120,70 +141,50 @@ public abstract class StatusDisplayItem{
 		);
 	}
 
-	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, Notification notification, boolean disableTranslate, Filter.FilterContext filterContext){
+	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, Notification notification, FilterContext filterContext, int flags){
 		String parentID=parentObject.getID();
 		ArrayList<StatusDisplayItem> items=new ArrayList<>();
-
 		Status statusForContent=status.getContentStatus();
 		Bundle args=new Bundle();
 		args.putString("account", accountID);
 		ScheduledStatus scheduledStatus = parentObject instanceof ScheduledStatus ? (ScheduledStatus) parentObject : null;
 
+		HeaderStatusDisplayItem header=null;
+		boolean hideCounts=!GlobalUserPreferences.showInteractionCounts;
 		ReblogOrReplyLineStatusDisplayItem replyLine = null;
-		boolean threadReply = statusForContent.inReplyToAccountId != null &&
-				statusForContent.inReplyToAccountId.equals(statusForContent.account.id);
 
-		if(statusForContent.inReplyToAccountId!=null && !(threadReply && fragment instanceof ThreadFragment)){
-			Account account = knownAccounts.get(statusForContent.inReplyToAccountId);
-			replyLine = buildReplyLine(fragment, status, accountID, parentObject, account, threadReply);
+		if((flags & FLAG_NO_HEADER)==0){
+			boolean threadReply = statusForContent.inReplyToAccountId != null &&
+					statusForContent.inReplyToAccountId.equals(statusForContent.account.id);
+
+			if(statusForContent.inReplyToAccountId!=null && !(threadReply && fragment instanceof ThreadFragment)){
+				Account account = knownAccounts.get(statusForContent.inReplyToAccountId);
+				replyLine = buildReplyLine(fragment, status, accountID, parentObject, account, threadReply);
+			}
+			
+			if((flags & FLAG_CHECKABLE)!=0)
+				items.add(header=new CheckableHeaderStatusDisplayItem(parentID, statusForContent.account, statusForContent.createdAt, fragment, accountID, statusForContent, null));
+			else
+				items.add(header=new HeaderStatusDisplayItem(parentID, statusForContent.account, statusForContent.createdAt, fragment, accountID, statusForContent, null, notification, scheduledStatus));
 		}
 
-		if(status.reblog!=null){
-			boolean isOwnPost = AccountSessionManager.getInstance().isSelf(fragment.getAccountID(), status.account);
-			String fullText = fragment.getString(R.string.user_boosted, status.account.displayName);
-			String text = GlobalUserPreferences.compactReblogReplyLine && replyLine != null ? status.account.displayName : fullText;
-			items.add(new ReblogOrReplyLineStatusDisplayItem(parentID, fragment, text, status.account.emojis, R.drawable.ic_fluent_arrow_repeat_all_20sp_filled, isOwnPost ? status.visibility : null, i->{
-				args.putParcelable("profileAccount", Parcels.wrap(status.account));
-				Nav.go(fragment.getActivity(), ProfileFragment.class, args);
-			}, fullText));
-		} else if (!(status.tags.isEmpty() ||
-				fragment instanceof HashtagTimelineFragment ||
-				fragment instanceof ListTimelineFragment
-		) && fragment.getParentFragment() instanceof HomeTabFragment home) {
-			home.getHashtags().stream()
-					.filter(followed -> status.tags.stream()
-							.anyMatch(hashtag -> followed.name.equalsIgnoreCase(hashtag.name)))
-					.findAny()
-					// post contains a hashtag the user is following
-					.ifPresent(hashtag -> items.add(new ReblogOrReplyLineStatusDisplayItem(
-							parentID, fragment, hashtag.name, List.of(),
-							R.drawable.ic_fluent_number_symbol_20sp_filled, null,
-							i -> {
-								args.putString("hashtag", hashtag.name);
-								Nav.go(fragment.getActivity(), HashtagTimelineFragment.class, args);
-							}
-					)));
-		}
-
-		if (replyLine != null && GlobalUserPreferences.replyLineAboveHeader) {
-			Optional<ReblogOrReplyLineStatusDisplayItem> primaryLine = items.stream()
-					.filter(i -> i instanceof ReblogOrReplyLineStatusDisplayItem)
-					.map(ReblogOrReplyLineStatusDisplayItem.class::cast)
-					.findFirst();
-
-			if (primaryLine.isPresent() && GlobalUserPreferences.compactReblogReplyLine) {
-				primaryLine.get().extra = replyLine;
-			} else {
-				items.add(replyLine);
+		boolean filtered=false;
+		if(status.filtered!=null){
+			for(FilterResult filter:status.filtered){
+				if(filter.filter.isActive()){
+					filtered=true;
+					break;
+				}
 			}
 		}
 
-		HeaderStatusDisplayItem header;
-		items.add(header=new HeaderStatusDisplayItem(parentID, statusForContent.account, statusForContent.createdAt, fragment, accountID, statusForContent, null, notification, scheduledStatus));
-
-		if (replyLine != null && !GlobalUserPreferences.replyLineAboveHeader) {
-			replyLine.belowHeader = true;
-			items.add(replyLine);
+		ArrayList<StatusDisplayItem> contentItems;
+		if(!TextUtils.isEmpty(statusForContent.spoilerText)){
+			SpoilerStatusDisplayItem spoilerItem=new SpoilerStatusDisplayItem(parentID, fragment, null, statusForContent, Type.SPOILER);
+			items.add(spoilerItem);
+			contentItems=spoilerItem.contentItems;
+		}else{
+			contentItems=items;
 		}
 
 		if (statusForContent.quote != null) {
@@ -195,29 +196,31 @@ public abstract class StatusDisplayItem{
 				statusForContent.content += quoteInline;
 			}
 		}
-		if(!TextUtils.isEmpty(statusForContent.content))
-			items.add(new TextStatusDisplayItem(parentID, HtmlParser.parse(statusForContent.content, statusForContent.emojis, statusForContent.mentions, statusForContent.tags, accountID), fragment, statusForContent, disableTranslate));
-		else if (!GlobalUserPreferences.replyLineAboveHeader && replyLine != null)
-			replyLine.needBottomPadding=true;
-		else
-			header.needBottomPadding=true;
 
-		List<Attachment> imageAttachments=statusForContent.mediaAttachments.stream()
-				.filter(att->att.type.isImage() && !att.type.equals(Attachment.Type.UNKNOWN))
-				.collect(Collectors.toList());
+		if(!TextUtils.isEmpty(statusForContent.content)){
+			SpannableStringBuilder parsedText=HtmlParser.parse(statusForContent.content, statusForContent.emojis, statusForContent.mentions, statusForContent.tags, accountID);
+			HtmlParser.applyFilterHighlights(fragment.getActivity(), parsedText, status.filtered);
+			TextStatusDisplayItem text=new TextStatusDisplayItem(parentID, HtmlParser.parse(statusForContent.content, statusForContent.emojis, statusForContent.mentions, statusForContent.tags, accountID), fragment, statusForContent, (flags & FLAG_NO_TRANSLATE) != 0);
+			contentItems.add(text);
+		} else if (!GlobalUserPreferences.replyLineAboveHeader && replyLine != null) {
+			replyLine.needBottomPadding=true;
+		} else if (header!=null){
+			header.needBottomPadding=true;
+		}
+
+		List<Attachment> imageAttachments=statusForContent.mediaAttachments.stream().filter(att->att.type.isImage()).collect(Collectors.toList());
 		if(!imageAttachments.isEmpty()){
-			int color = UiUtils.getThemeColor(fragment.getContext(), R.attr.colorAccentLightest);
-			for (Attachment att : imageAttachments) {
-				if (att.blurhashPlaceholder == null) {
-					att.blurhashPlaceholder = new ColorDrawable(color);
-				}
-			}
 			PhotoLayoutHelper.TiledLayoutResult layout=PhotoLayoutHelper.processThumbs(imageAttachments);
-			items.add(new MediaGridStatusDisplayItem(parentID, fragment, layout, imageAttachments, statusForContent));
+			MediaGridStatusDisplayItem mediaGrid=new MediaGridStatusDisplayItem(parentID, fragment, layout, imageAttachments, statusForContent);
+			if((flags & FLAG_MEDIA_FORCE_HIDDEN)!=0)
+				mediaGrid.sensitiveTitle=fragment.getString(R.string.media_hidden);
+			else if(statusForContent.sensitive)
+				mediaGrid.sensitiveRevealed=true;
+			contentItems.add(mediaGrid);
 		}
 		for(Attachment att:statusForContent.mediaAttachments){
 			if(att.type==Attachment.Type.AUDIO){
-				items.add(new AudioStatusDisplayItem(parentID, fragment, statusForContent, att));
+				contentItems.add(new AudioStatusDisplayItem(parentID, fragment, statusForContent, att));
 			}
 		}
 
@@ -230,39 +233,35 @@ public abstract class StatusDisplayItem{
 			buildPollItems(parentID, fragment, statusForContent.poll, items);
 		}
 		if(statusForContent.card!=null && statusForContent.mediaAttachments.isEmpty() && TextUtils.isEmpty(statusForContent.spoilerText)){
-			items.add(new LinkCardStatusDisplayItem(parentID, fragment, statusForContent));
+			contentItems.add(new LinkCardStatusDisplayItem(parentID, fragment, statusForContent));
 		}
-		if(addFooter){
-			items.add(new FooterStatusDisplayItem(parentID, fragment, statusForContent, accountID));
+		if((flags & FLAG_NO_FOOTER)==0){
+			FooterStatusDisplayItem footer=new FooterStatusDisplayItem(parentID, fragment, statusForContent, accountID);
+			footer.hideCounts=hideCounts;
+			items.add(footer);
+			if(status.hasGapAfter && !(fragment instanceof ThreadFragment))
+				items.add(new GapStatusDisplayItem(parentID, fragment));
 		}
 		int i=1;
+		boolean inset=(flags & FLAG_INSET)!=0;
 		for(StatusDisplayItem item:items){
 			item.inset=inset;
 			item.index=i++;
 		}
-
-		Filter applyingFilter = null;
-		if (!statusForContent.filterRevealed) {
-			StatusFilterPredicate predicate = new StatusFilterPredicate(accountID, filterContext, Filter.FilterAction.WARN);
-			statusForContent.filterRevealed = predicate.test(status);
-			applyingFilter = predicate.getApplyingFilter();
+		if(items!=contentItems){
+			for(StatusDisplayItem item:contentItems){
+				item.inset=inset;
+				item.index=i++;
+			}
 		}
-
-		ArrayList<StatusDisplayItem> result = statusForContent.filterRevealed ? items :
-				new ArrayList<>(List.of(new WarningFilteredStatusDisplayItem(parentID, fragment, statusForContent, items, applyingFilter)));
-
-		if (addFooter && status.hasGapAfter && !(fragment instanceof ThreadFragment)) {
-			StatusDisplayItem gap = new GapStatusDisplayItem(parentID, fragment);
-			gap.index = i++;
-			result.add(gap);
-		}
-
-		return result;
+		return items;
 	}
 
 	public static void buildPollItems(String parentID, BaseStatusListFragment fragment, Poll poll, List<StatusDisplayItem> items){
+		int i=0;
 		for(Poll.Option opt:poll.options){
-			items.add(new PollOptionStatusDisplayItem(parentID, poll, opt, fragment));
+			items.add(new PollOptionStatusDisplayItem(parentID, poll, /* i, */ opt, fragment));
+			i++;
 		}
 		items.add(new PollFooterStatusDisplayItem(parentID, fragment, poll));
 	}
@@ -283,7 +282,12 @@ public abstract class StatusDisplayItem{
 		EXTENDED_FOOTER,
 		MEDIA_GRID,
 		WARNING,
-		FILE
+		FILE,
+		SPOILER,
+		SECTION_HEADER,
+		HEADER_CHECKABLE,
+		NOTIFICATION_HEADER,
+		FILTER_SPOILER
 	}
 
 	public static abstract class Holder<T extends StatusDisplayItem> extends BindableViewHolder<T> implements UsableRecyclerView.DisableableClickable{

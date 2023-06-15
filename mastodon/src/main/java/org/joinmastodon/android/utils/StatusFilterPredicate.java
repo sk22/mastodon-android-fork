@@ -2,6 +2,8 @@ package org.joinmastodon.android.utils;
 
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.FilterAction;
+import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Status;
 
 import java.time.Instant;
@@ -13,8 +15,8 @@ import java.util.stream.Stream;
 
 public class StatusFilterPredicate implements Predicate<Status>{
 	private final List<Filter> filters;
-	private final Filter.FilterContext context;
-	private final Filter.FilterAction action;
+	private final FilterContext context;
+	private final FilterAction action;
 	private Filter applyingFilter;
 
 	/**
@@ -22,14 +24,14 @@ public class StatusFilterPredicate implements Predicate<Status>{
 	 * @param action defines what the predicate should check:
 	 * 	             status should not be hidden or should not display with warning
 	 */
-	public StatusFilterPredicate(List<Filter> filters, Filter.FilterContext context, Filter.FilterAction action){
+	public StatusFilterPredicate(List<Filter> filters, FilterContext context, FilterAction action){
 		this.filters = filters;
 		this.context = context;
 		this.action = action;
 	}
 
-	public StatusFilterPredicate(List<Filter> filters, Filter.FilterContext context){
-		this(filters, context, Filter.FilterAction.HIDE);
+	public StatusFilterPredicate(List<Filter> filters, FilterContext context){
+		this(filters, context, FilterAction.HIDE);
 	}
 
 	/**
@@ -37,7 +39,7 @@ public class StatusFilterPredicate implements Predicate<Status>{
 	 * @param action defines what the predicate should check:
 	 *               status should not be hidden or should not display with warning
 	 */
-	public StatusFilterPredicate(String accountID, Filter.FilterContext context, Filter.FilterAction action){
+	public StatusFilterPredicate(String accountID, FilterContext context, FilterAction action){
 		filters=AccountSessionManager.getInstance().getAccount(accountID).wordFilters.stream().filter(f->f.context.contains(context)).collect(Collectors.toList());
 		this.context = context;
 		this.action = action;
@@ -46,8 +48,8 @@ public class StatusFilterPredicate implements Predicate<Status>{
 	/**
 	 * @param context null makes the predicate pass automatically
 	 */
-	public StatusFilterPredicate(String accountID, Filter.FilterContext context){
-		this(accountID, context, Filter.FilterAction.HIDE);
+	public StatusFilterPredicate(String accountID, FilterContext context){
+		this(accountID, context, FilterAction.HIDE);
 	}
 
 	/**
@@ -72,7 +74,7 @@ public class StatusFilterPredicate implements Predicate<Status>{
 				// only apply filters for given context
 				.filter(filter -> filter.context.contains(context))
 				// treating filterAction = null (from filters list) as FilterAction.HIDE
-				.filter(filter -> filter.filterAction == null ? action == Filter.FilterAction.HIDE : filter.filterAction == action)
+				.filter(filter -> filter.filterAction == null ? action == FilterAction.HIDE : filter.filterAction == action)
 				.findAny();
 
 		this.applyingFilter = applyingFilter.orElse(null);

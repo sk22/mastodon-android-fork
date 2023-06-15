@@ -15,6 +15,7 @@ import org.joinmastodon.android.events.StatusCreatedEvent;
 import org.joinmastodon.android.events.StatusDeletedEvent;
 import org.joinmastodon.android.events.StatusUpdatedEvent;
 import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.displayitems.ExtendedFooterStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.FooterStatusDisplayItem;
@@ -35,10 +36,10 @@ public abstract class StatusListFragment extends BaseStatusListFragment<Status> 
 	protected List<StatusDisplayItem> buildDisplayItems(Status s){
 		boolean addFooter = !GlobalUserPreferences.spectatorMode ||
 				(this instanceof ThreadFragment t && s.id.equals(t.mainStatus.id));
-		return StatusDisplayItem.buildItems(this, s, accountID, s, knownAccounts, false, addFooter, null, getFilterContext());
+		return StatusDisplayItem.buildItems(this, s, accountID, s, knownAccounts, null, getFilterContext(), addFooter ? 0 : StatusDisplayItem.FLAG_NO_FOOTER);
 	}
 
-	protected abstract Filter.FilterContext getFilterContext();
+	protected abstract FilterContext getFilterContext();
 
 	@Override
 	protected void addAccountToKnown(Status s){

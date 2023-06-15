@@ -48,6 +48,8 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 	private final List<Attachment> attachments;
 	private final ArrayList<ImageLoaderRequest> requests=new ArrayList<>();
 	public final Status status;
+	public boolean sensitiveRevealed;
+	public String sensitiveTitle;
 
 	public MediaGridStatusDisplayItem(String parentID, BaseStatusListFragment<?> parentFragment, PhotoLayoutHelper.TiledLayoutResult tiledLayout, List<Attachment> attachments, Status status){
 		super(parentID, parentFragment);
@@ -55,6 +57,7 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 		this.viewPool=parentFragment.getAttachmentViewsPool();
 		this.attachments=attachments;
 		this.status=status;
+		sensitiveRevealed=!status.sensitive;
 		for(Attachment att:attachments){
 			requests.add(new UrlImageLoaderRequest(switch(att.type){
 				case IMAGE -> att.url;

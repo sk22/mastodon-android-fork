@@ -7,6 +7,7 @@ import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.accounts.GetAccountStatuses;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Status;
 import org.parceler.Parcels;
 
@@ -41,8 +42,8 @@ public class PinnedPostsListFragment extends StatusListFragment{
 	}
 
 	@Override
-	protected Filter.FilterContext getFilterContext() {
-		return Filter.FilterContext.ACCOUNT;
+	protected FilterContext getFilterContext() {
+		return FilterContext.ACCOUNT;
 	}
 
 	@Override

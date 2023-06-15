@@ -18,6 +18,7 @@ import org.joinmastodon.android.events.StatusCreatedEvent;
 import org.joinmastodon.android.events.StatusUpdatedEvent;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.model.StatusContext;
 import org.joinmastodon.android.ui.BetterItemAnimator;
@@ -425,8 +426,8 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 
 
 	@Override
-	protected Filter.FilterContext getFilterContext() {
-		return Filter.FilterContext.THREAD;
+	protected FilterContext getFilterContext() {
+		return FilterContext.THREAD;
 	}
 
 	@Override

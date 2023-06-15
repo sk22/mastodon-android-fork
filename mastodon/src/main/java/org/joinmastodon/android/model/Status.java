@@ -189,6 +189,7 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 		s.mentions = List.of();
 		s.tags = List.of();
 		s.emojis = List.of();
+		s.filtered = List.of();
 		return s;
 	}
 

@@ -17,6 +17,7 @@ import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.model.CacheablePaginatedResponse;
 import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.SearchResult;
@@ -58,7 +59,7 @@ public class CacheController{
 		cancelDelayedClose();
 		databaseThread.postRunnable(()->{
 			try{
-				List<Filter> filters=AccountSessionManager.getInstance().getAccount(accountID).wordFilters.stream().filter(f->f.context.contains(Filter.FilterContext.HOME)).collect(Collectors.toList());
+				List<Filter> filters=AccountSessionManager.getInstance().getAccount(accountID).wordFilters.stream().filter(f->f.context.contains(FilterContext.HOME)).collect(Collectors.toList());
 				if(!forceReload){
 					SQLiteDatabase db=getOrOpenDatabase();
 					try(Cursor cursor=db.query("home_timeline", new String[]{"json", "flags"}, maxID==null ? null : "`id`<?", maxID==null ? null : new String[]{maxID}, null, null, "`time` DESC", count+"")){
@@ -73,7 +74,7 @@ public class CacheController{
 								int flags=cursor.getInt(1);
 								status.hasGapAfter=((flags & POST_FLAG_GAP_AFTER)!=0);
 								newMaxID=status.id;
-								if (!new StatusFilterPredicate(filters, Filter.FilterContext.HOME).test(status))
+								if (!new StatusFilterPredicate(filters, FilterContext.HOME).test(status))
 									continue outer;
 								result.add(status);
 							}while(cursor.moveToNext());
@@ -89,7 +90,7 @@ public class CacheController{
 						.setCallback(new Callback<>(){
 							@Override
 							public void onSuccess(List<Status> result){
-								callback.onSuccess(new CacheablePaginatedResponse<>(result.stream().filter(new StatusFilterPredicate(filters, Filter.FilterContext.HOME)).collect(Collectors.toList()), result.isEmpty() ? null : result.get(result.size()-1).id, false));
+								callback.onSuccess(new CacheablePaginatedResponse<>(result.stream().filter(new StatusFilterPredicate(filters, FilterContext.HOME)).collect(Collectors.toList()), result.isEmpty() ? null : result.get(result.size()-1).id, false));
 								putHomeTimeline(result, maxID==null);
 							}
 
@@ -131,7 +132,7 @@ public class CacheController{
 		databaseThread.postRunnable(()->{
 			try{
 				AccountSession accountSession=AccountSessionManager.getInstance().getAccount(accountID);
-				List<Filter> filters=accountSession.wordFilters.stream().filter(f->f.context.contains(Filter.FilterContext.NOTIFICATIONS)).collect(Collectors.toList());
+				List<Filter> filters=accountSession.wordFilters.stream().filter(f->f.context.contains(FilterContext.NOTIFICATIONS)).collect(Collectors.toList());
 				if(!forceReload){
 					SQLiteDatabase db=getOrOpenDatabase();
 					String table=onlyPosts ? "notifications_posts" : onlyMentions ? "notifications_mentions" : "notifications_all";
@@ -146,7 +147,7 @@ public class CacheController{
 								ntf.postprocess();
 								newMaxID=ntf.id;
 								if(ntf.status!=null){
-									if (!new StatusFilterPredicate(filters, Filter.FilterContext.NOTIFICATIONS).test(ntf.status))
+									if (!new StatusFilterPredicate(filters, FilterContext.NOTIFICATIONS).test(ntf.status))
 										continue outer;
 								}
 								result.add(ntf);
@@ -166,7 +167,7 @@ public class CacheController{
 							public void onSuccess(List<Notification> result){
 								callback.onSuccess(new CacheablePaginatedResponse<>(result.stream().filter(ntf->{
 									if(ntf.status!=null){
-										return new StatusFilterPredicate(filters, Filter.FilterContext.NOTIFICATIONS).test(ntf.status);
+										return new StatusFilterPredicate(filters, FilterContext.NOTIFICATIONS).test(ntf.status);
 									}
 									return true;
 								}).collect(Collectors.toList()), result.isEmpty() ? null : result.get(result.size()-1).id, false));

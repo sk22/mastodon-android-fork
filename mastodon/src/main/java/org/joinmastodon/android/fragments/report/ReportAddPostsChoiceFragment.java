@@ -23,6 +23,7 @@ import org.joinmastodon.android.events.FinishReportFragmentsEvent;
 import org.joinmastodon.android.fragments.StatusListFragment;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.displayitems.AudioStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.HeaderStatusDisplayItem;
@@ -265,7 +266,7 @@ public class ReportAddPostsChoiceFragment extends StatusListFragment{
 	}
 
 	@Override
-	protected Filter.FilterContext getFilterContext() {
+	protected FilterContext getFilterContext() {
 		return null;
 	}
 

@@ -40,6 +40,7 @@ import org.joinmastodon.android.ui.displayitems.HeaderStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.MediaGridStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.PollFooterStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.PollOptionStatusDisplayItem;
+import org.joinmastodon.android.ui.displayitems.SpoilerStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.StatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.TextStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.WarningFilteredStatusDisplayItem;
@@ -54,6 +55,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -533,6 +535,29 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 	public void onRevealSpoilerClick(MediaGridStatusDisplayItem.Holder holder){
 		Status status=holder.getItem().status;
 		revealSpoiler(status, holder.getItemID());
+	}
+
+	public void onRevealSpoilerClick(SpoilerStatusDisplayItem.Holder holder){
+		Status status=holder.getItem().status;
+		toggleSpoiler(status, holder.getItemID());
+	}
+
+	protected void toggleSpoiler(Status status, String itemID){
+		status.spoilerRevealed=!status.spoilerRevealed;
+		SpoilerStatusDisplayItem.Holder spoiler=findHolderOfType(itemID, SpoilerStatusDisplayItem.Holder.class);
+		if(spoiler!=null)
+			spoiler.rebind();
+		SpoilerStatusDisplayItem spoilerItem=Objects.requireNonNull(findItemOfType(itemID, SpoilerStatusDisplayItem.class));
+
+		int index=displayItems.indexOf(spoilerItem);
+		if(status.spoilerRevealed){
+			displayItems.addAll(index+1, spoilerItem.contentItems);
+			adapter.notifyItemRangeInserted(index+1, spoilerItem.contentItems.size());
+		}else{
+			displayItems.subList(index+1, index+1+spoilerItem.contentItems.size()).clear();
+			adapter.notifyItemRangeRemoved(index+1, spoilerItem.contentItems.size());
+		}
+		list.invalidateItemDecorations();
 	}
 
 	protected void revealSpoiler(Status status, String itemID){

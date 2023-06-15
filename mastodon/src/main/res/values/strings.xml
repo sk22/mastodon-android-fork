@@ -454,4 +454,37 @@
 	<string name="welcome_paragraph2"><![CDATA[Every Mastodon account is hosted on a server — each with its own values, rules, & admins. No matter which one you pick, you can follow and interact with people on any server.]]></string>
 	<string name="log_out_all_accounts">Log out of all accounts</string>
 	<string name="confirm_log_out_all_accounts">Log out of all accounts?</string>
+	<string name="filter_context_home_lists">Home &amp; lists</string>
+	<string name="filter_context_notifications">Notifications</string>
+	<string name="filter_context_public_timelines">Public timelines</string>
+	<string name="filter_context_threads_replies">Threads &amp; replies</string>
+	<string name="filter_context_profiles">Profiles</string>
+	<string name="settings_filter_title">Title</string>
+	<string name="settings_delete_filter_title">Delete filter “%s”?</string>
+	<string name="settings_delete_filter_confirmation">This filter will be deleted from your account on all your devices.</string>
+	<string name="add_muted_word">Add muted word</string>
+	<string name="edit_muted_word">Edit muted word</string>
+	<string name="add">Add</string>
+	<string name="filter_word_or_phrase">Word or phrase</string>
+	<string name="filter_add_word_help">Words are case-insensitive and match full words only.\n\nIf you filter the keyword “Apple,” it will hide posts containing “apple” or “aPpLe” but not “pineapple.”</string>
+	<string name="settings_delete_filter_word">Delete word “%s”?</string>
+	<string name="enter_selection_mode">Select</string>
+	<string name="select_all">Select all</string>
+	<string name="settings_filter_duration_title">Filter duration</string>
+	<string name="filter_duration_custom">Custom</string>
+	<plurals name="settings_delete_x_filter_words">
+		<item quantity="one">Delete %d word?</item>
+		<item quantity="other">Delete %d words?</item>
+	</plurals>
+	<plurals name="x_items_selected">
+		<item quantity="one">%d selected</item>
+		<item quantity="other">%d selected</item>
+	</plurals>
+	<string name="required_form_field_blank">Cannot be blank</string>
+	<string name="filter_word_already_in_list">Already in the list</string>
+	<string name="app_update_ready">App update ready</string>
+	<string name="app_update_version">Version %s</string>
+	<string name="downloading_update">Downloading (%d%%)</string>
+	<!-- Shown like a content warning, %s is the name of the filter -->
+	<string name="post_matches_filter_x">Matches filter “%s”</string>
 </resources>

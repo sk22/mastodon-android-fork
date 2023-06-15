@@ -7,6 +7,7 @@ import android.view.View;
 import org.joinmastodon.android.api.requests.trends.GetTrendingStatuses;
 import org.joinmastodon.android.fragments.StatusListFragment;
 import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.utils.DiscoverInfoBannerHelper;
 import org.joinmastodon.android.utils.StatusFilterPredicate;
@@ -39,8 +40,8 @@ public class DiscoverPostsFragment extends StatusListFragment {
 	}
 
 	@Override
-	protected Filter.FilterContext getFilterContext() {
-		return Filter.FilterContext.PUBLIC;
+	protected FilterContext getFilterContext() {
+		return FilterContext.PUBLIC;
 	}
 
 	@Override
