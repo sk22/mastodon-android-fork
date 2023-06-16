@@ -166,4 +166,15 @@
     <string name="sk_icon_star">ستاره</string>
     <string name="sk_confirm_delete_draft">آیا مطمئنید که می‌خواهید این فرسته پیش نویس شده را حذف کنید؟</string>
     <string name="sk_changelog">گزارش تغییرات</string>
+    <string name="sk_federated_timeline_info_banner">این‌ها جدیدترین فرسته‌های اعضای فدریشن شماست.</string>
+    <string name="sk_settings_always_reveal_content_warnings">همیشه هشدارهای محتوا را آشکار کن</string>
+    <string name="sk_settings_contribute">کمک به مگالودون</string>
+    <string name="sk_settings_show_federated_timeline">نمایش خط زمانی فدریتد</string>
+    <string name="sk_settings_translate_only_opened">فقط فرسته‌های باز شده را ترجمه کنید</string>
+    <string name="sk_settings_translation_availability_note_unavailable">%s به نظر نمی‌رسد از ترجمه پشتیبانی کند.</string>
+    <string name="sk_hashtags_you_follow">برچسب‌هایی که پی‌گیری می‌کنید</string>
+    <string name="sk_already_bookmarked">قبلا نشانک شده است</string>
+    <string name="sk_bookmarked_as">به عنوان %s نشانک‌گذاری شد</string>
+    <string name="sk_compose_draft">فرسته به‌عنوان پیش‌نویس ذخیره شده است.</string>
+    <string name="sk_settings_single_notification">فقط یک آگاهی نمایش داده شود</string>
 </resources>
