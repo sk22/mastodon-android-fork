@@ -305,4 +305,8 @@
     <string name="sk_settings_prefix_replies_never">нікого</string>
     <string name="sk_settings_prefix_replies_to_others">іншим</string>
     <string name="sk_settings_forward_report_default">Усталений перемикач “Пересилати звіт”</string>
+    <string name="sk_icon_feed">Стрічка</string>
+    <string name="sk_exclusive_list">Список виключення</string>
+    <string name="sk_list_exclusive_switch">Створити список виключень</string>
+    <string name="sk_list_exclusive_switch_explanation">Учасники списку виключень не будуть показані на вашій домашній стрічці — якщо ваш сервер підтримує цю функцію.</string>
 </resources>
