@@ -305,4 +305,8 @@
     <string name="sk_settings_prefix_replies_never">Ninguna</string>
     <string name="sk_settings_prefix_replies_to_others">A otros</string>
     <string name="sk_settings_forward_report_default">\"Reenviar denuncia\" activado por defecto</string>
+    <string name="sk_list_exclusive_switch">Hacer una lista exclusiva</string>
+    <string name="sk_icon_feed">Feed</string>
+    <string name="sk_exclusive_list">Lista exclusiva</string>
+    <string name="sk_list_exclusive_switch_explanation">Los miembros de una lista exclusiva no aparecerán en tu línea de tiempo de inicio, si tu instancia lo admite.</string>
 </resources>
