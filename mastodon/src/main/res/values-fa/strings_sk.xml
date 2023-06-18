@@ -249,4 +249,8 @@
     <string name="sk_icon_feed">خوراک</string>
     <string name="sk_settings_content_types">به‌کار انداختن قالب‌بندی فرسته</string>
     <string name="sk_settings_glitch_mode_explanation">اگر نمونه خانه شما روی Glitch اجرا می شود، این را به‌کار بندازید. برای Hometown یا Akkoma مورد نیاز نیست.</string>
+    <string name="sk_quote_post">درباره این مورد فرسته بفرستید</string>
+    <string name="sk_scheduled_too_soon">فرسته باید برای حداقل 10 دقیقه در آینده برنامه ریزی شود.</string>
+    <string name="sk_remove_follower">برداشتن به عنوان پی‌گیرنده</string>
+    <string name="sk_alt_text_missing">حداقل یک پیوست حاوی توضیحات نیست.</string>
 </resources>
