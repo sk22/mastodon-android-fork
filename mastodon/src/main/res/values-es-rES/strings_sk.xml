@@ -272,7 +272,7 @@
     <string name="sk_reply_line_above_avatar">\"En respuesta a\" línea sobre el avatar</string>
     <string name="sk_show_thread">Mostrar hilo</string>
     <string name="sk_compact_reblog_reply_line">Línea compacta compartida/respondida</string>
-    <string name="sk_settings_confirm_before_reblog">Confirmar antes de volver a publicar</string>
+    <string name="sk_settings_confirm_before_reblog">Confirmación antes de impulsar</string>
     <string name="sk_reacted_with">reaccionó con %s</string>
     <string name="sk_reacted">reaccionó</string>
     <string name="sk_content_type">Tipo del contenido</string>
@@ -292,7 +292,7 @@
     <string name="sk_external_share_or_open_title">Compartir o abrir con una cuenta</string>
     <string name="sk_open_in_app">Abrir en la app</string>
     <string name="sk_external_share_title">Compartir con una cuenta</string>
-    <string name="sk_settings_auto_reveal_equal_spoilers">Mostrar CW iguales en las respuestas de</string>
+    <string name="sk_settings_auto_reveal_equal_spoilers">Mostrar Avisos de Contenido para respuesta de</string>
     <string name="sk_settings_auto_reveal_nobody">nadie</string>
     <string name="sk_settings_auto_reveal_author">autor</string>
     <string name="sk_settings_auto_reveal_anyone">todos</string>
@@ -306,7 +306,7 @@
     <string name="sk_settings_prefix_replies_to_others">A otros</string>
     <string name="sk_settings_forward_report_default">\"Reenviar denuncia\" activado por defecto</string>
     <string name="sk_list_exclusive_switch">Hacer una lista exclusiva</string>
-    <string name="sk_icon_feed">Feed</string>
+    <string name="sk_icon_feed">Cronología</string>
     <string name="sk_exclusive_list">Lista exclusiva</string>
-    <string name="sk_list_exclusive_switch_explanation">Los miembros de una lista exclusiva no aparecerán en tu línea de tiempo de inicio, si tu instancia lo admite.</string>
+    <string name="sk_list_exclusive_switch_explanation">Los miembros de una lista exclusiva no aparecerán en tu cronología de inicio - si tu instancia lo admite.</string>
 </resources>
