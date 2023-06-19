@@ -116,6 +116,46 @@ public class MainActivity extends FragmentStackActivity implements ProvidesAssis
 		}*/
 	}
 
+//	unused in megalodon
+	/* private void handleURL(Uri uri){
+		if(uri==null)
+			return;
+		if(!"https".equals(uri.getScheme()) && !"http".equals(uri.getScheme()))
+			return;
+		if(!uri.getPath().startsWith("/@"))
+			return;
+		AccountSession session=AccountSessionManager.getInstance().getLastActiveAccount();
+		if(session==null || !session.activated)
+			return;
+
+		new GetSearchResults(uri.toString(), null, true)
+				.setCallback(new Callback<>(){
+					@Override
+					public void onSuccess(SearchResults result){
+						Bundle args=new Bundle();
+						args.putString("account", session.getID());
+						if(result.statuses!=null && !result.statuses.isEmpty()){
+							args.putParcelable("status", Parcels.wrap(result.statuses.get(0)));
+							Nav.go(MainActivity.this, ThreadFragment.class, args);
+						}else if(result.accounts!=null && !result.accounts.isEmpty()){
+							args.putParcelable("profileAccount", Parcels.wrap(result.accounts.get(0)));
+							Nav.go(MainActivity.this, ProfileFragment.class, args);
+						}else{
+							Toast.makeText(MainActivity.this, R.string.link_not_supported, Toast.LENGTH_SHORT).show();
+						}
+					}
+
+					@Override
+					public void onError(ErrorResponse error){
+						error.showToast(MainActivity.this);
+					}
+				})
+				.wrapProgress(this, R.string.opening_link, true)
+				.exec(session.getID());
+	} */
+
+
+
 	private void showFragmentForNotification(Notification notification, String accountID){
 		try{
 			notification.postprocess();
