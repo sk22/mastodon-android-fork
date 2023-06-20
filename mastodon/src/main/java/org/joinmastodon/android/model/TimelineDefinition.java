@@ -38,6 +38,7 @@ public class TimelineDefinition {
     private @Nullable List<String> hashtagAny;
     private @Nullable List<String> hashtagAll;
     private @Nullable List<String> hashtagNone;
+    private boolean hashtagLocalOnly;
 
     public static TimelineDefinition ofList(String listId, String listTitle, boolean listIsExclusive) {
         TimelineDefinition def = new TimelineDefinition(TimelineType.LIST);
@@ -104,6 +105,9 @@ public class TimelineDefinition {
         return hashtagNone;
     }
 
+    public boolean isHashtagLocalOnly() {
+        return hashtagLocalOnly;
+    }
 
     public void setTitle(String title) {
         this.title = title == null || title.isBlank() ? null : title;
@@ -116,11 +120,12 @@ public class TimelineDefinition {
                 .collect(Collectors.toList());
     }
 
-    public void setTagOptions(String main, List<String> any, List<String> all, List<String> none) {
+    public void setTagOptions(String main, List<String> any, List<String> all, List<String> none, boolean localOnly) {
         this.hashtagName = main;
         this.hashtagAny = sanitizeTagList(any);
         this.hashtagAll = sanitizeTagList(all);
         this.hashtagNone = sanitizeTagList(none);
+        this.hashtagLocalOnly = localOnly;
     }
 
 
@@ -215,6 +220,7 @@ public class TimelineDefinition {
             args.putBoolean("listIsExclusive", listIsExclusive);
         } else if (type == TimelineType.HASHTAG) {
             args.putString("hashtag", hashtagName);
+            args.putBoolean("localOnly", hashtagLocalOnly);
             args.putStringArrayList("any", hashtagAny == null ? new ArrayList<>() : new ArrayList<>(hashtagAny));
             args.putStringArrayList("all", hashtagAll == null ? new ArrayList<>() : new ArrayList<>(hashtagAll));
             args.putStringArrayList("none", hashtagNone == null ? new ArrayList<>() : new ArrayList<>(hashtagNone));

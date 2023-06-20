@@ -72,7 +72,7 @@
 				android:layout_marginStart="26dp"
 				android:layout_marginBottom="8dp"
 				android:drawableStart="@drawable/ic_fluent_number_symbol_20_filled"
-				android:drawablePadding="8dp"
+				android:drawablePadding="12dp"
 				android:textColor="?android:textColorSecondary" />
 
 			<EditText
@@ -90,7 +90,7 @@
 				android:layout_marginStart="26dp"
 				android:layout_marginBottom="8dp"
 				android:drawableStart="@drawable/ic_fluent_shape_union_20_regular"
-				android:drawablePadding="8dp"
+				android:drawablePadding="12dp"
 				android:textColor="?android:textColorSecondary" />
 
 			<com.hootsuite.nachos.NachoTextView
@@ -112,7 +112,7 @@
 				android:layout_marginStart="26dp"
 				android:layout_marginBottom="8dp"
 				android:drawableStart="@drawable/ic_fluent_shape_intersect_20_regular"
-				android:drawablePadding="8dp"
+				android:drawablePadding="12dp"
 				android:textColor="?android:textColorSecondary" />
 
 			<com.hootsuite.nachos.NachoTextView
@@ -134,7 +134,7 @@
 				android:layout_marginStart="26dp"
 				android:layout_marginBottom="8dp"
 				android:drawableStart="@drawable/ic_fluent_shape_exclude_20_regular"
-				android:drawablePadding="8dp"
+				android:drawablePadding="18dp"
 				android:textColor="?android:textColorSecondary" />
 
 			<com.hootsuite.nachos.NachoTextView
@@ -148,6 +148,39 @@
 				android:layout_marginBottom="16dp"
 				app:chipBackground="?colorAccentLightest"
 				app:chipTextColor="?android:textColorPrimary" />
+
+			<LinearLayout
+				android:id="@+id/local_only"
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginHorizontal="24dp"
+				android:layout_marginBottom="16dp"
+				android:minHeight="48dp"
+				android:gravity="center_vertical"
+				android:layoutDirection="locale">
+
+				<TextView
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:paddingVertical="8dp"
+					android:textSize="16sp"
+					android:textColor="?android:textColorPrimary"
+					android:drawableStart="@drawable/ic_fluent_eye_24_regular"
+					android:drawableTint="?android:textColorPrimary"
+					android:drawablePadding="16dp"
+					android:text="@string/sk_hashtag_timeline_local_only_switch" />
+
+				<Switch
+					android:id="@+id/local_only_switch"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginStart="16dp"
+					android:focusable="false"
+					android:clickable="false"/>
+
+			</LinearLayout>
 
 		</LinearLayout>
 	</LinearLayout>

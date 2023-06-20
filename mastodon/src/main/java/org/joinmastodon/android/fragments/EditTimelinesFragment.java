@@ -23,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -270,6 +271,10 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
             tagWrap.setVisibility(advancedBtn.isSelected() ? View.VISIBLE : View.GONE);
         });
 
+        Switch localOnlySwitch = view.findViewById(R.id.local_only_switch);
+        view.findViewById(R.id.local_only)
+                .setOnClickListener(l -> localOnlySwitch.setChecked(!localOnlySwitch.isChecked()));
+
         EditText tagMain = view.findViewById(R.id.tag_main);
         NachoTextView tagsAny = prepareChipTextView(view.findViewById(R.id.tags_any));
         NachoTextView tagsAll = prepareChipTextView(view.findViewById(R.id.tags_all));
@@ -279,6 +284,10 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
             boolean hasAdvanced = setTagListContent(tagsAny, item.getHashtagAny());
             hasAdvanced = setTagListContent(tagsAll, item.getHashtagAll()) || hasAdvanced;
             hasAdvanced = setTagListContent(tagsNone, item.getHashtagNone()) || hasAdvanced;
+            if (item.isHashtagLocalOnly()) {
+                localOnlySwitch.setChecked(true);
+                hasAdvanced = true;
+            }
             if (hasAdvanced) {
                 advancedBtn.setSelected(true);
                 advancedBtn.setText(R.string.sk_advanced_options_hide);
@@ -339,7 +348,8 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
                             mainHashtag,
                             tagsAny.getChipValues(),
                             tagsAll.getChipValues(),
-                            tagsNone.getChipValues()
+                            tagsNone.getChipValues(),
+                            localOnlySwitch.isChecked()
                     );
                     onSave.accept(tl);
                 })
