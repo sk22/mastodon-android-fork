@@ -4,8 +4,10 @@ import static android.view.Menu.NONE;
 import static org.joinmastodon.android.ui.utils.UiUtils.makeBackItem;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -13,13 +15,16 @@ import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -36,7 +41,6 @@ import org.joinmastodon.android.model.TimelineDefinition;
 import org.joinmastodon.android.ui.DividerItemDecoration;
 import org.joinmastodon.android.ui.M3AlertDialogBuilder;
 import org.joinmastodon.android.ui.utils.UiUtils;
-import org.joinmastodon.android.ui.views.TextInputFrameLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +48,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
@@ -59,6 +64,7 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
     private final Map<MenuItem, TimelineDefinition> timelineByMenuItem = new HashMap<>();
     private final List<ListTimeline> listTimelines = new ArrayList<>();
     private final List<Hashtag> hashtags = new ArrayList<>();
+    private MenuItem addHashtagItem;
 
     public EditTimelinesFragment() {
         super(10);
@@ -129,19 +135,32 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
         }
         TimelineDefinition tl = timelineByMenuItem.get(item);
         if (tl != null) {
-            data.add(tl.copy());
-            adapter.notifyItemInserted(data.size());
-            saveTimelines();
-            updateOptionsMenu();
-        };
+            addTimeline(tl);
+        } else if (item == addHashtagItem) {
+            makeTimelineEditor(null, (hashtag) -> {
+                if (hashtag != null) addTimeline(hashtag);
+            }, null);
+        }
         return true;
+    }
+
+    private void addTimeline(TimelineDefinition tl) {
+        data.add(tl.copy());
+        adapter.notifyItemInserted(data.size());
+        saveTimelines();
+        updateOptionsMenu();
     }
 
     private void addTimelineToOptions(TimelineDefinition tl, Menu menu) {
         if (data.contains(tl)) return;
-        MenuItem item = menu.add(0, View.generateViewId(), Menu.NONE, tl.getTitle(getContext()));
-        item.setIcon(tl.getIcon().iconRes);
+        MenuItem item = addOptionsItem(menu, tl.getTitle(getContext()), tl.getIcon().iconRes);
         timelineByMenuItem.put(item, tl);
+    }
+
+    private MenuItem addOptionsItem(Menu menu, String name, @DrawableRes int icon) {
+        MenuItem item = menu.add(0, View.generateViewId(), Menu.NONE, name);
+        item.setIcon(icon);
+        return item;
     }
 
     private void updateOptionsMenu() {
@@ -166,6 +185,7 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
 
         TimelineDefinition.getAllTimelines(accountID).forEach(tl -> addTimelineToOptions(tl, timelinesMenu));
         listTimelines.stream().map(TimelineDefinition::ofList).forEach(tl -> addTimelineToOptions(tl, listsMenu));
+        addHashtagItem = addOptionsItem(hashtagsMenu, getContext().getString(R.string.sk_timelines_add), R.drawable.ic_fluent_add_24_regular);
         hashtags.stream().map(TimelineDefinition::ofHashtag).forEach(tl -> addTimelineToOptions(tl, hashtagsMenu));
 
         timelinesMenu.getItem().setVisible(timelinesMenu.size() > 0);
@@ -208,6 +228,110 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
     public void onDestroy() {
         super.onDestroy();
         if (updated) UiUtils.restartApp();
+    }
+
+    private boolean setTagListContent(EditText editText, @Nullable List<String> tags) {
+        if (tags == null || tags.isEmpty()) return false;
+        editText.setText(String.join(",", tags));
+        return true;
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    protected void makeTimelineEditor(@Nullable TimelineDefinition item, Consumer<TimelineDefinition> onSave, Runnable onRemove) {
+        Context ctx = getContext();
+        View view = getActivity().getLayoutInflater().inflate(R.layout.edit_timeline, list, false);
+
+        Button advancedBtn = view.findViewById(R.id.advanced);
+        EditText editText = view.findViewById(R.id.input);
+        if (item != null) editText.setText(item.getCustomTitle());
+        editText.setHint(item != null ? item.getDefaultTitle(ctx) : ctx.getString(R.string.sk_hashtag));
+
+        LinearLayout tagWrap = view.findViewById(R.id.tag_wrap);
+        boolean advancedOptionsAvailable = item == null || item.getType() == TimelineDefinition.TimelineType.HASHTAG;
+        advancedBtn.setVisibility(advancedOptionsAvailable ? View.VISIBLE : View.GONE);
+        view.findViewById(R.id.divider).setVisibility(advancedOptionsAvailable ? View.VISIBLE : View.GONE);
+        advancedBtn.setOnClickListener(l -> {
+            advancedBtn.setSelected(!advancedBtn.isSelected());
+            advancedBtn.setText(advancedBtn.isSelected() ? R.string.sk_advanced_options_hide : R.string.sk_advanced_options_show);
+            tagWrap.setVisibility(advancedBtn.isSelected() ? View.VISIBLE : View.GONE);
+        });
+
+        EditText tagMain = view.findViewById(R.id.tag_main);
+        EditText tagsAny = view.findViewById(R.id.tags_any);
+        EditText tagsAll = view.findViewById(R.id.tags_all);
+        EditText tagsNone = view.findViewById(R.id.tags_none);
+        if (item != null) {
+            tagMain.setText(item.getHashtagName());
+            boolean hasAdvanced = setTagListContent(tagsAny, item.getHashtagAny());
+            hasAdvanced = hasAdvanced || setTagListContent(tagsAll, item.getHashtagAll());
+            hasAdvanced = hasAdvanced || setTagListContent(tagsNone, item.getHashtagNone());
+            if (hasAdvanced) {
+                advancedBtn.setSelected(true);
+                advancedBtn.setText(R.string.sk_advanced_options_hide);
+                tagWrap.setVisibility(View.VISIBLE);
+            }
+        }
+
+        ImageButton btn = view.findViewById(R.id.button);
+        PopupMenu popup = new PopupMenu(ctx, btn);
+        TimelineDefinition.Icon currentIcon = item != null ? item.getIcon() : TimelineDefinition.Icon.HASHTAG;
+        btn.setImageResource(currentIcon.iconRes);
+        btn.setTag(currentIcon.ordinal());
+        btn.setContentDescription(ctx.getString(currentIcon.nameRes));
+        btn.setOnTouchListener(popup.getDragToOpenListener());
+        btn.setOnClickListener(l -> popup.show());
+
+        Menu menu = popup.getMenu();
+        TimelineDefinition.Icon defaultIcon = item != null ? item.getDefaultIcon() : TimelineDefinition.Icon.HASHTAG;
+        menu.add(0, currentIcon.ordinal(), NONE, currentIcon.nameRes).setIcon(currentIcon.iconRes);
+        if (!currentIcon.equals(defaultIcon)) {
+            menu.add(0, defaultIcon.ordinal(), NONE, defaultIcon.nameRes).setIcon(defaultIcon.iconRes);
+        }
+        for (TimelineDefinition.Icon icon : TimelineDefinition.Icon.values()) {
+            if (icon.hidden || icon.ordinal() == (int) btn.getTag()) continue;
+            menu.add(0, icon.ordinal(), NONE, icon.nameRes).setIcon(icon.iconRes);
+        }
+        UiUtils.enablePopupMenuIcons(ctx, popup);
+
+        popup.setOnMenuItemClickListener(menuItem -> {
+            TimelineDefinition.Icon icon = TimelineDefinition.Icon.values()[menuItem.getItemId()];
+            btn.setImageResource(icon.iconRes);
+            btn.setTag(menuItem.getItemId());
+            btn.setContentDescription(ctx.getString(icon.nameRes));
+            return true;
+        });
+
+        AlertDialog.Builder builder = new M3AlertDialogBuilder(ctx)
+                .setTitle(item == null ? R.string.sk_add_timeline : R.string.sk_edit_timeline)
+                .setView(view)
+                .setPositiveButton(R.string.save, (d, which) -> {
+                    String name = editText.getText().toString().trim();
+                    String mainHashtag = tagMain.getText().toString().trim();
+                    if (TextUtils.isEmpty(mainHashtag)) mainHashtag = name;
+                    if (item == null && TextUtils.isEmpty(mainHashtag)) {
+                        Toast.makeText(ctx, R.string.sk_add_timeline_tag_error_empty, Toast.LENGTH_SHORT).show();
+                        onSave.accept(null);
+                        return;
+                    }
+
+                    TimelineDefinition tl = item != null ? item : TimelineDefinition.ofHashtag(name);
+                    TimelineDefinition.Icon icon = TimelineDefinition.Icon.values()[(int) btn.getTag()];
+                    tl.setIcon(icon);
+                    tl.setTitle(name);
+                    tl.setTags(
+                            mainHashtag,
+                            Arrays.asList(tagsAny.getText().toString().split(",")),
+                            Arrays.asList(tagsAll.getText().toString().split(",")),
+                            Arrays.asList(tagsNone.getText().toString().split(","))
+                    );
+                    onSave.accept(tl);
+                })
+                .setNegativeButton(R.string.cancel, (d, which) -> {});
+
+        if (onRemove != null) builder.setNeutralButton(R.string.sk_remove, (d, which) -> onRemove.run());
+
+        builder.show();
+        btn.requestFocus();
     }
 
     private class TimelinesAdapter extends RecyclerView.Adapter<TimelineViewHolder>{
@@ -253,81 +377,19 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
             });
         }
 
-        private void setupTagEditText(EditText text, List<String> tags) {
-            text.setHint(R.string.sk_edit_timeline_tag_enter);
-            if (tags != null)
-                text.setText(String.join(",", tags));
+        private void onSave(TimelineDefinition tl) {
+            saveTimelines();
+            rebind();
+        }
+
+        private void onRemove() {
+            removeTimeline(getAbsoluteAdapterPosition());
         }
 
         @SuppressLint("ClickableViewAccessibility")
         @Override
         public void onClick() {
-            Context ctx = getContext();
-            LinearLayout view = (LinearLayout) getActivity().getLayoutInflater()
-                    .inflate(R.layout.edit_timeline, (ViewGroup) itemView, false);
-
-            TextInputFrameLayout inputLayout = view.findViewById(R.id.input);
-            EditText editText = inputLayout.getEditText();
-            editText.setText(item.getCustomTitle());
-            editText.setHint(item.getDefaultTitle(ctx));
-
-            LinearLayout tagWrap = view.findViewById(R.id.tag_wrap);
-            tagWrap.setVisibility(item.isHashTag() ? View.VISIBLE : View.GONE);
-
-            EditText tagsAny = ((TextInputFrameLayout) view.findViewById(R.id.tags_any)).getEditText();
-            setupTagEditText(tagsAny, item.getHashtagAny());
-            EditText tagsAll = ((TextInputFrameLayout) view.findViewById(R.id.tags_all)).getEditText();
-            setupTagEditText(tagsAll, item.getHashtagAll());
-            EditText tagsNone = ((TextInputFrameLayout) view.findViewById(R.id.tags_none)).getEditText();
-            setupTagEditText(tagsNone, item.getHashtagNone());
-
-            ImageButton btn = view.findViewById(R.id.button);
-            PopupMenu popup = new PopupMenu(ctx, btn);
-            TimelineDefinition.Icon currentIcon = item.getIcon();
-            btn.setImageResource(currentIcon.iconRes);
-            btn.setContentDescription(ctx.getString(currentIcon.nameRes));
-            btn.setOnTouchListener(popup.getDragToOpenListener());
-            btn.setOnClickListener(l -> popup.show());
-
-            Menu menu = popup.getMenu();
-            TimelineDefinition.Icon defaultIcon = item.getDefaultIcon();
-            menu.add(0, currentIcon.ordinal(), NONE, currentIcon.nameRes).setIcon(currentIcon.iconRes);
-            if (!currentIcon.equals(defaultIcon)) {
-                menu.add(0, defaultIcon.ordinal(), NONE, defaultIcon.nameRes).setIcon(defaultIcon.iconRes);
-            }
-            for (TimelineDefinition.Icon icon : TimelineDefinition.Icon.values()) {
-                if (icon.hidden || icon.equals(item.getIcon())) continue;
-                menu.add(0, icon.ordinal(), NONE, icon.nameRes).setIcon(icon.iconRes);
-            }
-            UiUtils.enablePopupMenuIcons(ctx, popup);
-
-            popup.setOnMenuItemClickListener(menuItem -> {
-                TimelineDefinition.Icon icon = TimelineDefinition.Icon.values()[menuItem.getItemId()];
-                btn.setImageResource(icon.iconRes);
-                btn.setContentDescription(ctx.getString(icon.nameRes));
-                item.setIcon(icon);
-                return true;
-            });
-
-            new M3AlertDialogBuilder(ctx)
-                    .setTitle(R.string.sk_edit_timeline)
-                    .setView(view)
-                    .setPositiveButton(R.string.save, (d, which) -> {
-                        item.setTitle(editText.getText().toString().trim());
-                        item.setTagsList(
-                                Arrays.asList(tagsAny.getText().toString().split(",")),
-                                Arrays.asList(tagsAll.getText().toString().split(",")),
-                                Arrays.asList(tagsNone.getText().toString().split(","))
-                        );
-                        rebind();
-                        saveTimelines();
-                    })
-                    .setNeutralButton(R.string.sk_remove, (d, which) ->
-                            removeTimeline(getAbsoluteAdapterPosition()))
-                    .setNegativeButton(R.string.cancel, (d, which) -> {})
-                    .show();
-
-            btn.requestFocus();
+            makeTimelineEditor(item, this::onSave, this::onRemove);
         }
     }
 

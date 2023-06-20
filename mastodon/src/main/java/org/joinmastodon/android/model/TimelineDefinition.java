@@ -23,6 +23,8 @@ import org.joinmastodon.android.fragments.discover.LocalTimelineFragment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class TimelineDefinition {
@@ -84,10 +86,10 @@ public class TimelineDefinition {
         return title;
     }
 
-    public boolean isHashTag() {
-        return !TextUtils.isEmpty(hashtagName);
+    @Nullable
+    public String getHashtagName() {
+        return hashtagName;
     }
-
 
     @Nullable
     public List<String> getHashtagAny() {
@@ -109,10 +111,18 @@ public class TimelineDefinition {
         this.title = title == null || title.isBlank() ? null : title;
     }
 
-    public void setTagsList(List<String> any, List<String> all, List<String> none) {
-        this.hashtagAny = any;
-        this.hashtagAll = all;
-        this.hashtagNone = none;
+    private List<String> sanitizeTagList(List<String> tags) {
+        return tags.stream()
+                .map(String::trim)
+                .filter(str -> !TextUtils.isEmpty(str))
+                .collect(Collectors.toList());
+    }
+
+    public void setTags(String main, List<String> any, List<String> all, List<String> none) {
+        this.hashtagName = main;
+        this.hashtagAny = sanitizeTagList(any);
+        this.hashtagAll = sanitizeTagList(all);
+        this.hashtagNone = sanitizeTagList(none);
     }
 
 
@@ -173,16 +183,17 @@ public class TimelineDefinition {
         TimelineDefinition that = (TimelineDefinition) o;
         if (type != that.type) return false;
         if (type == TimelineType.LIST) return Objects.equals(listId, that.listId);
-        if (type == TimelineType.HASHTAG) return Objects.equals(hashtagName.toLowerCase(), that.hashtagName.toLowerCase());
+        if (type == TimelineType.HASHTAG) {
+            if (hashtagName == null && that.hashtagName == null) return true;
+            if (hashtagName == null || that.hashtagName == null) return false;
+            return Objects.equals(hashtagName.toLowerCase(), that.hashtagName.toLowerCase());
+        }
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = type.ordinal();
-        result = 31 * result + (listId != null ? listId.hashCode() : 0);
-        result = 31 * result + (hashtagName.toLowerCase() != null ? hashtagName.toLowerCase().hashCode() : 0);
-        return result;
+        return Objects.hash(type, title, listId, hashtagName, hashtagAny, hashtagAll, hashtagNone);
     }
 
     public TimelineDefinition copy() {
@@ -206,9 +217,9 @@ public class TimelineDefinition {
             args.putBoolean("listIsExclusive", listIsExclusive);
         } else if (type == TimelineType.HASHTAG) {
             args.putString("hashtag", hashtagName);
-            args.putStringArrayList("any", (ArrayList<String>) hashtagAny);
-            args.putStringArrayList("all", (ArrayList<String>) hashtagAll);
-            args.putStringArrayList("none", (ArrayList<String>) hashtagNone);
+            args.putStringArrayList("any", hashtagAny == null ? new ArrayList<>() : new ArrayList<>(hashtagAny));
+            args.putStringArrayList("all", hashtagAll == null ? new ArrayList<>() : new ArrayList<>(hashtagAll));
+            args.putStringArrayList("none", hashtagNone == null ? new ArrayList<>() : new ArrayList<>(hashtagNone));
         }
         return args;
     }
