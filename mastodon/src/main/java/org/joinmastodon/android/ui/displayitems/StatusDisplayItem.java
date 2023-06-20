@@ -41,6 +41,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import me.grishka.appkit.Nav;
 import me.grishka.appkit.imageloader.requests.ImageLoaderRequest;
 import me.grishka.appkit.utils.BindableViewHolder;
 import me.grishka.appkit.views.UsableRecyclerView;
@@ -151,15 +152,55 @@ public abstract class StatusDisplayItem{
 
 		HeaderStatusDisplayItem header=null;
 		boolean hideCounts=!GlobalUserPreferences.showInteractionCounts;
-		ReblogOrReplyLineStatusDisplayItem replyLine = null;
 
 		if((flags & FLAG_NO_HEADER)==0){
+			ReblogOrReplyLineStatusDisplayItem replyLine = null;
 			boolean threadReply = statusForContent.inReplyToAccountId != null &&
 					statusForContent.inReplyToAccountId.equals(statusForContent.account.id);
 
 			if(statusForContent.inReplyToAccountId!=null && !(threadReply && fragment instanceof ThreadFragment)){
 				Account account = knownAccounts.get(statusForContent.inReplyToAccountId);
 				replyLine = buildReplyLine(fragment, status, accountID, parentObject, account, threadReply);
+			}
+
+			if(status.reblog!=null){
+				boolean isOwnPost = AccountSessionManager.getInstance().isSelf(fragment.getAccountID(), status.account);
+				String fullText = fragment.getString(R.string.user_boosted, status.account.displayName);
+				String text = GlobalUserPreferences.compactReblogReplyLine && replyLine != null ? status.account.displayName : fullText;
+				items.add(new ReblogOrReplyLineStatusDisplayItem(parentID, fragment, text, status.account.emojis, R.drawable.ic_fluent_arrow_repeat_all_20sp_filled, isOwnPost ? status.visibility : null, i->{
+					args.putParcelable("profileAccount", Parcels.wrap(status.account));
+					Nav.go(fragment.getActivity(), ProfileFragment.class, args);
+				}, fullText));
+			} else if (!(status.tags.isEmpty() ||
+					fragment instanceof HashtagTimelineFragment ||
+					fragment instanceof ListTimelineFragment
+			) && fragment.getParentFragment() instanceof HomeTabFragment home) {
+				home.getHashtags().stream()
+						.filter(followed -> status.tags.stream()
+								.anyMatch(hashtag -> followed.name.equalsIgnoreCase(hashtag.name)))
+						.findAny()
+						// post contains a hashtag the user is following
+						.ifPresent(hashtag -> items.add(new ReblogOrReplyLineStatusDisplayItem(
+								parentID, fragment, hashtag.name, List.of(),
+								R.drawable.ic_fluent_number_symbol_20sp_filled, null,
+								i -> {
+									args.putString("hashtag", hashtag.name);
+									Nav.go(fragment.getActivity(), HashtagTimelineFragment.class, args);
+								}
+						)));
+			}
+
+			if (replyLine != null) {
+				Optional<ReblogOrReplyLineStatusDisplayItem> primaryLine = items.stream()
+						.filter(i -> i instanceof ReblogOrReplyLineStatusDisplayItem)
+						.map(ReblogOrReplyLineStatusDisplayItem.class::cast)
+						.findFirst();
+
+				if (primaryLine.isPresent() && GlobalUserPreferences.compactReblogReplyLine) {
+					primaryLine.get().extra = replyLine;
+				} else {
+					items.add(replyLine);
+				}
 			}
 			
 			if((flags & FLAG_CHECKABLE)!=0)
@@ -203,8 +244,6 @@ public abstract class StatusDisplayItem{
 			HtmlParser.applyFilterHighlights(fragment.getActivity(), parsedText, status.filtered);
 			TextStatusDisplayItem text=new TextStatusDisplayItem(parentID, HtmlParser.parse(statusForContent.content, statusForContent.emojis, statusForContent.mentions, statusForContent.tags, accountID), fragment, statusForContent, (flags & FLAG_NO_TRANSLATE) != 0);
 			contentItems.add(text);
-		} else if (!GlobalUserPreferences.replyLineAboveHeader && replyLine != null) {
-			replyLine.needBottomPadding=true;
 		} else if (header!=null){
 			header.needBottomPadding=true;
 		}

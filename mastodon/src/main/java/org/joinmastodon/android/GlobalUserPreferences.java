@@ -45,7 +45,6 @@ public class GlobalUserPreferences{
 	public static boolean collapseLongPosts;
 	public static boolean spectatorMode;
 	public static boolean autoHideFab;
-	public static boolean replyLineAboveHeader;
 	public static boolean compactReblogReplyLine;
 	public static boolean confirmBeforeReblog;
 	public static boolean allowRemoteLoading;
@@ -119,7 +118,6 @@ public class GlobalUserPreferences{
 		collapseLongPosts=prefs.getBoolean("collapseLongPosts", true);
 		spectatorMode=prefs.getBoolean("spectatorMode", false);
 		autoHideFab=prefs.getBoolean("autoHideFab", true);
-		replyLineAboveHeader=prefs.getBoolean("replyLineAboveHeader", true);
 		compactReblogReplyLine=prefs.getBoolean("compactReblogReplyLine", true);
 		confirmBeforeReblog=prefs.getBoolean("confirmBeforeReblog", false);
 		publishButtonText=prefs.getString("publishButtonText", "");
@@ -181,7 +179,6 @@ public class GlobalUserPreferences{
 				.putBoolean("compactReblogReplyLine", compactReblogReplyLine)
 				.putString("publishButtonText", publishButtonText)
 				.putBoolean("bottomEncoding", bottomEncoding)
-				.putBoolean("replyLineAboveHeader", replyLineAboveHeader)
 				.putBoolean("confirmBeforeReblog", confirmBeforeReblog)
 				.putInt("theme", theme.ordinal())
 				.putString("color", color.name())
