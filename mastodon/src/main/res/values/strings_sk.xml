@@ -230,6 +230,9 @@
     <string name="sk_icon_feed">Feed</string>
     <string name="sk_edit_timeline">Edit timeline</string>
     <string name="sk_edit_timelines">Edit timelines</string>
+    <string name="sk_edit_timeline_tag_any">Include any of these</string>
+    <string name="sk_edit_timeline_tag_all">Include all of these</string>
+    <string name="sk_edit_timeline_tag_none">Include none of these</string>
     <string name="sk_alt_button">ALT</string>
     <string name="sk_post_edited">edited</string>
     <string name="sk_notification_type_update">Edited posts</string>
