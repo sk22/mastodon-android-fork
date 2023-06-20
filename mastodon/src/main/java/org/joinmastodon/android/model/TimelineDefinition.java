@@ -23,8 +23,6 @@ import org.joinmastodon.android.fragments.discover.LocalTimelineFragment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class TimelineDefinition {
@@ -118,7 +116,7 @@ public class TimelineDefinition {
                 .collect(Collectors.toList());
     }
 
-    public void setTags(String main, List<String> any, List<String> all, List<String> none) {
+    public void setTagOptions(String main, List<String> any, List<String> all, List<String> none) {
         this.hashtagName = main;
         this.hashtagAny = sanitizeTagList(any);
         this.hashtagAll = sanitizeTagList(all);

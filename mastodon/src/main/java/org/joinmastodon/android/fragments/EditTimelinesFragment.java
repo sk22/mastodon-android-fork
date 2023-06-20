@@ -1,6 +1,7 @@
 package org.joinmastodon.android.fragments;
 
 import static android.view.Menu.NONE;
+import static com.hootsuite.nachos.terminator.ChipTerminatorHandler.BEHAVIOR_CHIPIFY_ALL;
 import static org.joinmastodon.android.ui.utils.UiUtils.makeBackItem;
 
 import android.annotation.SuppressLint;
@@ -15,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -30,6 +32,8 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.hootsuite.nachos.NachoTextView;
+
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.lists.GetLists;
@@ -43,7 +47,6 @@ import org.joinmastodon.android.ui.M3AlertDialogBuilder;
 import org.joinmastodon.android.ui.utils.UiUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -230,10 +233,21 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
         if (updated) UiUtils.restartApp();
     }
 
-    private boolean setTagListContent(EditText editText, @Nullable List<String> tags) {
+    private boolean setTagListContent(NachoTextView editText, @Nullable List<String> tags) {
         if (tags == null || tags.isEmpty()) return false;
         editText.setText(String.join(",", tags));
+        editText.chipifyAllUnterminatedTokens();
         return true;
+    }
+
+    private NachoTextView prepareChipTextView(NachoTextView nacho) {
+        nacho.addChipTerminator(',', BEHAVIOR_CHIPIFY_ALL);
+        nacho.addChipTerminator('\n', BEHAVIOR_CHIPIFY_ALL);
+        nacho.addChipTerminator(' ', BEHAVIOR_CHIPIFY_ALL);
+        nacho.addChipTerminator(';', BEHAVIOR_CHIPIFY_ALL);
+        nacho.enableEditChipOnTouch(true, true);
+        nacho.setOnFocusChangeListener((v, hasFocus) -> nacho.chipifyAllUnterminatedTokens());
+        return nacho;
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -257,14 +271,14 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
         });
 
         EditText tagMain = view.findViewById(R.id.tag_main);
-        EditText tagsAny = view.findViewById(R.id.tags_any);
-        EditText tagsAll = view.findViewById(R.id.tags_all);
-        EditText tagsNone = view.findViewById(R.id.tags_none);
+        NachoTextView tagsAny = prepareChipTextView(view.findViewById(R.id.tags_any));
+        NachoTextView tagsAll = prepareChipTextView(view.findViewById(R.id.tags_all));
+        NachoTextView tagsNone = prepareChipTextView(view.findViewById(R.id.tags_none));
         if (item != null) {
             tagMain.setText(item.getHashtagName());
             boolean hasAdvanced = setTagListContent(tagsAny, item.getHashtagAny());
-            hasAdvanced = hasAdvanced || setTagListContent(tagsAll, item.getHashtagAll());
-            hasAdvanced = hasAdvanced || setTagListContent(tagsNone, item.getHashtagNone());
+            hasAdvanced = setTagListContent(tagsAll, item.getHashtagAll()) || hasAdvanced;
+            hasAdvanced = setTagListContent(tagsNone, item.getHashtagNone()) || hasAdvanced;
             if (hasAdvanced) {
                 advancedBtn.setSelected(true);
                 advancedBtn.setText(R.string.sk_advanced_options_hide);
@@ -305,6 +319,9 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
                 .setTitle(item == null ? R.string.sk_add_timeline : R.string.sk_edit_timeline)
                 .setView(view)
                 .setPositiveButton(R.string.save, (d, which) -> {
+                    tagsAny.chipifyAllUnterminatedTokens();
+                    tagsAll.chipifyAllUnterminatedTokens();
+                    tagsNone.chipifyAllUnterminatedTokens();
                     String name = editText.getText().toString().trim();
                     String mainHashtag = tagMain.getText().toString().trim();
                     if (TextUtils.isEmpty(mainHashtag)) mainHashtag = name;
@@ -318,11 +335,11 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
                     TimelineDefinition.Icon icon = TimelineDefinition.Icon.values()[(int) btn.getTag()];
                     tl.setIcon(icon);
                     tl.setTitle(name);
-                    tl.setTags(
+                    tl.setTagOptions(
                             mainHashtag,
-                            Arrays.asList(tagsAny.getText().toString().split(",")),
-                            Arrays.asList(tagsAll.getText().toString().split(",")),
-                            Arrays.asList(tagsNone.getText().toString().split(","))
+                            tagsAny.getChipValues(),
+                            tagsAll.getChipValues(),
+                            tagsNone.getChipValues()
                     );
                     onSave.accept(tl);
                 })

@@ -231,7 +231,7 @@
     <string name="sk_edit_timeline">Edit timeline</string>
     <string name="sk_add_timeline">Add timeline</string>
     <string name="sk_edit_timelines">Edit timelines</string>
-    <string name="sk_edit_timeline_tag_any">Posts can alternatively contain</string>
+    <string name="sk_edit_timeline_tag_any">Posts can otherwise contain</string>
     <string name="sk_edit_timeline_tag_all">Posts must also contain</string>
     <string name="sk_edit_timeline_tag_none">Exclude posts containing</string>
     <string name="sk_edit_timeline_tag_hint">Enter hashtag…</string>
