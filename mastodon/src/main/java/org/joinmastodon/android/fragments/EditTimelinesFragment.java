@@ -43,6 +43,7 @@ import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.ui.views.TextInputFrameLayout;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -268,6 +269,19 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
             editText.setText(item.getCustomTitle());
             editText.setHint(item.getDefaultTitle(ctx));
 
+            LinearLayout tagWrap = view.findViewById(R.id.tag_wrap);
+            tagWrap.setVisibility(item.isHashTag() ? View.VISIBLE : View.GONE);
+
+            EditText tagsAny = ((TextInputFrameLayout) view.findViewById(R.id.tags_any)).getEditText();
+            if (item.getHashtagAny() != null)
+                tagsAny.setText(String.join(",", item.getHashtagAny()));
+            EditText tagsAll = ((TextInputFrameLayout) view.findViewById(R.id.tags_all)).getEditText();
+            if (item.getHashtagAll() != null)
+                tagsAll.setText(String.join(",", item.getHashtagAll()));
+            EditText tagsNone = ((TextInputFrameLayout) view.findViewById(R.id.tags_none)).getEditText();
+            if (item.getHashtagNone() != null)
+                tagsNone.setText(String.join(",", item.getHashtagNone()));
+
             ImageButton btn = view.findViewById(R.id.button);
             PopupMenu popup = new PopupMenu(ctx, btn);
             TimelineDefinition.Icon currentIcon = item.getIcon();
@@ -301,6 +315,11 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
                     .setView(view)
                     .setPositiveButton(R.string.save, (d, which) -> {
                         item.setTitle(editText.getText().toString().trim());
+                        item.setTagsList(
+                                Arrays.asList(tagsAny.getText().toString().split(",")),
+                                Arrays.asList(tagsAll.getText().toString().split(",")),
+                                Arrays.asList(tagsNone.getText().toString().split(","))
+                        );
                         rebind();
                         saveTimelines();
                     })

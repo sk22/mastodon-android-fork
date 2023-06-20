@@ -3,6 +3,7 @@ package org.joinmastodon.android.model;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.Nullable;
@@ -34,9 +35,9 @@ public class TimelineDefinition {
     private boolean listIsExclusive;
 
     private @Nullable String hashtagName;
-    private @Nullable ArrayList<String> hashtagAny;
-    private @Nullable ArrayList<String> hashtagAll;
-    private @Nullable ArrayList<String> hashtagNone;
+    private @Nullable List<String> hashtagAny;
+    private @Nullable List<String> hashtagAll;
+    private @Nullable List<String> hashtagNone;
 
     public static TimelineDefinition ofList(String listId, String listTitle, boolean listIsExclusive) {
         TimelineDefinition def = new TimelineDefinition(TimelineType.LIST);
@@ -53,15 +54,6 @@ public class TimelineDefinition {
     public static TimelineDefinition ofHashtag(String hashtag) {
         TimelineDefinition def = new TimelineDefinition(TimelineType.HASHTAG);
         def.hashtagName = hashtag;
-        return def;
-    }
-
-    public static TimelineDefinition ofHashtag(String hashtag, ArrayList<String> any, ArrayList<String> all, ArrayList<String> none) {
-        TimelineDefinition def = new TimelineDefinition(TimelineType.HASHTAG);
-        def.hashtagName = hashtag;
-        def.hashtagAll = all;
-        def.hashtagAny = any;
-        def.hashtagNone = none;
         return def;
     }
 
@@ -92,9 +84,37 @@ public class TimelineDefinition {
         return title;
     }
 
+    public boolean isHashTag() {
+        return !TextUtils.isEmpty(hashtagName);
+    }
+
+
+    @Nullable
+    public List<String> getHashtagAny() {
+        return hashtagAny;
+    }
+
+    @Nullable
+    public List<String> getHashtagAll() {
+        return hashtagAll;
+    }
+
+    @Nullable
+    public List<String> getHashtagNone() {
+        return hashtagNone;
+    }
+
+
     public void setTitle(String title) {
         this.title = title == null || title.isBlank() ? null : title;
     }
+
+    public void setTagsList(List<String> any, List<String> all, List<String> none) {
+        this.hashtagAny = any;
+        this.hashtagAll = all;
+        this.hashtagNone = none;
+    }
+
 
     public String getDefaultTitle(Context ctx) {
         return switch (type) {
@@ -186,9 +206,9 @@ public class TimelineDefinition {
             args.putBoolean("listIsExclusive", listIsExclusive);
         } else if (type == TimelineType.HASHTAG) {
             args.putString("hashtag", hashtagName);
-            args.putStringArrayList("any", hashtagAny);
-            args.putStringArrayList("all", hashtagAll);
-            args.putStringArrayList("none", hashtagNone);
+            args.putStringArrayList("any", (ArrayList<String>) hashtagAny);
+            args.putStringArrayList("all", (ArrayList<String>) hashtagAll);
+            args.putStringArrayList("none", (ArrayList<String>) hashtagNone);
         }
         return args;
     }
