@@ -19,6 +19,7 @@ import org.joinmastodon.android.fragments.discover.BubbleTimelineFragment;
 import org.joinmastodon.android.fragments.discover.FederatedTimelineFragment;
 import org.joinmastodon.android.fragments.discover.LocalTimelineFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -33,6 +34,9 @@ public class TimelineDefinition {
     private boolean listIsExclusive;
 
     private @Nullable String hashtagName;
+    private @Nullable ArrayList<String> hashtagAny;
+    private @Nullable ArrayList<String> hashtagAll;
+    private @Nullable ArrayList<String> hashtagNone;
 
     public static TimelineDefinition ofList(String listId, String listTitle, boolean listIsExclusive) {
         TimelineDefinition def = new TimelineDefinition(TimelineType.LIST);
@@ -49,6 +53,15 @@ public class TimelineDefinition {
     public static TimelineDefinition ofHashtag(String hashtag) {
         TimelineDefinition def = new TimelineDefinition(TimelineType.HASHTAG);
         def.hashtagName = hashtag;
+        return def;
+    }
+
+    public static TimelineDefinition ofHashtag(String hashtag, ArrayList<String> any, ArrayList<String> all, ArrayList<String> none) {
+        TimelineDefinition def = new TimelineDefinition(TimelineType.HASHTAG);
+        def.hashtagName = hashtag;
+        def.hashtagAll = all;
+        def.hashtagAny = any;
+        def.hashtagNone = none;
         return def;
     }
 
@@ -159,6 +172,9 @@ public class TimelineDefinition {
         def.listTitle = listTitle;
         def.listIsExclusive = listIsExclusive;
         def.hashtagName = hashtagName;
+        def.hashtagAny = hashtagAny;
+        def.hashtagAll = hashtagAll;
+        def.hashtagNone = hashtagNone;
         def.icon = icon == null ? null : Icon.values()[icon.ordinal()];
         return def;
     }
@@ -170,6 +186,9 @@ public class TimelineDefinition {
             args.putBoolean("listIsExclusive", listIsExclusive);
         } else if (type == TimelineType.HASHTAG) {
             args.putString("hashtag", hashtagName);
+            args.putStringArrayList("any", hashtagAny);
+            args.putStringArrayList("all", hashtagAll);
+            args.putStringArrayList("none", hashtagNone);
         }
         return args;
     }

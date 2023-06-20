@@ -51,9 +51,9 @@ public class HashtagTimelineFragment extends PinnableStatusListFragment {
 		super.onAttach(activity);
 		updateTitle(getArguments().getString("hashtag"));
 		following=getArguments().getBoolean("following", false);
-		any =getArguments().getStringArrayList("any");
-		all =getArguments().getStringArrayList("all");
-		none =getArguments().getStringArrayList("none");
+		any=getArguments().getStringArrayList("any");
+		all=getArguments().getStringArrayList("all");
+		none=getArguments().getStringArrayList("none");
 		setHasOptionsMenu(true);
 	}
 
