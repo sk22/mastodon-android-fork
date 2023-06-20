@@ -376,6 +376,17 @@ public class UiUtils {
 		Nav.go((Activity) context, HashtagTimelineFragment.class, args);
 	}
 
+	public static void openHashtagTimeline(Context context, String accountID, String hashtag, @Nullable Boolean following, List<String> any, List<String> all, List<String> none) {
+		Bundle args = new Bundle();
+		args.putString("account", accountID);
+		args.putString("hashtag", hashtag);
+		args.putStringArrayList("any", (ArrayList<String>) any);
+		args.putStringArrayList("all", (ArrayList<String>) all);
+		args.putStringArrayList("none", (ArrayList<String>) none);
+		if (following != null) args.putBoolean("following", following);
+		Nav.go((Activity) context, HashtagTimelineFragment.class, args);
+	}
+
 	public static void showConfirmationAlert(Context context, @StringRes int title, @StringRes int message, @StringRes int confirmButton, Runnable onConfirmed) {
 		showConfirmationAlert(context, title, message, confirmButton, 0, onConfirmed);
 	}

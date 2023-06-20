@@ -35,6 +35,9 @@ import me.grishka.appkit.utils.V;
 
 public class HashtagTimelineFragment extends PinnableStatusListFragment {
 	private String hashtag;
+	private List<String> any;
+	private List<String> all;
+	private List<String> none;
 	private boolean following;
 	private MenuItem followButton;
 
@@ -48,6 +51,9 @@ public class HashtagTimelineFragment extends PinnableStatusListFragment {
 		super.onAttach(activity);
 		updateTitle(getArguments().getString("hashtag"));
 		following=getArguments().getBoolean("following", false);
+		any =getArguments().getStringArrayList("any");
+		all =getArguments().getStringArrayList("all");
+		none =getArguments().getStringArrayList("none");
 		setHasOptionsMenu(true);
 	}
 
@@ -118,7 +124,7 @@ public class HashtagTimelineFragment extends PinnableStatusListFragment {
 
 	@Override
 	protected void doLoadData(int offset, int count){
-		currentRequest=new GetHashtagTimeline(hashtag, offset==0 ? null : getMaxID(), null, count)
+		currentRequest=new GetHashtagTimeline(hashtag, offset==0 ? null : getMaxID(), null, count, any, all, none)
 				.setCallback(new SimpleCallback<>(this){
 					@Override
 					public void onSuccess(List<Status> result){

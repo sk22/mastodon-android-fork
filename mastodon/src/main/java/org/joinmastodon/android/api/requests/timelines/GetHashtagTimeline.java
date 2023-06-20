@@ -11,7 +11,7 @@ import org.joinmastodon.android.model.Status;
 import java.util.List;
 
 public class GetHashtagTimeline extends MastodonAPIRequest<List<Status>>{
-	public GetHashtagTimeline(String hashtag, String maxID, String minID, int limit, String[] containsAny, String[] containsAll, String[] containsNone){
+	public GetHashtagTimeline(String hashtag, String maxID, String minID, int limit, List<String> containsAny, List<String> containsAll, List<String> containsNone){
 		super(HttpMethod.GET, "/timelines/tag/"+hashtag, new TypeToken<>(){});
 		if(maxID!=null)
 			addQueryParameter("max_id", maxID);
@@ -19,11 +19,11 @@ public class GetHashtagTimeline extends MastodonAPIRequest<List<Status>>{
 			addQueryParameter("min_id", minID);
 		if(limit>0)
 			addQueryParameter("limit", ""+limit);
-		if(containsAny!=null && containsAny.length!=0)
+		if(containsAny!=null && !containsAny.isEmpty())
 			addQueryParameter("any[]", "[" + TextUtils.join(",", containsAny) + "]");
-		if(containsAll!=null && containsAll.length!=0)
+		if(containsAll!=null && !containsAll.isEmpty())
 			addQueryParameter("all[]", "[" + TextUtils.join(",", containsAll) + "]");
-		if(containsNone!=null && containsNone.length!=0)
+		if(containsNone!=null && !containsNone.isEmpty())
 			addQueryParameter("none[]", "[" + TextUtils.join(",", containsNone) + "]");
 	}
 
