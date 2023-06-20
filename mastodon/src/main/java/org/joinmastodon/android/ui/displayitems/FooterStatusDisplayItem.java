@@ -194,9 +194,11 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 
 			AccountSession accountSession = AccountSessionManager.getInstance().getAccount(item.accountID);
 			emojiKeyboard = new CustomEmojiPopupKeyboard(activity, AccountSessionManager.getInstance().getCustomEmojis(accountSession.domain), accountSession.domain);
-			emojiKeyboard.setListener(emoji ->
-					new PleromaAddStatusReaction(item.status.id, emoji.shortcode).exec(item.accountID)
-			);
+			emojiKeyboard.setListener(emoji -> {
+				new PleromaAddStatusReaction(item.status.id, emoji.shortcode).exec(item.accountID);
+				emojiKeyboard.toggleKeyboardPopup(null);
+				reactVisibilityState = ReactVisibilityState.HIDDEN;
+			});
 
 			emojiKeyboardContainer.removeAllViews();
 			emojiKeyboardContainer.addView(emojiKeyboard.getView());
