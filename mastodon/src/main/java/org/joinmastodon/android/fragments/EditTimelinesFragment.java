@@ -1,7 +1,6 @@
 package org.joinmastodon.android.fragments;
 
 import static android.view.Menu.NONE;
-
 import static org.joinmastodon.android.ui.utils.UiUtils.makeBackItem;
 
 import android.annotation.SuppressLint;
@@ -30,11 +29,8 @@ import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.lists.GetLists;
 import org.joinmastodon.android.api.requests.tags.GetFollowedHashtags;
-import org.joinmastodon.android.api.session.AccountSession;
-import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.model.Hashtag;
 import org.joinmastodon.android.model.HeaderPaginationList;
-import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.ListTimeline;
 import org.joinmastodon.android.model.TimelineDefinition;
 import org.joinmastodon.android.ui.DividerItemDecoration;
@@ -273,12 +269,15 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
             tagWrap.setVisibility(item.isHashTag() ? View.VISIBLE : View.GONE);
 
             EditText tagsAny = ((TextInputFrameLayout) view.findViewById(R.id.tags_any)).getEditText();
+            tagsAny.setHint(R.string.sk_edit_timeline_tag_enter);
             if (item.getHashtagAny() != null)
                 tagsAny.setText(String.join(",", item.getHashtagAny()));
             EditText tagsAll = ((TextInputFrameLayout) view.findViewById(R.id.tags_all)).getEditText();
+            tagsAll.setHint(R.string.sk_edit_timeline_tag_enter);
             if (item.getHashtagAll() != null)
                 tagsAll.setText(String.join(",", item.getHashtagAll()));
             EditText tagsNone = ((TextInputFrameLayout) view.findViewById(R.id.tags_none)).getEditText();
+            tagsNone.setHint(R.string.sk_edit_timeline_tag_enter);
             if (item.getHashtagNone() != null)
                 tagsNone.setText(String.join(",", item.getHashtagNone()));
 

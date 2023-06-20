@@ -233,6 +233,7 @@
     <string name="sk_edit_timeline_tag_any">Include any of these</string>
     <string name="sk_edit_timeline_tag_all">Include all of these</string>
     <string name="sk_edit_timeline_tag_none">Include none of these</string>
+    <string name="sk_edit_timeline_tag_enter">Enter Hashtags…</string>
     <string name="sk_alt_button">ALT</string>
     <string name="sk_post_edited">edited</string>
     <string name="sk_notification_type_update">Edited posts</string>
