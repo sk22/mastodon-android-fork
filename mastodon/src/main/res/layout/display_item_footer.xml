@@ -7,155 +7,204 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content">
 
-	<LinearLayout
-		android:orientation="horizontal"
+	<GridLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:paddingHorizontal="11sp">
-		<!-- avatar width (46sp) / 2 - button width (24sp) / 2 -->
+		android:rowCount="2"
+		android:columnCount="1">
 
-		<FrameLayout
-			android:layout_weight="1"
-			android:layout_width="0dp"
-			android:layout_height="match_parent">
-			<LinearLayout
-				android:id="@+id/reply_btn"
-				android:layout_width="wrap_content"
-				android:layout_height="match_parent"
-				android:paddingVertical="12dp">
-				<ImageView
-					android:layout_width="24sp"
-					android:layout_height="24sp"
-					android:layout_gravity="center_vertical"
-					android:layout_marginStart="16dp"
-					android:duplicateParentState="true"
-					android:src="@drawable/ic_fluent_chat_multiple_24_selector_text"
-					android:tint="?android:textColorSecondary"
-					android:gravity="center_vertical" />
-				<TextView
-					android:id="@+id/reply"
-					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-					android:layout_gravity="center_vertical"
-					android:paddingStart="8dp"
-					android:minWidth="16dp"
-					android:gravity="center_vertical"
-					android:textAppearance="@style/m3_label_large"
-					android:maxLines="1"
-					android:ellipsize="end"
-					tools:text="123"
-					tools:ignore="RtlSymmetry" />
-			</LinearLayout>
-		</FrameLayout>
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:paddingHorizontal="11sp">
+			<!-- avatar width (46sp) / 2 - button width (24sp) / 2 -->
 
-		<FrameLayout
-			android:layout_weight="1"
-			android:layout_width="0dp"
-			android:layout_height="match_parent">
-			<LinearLayout
-				android:id="@+id/boost_btn"
-				android:layout_width="wrap_content"
-				android:layout_height="match_parent"
-				android:foregroundTint="@color/boost_icon"
-				android:paddingVertical="12dp">
-				<ImageView
-					android:layout_width="24sp"
-					android:layout_height="24sp"
-					android:layout_gravity="center_vertical"
-					android:layout_marginStart="16dp"
-					android:duplicateParentState="true"
-					android:src="@drawable/ic_boost"
-					android:tint="@color/boost_icon"
-					android:gravity="center_vertical" />
-				<TextView
-					android:id="@+id/boost"
-					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-					android:layout_gravity="center_vertical"
-					android:paddingStart="8dp"
-					android:minWidth="16dp"
-					android:textColor="@color/boost_icon"
-					android:gravity="center_vertical"
-					android:textAppearance="@style/m3_label_large"
-					android:maxLines="1"
-					android:ellipsize="end"
-					tools:text="123"
-					tools:ignore="RtlSymmetry" />
-			</LinearLayout>
-		</FrameLayout>
-
-		<FrameLayout
-			android:layout_weight="1"
-			android:layout_width="0dp"
-			android:layout_height="match_parent">
-			<LinearLayout
-				android:id="@+id/favorite_btn"
-				android:layout_width="wrap_content"
-				android:layout_height="match_parent"
-				android:paddingVertical="12dp">
-				<ImageView
-					android:layout_width="24sp"
-					android:layout_height="24sp"
-					android:layout_gravity="center_vertical"
-					android:layout_marginStart="16dp"
-					android:duplicateParentState="true"
-					android:src="@drawable/ic_fluent_star_24_selector"
-					android:tint="@color/favorite_icon"
-					android:gravity="center_vertical" />
-				<TextView
-					android:id="@+id/favorite"
-					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
-					android:layout_gravity="center_vertical"
-					android:paddingStart="8dp"
-					android:minWidth="16dp"
-					android:textColor="@color/favorite_icon"
-					android:gravity="center_vertical"
-					android:textAppearance="@style/m3_label_large"
-					android:maxLines="1"
-					android:ellipsize="end"
-					tools:text="123"
-					tools:ignore="RtlSymmetry" />
-			</LinearLayout>
-		</FrameLayout>
-
-		<FrameLayout
-			android:layout_weight="1"
-			android:layout_width="0dp"
-			android:layout_height="match_parent">
 			<FrameLayout
-				android:id="@+id/bookmark_btn"
+				android:layout_weight="1"
+				android:layout_width="0dp"
+				android:layout_height="match_parent">
+				<LinearLayout
+					android:id="@+id/reply_btn"
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:paddingVertical="12dp">
+					<ImageView
+						android:layout_width="24sp"
+						android:layout_height="24sp"
+						android:layout_gravity="center_vertical"
+						android:layout_marginStart="16dp"
+						android:duplicateParentState="true"
+						android:src="@drawable/ic_fluent_chat_multiple_24_selector_text"
+						android:tint="?android:textColorSecondary"
+						android:gravity="center_vertical" />
+					<TextView
+						android:id="@+id/reply"
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:layout_gravity="center_vertical"
+						android:paddingStart="8dp"
+						android:minWidth="16dp"
+						android:gravity="center_vertical"
+						android:textAppearance="@style/m3_label_large"
+						android:maxLines="1"
+						android:ellipsize="end"
+						tools:text="123"
+						tools:ignore="RtlSymmetry" />
+				</LinearLayout>
+			</FrameLayout>
+
+			<FrameLayout
+				android:layout_weight="1"
+				android:layout_width="0dp"
+				android:layout_height="match_parent">
+				<LinearLayout
+					android:id="@+id/boost_btn"
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:foregroundTint="@color/boost_icon"
+					android:paddingVertical="12dp">
+					<ImageView
+						android:layout_width="24sp"
+						android:layout_height="24sp"
+						android:layout_gravity="center_vertical"
+						android:layout_marginStart="16dp"
+						android:duplicateParentState="true"
+						android:src="@drawable/ic_boost"
+						android:tint="@color/boost_icon"
+						android:gravity="center_vertical" />
+					<TextView
+						android:id="@+id/boost"
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:layout_gravity="center_vertical"
+						android:paddingStart="8dp"
+						android:minWidth="16dp"
+						android:textColor="@color/boost_icon"
+						android:gravity="center_vertical"
+						android:textAppearance="@style/m3_label_large"
+						android:maxLines="1"
+						android:ellipsize="end"
+						tools:text="123"
+						tools:ignore="RtlSymmetry" />
+				</LinearLayout>
+			</FrameLayout>
+
+			<FrameLayout
+				android:layout_weight="1"
+				android:layout_width="0dp"
+				android:layout_height="match_parent">
+				<LinearLayout
+					android:id="@+id/favorite_btn"
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:paddingVertical="12dp">
+					<ImageView
+						android:layout_width="24sp"
+						android:layout_height="24sp"
+						android:layout_gravity="center_vertical"
+						android:layout_marginStart="16dp"
+						android:duplicateParentState="true"
+						android:src="@drawable/ic_fluent_star_24_selector"
+						android:tint="@color/favorite_icon"
+						android:gravity="center_vertical" />
+					<TextView
+						android:id="@+id/favorite"
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:layout_gravity="center_vertical"
+						android:paddingStart="8dp"
+						android:minWidth="16dp"
+						android:textColor="@color/favorite_icon"
+						android:gravity="center_vertical"
+						android:textAppearance="@style/m3_label_large"
+						android:maxLines="1"
+						android:ellipsize="end"
+						tools:text="123"
+						tools:ignore="RtlSymmetry" />
+				</LinearLayout>
+			</FrameLayout>
+
+			<FrameLayout
+				android:id="@+id/react_layout"
+				android:layout_weight="1"
+				android:layout_width="0dp"
+				android:layout_height="match_parent">
+				<FrameLayout
+					android:id="@+id/react_btn"
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:paddingVertical="12dp">
+					<ImageView
+						android:id="@+id/react"
+						android:layout_width="24sp"
+						android:layout_height="24sp"
+						android:layout_gravity="center_vertical"
+						android:layout_marginHorizontal="16dp"
+						android:src="@drawable/ic_fluent_emoji_laugh_24_regular"
+						android:tint="@color/bookmark_icon"
+						android:gravity="center_vertical"
+						android:textAppearance="@style/m3_label_large" />
+				</FrameLayout>
+				<LinearLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:visibility="gone">
+					<EditText
+						android:layout_width="100dp"
+						android:layout_height="20dp"
+						android:focusable = "true"
+						android:focusableInTouchMode = "true"
+						android:id="@+id/react_input"/>
+				</LinearLayout>
+			</FrameLayout>
+
+			<FrameLayout
+				android:layout_weight="1"
+				android:layout_width="0dp"
+				android:layout_height="match_parent">
+				<FrameLayout
+					android:id="@+id/bookmark_btn"
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:paddingVertical="12dp">
+					<ImageView
+						android:id="@+id/bookmark"
+						android:layout_width="24sp"
+						android:layout_height="24sp"
+						android:layout_gravity="center_vertical"
+						android:layout_marginHorizontal="16dp"
+						android:src="@drawable/ic_fluent_bookmark_24_selector"
+						android:tint="@color/bookmark_icon"
+						android:gravity="center_vertical"
+						android:textAppearance="@style/m3_label_large" />
+				</FrameLayout>
+			</FrameLayout>
+
+			<FrameLayout
+				android:id="@+id/share_btn"
 				android:layout_width="wrap_content"
 				android:layout_height="match_parent"
 				android:paddingVertical="12dp">
 				<ImageView
-					android:id="@+id/bookmark"
+					android:id="@+id/share"
 					android:layout_width="24sp"
 					android:layout_height="24sp"
 					android:layout_gravity="center_vertical"
 					android:layout_marginHorizontal="16dp"
-					android:src="@drawable/ic_fluent_bookmark_24_selector"
-					android:tint="@color/bookmark_icon"
-					android:gravity="center_vertical"
-					android:textAppearance="@style/m3_label_large" />
+					android:src="@drawable/ic_fluent_share_24_regular"
+					android:tint="?android:textColorSecondary"
+					android:gravity="center_vertical"/>
 			</FrameLayout>
-		</FrameLayout>
 
-		<FrameLayout
-			android:id="@+id/share_btn"
+		</LinearLayout>
+
+		<LinearLayout
 			android:layout_width="wrap_content"
-			android:layout_height="match_parent"
-			android:paddingVertical="12dp">
-			<ImageView
-				android:id="@+id/share"
-				android:layout_width="24sp"
-				android:layout_height="24sp"
-				android:layout_gravity="center_vertical"
-				android:layout_marginHorizontal="16dp"
-				android:src="@drawable/ic_fluent_share_24_regular"
-				android:tint="?android:textColorSecondary"
-				android:gravity="center_vertical"/>
-		</FrameLayout>
+			android:layout_height="wrap_content"
+			android:id="@+id/footer_emoji_keyboard_container"
+			android:orientation="vertical">
+		</LinearLayout>
+	</GridLayout>
 
-	</LinearLayout>
 </org.joinmastodon.android.ui.views.MaxWidthFrameLayout>

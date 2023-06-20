@@ -310,4 +310,5 @@
     <string name="sk_settings_emoji_reactions_in_lists">Show emoji reactions in timelines</string>
     <string name="sk_settings_emoji_reactions_in_lists_explanation">Whether emoji reactions should be displayed on timelines. If this option is off, emoji reactions will only be displayed when viewing a thread.</string>
     <string name="sk_x_reacted_with_x">%,d reacted with %s</string>
+    <string name="sk_button_react">React with emoji</string>
 </resources>
