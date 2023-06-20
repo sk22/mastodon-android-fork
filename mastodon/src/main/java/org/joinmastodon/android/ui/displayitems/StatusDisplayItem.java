@@ -22,6 +22,7 @@ import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Attachment;
 import org.joinmastodon.android.model.DisplayItemsParent;
 import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.FilterAction;
 import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.FilterResult;
 import org.joinmastodon.android.model.Notification;
@@ -297,7 +298,16 @@ public abstract class StatusDisplayItem{
 				item.index=i++;
 			}
 		}
-		return items;
+
+		Filter applyingFilter = null;
+		if (!statusForContent.filterRevealed) {
+			StatusFilterPredicate predicate = new StatusFilterPredicate(accountID, filterContext, FilterAction.WARN);
+			statusForContent.filterRevealed = predicate.test(status);
+			applyingFilter = predicate.getApplyingFilter();
+		}
+
+		return statusForContent.filterRevealed ? items :
+				new ArrayList<>(List.of(new WarningFilteredStatusDisplayItem(parentID, fragment, statusForContent, items, applyingFilter)));
 	}
 
 	public static void buildPollItems(String parentID, BaseStatusListFragment fragment, Poll poll, List<StatusDisplayItem> items){
