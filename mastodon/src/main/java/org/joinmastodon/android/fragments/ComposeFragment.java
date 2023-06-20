@@ -689,7 +689,6 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 
 			((TextView) view.findViewById(R.id.name)).setText(status.account.displayName);
 			((TextView) view.findViewById(R.id.username)).setText(status.account.getDisplayUsername());
-			view.findViewById(R.id.visibility).setVisibility(View.GONE);
 			Drawable visibilityIcon = getActivity().getDrawable(switch(status.visibility){
 				case PUBLIC -> R.drawable.ic_fluent_earth_20_regular;
 				case UNLISTED -> R.drawable.ic_fluent_lock_open_20_regular;
@@ -705,8 +704,9 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			else if (status.createdAt!=null) timestamp.setText(UiUtils.formatRelativeTimestamp(getContext(), status.createdAt));
 			else timestamp.setText("");
 			if (status.spoilerText != null && !status.spoilerText.isBlank()) {
-				view.findViewById(R.id.spoiler_header).setVisibility(View.VISIBLE);
-				((TextView) view.findViewById(R.id.spoiler_title_inline)).setText(status.spoilerText);
+				// TODO
+//				view.findViewById(R.id.spoiler_header).setVisibility(View.VISIBLE);
+//				((TextView) view.findViewById(R.id.spoiler_title_inline)).setText(status.spoilerText);
 			}
 
 			SpannableStringBuilder content = HtmlParser.parse(status.content, status.emojis, status.mentions, status.tags, accountID);

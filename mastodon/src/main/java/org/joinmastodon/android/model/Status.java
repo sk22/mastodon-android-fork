@@ -74,6 +74,7 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 
 	public transient boolean filterRevealed;
 	public transient boolean spoilerRevealed;
+	public transient boolean sensitiveRevealed;
 	public transient boolean textExpanded, textExpandable;
 	public transient boolean hasGapAfter;
 	public transient TranslatedStatus translation;
@@ -109,6 +110,7 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 				fr.postprocess();
 
 		spoilerRevealed=GlobalUserPreferences.alwaysExpandContentWarnings || !sensitive;
+		sensitiveRevealed=GlobalUserPreferences.alwaysExpandContentWarnings || !sensitive;
 		if (visibility.equals(StatusPrivacy.LOCAL)) localOnly = true;
 	}
 

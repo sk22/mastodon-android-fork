@@ -2,6 +2,7 @@ package org.joinmastodon.android.ui.displayitems;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.res.ColorStateList;
 import android.graphics.Outline;
 import android.graphics.Paint;
 import android.graphics.Typeface;
@@ -99,15 +100,7 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 		HtmlParser.parseCustomEmoji(parsedName, user.emojis);
 		emojiHelper.setText(parsedName);
 		if(status!=null){
-			hasVisibilityToggle=status.sensitive || !TextUtils.isEmpty(status.spoilerText);
-			if(!hasVisibilityToggle && !status.mediaAttachments.isEmpty()){
-				for(Attachment att:status.mediaAttachments){
-					if(att.type!=Attachment.Type.AUDIO){
-						hasVisibilityToggle=true;
-						break;
-					}
-				}
-			}
+			hasVisibilityToggle=status.sensitive && !status.mediaAttachments.isEmpty();
 		}
 		this.extraText=extraText;
 		emojiHelper.addText(extraText);
@@ -329,14 +322,18 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 				separator.setVisibility(View.GONE);
 				timestamp.setText("");
 			}
-			visibility.setVisibility(item.hasVisibilityToggle && !item.inset ? View.VISIBLE : View.GONE);
 			deleteNotification.setVisibility(GlobalUserPreferences.enableDeleteNotifications && item.notification!=null && !item.inset ? View.VISIBLE : View.GONE);
-			if(item.hasVisibilityToggle){
-				visibility.setImageResource(item.status.spoilerRevealed ? R.drawable.ic_visibility_off : R.drawable.ic_visibility);
-				visibility.setContentDescription(item.parentFragment.getString(item.status.spoilerRevealed ? R.string.hide_content : R.string.reveal_content));
+			if (item.hasVisibilityToggle && !item.inset){
+				boolean disabled = !TextUtils.isEmpty(item.status.spoilerText) && !item.status.spoilerRevealed;
+				visibility.setEnabled(!disabled);
+				V.setVisibilityAnimated(visibility, disabled ? View.INVISIBLE : View.VISIBLE);
+				visibility.setImageResource(item.status.sensitiveRevealed ? R.drawable.ic_fluent_eye_off_24_regular :  R.drawable.ic_fluent_eye_24_regular);
+				visibility.setContentDescription(item.parentFragment.getString(item.status.sensitiveRevealed ? R.string.hide_content : R.string.reveal_content));
 				if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
 					visibility.setTooltipText(visibility.getContentDescription());
 				}
+			} else {
+				visibility.setVisibility(View.GONE);
 			}
 			itemView.setPadding(itemView.getPaddingLeft(), itemView.getPaddingTop(), itemView.getPaddingRight(), item.needBottomPadding ? V.dp(16) : 0);
 			if(TextUtils.isEmpty(item.extraText)){

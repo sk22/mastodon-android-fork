@@ -268,6 +268,7 @@ public class HtmlParser{
 	}
 
 	public static void applyFilterHighlights(Context context, SpannableStringBuilder text, List<FilterResult> filters){
+		if (filters == null) return;
 		int fgColor=UiUtils.getThemeColor(context, R.attr.colorM3Error);
 		int bgColor=UiUtils.getThemeColor(context, R.attr.colorM3ErrorContainer);
 		for(FilterResult filter:filters){

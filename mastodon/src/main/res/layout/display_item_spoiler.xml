@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
+	android:orientation="horizontal"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:paddingLeft="16dp"
@@ -39,4 +40,13 @@
 
 	</LinearLayout>
 
-</FrameLayout>
+	<ImageView
+		android:id="@+id/media_icon"
+		android:layout_width="36dp"
+		android:layout_height="36dp"
+		android:background="?android:actionBarItemBackground"
+		android:scaleType="center"
+		android:src="@drawable/ic_fluent_image_24_regular"
+		android:tint="?android:textColorSecondary" />
+
+</LinearLayout>

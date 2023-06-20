@@ -6,14 +6,9 @@ import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Layout;
-import android.text.StaticLayout;
-import android.text.TextPaint;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
@@ -73,7 +68,7 @@ import me.grishka.appkit.utils.BindableViewHolder;
 import me.grishka.appkit.utils.V;
 import me.grishka.appkit.views.UsableRecyclerView;
 
-public abstract class BaseStatusListFragment<T extends DisplayItemsParent> extends RecyclerFragment<T> implements PhotoViewerHost, ScrollableToTop, IsOnTop, HasFab, ProvidesAssistContent.ProvidesWebUri {
+public abstract class BaseStatusListFragment<T extends DisplayItemsParent> extends MastodonRecyclerFragment<T> implements PhotoViewerHost, ScrollableToTop, IsOnTop, HasFab, ProvidesAssistContent.ProvidesWebUri {
 	protected ArrayList<StatusDisplayItem> displayItems=new ArrayList<>();
 	protected DisplayItemsAdapter adapter;
 	protected String accountID;
@@ -352,7 +347,11 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 			public void getSelectorBounds(View view, Rect outRect){
 				boolean hasDescendant = false, hasAncestor = false, isWarning = false;
 				int lastIndex = -1, firstIndex = -1;
-				list.getDecoratedBoundsWithMargins(view, outRect);
+				if(((UsableRecyclerView) list).isIncludeMarginsInItemHitbox()){
+					list.getDecoratedBoundsWithMargins(view, outRect);
+				}else{
+					outRect.set(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
+				}
 				RecyclerView.ViewHolder holder=list.getChildViewHolder(view);
 				if(holder instanceof StatusDisplayItem.Holder){
 					if(((StatusDisplayItem.Holder<?>) holder).getItem().getType()==StatusDisplayItem.Type.GAP){
@@ -438,6 +437,10 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 		float y=tmpRect.bottom-V.dp(.5f);
 		paint.setAlpha(Math.round(255*child.getAlpha()));
 		c.drawLine(0, y, parent.getWidth(), y, paint);
+	}
+
+	protected boolean needDividerForExtraItem(View child, View bottomSibling, RecyclerView.ViewHolder holder, RecyclerView.ViewHolder siblingHolder){
+		return false;
 	}
 
 	public abstract void onItemClick(String id);
@@ -527,23 +530,30 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 				.exec(accountID);
 	}
 
-	public void onRevealSpoilerClick(TextStatusDisplayItem.Holder holder){
-		Status status=holder.getItem().status;
-		revealSpoiler(status, holder.getItemID());
-	}
-
-	public void onRevealSpoilerClick(MediaGridStatusDisplayItem.Holder holder){
-		Status status=holder.getItem().status;
-		revealSpoiler(status, holder.getItemID());
-	}
-
 	public void onRevealSpoilerClick(SpoilerStatusDisplayItem.Holder holder){
 		Status status=holder.getItem().status;
 		toggleSpoiler(status, holder.getItemID());
 	}
 
+	public void onVisibilityIconClick(HeaderStatusDisplayItem.Holder holder) {
+		Status status = holder.getItem().status;
+		MediaGridStatusDisplayItem.Holder mediaGrid = findHolderOfType(holder.getItemID(), MediaGridStatusDisplayItem.Holder.class);
+		if (mediaGrid != null) {
+			if (!status.sensitiveRevealed) mediaGrid.revealSensitive();
+			else mediaGrid.hideSensitive();
+		}
+		holder.rebind();
+	}
+
+	public void onSensitiveRevealed(MediaGridStatusDisplayItem.Holder holder) {
+		HeaderStatusDisplayItem.Holder header = findHolderOfType(holder.getItemID(), HeaderStatusDisplayItem.Holder.class);
+		if(header != null) header.rebind();
+	}
+
 	protected void toggleSpoiler(Status status, String itemID){
 		status.spoilerRevealed=!status.spoilerRevealed;
+		if (!status.spoilerRevealed && !GlobalUserPreferences.alwaysExpandContentWarnings) status.sensitiveRevealed = false;
+
 		SpoilerStatusDisplayItem.Holder spoiler=findHolderOfType(itemID, SpoilerStatusDisplayItem.Holder.class);
 		if(spoiler!=null)
 			spoiler.rebind();
@@ -557,31 +567,15 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 			displayItems.subList(index+1, index+1+spoilerItem.contentItems.size()).clear();
 			adapter.notifyItemRangeRemoved(index+1, spoilerItem.contentItems.size());
 		}
-		list.invalidateItemDecorations();
-	}
 
-	protected void revealSpoiler(Status status, String itemID){
-		status.spoilerRevealed=true;
 		TextStatusDisplayItem.Holder text=findHolderOfType(itemID, TextStatusDisplayItem.Holder.class);
 		if(text!=null)
 			adapter.notifyItemChanged(text.getAbsoluteAdapterPosition()-getMainAdapterOffset());
 		HeaderStatusDisplayItem.Holder header=findHolderOfType(itemID, HeaderStatusDisplayItem.Holder.class);
 		if(header!=null)
 			header.rebind();
-		updateImagesSpoilerState(status, itemID);
-	}
 
-	public void onVisibilityIconClick(HeaderStatusDisplayItem.Holder holder){
-		Status status=holder.getItem().status;
-		status.spoilerRevealed=!status.spoilerRevealed;
-		if(!TextUtils.isEmpty(status.spoilerText)){
-			TextStatusDisplayItem.Holder text = findHolderOfType(holder.getItemID(), TextStatusDisplayItem.Holder.class);
-			if(text!=null){
-				adapter.notifyItemChanged(text.getAbsoluteAdapterPosition());
-			}
-		}
-		holder.rebind();
-		updateImagesSpoilerState(status, holder.getItemID());
+		list.invalidateItemDecorations();
 	}
 
 	public void onEnableExpandable(TextStatusDisplayItem.Holder holder, boolean expandable) {
@@ -600,22 +594,7 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 		if (header != null) header.rebind();
 	}
 
-	protected void updateImagesSpoilerState(Status status, String itemID){
-		ArrayList<Integer> updatedPositions=new ArrayList<>();
-		MediaGridStatusDisplayItem.Holder mediaGrid=findHolderOfType(itemID, MediaGridStatusDisplayItem.Holder.class);
-		if(mediaGrid!=null){
-			mediaGrid.setRevealed(status.spoilerRevealed);
-			updatedPositions.add(mediaGrid.getAbsoluteAdapterPosition()-getMainAdapterOffset());
-		}
-		int i=0;
-		for(StatusDisplayItem item:displayItems){
-			if(itemID.equals(item.parentID) && item instanceof MediaGridStatusDisplayItem && !updatedPositions.contains(i)){
-				adapter.notifyItemChanged(i);
-			}
-			i++;
-		}
-	}
-
+	// TODO: do we still need this?
 	public void onImageUpdated(MediaGridStatusDisplayItem.Holder holder, int index) {
 		holder.rebind();
 		MediaGridStatusDisplayItem.Holder mediaGrid = findHolderOfType(holder.getItemID(), MediaGridStatusDisplayItem.Holder.class);
@@ -779,6 +758,16 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 		assistContent.setWebUri(getWebUri(getSession().getInstanceUri().buildUpon()));
 	}
 
+	public void rebuildAllDisplayItems(){
+		displayItems.clear();
+		for(T item:data){
+			displayItems.addAll(buildDisplayItems(item));
+		}
+		adapter.notifyDataSetChanged();
+	}
+
+	protected void onModifyItemViewHolder(BindableViewHolder<StatusDisplayItem> holder){}
+
 	@Override
 	protected void onDataLoaded(List<T> d, boolean more) {
 		super.onDataLoaded(d, more);
@@ -795,7 +784,9 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 		@NonNull
 		@Override
 		public BindableViewHolder<StatusDisplayItem> onCreateViewHolder(@NonNull ViewGroup parent, int viewType){
-			return (BindableViewHolder<StatusDisplayItem>) StatusDisplayItem.createViewHolder(StatusDisplayItem.Type.values()[viewType & (~0x80000000)], getActivity(), parent);
+			BindableViewHolder<StatusDisplayItem> holder=(BindableViewHolder<StatusDisplayItem>) StatusDisplayItem.createViewHolder(StatusDisplayItem.Type.values()[viewType & (~0x80000000)], getActivity(), parent);
+			onModifyItemViewHolder(holder);
+			return holder;
 		}
 
 		@Override
@@ -826,15 +817,12 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 	}
 
 	private class StatusListItemDecoration extends RecyclerView.ItemDecoration{
-		private Paint dividerPaint=new Paint(), hiddenMediaPaint=new Paint(Paint.ANTI_ALIAS_FLAG);
-		private Typeface mediumTypeface=Typeface.create("sans-serif-medium", Typeface.NORMAL);
-		private Layout mediaHiddenTitleLayout, mediaHiddenTextLayout, tapToRevealTextLayout;
-		private int currentMediaHiddenLayoutsWidth=0;
+		private Paint dividerPaint=new Paint();
 
 		{
-			dividerPaint.setColor(UiUtils.getThemeColor(getActivity(), R.attr.colorPollVoted));
+			dividerPaint.setColor(UiUtils.getThemeColor(getActivity(), R.attr.colorM3OutlineVariant));
 			dividerPaint.setStyle(Paint.Style.STROKE);
-			dividerPaint.setStrokeWidth(V.dp(1));
+			dividerPaint.setStrokeWidth(V.dp(0.5f));
 		}
 
 		@Override
@@ -844,80 +832,12 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 				View bottomSibling=parent.getChildAt(i+1);
 				RecyclerView.ViewHolder holder=parent.getChildViewHolder(child);
 				RecyclerView.ViewHolder siblingHolder=parent.getChildViewHolder(bottomSibling);
-				if(holder instanceof StatusDisplayItem.Holder<?> ih && siblingHolder instanceof StatusDisplayItem.Holder<?> sh
-						&& (!ih.getItemID().equals(sh.getItemID()) || sh instanceof ExtendedFooterStatusDisplayItem.Holder) && ih.getItem().getType()!=StatusDisplayItem.Type.GAP){
-					if (!ih.getItem().isMainStatus && ih.getItem().hasDescendantNeighbor) continue;
+				if((holder instanceof StatusDisplayItem.Holder<?> ih && siblingHolder instanceof StatusDisplayItem.Holder<?> sh
+						&& (!ih.getItemID().equals(sh.getItemID()) || sh instanceof ExtendedFooterStatusDisplayItem.Holder) && ih.getItem().getType()!=StatusDisplayItem.Type.GAP)
+						|| needDividerForExtraItem(child, bottomSibling, holder, siblingHolder)){
 					drawDivider(child, bottomSibling, holder, siblingHolder, parent, c, dividerPaint);
 				}
 			}
-		}
-
-		@Override
-		public void onDrawOver(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state){
-			for(int i=0;i<parent.getChildCount();i++){
-				View child=parent.getChildAt(i);
-				RecyclerView.ViewHolder holder=parent.getChildViewHolder(child);
-				if(holder instanceof MediaGridStatusDisplayItem.Holder imgHolder){
-					if(!imgHolder.getItem().status.spoilerRevealed && TextUtils.isEmpty(imgHolder.getItem().status.spoilerText)){
-						hiddenMediaPaint.setColor(0x80000000);
-						c.drawRect(child.getX(), child.getY(), child.getX()+child.getWidth(), child.getY()+child.getHeight(), hiddenMediaPaint);
-					}
-				}
-			}
-			for(int i=0;i<parent.getChildCount();i++){
-				View child=parent.getChildAt(i);
-				RecyclerView.ViewHolder holder=parent.getChildViewHolder(child);
-				if(holder instanceof MediaGridStatusDisplayItem.Holder imgHolder){
-					if(!imgHolder.getItem().status.spoilerRevealed){
-						if(TextUtils.isEmpty(imgHolder.getItem().status.spoilerText)){
-							int listWidth=getListWidthForMediaLayout();
-							int width=Math.min(listWidth, UiUtils.MAX_WIDTH);
-							if(currentMediaHiddenLayoutsWidth!=width)
-								rebuildMediaHiddenLayouts(width-V.dp(32));
-							c.save();
-							float totalHeight;
-							boolean hiddenByAuthor=imgHolder.getItem().status.sensitive;
-							if(hiddenByAuthor)
-								totalHeight=mediaHiddenTitleLayout.getHeight()+mediaHiddenTextLayout.getHeight()+V.dp(8);
-							else
-								totalHeight=tapToRevealTextLayout.getHeight();
-							c.translate(child.getX()+V.dp(16), child.getY()+child.getHeight()/2f-totalHeight/2f);
-							if(hiddenByAuthor){
-								mediaHiddenTitleLayout.draw(c);
-								c.translate(0, mediaHiddenTitleLayout.getHeight()+V.dp(8));
-								mediaHiddenTextLayout.draw(c);
-							}else{
-								tapToRevealTextLayout.draw(c);
-							}
-							c.restore();
-						}
-					}
-				}
-			}
-		}
-
-		private void rebuildMediaHiddenLayouts(int width){
-			currentMediaHiddenLayoutsWidth=width;
-			String title=getString(R.string.sensitive_content);
-			TextPaint titlePaint=new TextPaint(Paint.ANTI_ALIAS_FLAG);
-			titlePaint.setColor(UiUtils.getThemeColor(getContext(), R.attr.colorGray50));
-			titlePaint.setTextSize(V.dp(22));
-			titlePaint.setTypeface(mediumTypeface);
-			mediaHiddenTitleLayout=StaticLayout.Builder.obtain(title, 0, title.length(), titlePaint, width)
-					.setAlignment(Layout.Alignment.ALIGN_CENTER)
-					.build();
-			String tapToReveal=getString(R.string.tap_to_reveal);
-			tapToRevealTextLayout=StaticLayout.Builder.obtain(tapToReveal, 0, tapToReveal.length(), titlePaint, width)
-					.setAlignment(Layout.Alignment.ALIGN_CENTER)
-					.build();
-			TextPaint textPaint=new TextPaint(Paint.ANTI_ALIAS_FLAG);
-			textPaint.setColor(UiUtils.getThemeColor(getContext(), R.attr.colorGray200));
-			textPaint.setTextSize(V.dp(16));
-			String text=getString(R.string.sensitive_content_explain);
-			mediaHiddenTextLayout=StaticLayout.Builder.obtain(text, 0, text.length(), textPaint, width)
-					.setAlignment(Layout.Alignment.ALIGN_CENTER)
-					.setLineSpacing(V.dp(5), 1f)
-					.build();
 		}
 	}
 }

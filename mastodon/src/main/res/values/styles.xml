@@ -83,6 +83,7 @@
 		<item name="colorM3SurfaceVariant">?colorNeutral100</item>
 		<item name="colorM3OnSurfaceVariant">?colorNeutral700</item>
 		<item name="colorM3Outline">?colorNeutral500</item>
+		<item name="colorM3OutlineVariant">?colorNeutral200</item>
 		<item name="colorM3DisabledBackground">#1F1F1F1F</item>
 		<item name="colorM3PressedOverlay">@color/white</item>
 		<item name="colorM3Error">#B3261E</item>
@@ -107,6 +108,7 @@
 		<item name="colorButtonBackgroundSecondaryLightOnDarkDisabled">?colorGray300</item>
 		<item name="colorButtonTextSecondaryLightOnDark">?colorGray50</item>
 		<item name="colorButtonTextSecondaryLightOnDarkDisabled">?colorGray400</item>
+		<item name="colorSensitiveOverlay">#a6ffffff</item>
 	</style>
 
 
@@ -184,6 +186,7 @@
 		<item name="colorM3SurfaceVariant">?colorNeutral700</item>
 		<item name="colorM3OnSurfaceVariant">?colorNeutral200</item>
 		<item name="colorM3Outline">?colorNeutral400</item>
+		<item name="colorM3OutlineVariant">?colorNeutral700</item>
 		<item name="colorM3DisabledBackground">#1FE3E3E3</item>
 		<item name="colorM3PressedOverlay">?colorPrimary200</item>
 		<item name="colorM3Error">#F2B8B5</item>
@@ -208,6 +211,7 @@
 		<item name="colorButtonBackgroundSecondaryLightOnDarkDisabled">?colorGray300</item>
 		<item name="colorButtonTextSecondaryLightOnDark">?colorGray50</item>
 		<item name="colorButtonTextSecondaryLightOnDarkDisabled">?colorGray400</item>
+		<item name="colorSensitiveOverlay">#80000000</item>
 	</style>
 
 	<style name="Theme.Mastodon.Dark.SplashFragment">

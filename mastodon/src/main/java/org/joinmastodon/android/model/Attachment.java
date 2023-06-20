@@ -14,8 +14,6 @@ import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 import org.parceler.ParcelProperty;
 
-import java.util.UUID;
-
 @Parcel
 public class Attachment extends BaseModel{
 //	@RequiredField

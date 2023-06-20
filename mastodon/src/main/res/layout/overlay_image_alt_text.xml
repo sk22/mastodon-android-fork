@@ -25,8 +25,9 @@
 		android:textColor="?colorGray25"
 		android:gravity="center"
 		android:includeFontPadding="false"
-		android:paddingHorizontal="5dp"
-		android:paddingVertical="2dp"
+		android:paddingHorizontal="8dp"
+		android:paddingVertical="4dp"
+		android:maxLines="1"
 		android:text="@string/sk_alt_button"/>
 
 	<ImageButton

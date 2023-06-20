@@ -62,12 +62,20 @@
 	<attr name="colorM3SurfaceVariant" format="color"/>
 	<attr name="colorM3OnSurfaceVariant" format="color"/>
 	<attr name="colorM3Outline" format="color"/>
+	<attr name="colorM3OutlineVariant" format="color"/>
 	<attr name="colorM3DisabledBackground" format="color"/>
 	<attr name="colorM3PressedOverlay" format="color"/>
 	<attr name="colorM3Error" format="color"/>
 	<attr name="colorM3OnError" format="color"/>
 	<attr name="colorM3ErrorContainer" format="color"/>
 	<attr name="colorM3OnErrorContainer" format="color"/>
+	<attr name="colorM3PrimaryInverse" format="color"/>
+	<attr name="colorSensitiveOverlay" format="color"/>
+	<attr name="colorWhite" format="color"/>
+	<attr name="colorFavorite" format="color" />
+	<attr name="colorBoost" format="color" />
+	<attr name="colorFollow" format="color" />
+	<attr name="colorPoll" format="color" />
 
 	<attr name="primaryLargeButtonStyle" format="reference"/>
 	<attr name="secondaryLargeButtonStyle" format="reference"/>

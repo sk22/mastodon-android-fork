@@ -15,7 +15,8 @@
 		android:padding="4dp"
 		android:src="@drawable/ic_fluent_important_20_filled"
 		android:background="@drawable/bg_image_no_alt_overlay"
-		android:tint="?colorGray25" />
+		android:tint="?colorGray25"
+		android:visibility="gone" />
 
 	<TextView
 		android:id="@+id/alt_button"
@@ -26,9 +27,10 @@
 		android:textColor="?colorGray25"
 		android:gravity="center"
 		android:includeFontPadding="false"
-		android:paddingHorizontal="5dp"
-		android:paddingVertical="2dp"
+		android:paddingHorizontal="8dp"
+		android:paddingVertical="4dp"
 		android:background="@drawable/bg_image_alt_overlay"
+		android:maxLines="1"
 		android:text="@string/sk_alt_button"/>
 
 </FrameLayout>

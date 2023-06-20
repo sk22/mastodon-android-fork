@@ -180,6 +180,7 @@ public abstract class StatusDisplayItem{
 
 		ArrayList<StatusDisplayItem> contentItems;
 		if(!TextUtils.isEmpty(statusForContent.spoilerText)){
+			if (GlobalUserPreferences.alwaysExpandContentWarnings) statusForContent.spoilerRevealed = true;
 			SpoilerStatusDisplayItem spoilerItem=new SpoilerStatusDisplayItem(parentID, fragment, null, statusForContent, Type.SPOILER);
 			items.add(spoilerItem);
 			contentItems=spoilerItem.contentItems;
@@ -214,8 +215,8 @@ public abstract class StatusDisplayItem{
 			MediaGridStatusDisplayItem mediaGrid=new MediaGridStatusDisplayItem(parentID, fragment, layout, imageAttachments, statusForContent);
 			if((flags & FLAG_MEDIA_FORCE_HIDDEN)!=0)
 				mediaGrid.sensitiveTitle=fragment.getString(R.string.media_hidden);
-			else if(statusForContent.sensitive)
-				mediaGrid.sensitiveRevealed=true;
+			else if(statusForContent.sensitive && GlobalUserPreferences.alwaysExpandContentWarnings) // TODO: !AccountSessionManager.get(accountID).getLocalPreferences().hideSensitiveMedia)
+				statusForContent.sensitiveRevealed=true;
 			contentItems.add(mediaGrid);
 		}
 		for(Attachment att:statusForContent.mediaAttachments){
@@ -232,8 +233,11 @@ public abstract class StatusDisplayItem{
 		if(statusForContent.poll!=null){
 			buildPollItems(parentID, fragment, statusForContent.poll, items);
 		}
-		if(statusForContent.card!=null && statusForContent.mediaAttachments.isEmpty() && TextUtils.isEmpty(statusForContent.spoilerText)){
+		if(statusForContent.card!=null && statusForContent.mediaAttachments.isEmpty()){
 			contentItems.add(new LinkCardStatusDisplayItem(parentID, fragment, statusForContent));
+		}
+		if (!TextUtils.isEmpty(statusForContent.spoilerText) && statusForContent.spoilerRevealed) {
+			items.addAll(contentItems);
 		}
 		if((flags & FLAG_NO_FOOTER)==0){
 			FooterStatusDisplayItem footer=new FooterStatusDisplayItem(parentID, fragment, statusForContent, accountID);
@@ -248,7 +252,7 @@ public abstract class StatusDisplayItem{
 			item.inset=inset;
 			item.index=i++;
 		}
-		if(items!=contentItems){
+		if(items!=contentItems && !statusForContent.spoilerRevealed){
 			for(StatusDisplayItem item:contentItems){
 				item.inset=inset;
 				item.index=i++;

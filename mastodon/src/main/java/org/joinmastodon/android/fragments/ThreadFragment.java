@@ -179,22 +179,11 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 		if(footerProgress!=null)
 			footerProgress.setVisibility(View.GONE);
 		data.addAll(result.descendants);
-		int prevCount=displayItems.size();
-		onAppendItems(result.descendants);
-		int count=displayItems.size();
-		if(!refreshing)
-			adapter.notifyItemRangeInserted(prevCount, count-prevCount);
-		int prependedCount = prependItems(result.ancestors, !refreshing);
-		if (prependedCount > 0 && displayItems.get(prependedCount) instanceof ReblogOrReplyLineStatusDisplayItem) {
-			displayItems.remove(prependedCount);
-			adapter.notifyItemRemoved(prependedCount);
-			count--;
-		}
 
 		for (Status s : data) {
 			Status oldStatus = oldData == null ? null : oldData.get(s.id);
 			// restore previous spoiler/filter revealed states when refreshing
-			if (oldStatus != null) {
+			if (oldStatus != null && !GlobalUserPreferences.alwaysExpandContentWarnings) {
 				s.spoilerRevealed = oldStatus.spoilerRevealed;
 				s.filterRevealed = oldStatus.filterRevealed;
 			} else if (GlobalUserPreferences.autoRevealEqualSpoilers != AutoRevealMode.NEVER &&
@@ -205,6 +194,18 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 					s.spoilerRevealed = true;
 				}
 			}
+		}
+
+		int prevCount=displayItems.size();
+		onAppendItems(result.descendants);
+		int count=displayItems.size();
+		if(!refreshing)
+			adapter.notifyItemRangeInserted(prevCount, count-prevCount);
+		int prependedCount = prependItems(result.ancestors, !refreshing);
+		if (prependedCount > 0 && displayItems.get(prependedCount) instanceof ReblogOrReplyLineStatusDisplayItem) {
+			displayItems.remove(prependedCount);
+			adapter.notifyItemRemoved(prependedCount);
+			count--;
 		}
 
 		dataLoaded();

@@ -11,6 +11,6 @@
 		android:layout_gravity="center"
 		android:scaleType="centerCrop"/>
 
-	<include layout="@layout/alt_badge" />
+	<include layout="@layout/alt_text_badge" />
 
 </FrameLayout>

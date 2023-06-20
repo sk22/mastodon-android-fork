@@ -20,6 +20,10 @@ public class SpoilerStripesDrawable extends Drawable{
 	private static final float X1=-0.860365f;
 	private static final float X2=10.6078f;
 
+	public SpoilerStripesDrawable(){
+		this(false);
+	}
+
 	public SpoilerStripesDrawable(boolean flipped){
 		paint.setColor(0xff000000);
 		paint.setStyle(Paint.Style.STROKE);
