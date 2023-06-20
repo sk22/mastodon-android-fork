@@ -253,6 +253,12 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
             });
         }
 
+        private void setupTagEditText(EditText text, List<String> tags) {
+            text.setHint(R.string.sk_edit_timeline_tag_enter);
+            if (tags != null)
+                text.setText(String.join(",", tags));
+        }
+
         @SuppressLint("ClickableViewAccessibility")
         @Override
         public void onClick() {
@@ -269,17 +275,11 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
             tagWrap.setVisibility(item.isHashTag() ? View.VISIBLE : View.GONE);
 
             EditText tagsAny = ((TextInputFrameLayout) view.findViewById(R.id.tags_any)).getEditText();
-            tagsAny.setHint(R.string.sk_edit_timeline_tag_enter);
-            if (item.getHashtagAny() != null)
-                tagsAny.setText(String.join(",", item.getHashtagAny()));
+            setupTagEditText(tagsAny, item.getHashtagAny());
             EditText tagsAll = ((TextInputFrameLayout) view.findViewById(R.id.tags_all)).getEditText();
-            tagsAll.setHint(R.string.sk_edit_timeline_tag_enter);
-            if (item.getHashtagAll() != null)
-                tagsAll.setText(String.join(",", item.getHashtagAll()));
+            setupTagEditText(tagsAll, item.getHashtagAll());
             EditText tagsNone = ((TextInputFrameLayout) view.findViewById(R.id.tags_none)).getEditText();
-            tagsNone.setHint(R.string.sk_edit_timeline_tag_enter);
-            if (item.getHashtagNone() != null)
-                tagsNone.setText(String.join(",", item.getHashtagNone()));
+            setupTagEditText(tagsNone, item.getHashtagNone());
 
             ImageButton btn = view.findViewById(R.id.button);
             PopupMenu popup = new PopupMenu(ctx, btn);
