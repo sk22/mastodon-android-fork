@@ -231,11 +231,13 @@
     <string name="sk_edit_timeline">Edit timeline</string>
     <string name="sk_add_timeline">Add timeline</string>
     <string name="sk_edit_timelines">Edit timelines</string>
-    <string name="sk_edit_timeline_tag_any">Posts can otherwise contain</string>
-    <string name="sk_edit_timeline_tag_all">Posts must also contain</string>
-    <string name="sk_edit_timeline_tag_none">Exclude posts containing</string>
+    <string name="sk_edit_timeline_tag_main">Posts containing hashtag…</string>
+    <string name="sk_edit_timeline_tag_any">…or any of these</string>
+    <string name="sk_edit_timeline_tag_all">…and every one of these</string>
+    <string name="sk_edit_timeline_tag_none">…but none of these</string>
     <string name="sk_edit_timeline_tag_hint">Enter hashtag…</string>
     <string name="sk_edit_timeline_tags_hint">Enter hashtags…</string>
+    <string name="sk_edit_timeline_tags_explanation">Please note that the server handles these operations. Combining them might not be supported.</string>
     <string name="sk_hashtag_timeline_local_only_switch">Show only local posts?</string>
     <string name="sk_add_timeline_tag_error_empty">Hashtag must not be empty</string>
     <string name="sk_alt_button">ALT</string>
