@@ -229,7 +229,17 @@
     <string name="sk_icon_pin">Pin</string>
     <string name="sk_icon_feed">Feed</string>
     <string name="sk_edit_timeline">Edit timeline</string>
+    <string name="sk_add_timeline">Add timeline</string>
     <string name="sk_edit_timelines">Edit timelines</string>
+    <string name="sk_edit_timeline_tag_main">Posts containing hashtag…</string>
+    <string name="sk_edit_timeline_tag_any">…or any of these</string>
+    <string name="sk_edit_timeline_tag_all">…and every one of these</string>
+    <string name="sk_edit_timeline_tag_none">…but none of these</string>
+    <string name="sk_edit_timeline_tag_hint">Enter hashtag…</string>
+    <string name="sk_edit_timeline_tags_hint">Enter hashtags…</string>
+    <string name="sk_edit_timeline_tags_explanation">Please note that the server handles these operations. Combining them might not be supported.</string>
+    <string name="sk_hashtag_timeline_local_only_switch">Show only local posts?</string>
+    <string name="sk_add_timeline_tag_error_empty">Hashtag must not be empty</string>
     <string name="sk_alt_button">ALT</string>
     <string name="sk_post_edited">edited</string>
     <string name="sk_notification_type_update">Edited posts</string>
@@ -309,4 +319,6 @@
     <string name="sk_exclusive_list">Exclusive list</string>
     <string name="sk_list_exclusive_switch">Make list exclusive</string>
     <string name="sk_list_exclusive_switch_explanation">Members of an exclusive list will not show up on your home timeline – if your instance supports it.</string>
+    <string name="sk_advanced_options_show">Show advanced options</string>
+    <string name="sk_advanced_options_hide">Hide advanced options</string>
 </resources>

@@ -50,15 +50,6 @@
         android:gravity="center_vertical"
         android:layoutDirection="locale">
 
-        <ImageView
-            android:id="@+id/icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="16dp"
-            android:importantForAccessibility="no"
-            android:tint="?android:textColorPrimary"
-            android:src="@drawable/ic_fluent_rss_24_regular"/>
-
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -66,6 +57,9 @@
             android:paddingVertical="8dp"
             android:textSize="16sp"
             android:textColor="?android:textColorPrimary"
+            android:drawableStart="@drawable/ic_fluent_rss_24_regular"
+            android:drawableTint="?android:textColorPrimary"
+            android:drawablePadding="16dp"
             android:text="@string/sk_list_exclusive_switch" />
 
         <Switch
@@ -73,7 +67,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:duplicateParentState="true"
             android:focusable="false"
             android:clickable="false"/>
 
