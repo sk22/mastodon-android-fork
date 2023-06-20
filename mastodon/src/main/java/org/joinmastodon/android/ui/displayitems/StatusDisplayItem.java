@@ -276,7 +276,7 @@ public abstract class StatusDisplayItem{
 		if(statusForContent.card!=null && statusForContent.mediaAttachments.isEmpty()){
 			contentItems.add(new LinkCardStatusDisplayItem(parentID, fragment, statusForContent));
 		}
-		if (!TextUtils.isEmpty(statusForContent.spoilerText) && statusForContent.spoilerRevealed) {
+		if(contentItems!=items && statusForContent.spoilerRevealed){
 			items.addAll(contentItems);
 		}
 		if((flags & FLAG_NO_FOOTER)==0){
