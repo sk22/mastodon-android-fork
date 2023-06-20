@@ -27,7 +27,7 @@ public class Filter extends BaseModel{
 	public FilterAction filterAction;
 
 	@SerializedName("context")
-	private List<FilterContext> _context;
+	protected List<FilterContext> _context;
 
 	private transient Pattern pattern;
 

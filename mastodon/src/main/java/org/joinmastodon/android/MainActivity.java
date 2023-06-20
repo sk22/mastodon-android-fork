@@ -123,7 +123,9 @@ public class MainActivity extends FragmentStackActivity implements ProvidesAssis
 			Log.w("MainActivity", x);
 			return;
 		}
-		UiUtils.showFragmentForNotification(this, notification, accountID, null);
+		Bundle args = new Bundle();
+		args.putBoolean("noTransition", true);
+		UiUtils.showFragmentForNotification(this, notification, accountID, args);
 	}
 
 	private void showFragmentForExternalShare(Bundle args) {

@@ -15,7 +15,7 @@ public abstract class BaseModel implements Cloneable{
 	/**
 	 * indicates the profile has been fetched from a foreign instance.
 	 *
-	 * @see MastodonAPIRequest#execRemote
+	 * @see org.joinmastodon.android.api.MastodonAPIRequest#execRemote
 	 */
 	public transient boolean isRemote;
 

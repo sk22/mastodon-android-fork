@@ -43,7 +43,8 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_vertical"
-		android:layout_marginEnd="40dp">
+		android:layout_marginEnd="40dp"
+		android:minWidth="40dp">
 
 		<LinearLayout
 			android:layout_width="wrap_content"

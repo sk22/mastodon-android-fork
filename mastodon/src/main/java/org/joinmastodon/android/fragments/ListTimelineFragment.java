@@ -24,7 +24,7 @@ import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.model.TimelineDefinition;
 import org.joinmastodon.android.ui.M3AlertDialogBuilder;
 import org.joinmastodon.android.ui.utils.UiUtils;
-import org.joinmastodon.android.ui.views.ListTimelineEditor;
+import org.joinmastodon.android.ui.views.ListEditor;
 import org.joinmastodon.android.utils.StatusFilterPredicate;
 
 import java.util.List;
@@ -36,12 +36,12 @@ import me.grishka.appkit.api.ErrorResponse;
 import me.grishka.appkit.api.SimpleCallback;
 import me.grishka.appkit.utils.V;
 
-
 public class ListTimelineFragment extends PinnableStatusListFragment {
     private String listID;
     private String listTitle;
     @Nullable
     private ListTimeline.RepliesPolicy repliesPolicy;
+    private boolean exclusive;
 
     @Override
     protected boolean wantsComposeButton() {
@@ -54,6 +54,7 @@ public class ListTimelineFragment extends PinnableStatusListFragment {
         Bundle args = getArguments();
         listID = args.getString("listID");
         listTitle = args.getString("listTitle");
+        exclusive = args.getBoolean("listIsExclusive");
         repliesPolicy = ListTimeline.RepliesPolicy.values()[args.getInt("repliesPolicy", 0)];
 
         setTitle(listTitle);
@@ -88,8 +89,8 @@ public class ListTimelineFragment extends PinnableStatusListFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (super.onOptionsItemSelected(item)) return true;
         if (item.getItemId() == R.id.edit) {
-            ListTimelineEditor editor = new ListTimelineEditor(getContext());
-            editor.applyList(listTitle, repliesPolicy);
+            ListEditor editor = new ListEditor(getContext());
+            editor.applyList(listTitle, exclusive, repliesPolicy);
             new M3AlertDialogBuilder(getActivity())
                     .setTitle(R.string.sk_edit_list_title)
                     .setIcon(R.drawable.ic_fluent_people_28_regular)
@@ -97,14 +98,15 @@ public class ListTimelineFragment extends PinnableStatusListFragment {
                     .setPositiveButton(R.string.save, (d, which) -> {
                         String newTitle = editor.getTitle().trim();
                         setTitle(newTitle);
-                        new UpdateList(listID, newTitle, editor.getRepliesPolicy()).setCallback(new Callback<>() {
+                        new UpdateList(listID, newTitle, editor.isExclusive(), editor.getRepliesPolicy()).setCallback(new Callback<>() {
                             @Override
                             public void onSuccess(ListTimeline list) {
                                 if (getActivity() == null) return;
                                 setTitle(list.title);
                                 listTitle = list.title;
                                 repliesPolicy = list.repliesPolicy;
-                                E.post(new ListUpdatedCreatedEvent(listID, listTitle, repliesPolicy));
+                                exclusive = list.exclusive;
+                                E.post(new ListUpdatedCreatedEvent(listID, listTitle, exclusive, repliesPolicy));
                             }
 
                             @Override
@@ -127,7 +129,7 @@ public class ListTimelineFragment extends PinnableStatusListFragment {
 
     @Override
     protected TimelineDefinition makeTimelineDefinition() {
-        return TimelineDefinition.ofList(listID, listTitle);
+        return TimelineDefinition.ofList(listID, listTitle, exclusive);
     }
 
     @Override

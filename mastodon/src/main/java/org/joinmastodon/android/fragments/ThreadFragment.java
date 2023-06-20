@@ -65,6 +65,7 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 		data.add(mainStatus);
 		onAppendItems(Collections.singletonList(mainStatus));
 		setTitle(HtmlParser.parseCustomEmoji(getString(R.string.post_from_user, mainStatus.account.displayName), mainStatus.account.emojis));
+		transitionFinished = getArguments().getBoolean("noTransition", false);
 	}
 
 	@Override
@@ -359,7 +360,7 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 
 		int nextDisplayItemsIndex = -1, indexOfPreviousDisplayItem = -1;
 
-		for (int i = 0; i < displayItems.size(); i++) {
+		if (ancestry != null) for (int i = 0; i < displayItems.size(); i++) {
 			StatusDisplayItem item = displayItems.get(i);
 			if (repliedToStatus.id.equals(item.parentID)) {
 				// saving the replied-to status' display items index to eventually reach the last one
@@ -382,7 +383,7 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 		int nextDataIndex = data.indexOf(repliedToStatus) + 1;
 
 		// if replied-to status already has another reply...
-		if (ancestry.descendantNeighbor != null) {
+		if (ancestry != null && ancestry.descendantNeighbor != null) {
 			// update the reply's ancestry to remove its ancestoring neighbor (as we did above)
 			ancestryMap.get(ancestry.descendantNeighbor.id).ancestoringNeighbor = null;
 			// make sure the existing reply has a reply line
@@ -399,7 +400,7 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 		}
 
 		// update replied-to status' ancestry
-		ancestry.descendantNeighbor = ev.status;
+		if (ancestry != null) ancestry.descendantNeighbor = ev.status;
 
 		// add ancestry for newly created status before building its display items
 		ancestryMap.put(ev.status.id, new NeighborAncestryInfo(ev.status, null, repliedToStatus));

@@ -13,7 +13,7 @@ public class Poll extends BaseModel{
 	@RequiredField
 	public String id;
 	public Instant expiresAt;
-	private boolean expired;
+	protected boolean expired;
 	public boolean multiple;
 	public int votersCount;
 	public int votesCount;

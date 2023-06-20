@@ -10,11 +10,15 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 
+import me.grishka.appkit.utils.V;
+
 public class PhotoLayoutHelper{
 	public static final int MAX_WIDTH=1000;
-	public static final int MAX_HEIGHT=1777; // 9:16
-	public static final int MIN_HEIGHT=250;
+	public static final int MAX_HEIGHT=1700;
 	public static final float GAP=1.5f;
+
+	// 2 * margin + close button height - gap. i don't know if the gap subtraction is correct
+	public static final int MIN_HEIGHT = Math.round(V.dp(2 * 12) + V.dp(40) - GAP);
 
 	@NonNull
 	public static TiledLayoutResult processThumbs(List<Attachment> thumbs){

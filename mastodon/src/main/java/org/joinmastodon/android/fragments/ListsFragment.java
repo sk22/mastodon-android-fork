@@ -27,7 +27,7 @@ import org.joinmastodon.android.events.ListUpdatedCreatedEvent;
 import org.joinmastodon.android.model.ListTimeline;
 import org.joinmastodon.android.ui.DividerItemDecoration;
 import org.joinmastodon.android.ui.M3AlertDialogBuilder;
-import org.joinmastodon.android.ui.views.ListTimelineEditor;
+import org.joinmastodon.android.ui.views.ListEditor;
 import org.joinmastodon.android.utils.ProvidesAssistContent;
 
 import java.util.ArrayList;
@@ -91,18 +91,18 @@ public class ListsFragment extends RecyclerFragment<ListTimeline> implements Scr
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.create) {
-			ListTimelineEditor editor = new ListTimelineEditor(getContext());
+			ListEditor editor = new ListEditor(getContext());
 			new M3AlertDialogBuilder(getActivity())
 					.setTitle(R.string.sk_create_list_title)
 					.setIcon(R.drawable.ic_fluent_people_add_28_regular)
 					.setView(editor)
 					.setPositiveButton(R.string.sk_create, (d, which) ->
-							new CreateList(editor.getTitle(), editor.getRepliesPolicy()).setCallback(new Callback<>() {
+							new CreateList(editor.getTitle(), editor.isExclusive(), editor.getRepliesPolicy()).setCallback(new Callback<>() {
 								@Override
 								public void onSuccess(ListTimeline list) {
 									data.add(0, list);
 									adapter.notifyItemRangeInserted(0, 1);
-									E.post(new ListUpdatedCreatedEvent(list.id, list.title, list.repliesPolicy));
+									E.post(new ListUpdatedCreatedEvent(list.id, list.title, list.exclusive, list.repliesPolicy));
 								}
 
 								@Override
@@ -185,6 +185,7 @@ public class ListsFragment extends RecyclerFragment<ListTimeline> implements Scr
 			if (item.id.equals(event.id)) {
 				item.title = event.title;
 				item.repliesPolicy = event.repliesPolicy;
+				item.exclusive = event.exclusive;
 				adapter.notifyItemChanged(i);
 				break;
 			}
@@ -242,7 +243,9 @@ public class ListsFragment extends RecyclerFragment<ListTimeline> implements Scr
 		@Override
 		public void onBind(ListTimeline item) {
 			title.setText(item.title);
-			title.setCompoundDrawablesRelativeWithIntrinsicBounds(itemView.getContext().getDrawable(R.drawable.ic_fluent_people_24_regular), null, null, null);
+			title.setCompoundDrawablesRelativeWithIntrinsicBounds(itemView.getContext().getDrawable(
+					item.exclusive ? R.drawable.ic_fluent_rss_24_regular : R.drawable.ic_fluent_people_24_regular
+			), null, null, null);
 			if (profileAccountId != null) {
 				Boolean checked = userInList.get(item.id);
 				listToggle.setVisibility(View.VISIBLE);
@@ -263,6 +266,7 @@ public class ListsFragment extends RecyclerFragment<ListTimeline> implements Scr
 			args.putString("account", accountID);
 			args.putString("listID", item.id);
 			args.putString("listTitle", item.title);
+			args.putBoolean("listIsExclusive", item.exclusive);
 			if (item.repliesPolicy != null) args.putInt("repliesPolicy", item.repliesPolicy.ordinal());
 			Nav.go(getActivity(), ListTimelineFragment.class, args);
 		}

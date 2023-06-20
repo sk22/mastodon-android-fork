@@ -14,6 +14,7 @@ public class ListTimeline extends BaseModel {
     @RequiredField
     public String title;
     public RepliesPolicy repliesPolicy;
+    public boolean exclusive;
 
     @NonNull
     @Override
@@ -22,6 +23,7 @@ public class ListTimeline extends BaseModel {
                 "id='" + id + '\'' +
                 ", title='" + title + '\'' +
                 ", repliesPolicy=" + repliesPolicy +
+                ", exclusive=" + exclusive +
                 '}';
     }
 

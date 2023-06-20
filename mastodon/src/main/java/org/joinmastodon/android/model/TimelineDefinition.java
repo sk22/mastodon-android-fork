@@ -30,18 +30,20 @@ public class TimelineDefinition {
 
     private @Nullable String listId;
     private @Nullable String listTitle;
+    private boolean listIsExclusive;
 
     private @Nullable String hashtagName;
 
-    public static TimelineDefinition ofList(String listId, String listTitle) {
+    public static TimelineDefinition ofList(String listId, String listTitle, boolean listIsExclusive) {
         TimelineDefinition def = new TimelineDefinition(TimelineType.LIST);
         def.listId = listId;
         def.listTitle = listTitle;
+        def.listIsExclusive = listIsExclusive;
         return def;
     }
 
     public static TimelineDefinition ofList(ListTimeline list) {
-        return ofList(list.id, list.title);
+        return ofList(list.id, list.title, list.exclusive);
     }
 
     public static TimelineDefinition ofHashtag(String hashtag) {
@@ -99,7 +101,7 @@ public class TimelineDefinition {
             case LOCAL -> Icon.LOCAL;
             case FEDERATED -> Icon.FEDERATED;
             case POST_NOTIFICATIONS -> Icon.POST_NOTIFICATIONS;
-            case LIST -> Icon.LIST;
+            case LIST -> listIsExclusive ? Icon.EXCLUSIVE_LIST : Icon.LIST;
             case HASHTAG -> Icon.HASHTAG;
             case BUBBLE -> Icon.BUBBLE;
         };
@@ -155,6 +157,7 @@ public class TimelineDefinition {
         def.title = title;
         def.listId = listId;
         def.listTitle = listTitle;
+        def.listIsExclusive = listIsExclusive;
         def.hashtagName = hashtagName;
         def.icon = icon == null ? null : Icon.values()[icon.ordinal()];
         return def;
@@ -164,6 +167,7 @@ public class TimelineDefinition {
         if (type == TimelineType.LIST) {
             args.putString("listTitle", title);
             args.putString("listID", listId);
+            args.putBoolean("listIsExclusive", listIsExclusive);
         } else if (type == TimelineType.HASHTAG) {
             args.putString("hashtag", hashtagName);
         }
@@ -179,6 +183,7 @@ public class TimelineDefinition {
         CITY(R.drawable.ic_fluent_city_24_regular, R.string.sk_icon_city),
         IMAGE(R.drawable.ic_fluent_image_24_regular, R.string.sk_icon_image),
         NEWS(R.drawable.ic_fluent_news_24_regular, R.string.sk_icon_news),
+        FEED(R.drawable.ic_fluent_rss_24_regular, R.string.sk_icon_feed),
         COLOR_PALETTE(R.drawable.ic_fluent_color_24_regular, R.string.sk_icon_color_palette),
         CAT(R.drawable.ic_fluent_animal_cat_24_regular, R.string.sk_icon_cat),
         DOG(R.drawable.ic_fluent_animal_dog_24_regular, R.string.sk_icon_dog),
@@ -233,6 +238,7 @@ public class TimelineDefinition {
         FEDERATED(R.drawable.ic_fluent_earth_24_regular, R.string.sk_timeline_federated, true),
         POST_NOTIFICATIONS(R.drawable.ic_fluent_chat_24_regular, R.string.sk_timeline_posts, true),
         LIST(R.drawable.ic_fluent_people_24_regular, R.string.sk_list, true),
+        EXCLUSIVE_LIST(R.drawable.ic_fluent_rss_24_regular, R.string.sk_exclusive_list, true),
         HASHTAG(R.drawable.ic_fluent_number_symbol_24_regular, R.string.sk_hashtag, true),
         BUBBLE(R.drawable.ic_fluent_circle_24_regular, R.string.sk_timeline_bubble, true);
 

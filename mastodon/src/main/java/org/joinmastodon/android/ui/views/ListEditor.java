@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.Switch;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,18 +17,20 @@ import androidx.annotation.Nullable;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.model.ListTimeline;
 
-public class ListTimelineEditor extends LinearLayout {
+public class ListEditor extends LinearLayout {
     private ListTimeline.RepliesPolicy policy = null;
     private final TextInputFrameLayout input;
     private final Button button;
+    private final Switch exclusiveSwitch;
 
     @SuppressLint("ClickableViewAccessibility")
-    public ListTimelineEditor(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public ListEditor(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         LayoutInflater.from(context).inflate(R.layout.list_timeline_editor, this);
 
         button = findViewById(R.id.button);
         input = findViewById(R.id.input);
+        exclusiveSwitch = findViewById(R.id.exclusive_checkbox);
 
         PopupMenu popupMenu = new PopupMenu(context, button, Gravity.CENTER_HORIZONTAL);
         popupMenu.inflate(R.menu.list_reply_policies);
@@ -36,12 +39,15 @@ public class ListTimelineEditor extends LinearLayout {
         button.setOnTouchListener(popupMenu.getDragToOpenListener());
         button.setOnClickListener(v->popupMenu.show());
         input.getEditText().setHint(context.getString(R.string.sk_list_name_hint));
+        findViewById(R.id.exclusive)
+                .setOnClickListener(v -> exclusiveSwitch.setChecked(!exclusiveSwitch.isChecked()));
 
         setRepliesPolicy(ListTimeline.RepliesPolicy.LIST);
     }
 
-    public void applyList(String title, @Nullable ListTimeline.RepliesPolicy policy) {
+    public void applyList(String title, boolean exclusive, @Nullable ListTimeline.RepliesPolicy policy) {
         input.getEditText().setText(title);
+        exclusiveSwitch.setChecked(exclusive);
         if (policy != null) setRepliesPolicy(policy);
     }
 
@@ -51,6 +57,10 @@ public class ListTimelineEditor extends LinearLayout {
 
     public ListTimeline.RepliesPolicy getRepliesPolicy() {
         return policy;
+    }
+
+    public boolean isExclusive() {
+        return exclusiveSwitch.isChecked();
     }
 
     public void setRepliesPolicy(@NonNull ListTimeline.RepliesPolicy policy) {
@@ -73,15 +83,15 @@ public class ListTimelineEditor extends LinearLayout {
         return true;
     }
 
-    public ListTimelineEditor(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ListEditor(Context context, AttributeSet attrs, int defStyleAttr) {
         this(context, attrs, defStyleAttr, 0);
     }
 
-    public ListTimelineEditor(Context context, AttributeSet attrs) {
+    public ListEditor(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public ListTimelineEditor(Context context) {
+    public ListEditor(Context context) {
         this(context, null);
     }
 }
