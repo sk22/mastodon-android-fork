@@ -236,7 +236,7 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
 
     private boolean setTagListContent(NachoTextView editText, @Nullable List<String> tags) {
         if (tags == null || tags.isEmpty()) return false;
-        editText.setText(String.join(",", tags));
+        editText.setText(tags);
         editText.chipifyAllUnterminatedTokens();
         return true;
     }
