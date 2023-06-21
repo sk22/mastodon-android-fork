@@ -87,6 +87,12 @@ public class SpoilerStatusDisplayItem extends StatusDisplayItem{
 		public void onBind(SpoilerStatusDisplayItem item){
 			title.setText(item.parsedTitle);
 			action.setText(item.status.spoilerRevealed ? R.string.spoiler_hide : R.string.spoiler_show);
+			itemView.setPadding(
+					itemView.getPaddingLeft(),
+					itemView.getPaddingTop(),
+					itemView.getPaddingRight(),
+					item.inset && !item.status.spoilerRevealed ? itemView.getPaddingTop() : 0
+			);
 		}
 
 		@Override
