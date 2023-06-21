@@ -330,12 +330,7 @@ public class InstanceInfoFragment extends LoaderFragment {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item){
 		int id=item.getItemId();
-		if (id==R.id.open_timeline) {
-			Bundle args=new Bundle();
-			args.putString("account", accountID);
-			args.putString("domain", instance.uri);
-			Nav.go(getActivity(), CustomLocalTimelineFragment.class, args);
-		}else if (id==R.id.rules) {
+		if (id==R.id.rules) {
 			Bundle args=new Bundle();
 			args.putParcelable("instance", Parcels.wrap(instance));
 			Nav.go(getActivity(), InstanceRulesFragment.class, args);
