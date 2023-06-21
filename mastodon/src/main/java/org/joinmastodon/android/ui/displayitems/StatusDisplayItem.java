@@ -271,7 +271,7 @@ public abstract class StatusDisplayItem{
 				.forEach(items::add);
 
 		if(statusForContent.poll!=null){
-			buildPollItems(parentID, fragment, statusForContent.poll, items);
+			buildPollItems(parentID, fragment, statusForContent.poll, contentItems);
 		}
 		if(statusForContent.card!=null && statusForContent.mediaAttachments.isEmpty()){
 			contentItems.add(new LinkCardStatusDisplayItem(parentID, fragment, statusForContent));
