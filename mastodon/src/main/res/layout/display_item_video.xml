@@ -18,35 +18,20 @@
 		android:layout_gravity="center"/>
 
 	<LinearLayout
+		android:id="@+id/extra_badge"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
-		android:layout_margin="8dp"
+		android:layout_margin="12dp"
 		android:layout_gravity="start|bottom">
-		<!-- This is hidden from screenreaders because that same alt text is set as content description on the ImageView -->
-		<TextView
-			android:id="@+id/alt_button"
-			android:layout_width="wrap_content"
-			android:layout_height="24dp"
-			android:paddingLeft="8dp"
-			android:paddingRight="8dp"
-			android:layout_marginEnd="2dp"
-			android:importantForAccessibility="no"
-			android:textAppearance="@style/m3_label_large"
-			android:textColor="#FFF"
-			android:gravity="center"
-			android:includeFontPadding="false"
-			android:background="@drawable/bg_image_alt_overlay"
-			android:text="ALT"
-			tools:ignore="HardcodedText" />
 
 		<TextView
 			android:id="@+id/duration"
 			android:layout_width="wrap_content"
 			android:layout_height="24dp"
-			android:paddingLeft="8dp"
-			android:paddingRight="8dp"
-			android:layout_marginEnd="2dp"
+			android:paddingHorizontal="6dp"
+			android:paddingVertical="3dp"
+			android:layout_marginEnd="4dp"
 			android:importantForAccessibility="no"
 			android:textAppearance="@style/m3_label_large"
 			android:textColor="#FFF"
@@ -56,5 +41,7 @@
 			android:fontFeatureSettings="'tnum'"
 			tools:text="1:23"/>
 	</LinearLayout>
+
+	<include layout="@layout/alt_text_badge" />
 
 </FrameLayout>

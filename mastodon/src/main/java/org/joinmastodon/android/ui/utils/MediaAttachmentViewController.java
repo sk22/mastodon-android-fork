@@ -21,7 +21,7 @@ public class MediaAttachmentViewController{
 	public final View view;
 	public final MediaGridStatusDisplayItem.GridItemType type;
 	public final ImageView photo;
-	public final View altButton, noAltButton, btnsWrap;
+	public final View altButton, noAltButton, btnsWrap, extraBadge;
 	public final TextView duration;
 	public final View playButton;
 	private BlurhashCrossfadeDrawable crossfadeDrawable=new BlurhashCrossfadeDrawable();
@@ -32,8 +32,8 @@ public class MediaAttachmentViewController{
 	public MediaAttachmentViewController(Context context, MediaGridStatusDisplayItem.GridItemType type){
 		view=context.getSystemService(LayoutInflater.class).inflate(switch(type){
 				case PHOTO -> R.layout.display_item_photo;
-				case VIDEO, GIFV -> R.layout.display_item_video;
-//				case GIFV -> R.layout.display_item_gifv;
+				case VIDEO -> R.layout.display_item_video;
+				case GIFV -> R.layout.display_item_gifv;
 			}, null);
 		photo=view.findViewById(R.id.photo);
 		altButton=view.findViewById(R.id.alt_button);
@@ -41,6 +41,7 @@ public class MediaAttachmentViewController{
 		btnsWrap=view.findViewById(R.id.alt_badges);
 		duration=view.findViewById(R.id.duration);
 		playButton=view.findViewById(R.id.play_button);
+		extraBadge=view.findViewById(R.id.extra_badge);
 		this.type=type;
 		this.context=context;
 		if(playButton!=null){

@@ -169,8 +169,8 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 			for(Attachment att:item.attachments){
 				MediaAttachmentViewController c=item.viewPool.obtain(switch(att.type){
 					case IMAGE -> GridItemType.PHOTO;
-					case VIDEO, GIFV -> GridItemType.VIDEO;
-//					case GIFV -> GridItemType.GIFV;
+					case VIDEO -> GridItemType.VIDEO;
+					case GIFV -> GridItemType.GIFV;
 					default -> throw new IllegalStateException("Unexpected value: "+att.type);
 				});
 				if(c.view.getLayoutParams()==null)
@@ -269,6 +269,9 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 						if(c.btnsWrap!=null && c.btnsWrap!=v){
 							anims.add(ObjectAnimator.ofFloat(c.btnsWrap, View.ALPHA, 1, 0).setDuration(150));
 						}
+						if (c.extraBadge != null) {
+							anims.add(ObjectAnimator.ofFloat(c.extraBadge, View.ALPHA, 1, 0).setDuration(150));
+						}
 					}
 
 					AnimatorSet set=new AnimatorSet();
@@ -282,6 +285,7 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 								if(c.btnsWrap!=null){
 									c.btnsWrap.setVisibility(View.INVISIBLE);
 								}
+								if (c.extraBadge != null) c.extraBadge.setVisibility(View.INVISIBLE);
 							}
 						}
 					});
@@ -306,6 +310,7 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 						&& c.btnsWrap!=btn
 						&& ((hasAltText && showAltIndicator) || (!hasAltText && showNoAltIndicator))
 				) c.btnsWrap.setVisibility(View.VISIBLE);
+				if (c.extraBadge != null) c.extraBadge.setVisibility(View.VISIBLE);
 				i++;
 			}
 
@@ -330,9 +335,12 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 				a.setDuration(300);
 
 			for(MediaAttachmentViewController c:controllers){
-//				if(c.btnsWrap!=null && c.btnsWrap!=btn){
+				if(c.btnsWrap!=null && c.btnsWrap!=btn){
 					anims.add(ObjectAnimator.ofFloat(c.btnsWrap, View.ALPHA, 1).setDuration(150));
-//				}
+				}
+				if (c.extraBadge != null) {
+					anims.add(ObjectAnimator.ofFloat(c.extraBadge, View.ALPHA, 1).setDuration(150));
+				}
 			}
 
 			AnimatorSet set=new AnimatorSet();
