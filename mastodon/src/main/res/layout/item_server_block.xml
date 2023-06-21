@@ -41,7 +41,7 @@
 	<ImageView
 		android:id="@+id/severity"
 		android:src="@drawable/ic_fluent_speaker_mute_28_regular"
-		android:contentDescription="@string/mo_severity_silence"
+		android:contentDescription="@string/sk_severity_silence"
 		android:minHeight="32dp"
 		android:layout_gravity="center"
 		android:layout_width="wrap_content"
