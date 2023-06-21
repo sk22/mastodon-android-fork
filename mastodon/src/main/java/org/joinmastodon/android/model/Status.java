@@ -3,6 +3,8 @@ package org.joinmastodon.android.model;
 import static org.joinmastodon.android.api.MastodonAPIController.gson;
 import static org.joinmastodon.android.api.MastodonAPIController.gsonWithoutDeserializer;
 
+import android.text.TextUtils;
+
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -83,9 +85,6 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 
 	@Override
 	public void postprocess() throws ObjectValidationException{
-		if(spoilerText!=null && !spoilerText.isEmpty() && !sensitive)
-			sensitive=true;
-
 		super.postprocess();
 		if(application!=null)
 			application.postprocess();
@@ -109,6 +108,7 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 			for(FilterResult fr : filtered)
 				fr.postprocess();
 
+		if (!TextUtils.isEmpty(spoilerText)) sensitive = true;
 		spoilerRevealed=GlobalUserPreferences.alwaysExpandContentWarnings || !sensitive;
 		sensitiveRevealed=GlobalUserPreferences.alwaysExpandContentWarnings || !sensitive;
 		if (visibility.equals(StatusPrivacy.LOCAL)) localOnly = true;
