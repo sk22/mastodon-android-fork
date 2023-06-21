@@ -141,8 +141,8 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 			activity.getLayoutInflater().inflate(R.layout.overlay_image_sensitive, overlays);
 			sensitiveOverlay=findViewById(R.id.sensitive_overlay);
 			sensitiveOverlayBG=(LayerDrawable) sensitiveOverlay.getBackground().mutate();
-			sensitiveOverlayBG.setDrawableByLayerId(R.id.left_drawable, new SpoilerStripesDrawable());
-			sensitiveOverlayBG.setDrawableByLayerId(R.id.right_drawable, new SpoilerStripesDrawable());
+			sensitiveOverlayBG.setDrawableByLayerId(R.id.left_drawable, new SpoilerStripesDrawable(false));
+			sensitiveOverlayBG.setDrawableByLayerId(R.id.right_drawable, new SpoilerStripesDrawable(true));
 			sensitiveOverlay.setBackground(sensitiveOverlayBG);
 			sensitiveOverlay.setOnClickListener(v->revealSensitive());
 //			hideSensitiveButton.setOnClickListener(v->hideSensitive());
