@@ -100,7 +100,9 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 		HtmlParser.parseCustomEmoji(parsedName, user.emojis);
 		emojiHelper.setText(parsedName);
 		if(status!=null){
-			hasVisibilityToggle=!status.mediaAttachments.isEmpty();
+			hasVisibilityToggle=!status.mediaAttachments.isEmpty() &&
+					// visibility toggle can't do much for audio attachments
+					!status.mediaAttachments.stream().allMatch(m -> m.type == Attachment.Type.AUDIO);
 		}
 		this.extraText=extraText;
 		emojiHelper.addText(extraText);
