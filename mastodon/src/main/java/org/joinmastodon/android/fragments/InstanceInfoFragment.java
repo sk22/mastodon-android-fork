@@ -2,7 +2,6 @@ package org.joinmastodon.android.fragments;
 
 import android.app.Activity;
 import android.content.res.Configuration;
-import android.graphics.Outline;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -15,7 +14,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewOutlineProvider;
 import android.view.WindowInsets;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -25,7 +23,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import org.joinmastodon.android.DomainManager;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.instance.GetExtendedDescription;
 import org.joinmastodon.android.api.requests.instance.GetInstance;
@@ -105,7 +102,6 @@ public class InstanceInfoFragment extends LoaderFragment {
 		targetDomain=getArguments().getString("instanceDomain");
 		loadData();
 		loadExtendedDescription();
-		DomainManager.getInstance().setCurrentDomain(targetDomain + "/about");
 	}
 
 	@Override
@@ -258,33 +254,33 @@ public class InstanceInfoFragment extends LoaderFragment {
 
 		if (instance.contactAccount != null) {
 			AccountField admin = new AccountField();
-			admin.parsedName=admin.name=getContext().getString(R.string.mo_instance_admin);
+			admin.parsedName=admin.name=getContext().getString(R.string.sk_instance_admin);
 			admin.parsedValue=buildLinkText(instance.contactAccount.url, instance.contactAccount.getDisplayUsername() + "@" + instance.uri);
 			fields.add(admin);
 		}
 
 		if (instance.email != null) {
 			AccountField contact = new AccountField();
-			contact.parsedName=getContext().getString(R.string.mo_instance_contact);
+			contact.parsedName=getContext().getString(R.string.sk_instance_contact);
 			contact.parsedValue=buildLinkText("mailto:" + instance.email, instance.email);
 			fields.add(contact);
 		}
 
 		if (instance.stats != null) {
 			AccountField activeUsers = new AccountField();
-			activeUsers.parsedName=getContext().getString(R.string.mo_instance_users);
+			activeUsers.parsedName=getContext().getString(R.string.sk_instance_users);
 			activeUsers.parsedValue= NumberFormat.getInstance().format(instance.stats.userCount);
 			fields.add(activeUsers);
 
 			AccountField statusCount = new AccountField();
-			statusCount.parsedName=getContext().getString(R.string.mo_instance_status);
+			statusCount.parsedName=getContext().getString(R.string.sk_instance_status);
 			statusCount.parsedValue= NumberFormat.getInstance().format(instance.stats.statusCount);
 			fields.add(statusCount);
 		}
 
 		AccountField registration = new AccountField();
-		registration.parsedName=getContext().getString(R.string.mo_instance_registration);
-		registration.parsedValue=getContext().getString(instance.registrations ? instance.approvalRequired ? R.string.mo_instance_registration_approval : R.string.mo_instance_registration_open : R.string.instance_signup_closed);
+		registration.parsedName=getContext().getString(R.string.sk_instance_registration);
+		registration.parsedValue=getContext().getString(instance.registrations ? instance.approvalRequired ? R.string.sk_instance_registration_approval : R.string.sk_instance_registration_open : R.string.instance_signup_closed);
 		fields.add(registration);
 
 		setFields(fields);

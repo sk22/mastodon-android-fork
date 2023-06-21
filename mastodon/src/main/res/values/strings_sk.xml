@@ -321,4 +321,15 @@
     <string name="sk_list_exclusive_switch_explanation">Members of an exclusive list will not show up on your home timeline – if your instance supports it.</string>
     <string name="sk_advanced_options_show">Show advanced options</string>
     <string name="sk_advanced_options_hide">Hide advanced options</string>
+    <string name="sk_instance_admin">Administered by</string>
+    <string name="sk_instance_contact">Contact</string>
+    <string name="sk_instance_users">Users</string>
+    <string name="sk_instance_status">Status</string>
+    <string name="sk_instance_registration">Registration</string>
+    <string name="sk_instance_registration_open">Open</string>
+    <string name="sk_instance_registration_approval">Approval required</string>
+    <string name="sk_instance_info_open_timeline">Local timeline</string>
+    <string name="sk_instance_info_moderated_servers">Moderated servers</string>
+    <string name="sk_severity_silence">Silenced</string>
+    <string name="sk_severity_suspend">Blocked</string>
 </resources>
