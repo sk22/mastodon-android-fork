@@ -242,6 +242,7 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
     }
 
     private NachoTextView prepareChipTextView(NachoTextView nacho) {
+         //I’ll Be Back
         nacho.setChipTerminators(
                 Map.of(
                         ',', BEHAVIOR_CHIPIFY_ALL,
