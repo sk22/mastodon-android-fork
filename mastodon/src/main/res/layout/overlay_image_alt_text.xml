@@ -4,7 +4,7 @@
 	android:id="@+id/alt_text_wrapper"
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
-	android:layout_gravity="start|bottom"
+	android:layout_gravity="end|bottom"
 	android:layout_margin="12dp"
 	android:importantForAccessibility="noHideDescendants"
 	android:background="@drawable/bg_image_alt_overlay">
@@ -25,8 +25,8 @@
 		android:textColor="?colorGray25"
 		android:gravity="center"
 		android:includeFontPadding="false"
-		android:paddingHorizontal="8dp"
-		android:paddingVertical="4dp"
+		android:paddingHorizontal="6dp"
+		android:paddingVertical="3dp"
 		android:maxLines="1"
 		android:text="@string/sk_alt_button"/>
 
