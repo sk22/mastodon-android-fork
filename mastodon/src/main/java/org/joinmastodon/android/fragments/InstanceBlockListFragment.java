@@ -65,7 +65,7 @@ public class InstanceBlockListFragment extends LoaderFragment {
 		super.onAttach(activity);
 		setNavigationBarColor(UiUtils.getThemeColor(activity, R.attr.colorWindowBackground));
 		instance=Parcels.unwrap(getArguments().getParcelable("instance"));
-		setTitle(R.string.mo_instance_info_moderated_servers);
+		setTitle(R.string.sk_instance_info_moderated_servers);
 	}
 
 	@Override
@@ -170,11 +170,11 @@ public class InstanceBlockListFragment extends LoaderFragment {
 			switch (item.severity) {
 				case SILENCE -> {
 					severity.setImageDrawable(getContext().getDrawable(R.drawable.ic_fluent_speaker_mute_28_regular));
-					severity.setContentDescription(getContext().getString(R.string.mo_severity_silence));
+					severity.setContentDescription(getContext().getString(R.string.sk_severity_silence));
 				}
 				case SUSPEND -> {
 					severity.setImageDrawable(getContext().getDrawable(R.drawable.ic_fluent_shield_prohibited_28_regular));
-					severity.setContentDescription(getContext().getString(R.string.mo_severity_suspend));
+					severity.setContentDescription(getContext().getString(R.string.sk_severity_suspend));
 				}
 			}
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
