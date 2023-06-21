@@ -835,6 +835,8 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 				if((holder instanceof StatusDisplayItem.Holder<?> ih && siblingHolder instanceof StatusDisplayItem.Holder<?> sh
 						&& (!ih.getItemID().equals(sh.getItemID()) || sh instanceof ExtendedFooterStatusDisplayItem.Holder) && ih.getItem().getType()!=StatusDisplayItem.Type.GAP)
 						|| needDividerForExtraItem(child, bottomSibling, holder, siblingHolder)){
+					if (holder instanceof StatusDisplayItem.Holder<?> ih &&
+							!ih.getItem().isMainStatus && ih.getItem().hasDescendantNeighbor) continue;
 					drawDivider(child, bottomSibling, holder, siblingHolder, parent, c, dividerPaint);
 				}
 			}
