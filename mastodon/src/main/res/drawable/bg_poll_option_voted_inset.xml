@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 	<item>
+		<shape>
+			<solid android:color="?colorM3Surface"/>
+			<corners android:radius="20dp"/>
+		</shape>
+	</item>
+	<item>
 		<scale android:scaleGravity="start|fill_vertical" android:scaleWidth="100%">
 			<shape>
-				<solid android:color="?colorM3SecondaryContainer"/>
+				<solid android:color="@color/poll_option_progress_inset"/>
 				<corners android:radius="24dp"/>
 			</shape>
 		</scale>

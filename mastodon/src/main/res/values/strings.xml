@@ -103,9 +103,9 @@
 		<item quantity="one">%d day left</item>
 		<item quantity="other">%d days left</item>
 	</plurals>
-	<plurals name="x_voters">
-		<item quantity="one">%,d voter</item>
-		<item quantity="other">%,d voters</item>
+	<plurals name="x_votes">
+		<item quantity="one">%,d vote</item>
+		<item quantity="other">%,d votes</item>
 	</plurals>
 	<string name="poll_closed">Closed</string>
 	<string name="confirm_mute_title">Mute Account</string>

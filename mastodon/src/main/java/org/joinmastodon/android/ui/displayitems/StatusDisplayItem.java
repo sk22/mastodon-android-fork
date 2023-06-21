@@ -263,13 +263,10 @@ public abstract class StatusDisplayItem{
 			if(att.type==Attachment.Type.AUDIO){
 				contentItems.add(new AudioStatusDisplayItem(parentID, fragment, statusForContent, att));
 			}
+			if(att.type==Attachment.Type.UNKNOWN){
+				contentItems.add(new FileStatusDisplayItem(parentID, fragment, att));
+			}
 		}
-
-		statusForContent.mediaAttachments.stream()
-				.filter(att->att.type.equals(Attachment.Type.UNKNOWN))
-				.map(att -> new FileStatusDisplayItem(parentID, fragment, att))
-				.forEach(items::add);
-
 		if(statusForContent.poll!=null){
 			buildPollItems(parentID, fragment, statusForContent.poll, contentItems);
 		}
@@ -313,7 +310,7 @@ public abstract class StatusDisplayItem{
 	public static void buildPollItems(String parentID, BaseStatusListFragment fragment, Poll poll, List<StatusDisplayItem> items){
 		int i=0;
 		for(Poll.Option opt:poll.options){
-			items.add(new PollOptionStatusDisplayItem(parentID, poll, /* i, */ opt, fragment));
+			items.add(new PollOptionStatusDisplayItem(parentID, poll, i, fragment));
 			i++;
 		}
 		items.add(new PollFooterStatusDisplayItem(parentID, fragment, poll));
