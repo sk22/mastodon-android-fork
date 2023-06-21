@@ -169,8 +169,8 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 			for(Attachment att:item.attachments){
 				MediaAttachmentViewController c=item.viewPool.obtain(switch(att.type){
 					case IMAGE -> GridItemType.PHOTO;
-					case VIDEO -> GridItemType.VIDEO;
-					case GIFV -> GridItemType.GIFV;
+					case VIDEO, GIFV -> GridItemType.VIDEO;
+//					case GIFV -> GridItemType.GIFV;
 					default -> throw new IllegalStateException("Unexpected value: "+att.type);
 				});
 				if(c.view.getLayoutParams()==null)

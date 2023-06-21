@@ -32,8 +32,8 @@ public class MediaAttachmentViewController{
 	public MediaAttachmentViewController(Context context, MediaGridStatusDisplayItem.GridItemType type){
 		view=context.getSystemService(LayoutInflater.class).inflate(switch(type){
 				case PHOTO -> R.layout.display_item_photo;
-				case VIDEO -> R.layout.display_item_video;
-				case GIFV -> R.layout.display_item_gifv;
+				case VIDEO, GIFV -> R.layout.display_item_video;
+//				case GIFV -> R.layout.display_item_gifv;
 			}, null);
 		photo=view.findViewById(R.id.photo);
 		altButton=view.findViewById(R.id.alt_button);
