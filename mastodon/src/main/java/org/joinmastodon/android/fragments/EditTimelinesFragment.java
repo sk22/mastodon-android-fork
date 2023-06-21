@@ -242,10 +242,14 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
     }
 
     private NachoTextView prepareChipTextView(NachoTextView nacho) {
-        nacho.addChipTerminator(',', BEHAVIOR_CHIPIFY_ALL);
-        nacho.addChipTerminator('\n', BEHAVIOR_CHIPIFY_ALL);
-        nacho.addChipTerminator(' ', BEHAVIOR_CHIPIFY_ALL);
-        nacho.addChipTerminator(';', BEHAVIOR_CHIPIFY_ALL);
+        nacho.setChipTerminators(
+                Map.of(
+                        ',', BEHAVIOR_CHIPIFY_ALL,
+                        '\n', BEHAVIOR_CHIPIFY_ALL,
+                        ' ', BEHAVIOR_CHIPIFY_ALL,
+                        ';', BEHAVIOR_CHIPIFY_ALL
+                )
+        );
         nacho.enableEditChipOnTouch(true, true);
         nacho.setOnFocusChangeListener((v, hasFocus) -> nacho.chipifyAllUnterminatedTokens());
         return nacho;
