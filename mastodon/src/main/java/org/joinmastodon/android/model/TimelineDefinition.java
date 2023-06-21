@@ -286,6 +286,13 @@ public class TimelineDefinition {
         GAUGE(R.drawable.ic_fluent_gauge_24_regular, R.string.sk_icon_gauge),
         HEADPHONES(R.drawable.ic_fluent_headphones_sound_wave_24_regular, R.string.sk_icon_headphones),
         HUMAN(R.drawable.ic_fluent_accessibility_24_regular, R.string.sk_icon_human),
+        BEAKER(R.drawable.ic_fluent_beaker_24_regular, R.string.sk_icon_beaker),
+        BED(R.drawable.ic_fluent_bed_24_regular, R.string.sk_icon_bed),
+        RECYCLE_BIN(R.drawable.ic_fluent_bin_recycle_24_regular, R.string.sk_icon_recycle_bin),
+        VERIFIED(R.drawable.ic_fluent_checkmark_starburst_24_regular, R.string.sk_icon_verified),
+        DOCTOR(R.drawable.ic_fluent_doctor_24_regular, R.string.sk_icon_doctor),
+        DIAMOND(R.drawable.ic_fluent_premium_24_regular, R.string.sk_icon_diamond),
+        UMBRELLA(R.drawable.ic_fluent_umbrella_24_regular, R.string.sk_icon_umbrella),
 
         HOME(R.drawable.ic_fluent_home_24_regular, R.string.sk_timeline_home, true),
         LOCAL(R.drawable.ic_fluent_people_community_24_regular, R.string.sk_timeline_local, true),

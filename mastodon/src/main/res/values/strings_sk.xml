@@ -228,6 +228,13 @@
     <string name="sk_icon_globe">Globe</string>
     <string name="sk_icon_pin">Pin</string>
     <string name="sk_icon_feed">Feed</string>
+    <string name="sk_icon_beaker">Beaker</string>
+    <string name="sk_icon_bed">Bed</string>
+    <string name="sk_icon_recycle_bin">Recycle bin</string>
+    <string name="sk_icon_verified">Verified</string>
+    <string name="sk_icon_doctor">Doctor</string>
+    <string name="sk_icon_diamond">Diamond</string>
+    <string name="sk_icon_umbrella">Umbrella</string>
     <string name="sk_edit_timeline">Edit timeline</string>
     <string name="sk_add_timeline">Add timeline</string>
     <string name="sk_edit_timelines">Edit timelines</string>
