@@ -204,6 +204,8 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 //			hideSensitiveButton.setVisibility(item.status.sensitive ? View.VISIBLE : View.GONE);
 			if(!TextUtils.isEmpty(item.sensitiveTitle))
 				sensitiveText.setText(item.sensitiveTitle);
+			else if (!item.status.sensitive)
+				sensitiveText.setText(R.string.media_hidden);
 			else
 				sensitiveText.setText(R.string.sensitive_content_explain);
 		}
