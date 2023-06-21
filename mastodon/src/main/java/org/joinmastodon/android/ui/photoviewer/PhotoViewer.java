@@ -818,15 +818,15 @@ public class PhotoViewer implements ZoomPanView.Listener{
 
 		private void startPlayer(){
 			player.setSurface(surface);
-//			if(item.type==Attachment.Type.VIDEO){
+			if(item.type==Attachment.Type.VIDEO){
 				incKeepScreenOn();
 				keepingScreenOn=true;
-				if(getAbsoluteAdapterPosition()==currentIndex){
-					player.start();
-					startUpdatingVideoPosition(player);
-					hideUiDelayed();
-				}
-//			}else{
+			}
+			if(getAbsoluteAdapterPosition()==currentIndex){
+				player.start();
+				startUpdatingVideoPosition(player);
+				hideUiDelayed();
+			}
 			if (item.type == Attachment.Type.GIFV) {
 				keepingScreenOn=false;
 				player.setLooping(true);
