@@ -181,17 +181,19 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 		data.addAll(result.descendants);
 
 		for (Status s : data) {
+			if (s == mainStatus) continue;
 			Status oldStatus = oldData == null ? null : oldData.get(s.id);
 			// restore previous spoiler/filter revealed states when refreshing
-			if (oldStatus != null && !GlobalUserPreferences.alwaysExpandContentWarnings) {
+			if (oldStatus != null) {
 				s.spoilerRevealed = oldStatus.spoilerRevealed;
+				s.sensitiveRevealed = oldStatus.sensitiveRevealed;
 				s.filterRevealed = oldStatus.filterRevealed;
-			} else if (GlobalUserPreferences.autoRevealEqualSpoilers != AutoRevealMode.NEVER &&
+			}
+			if (GlobalUserPreferences.autoRevealEqualSpoilers != AutoRevealMode.NEVER &&
 					s.spoilerText != null &&
-					s.spoilerText.equals(mainStatus.spoilerText) &&
-					mainStatus.spoilerRevealed) {
+					s.spoilerText.equals(mainStatus.spoilerText)) {
 				if (GlobalUserPreferences.autoRevealEqualSpoilers == AutoRevealMode.DISCUSSIONS || Objects.equals(mainStatus.account.id, s.account.id)) {
-					s.spoilerRevealed = true;
+					s.spoilerRevealed = mainStatus.spoilerRevealed;
 				}
 			}
 		}
@@ -231,6 +233,7 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 		// restore revealed states for main status because it gets updated after doLoadData
 		updatedStatus.filterRevealed = mainStatus.filterRevealed;
 		updatedStatus.spoilerRevealed = mainStatus.spoilerRevealed;
+		updatedStatus.sensitiveRevealed = mainStatus.sensitiveRevealed;
 
 		// returning fired event object to facilitate testing
 		Object event;
