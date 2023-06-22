@@ -412,7 +412,7 @@
 	<style name="Widget.Mastodon.M3.Button" parent="android:Widget.Material.Button">
 		<item name="android:textAllCaps">false</item>
 		<item name="android:textSize">14sp</item>
-		<item name="android:minHeight">40dp</item>
+		<item name="android:minHeight">48dp</item>
 		<item name="android:fontFamily">sans-serif-medium</item>
 		<item name="android:stateListAnimator">@null</item>
 	</style>
