@@ -91,7 +91,7 @@ public class SpoilerStatusDisplayItem extends StatusDisplayItem{
 					itemView.getPaddingLeft(),
 					itemView.getPaddingTop(),
 					itemView.getPaddingRight(),
-					item.inset && !item.status.spoilerRevealed ? itemView.getPaddingTop() : 0
+					item.inset ? itemView.getPaddingTop() : 0
 			);
 		}
 

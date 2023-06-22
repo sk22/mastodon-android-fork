@@ -2,7 +2,6 @@ package org.joinmastodon.android.ui.displayitems;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -31,14 +30,12 @@ import org.joinmastodon.android.model.ScheduledStatus;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.PhotoLayoutHelper;
 import org.joinmastodon.android.ui.text.HtmlParser;
-import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.utils.StatusFilterPredicate;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -114,6 +111,7 @@ public abstract class StatusDisplayItem{
 			case SPOILER, FILTER_SPOILER -> new SpoilerStatusDisplayItem.Holder(activity, parent, type);
 			case SECTION_HEADER -> null; // new SectionHeaderStatusDisplayItem.Holder(activity, parent);
 			case NOTIFICATION_HEADER -> null; // new NotificationHeaderStatusDisplayItem.Holder(activity, parent);
+			case DUMMY -> new InsetDummyStatusDisplayItem.Holder(activity);
 		};
 	}
 
@@ -285,10 +283,14 @@ public abstract class StatusDisplayItem{
 		}
 		int i=1;
 		boolean inset=(flags & FLAG_INSET)!=0;
+		// add inset dummy so last content item doesn't clip out of inset bounds
+		if (inset) items.add(new InsetDummyStatusDisplayItem(parentID, fragment, false));
 		for(StatusDisplayItem item:items){
 			item.inset=inset;
 			item.index=i++;
 		}
+		// add dummy item that provides the missing top margin. workarounds, huh
+		if (inset) items.add(0, new InsetDummyStatusDisplayItem(parentID, fragment, true));
 		if(items!=contentItems && !statusForContent.spoilerRevealed){
 			for(StatusDisplayItem item:contentItems){
 				item.inset=inset;
@@ -337,7 +339,8 @@ public abstract class StatusDisplayItem{
 		SECTION_HEADER,
 		HEADER_CHECKABLE,
 		NOTIFICATION_HEADER,
-		FILTER_SPOILER
+		FILTER_SPOILER,
+		DUMMY
 	}
 
 	public static abstract class Holder<T extends StatusDisplayItem> extends BindableViewHolder<T> implements UsableRecyclerView.DisableableClickable{

@@ -114,6 +114,7 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 
 		@Override
 		public void onBind(TextStatusDisplayItem item){
+			boolean hasSpoiler = !TextUtils.isEmpty(item.status.spoilerText);
 			text.setText(item.translationShown
 							? HtmlParser.parse(item.status.translation.content, item.status.emojis, item.status.mentions, item.status.tags, item.parentFragment.getAccountID())
 							: item.text);
@@ -225,7 +226,6 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 
 			if (GlobalUserPreferences.collapseLongPosts && !item.status.textExpandable) {
 				boolean tooBig = text.getMeasuredHeight() > textMaxHeight;
-				boolean hasSpoiler = !TextUtils.isEmpty(item.status.spoilerText);
 				boolean expandable = tooBig && !hasSpoiler;
 				item.parentFragment.onEnableExpandable(Holder.this, expandable);
 			}
@@ -233,6 +233,11 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 			readMore.setVisibility(item.status.textExpandable && !item.status.textExpanded ? View.VISIBLE : View.GONE);
 			textScrollView.setLayoutParams(item.status.textExpandable && !item.status.textExpanded ? collapseParams : wrapParams);
 			if (item.status.textExpandable && !translateVisible) spaceBelowText.setVisibility(View.VISIBLE);
+
+			// compensate for spoiler's bottom margin
+			ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) itemView.getLayoutParams();
+			params.setMargins(params.leftMargin, item.inset && hasSpoiler ? V.dp(-16) : 0,
+					params.rightMargin, params.bottomMargin);
 		}
 
 		@Override

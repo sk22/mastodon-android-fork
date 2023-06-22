@@ -20,9 +20,7 @@ import org.joinmastodon.android.events.StatusCountersUpdatedEvent;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.CacheablePaginatedResponse;
 import org.joinmastodon.android.model.Emoji;
-import org.joinmastodon.android.model.Filter;
 import org.joinmastodon.android.model.FilterContext;
-import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Markers;
 import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.Status;
@@ -47,7 +45,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import androidx.recyclerview.widget.RecyclerView;
-import me.grishka.appkit.Nav;
 import me.grishka.appkit.api.SimpleCallback;
 
 public class NotificationsListFragment extends BaseStatusListFragment<Notification>{

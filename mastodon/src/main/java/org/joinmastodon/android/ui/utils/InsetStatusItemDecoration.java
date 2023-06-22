@@ -94,8 +94,12 @@ public class InsetStatusItemDecoration extends RecyclerView.ItemDecoration{
 					outRect.left=pad;
 				if(insetRight)
 					outRect.right=pad;
-				if(!topSiblingInset)
-					outRect.top=pad;
+
+				// had to comment this out because animations with offsets aren't handled properly.
+				// can be worked around by manually applying top margins to items
+				// see InsetDummyStatusDisplayItem#onBinds
+//				if(!topSiblingInset)
+//					outRect.top=pad;
 				if(!bottomSiblingInset)
 					outRect.bottom=pad;
 			}
