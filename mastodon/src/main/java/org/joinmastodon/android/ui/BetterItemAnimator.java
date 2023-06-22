@@ -25,9 +25,6 @@ import android.view.ViewPropertyAnimator;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
-
-import org.joinmastodon.android.ui.displayitems.TextStatusDisplayItem;
-
 import me.grishka.appkit.utils.CubicBezierInterpolator;
 
 import java.util.ArrayList;
@@ -205,11 +202,7 @@ public class BetterItemAnimator extends SimpleItemAnimator{
         final View view = holder.itemView;
         final ViewPropertyAnimator animation = view.animate();
         mRemoveAnimations.add(holder);
-
-        // TODO: please find a better way; this still causes text to jump over divider for like a frame
-        long removeDuration = holder instanceof TextStatusDisplayItem.Holder t && t.getItem().inset
-                ? 0 : getRemoveDuration();
-        animation.setDuration(removeDuration).alpha(0).setListener(
+        animation.setDuration(getRemoveDuration()).alpha(0).setListener(
                 new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationStart(Animator animator) {
