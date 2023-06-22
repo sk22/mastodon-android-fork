@@ -254,7 +254,7 @@
     <string name="sk_expand">Розгорнути</string>
     <string name="sk_collapse">Згорнути</string>
     <string name="sk_unfinished_attachments">Виправити вкладення\?</string>
-    <string name="sk_settings_prefix_reply_cw_with_re">Префікс «re:» під час відповіді CW</string>
+    <string name="sk_settings_prefix_reply_cw_with_re">Префікс CW під час відповіді</string>
     <string name="sk_settings_collapse_long_posts">Згортати надто довгі дописи</string>
     <string name="sk_unfinished_attachments_message">Деякі вкладення не повністю завантажилися.</string>
     <string name="sk_spectator_mode">Режим глядача</string>
@@ -296,5 +296,17 @@
     <string name="sk_no_remote_info_hint">віддалена інформація недоступна</string>
     <string name="sk_settings_allow_remote_loading">Завантажити інформацію з віддалених серверів</string>
     <string name="sk_settings_allow_remote_loading_explanation">Спробуйте отримати точніші списки підписників, вподобань і поширень, завантаживши інформацію з джерела.</string>
-    <string name="sk_error_loading_profile">Не вдалося завантажити профіль на ваш домашній сервер.</string>
+    <string name="sk_error_loading_profile">Не вдалося завантажити профіль через %s</string>
+    <string name="sk_settings_auto_reveal_equal_spoilers">Виявити ті самі CW у відповідях від</string>
+    <string name="sk_settings_auto_reveal_nobody">нікого</string>
+    <string name="sk_settings_auto_reveal_author">автора</string>
+    <string name="sk_settings_auto_reveal_anyone">будь-кого</string>
+    <string name="sk_settings_prefix_replies_always">усіх</string>
+    <string name="sk_settings_prefix_replies_never">нікого</string>
+    <string name="sk_settings_prefix_replies_to_others">іншим</string>
+    <string name="sk_settings_forward_report_default">Усталений перемикач “Пересилати звіт”</string>
+    <string name="sk_icon_feed">Стрічка</string>
+    <string name="sk_exclusive_list">Список виключення</string>
+    <string name="sk_list_exclusive_switch">Створити список виключень</string>
+    <string name="sk_list_exclusive_switch_explanation">Учасники списку виключень не будуть показані на вашій домашній стрічці — якщо ваш сервер підтримує цю функцію.</string>
 </resources>

@@ -14,4 +14,21 @@
     <string name="sk_accept_follow_request">قبول طلب المتابعة</string>
     <string name="sk_reject_follow_request">رفض طلب المتابعة</string>
     <string name="sk_lists_with_user">قوائم بها %s</string>
+    <string name="sk_confirm_unpin_post">أتريد فك المنشور من ملفك الشخصي؟</string>
+    <string name="sk_confirm_pin_post">أتريد تثبيت هذا المنشور في ملفك الشخصي؟</string>
+    <string name="sk_pinning">يثبت المنشور…</string>
+    <string name="sk_unpin_post">فك من ملفك الشخصي</string>
+    <string name="sk_confirm_unpin_post_title">فك المنشور من ملفك الشخصي</string>
+    <string name="sk_unpinning">يفك المنشور…</string>
+    <string name="sk_image_description">وصف الصورة</string>
+    <string name="sk_settings_show_replies">أظهر الردود</string>
+    <string name="sk_quoting_user">اقتباس %s</string>
+    <string name="sk_settings_reply_visibility_all">كل الردود</string>
+    <string name="sk_settings_reply_visibility_following">ردود على متابِعي</string>
+    <string name="sk_settings_reply_visibility_self">ردود عليَّ</string>
+    <string name="sk_settings_load_new_posts">تحميل المنشورات الجديدة تلقائيًا</string>
+    <string name="sk_user_post_notifications_on">شغِّل إشعارات النشر لـ %s</string>
+    <string name="sk_user_post_notifications_off">عطل إشعارات النشر لـ %s</string>
+    <string name="sk_check_for_update">تحقق من وجود تحديثات</string>
+    <string name="sk_no_update_available">لا يتوفر تحديث</string>
 </resources>

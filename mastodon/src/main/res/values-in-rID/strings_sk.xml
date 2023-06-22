@@ -258,7 +258,7 @@
     <string name="sk_settings_hide_interaction">Sembunyikan tombol interaksi</string>
     <string name="sk_follow_as">Ikuti dari akun lain</string>
     <string name="sk_followed_as">Diikuti dari %s</string>
-    <string name="sk_settings_prefix_reply_cw_with_re">Awali peringatan konten balasan dengan “re:”</string>
+    <string name="sk_settings_prefix_reply_cw_with_re">Awali balasan peringatan konten dengan “re:”</string>
     <string name="sk_settings_collapse_long_posts">Tutup kiriman yang sangat panjang</string>
     <string name="sk_unfinished_attachments">Perbaiki lampiran\?</string>
     <string name="sk_unfinished_attachments_message">Beberapa lampiran belum selesai diunggah.</string>
@@ -302,4 +302,12 @@
     <string name="sk_settings_auto_reveal_nobody">bukan siapa pun</string>
     <string name="sk_settings_auto_reveal_author">pembuat</string>
     <string name="sk_settings_auto_reveal_anyone">semuanya</string>
+    <string name="sk_settings_prefix_replies_always">semuanya</string>
+    <string name="sk_settings_prefix_replies_never">bukan siapa pun</string>
+    <string name="sk_settings_prefix_replies_to_others">lainnya</string>
+    <string name="sk_settings_forward_report_default">“Laporan diteruskan” ubah bawaan</string>
+    <string name="sk_icon_feed">Umpan</string>
+    <string name="sk_list_exclusive_switch">Buat daftar ekslusif</string>
+    <string name="sk_exclusive_list">Daftar ekslusif</string>
+    <string name="sk_list_exclusive_switch_explanation">Anggota dalam daftar ekslusif tidak akan muncul di lini masa beranda Anda — jika server Anda mendukungnya.</string>
 </resources>

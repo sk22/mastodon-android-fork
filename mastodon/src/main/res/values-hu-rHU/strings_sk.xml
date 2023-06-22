@@ -13,7 +13,7 @@
     <string name="sk_delete_and_redraft">Törlés és újraszövegezés</string>
     <string name="sk_pin_post">Pin a profilhoz</string>
     <string name="sk_confirm_pin_post_title">Hozzászólás rögzítése a profilhoz</string>
-    <string name="sk_pinning">Pinning poszt…</string>
+    <string name="sk_pinning">Bejegyzés kitűzése…</string>
     <string name="sk_unpin_post">Unpin a profilból</string>
     <string name="sk_confirm_unpin_post_title">Hozzászólás feloldása a profilból</string>
     <string name="sk_unpinning">Unpinning poszt…</string>
@@ -124,4 +124,7 @@
     <string name="sk_poll_allow_multiple">Több választási lehetőség engedélyezése</string>
     <string name="sk_tabs_disable_swipe">Lapok közötti lapozás letiltása</string>
     <string name="sk_settings_about">Az alkalmazásról</string>
+    <string name="sk_quoting_user">%s említése</string>
+    <string name="sk_settings_reply_visibility">Válasz láthatósága</string>
+    <string name="sk_settings_reply_visibility_all">Összes válasz</string>
 </resources>
