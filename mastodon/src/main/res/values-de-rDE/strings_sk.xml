@@ -304,4 +304,5 @@
     <string name="sk_settings_prefix_replies_always">alle</string>
     <string name="sk_settings_prefix_replies_never">niemanden</string>
     <string name="sk_settings_forward_report_default">Standardwert „Meldung weiterleiten“-Schalter</string>
+    <string name="sk_spoiler_show">Inhalt anzeigen</string>
 </resources>

@@ -329,4 +329,5 @@
     <string name="sk_list_exclusive_switch_explanation">Members of an exclusive list will not show up on your home timeline – if your instance supports it.</string>
     <string name="sk_advanced_options_show">Show advanced options</string>
     <string name="sk_advanced_options_hide">Hide advanced options</string>
+    <string name="sk_spoiler_show">Show content</string>
 </resources>
