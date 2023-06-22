@@ -17,7 +17,6 @@ import org.joinmastodon.android.events.StatusCountersUpdatedEvent;
 import org.joinmastodon.android.events.StatusCreatedEvent;
 import org.joinmastodon.android.events.StatusUpdatedEvent;
 import org.joinmastodon.android.model.Account;
-import org.joinmastodon.android.model.Filter;
 import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.model.StatusContext;
@@ -153,6 +152,26 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 				}).exec(accountID);
 	}
 
+	private void restoreStatusStates(List<Status> newData, Map<String, Status> oldData) {
+		for (Status s : newData) {
+			if (s == mainStatus) continue;
+			Status oldStatus = oldData == null ? null : oldData.get(s.id);
+			// restore previous spoiler/filter revealed states when refreshing
+			if (oldStatus != null) {
+				s.spoilerRevealed = oldStatus.spoilerRevealed;
+				s.sensitiveRevealed = oldStatus.sensitiveRevealed;
+				s.filterRevealed = oldStatus.filterRevealed;
+			}
+			if (GlobalUserPreferences.autoRevealEqualSpoilers != AutoRevealMode.NEVER &&
+					s.spoilerText != null &&
+					s.spoilerText.equals(mainStatus.spoilerText)) {
+				if (GlobalUserPreferences.autoRevealEqualSpoilers == AutoRevealMode.DISCUSSIONS || Objects.equals(mainStatus.account.id, s.account.id)) {
+					s.spoilerRevealed = mainStatus.spoilerRevealed;
+				}
+			}
+		}
+
+	}
 	protected void maybeApplyContext() {
 		if (!transitionFinished || result == null || getContext() == null) return;
 		Map<String, Status> oldData = null;
@@ -171,6 +190,8 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 
 		result.descendants=filterStatuses(result.descendants);
 		result.ancestors=filterStatuses(result.ancestors);
+		restoreStatusStates(result.descendants, oldData);
+		restoreStatusStates(result.ancestors, oldData);
 
 		for (NeighborAncestryInfo i : mapNeighborhoodAncestry(mainStatus, result)) {
 			ancestryMap.put(i.status.id, i);
@@ -180,26 +201,9 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 			footerProgress.setVisibility(View.GONE);
 		data.addAll(result.descendants);
 
-		for (Status s : data) {
-			if (s == mainStatus) continue;
-			Status oldStatus = oldData == null ? null : oldData.get(s.id);
-			// restore previous spoiler/filter revealed states when refreshing
-			if (oldStatus != null) {
-				s.spoilerRevealed = oldStatus.spoilerRevealed;
-				s.sensitiveRevealed = oldStatus.sensitiveRevealed;
-				s.filterRevealed = oldStatus.filterRevealed;
-			}
-			if (GlobalUserPreferences.autoRevealEqualSpoilers != AutoRevealMode.NEVER &&
-					s.spoilerText != null &&
-					s.spoilerText.equals(mainStatus.spoilerText)) {
-				if (GlobalUserPreferences.autoRevealEqualSpoilers == AutoRevealMode.DISCUSSIONS || Objects.equals(mainStatus.account.id, s.account.id)) {
-					s.spoilerRevealed = mainStatus.spoilerRevealed;
-				}
-			}
-		}
-
 		int prevCount=displayItems.size();
 		onAppendItems(result.descendants);
+
 		int count=displayItems.size();
 		if(!refreshing)
 			adapter.notifyItemRangeInserted(prevCount, count-prevCount);
@@ -226,7 +230,6 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 
 		result = null;
 	}
-
 	protected Object maybeApplyMainStatus() {
 		if (updatedStatus == null || !contextInitiallyRendered) return null;
 
