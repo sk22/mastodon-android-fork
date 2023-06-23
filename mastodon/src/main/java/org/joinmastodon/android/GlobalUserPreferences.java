@@ -138,6 +138,8 @@ public class GlobalUserPreferences{
 		allowRemoteLoading=prefs.getBoolean("allowRemoteLoading", true);
 		autoRevealEqualSpoilers=AutoRevealMode.valueOf(prefs.getString("autoRevealEqualSpoilers", AutoRevealMode.THREADS.name()));
 		forwardReportDefault=prefs.getBoolean("forwardReportDefault", true);
+		accountsWithEmojiReactions=prefs.getStringSet("accountsWithEmojiReactions", new HashSet<>());
+		accountsWithEmojiReactionsInLists=prefs.getStringSet("accountsWithEmojiReactionsInLists", new HashSet<>());
 
 		if (prefs.contains("prefixRepliesWithRe")) {
 			prefixReplies = prefs.getBoolean("prefixRepliesWithRe", false)
@@ -147,8 +149,6 @@ public class GlobalUserPreferences{
 					.remove("prefixRepliesWithRe")
 					.apply();
 		}
-		accountsWithEmojiReactions=prefs.getStringSet("accountsWithEmojiReactions", new HashSet<>());
-		accountsWithEmojiReactionsInLists=prefs.getStringSet("accountsWithEmojiReactionsInLists", new HashSet<>());
 
 		try {
 			color=ColorPreference.valueOf(prefs.getString("color", ColorPreference.PINK.name()));
@@ -160,6 +160,7 @@ public class GlobalUserPreferences{
 
 	public static void save(){
 		getPrefs().edit()
+				.clear()
 				.putBoolean("playGifs", playGifs)
 				.putBoolean("useCustomTabs", useCustomTabs)
 				.putBoolean("showReplies", showReplies)
