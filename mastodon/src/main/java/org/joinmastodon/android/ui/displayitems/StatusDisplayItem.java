@@ -221,7 +221,7 @@ public abstract class StatusDisplayItem{
 		ArrayList<StatusDisplayItem> contentItems;
 		if(!TextUtils.isEmpty(statusForContent.spoilerText)){
 			if (GlobalUserPreferences.alwaysExpandContentWarnings) statusForContent.spoilerRevealed = true;
-			SpoilerStatusDisplayItem spoilerItem=new SpoilerStatusDisplayItem(parentID, fragment, null, statusForContent, Type.SPOILER);
+			SpoilerStatusDisplayItem spoilerItem=new SpoilerStatusDisplayItem(parentID, fragment, null, status, Type.SPOILER);
 			items.add(spoilerItem);
 			contentItems=spoilerItem.contentItems;
 		}else{
