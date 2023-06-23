@@ -192,6 +192,9 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 
 			itemView.requestLayout();
 
+			reactVisibilityState = ReactVisibilityState.HIDDEN;
+			imm.hideSoftInputFromWindow(reactInput.getWindowToken(), 0);
+
 			AccountSession accountSession = AccountSessionManager.getInstance().getAccount(item.accountID);
 			emojiKeyboard = new CustomEmojiPopupKeyboard(activity, AccountSessionManager.getInstance().getCustomEmojis(accountSession.domain), accountSession.domain);
 			emojiKeyboard.setListener(emoji -> {
