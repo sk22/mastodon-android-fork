@@ -152,7 +152,7 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 
 		@Override
 		public void onBind(MediaGridStatusDisplayItem item){
-			wrapper.setPadding(0, 0, 0, 0); // item.inset ? 0 : V.dp(8));
+//			wrapper.setPadding(0, 0, 0, item.inset ? 0 : V.dp(8));
 
 			if(altTextAnimator!=null)
 				altTextAnimator.cancel();
@@ -208,6 +208,8 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 				sensitiveText.setText(R.string.media_hidden);
 			else
 				sensitiveText.setText(R.string.sensitive_content_explain);
+
+			applyRequestedTopMargin(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 		}
 
 		@Override

@@ -80,7 +80,7 @@ public class ScheduledStatusListFragment extends BaseStatusListFragment<Schedule
 
 	@Override
 	protected List<StatusDisplayItem> buildDisplayItems(ScheduledStatus s) {
-		return StatusDisplayItem.buildItems(this, s.toStatus(), accountID, s, knownAccounts, false, false, null, true, null);
+		return StatusDisplayItem.buildItems(this, s.toStatus(), accountID, s, knownAccounts, false, false, true, null);
 	}
 
 	@Override

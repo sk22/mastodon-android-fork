@@ -91,6 +91,10 @@
 		<attr name="labelTextColor" format="color"/>
 	</declare-styleable>
 
+	<declare-styleable name="NestedRecyclerScrollView">
+		<attr name="takePriorityOverChildViews" format="boolean"/>
+	</declare-styleable>
+
 	<attr name="colorPrimary25" format="color" />
 	<attr name="colorPrimary50" format="color" />
 	<attr name="colorPrimary100" format="color" />

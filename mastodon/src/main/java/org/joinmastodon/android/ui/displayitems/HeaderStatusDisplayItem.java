@@ -105,6 +105,7 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 		}
 		this.extraText=extraText;
 		emojiHelper.addText(extraText);
+//		this.needBottomPadding = true;
 	}
 
 	public static HeaderStatusDisplayItem fromAnnouncement(Announcement a, Status fakeStatus, Account instanceUser, BaseStatusListFragment parentFragment, String accountID, Consumer<String> consumeReadID) {
@@ -324,11 +325,12 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 				timestamp.setText("");
 			}
 			deleteNotification.setVisibility(GlobalUserPreferences.enableDeleteNotifications && item.notification!=null && !item.inset ? View.VISIBLE : View.GONE);
-			if (item.hasVisibilityToggle && !item.inset){
-				boolean disabled = !TextUtils.isEmpty(item.status.spoilerText) && !item.status.spoilerRevealed;
+			if (item.hasVisibilityToggle){
+				boolean disabled = !item.status.sensitiveRevealed ||
+						(!TextUtils.isEmpty(item.status.spoilerText) &&
+						!item.status.spoilerRevealed);
 				visibility.setEnabled(!disabled);
 				V.setVisibilityAnimated(visibility, disabled ? View.INVISIBLE : View.VISIBLE);
-				visibility.setImageResource(item.status.sensitiveRevealed ? R.drawable.ic_fluent_eye_off_24_regular :  R.drawable.ic_fluent_eye_24_regular);
 				visibility.setContentDescription(item.parentFragment.getString(item.status.sensitiveRevealed ? R.string.hide_content : R.string.reveal_content));
 				if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
 					visibility.setTooltipText(visibility.getContentDescription());

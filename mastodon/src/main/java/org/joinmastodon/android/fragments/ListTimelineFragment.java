@@ -18,7 +18,6 @@ import org.joinmastodon.android.api.requests.lists.UpdateList;
 import org.joinmastodon.android.api.requests.timelines.GetListTimeline;
 import org.joinmastodon.android.events.ListDeletedEvent;
 import org.joinmastodon.android.events.ListUpdatedCreatedEvent;
-import org.joinmastodon.android.model.Filter;
 import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.ListTimeline;
 import org.joinmastodon.android.model.Status;

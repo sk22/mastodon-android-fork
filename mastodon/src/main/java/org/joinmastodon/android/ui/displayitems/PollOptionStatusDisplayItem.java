@@ -5,6 +5,7 @@ import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -96,7 +97,7 @@ public class PollOptionStatusDisplayItem extends StatusDisplayItem{
 				Drawable bg=item.inset ? progressBgInset : progressBg;
 				bg.setLevel(Math.round(10000f*item.votesFraction));
 				button.setBackground(bg);
-				itemView.setSelected(item.isMostVoted);
+				itemView.setSelected(item.poll.ownVotes.contains(item.optionIndex));
 				percent.setText(String.format(Locale.getDefault(), "%d%%", Math.round(item.votesFraction*100f)));
 			}else{
 				itemView.setSelected(item.poll.selectedOptions!=null && item.poll.selectedOptions.contains(item.option));
@@ -109,6 +110,8 @@ public class PollOptionStatusDisplayItem extends StatusDisplayItem{
 				text.setTextColor(UiUtils.getThemeColor(itemView.getContext(), android.R.attr.textColorPrimary));
 				percent.setTextColor(UiUtils.getThemeColor(itemView.getContext(), R.attr.colorM3OnSecondaryContainer));
 			}
+
+			applyRequestedTopMargin(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 		}
 
 		@Override

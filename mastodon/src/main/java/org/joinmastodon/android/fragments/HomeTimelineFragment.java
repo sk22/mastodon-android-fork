@@ -14,7 +14,6 @@ import org.joinmastodon.android.api.requests.timelines.GetHomeTimeline;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.StatusCreatedEvent;
 import org.joinmastodon.android.model.CacheablePaginatedResponse;
-import org.joinmastodon.android.model.Filter;
 import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.displayitems.GapStatusDisplayItem;
@@ -168,10 +167,6 @@ public class HomeTimelineFragment extends StatusListFragment {
 					}
 				})
 				.exec(accountID);
-
-		if (parent.getParentFragment() instanceof HomeFragment homeFragment) {
-			homeFragment.updateNotificationBadge();
-		}
 	}
 
 	@Override

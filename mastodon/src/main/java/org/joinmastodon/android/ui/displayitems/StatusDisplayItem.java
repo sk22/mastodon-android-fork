@@ -20,7 +20,7 @@ import org.joinmastodon.android.fragments.ThreadFragment;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Attachment;
 import org.joinmastodon.android.model.DisplayItemsParent;
-import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.LegacyFilter;
 import org.joinmastodon.android.model.FilterAction;
 import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.FilterResult;
@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 import me.grishka.appkit.Nav;
 import me.grishka.appkit.imageloader.requests.ImageLoaderRequest;
 import me.grishka.appkit.utils.BindableViewHolder;
+import me.grishka.appkit.utils.V;
 import me.grishka.appkit.views.UsableRecyclerView;
 
 public abstract class StatusDisplayItem{
@@ -61,6 +62,7 @@ public abstract class StatusDisplayItem{
 	public static final int FLAG_MEDIA_FORCE_HIDDEN=1 << 3;
 	public static final int FLAG_NO_HEADER=1 << 4;
 	public static final int FLAG_NO_TRANSLATE=1 << 5;
+	boolean needTopPadding;
 
 	public void setAncestryInfo(
 			boolean hasDescendantNeighbor,
@@ -110,12 +112,12 @@ public abstract class StatusDisplayItem{
 			case FILE -> new FileStatusDisplayItem.Holder(activity, parent);
 			case SPOILER, FILTER_SPOILER -> new SpoilerStatusDisplayItem.Holder(activity, parent, type);
 			case SECTION_HEADER -> null; // new SectionHeaderStatusDisplayItem.Holder(activity, parent);
-			case NOTIFICATION_HEADER -> null; // new NotificationHeaderStatusDisplayItem.Holder(activity, parent);
+			case NOTIFICATION_HEADER -> new NotificationHeaderStatusDisplayItem.Holder(activity, parent);
 			case DUMMY -> new InsetDummyStatusDisplayItem.Holder(activity);
 		};
 	}
 
-	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, Notification notification, boolean disableTranslate, FilterContext filterContext) {
+	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, boolean disableTranslate, FilterContext filterContext) {
 		int flags=0;
 		if(inset)
 			flags|=FLAG_INSET;
@@ -123,7 +125,7 @@ public abstract class StatusDisplayItem{
 			flags|=FLAG_NO_FOOTER;
 		if (disableTranslate)
 			flags|=FLAG_NO_TRANSLATE;
-		return buildItems(fragment, status, accountID, parentObject, knownAccounts, null, filterContext, flags);
+		return buildItems(fragment, status, accountID, parentObject, knownAccounts, filterContext, flags);
 	}
 
 	public static ReblogOrReplyLineStatusDisplayItem buildReplyLine(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parent, Account account, boolean threadReply) {
@@ -141,7 +143,7 @@ public abstract class StatusDisplayItem{
 		);
 	}
 
-	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, Notification notification, FilterContext filterContext, int flags){
+	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, FilterContext filterContext, int flags){
 		String parentID=parentObject.getID();
 		ArrayList<StatusDisplayItem> items=new ArrayList<>();
 		Status statusForContent=status.getContentStatus();
@@ -205,7 +207,7 @@ public abstract class StatusDisplayItem{
 			if((flags & FLAG_CHECKABLE)!=0)
 				items.add(header=new CheckableHeaderStatusDisplayItem(parentID, statusForContent.account, statusForContent.createdAt, fragment, accountID, statusForContent, null));
 			else
-				items.add(header=new HeaderStatusDisplayItem(parentID, statusForContent.account, statusForContent.createdAt, fragment, accountID, statusForContent, null, notification, scheduledStatus));
+				items.add(header=new HeaderStatusDisplayItem(parentID, statusForContent.account, statusForContent.createdAt, fragment, accountID, statusForContent, null, null, scheduledStatus));
 		}
 
 		boolean filtered=false;
@@ -218,10 +220,11 @@ public abstract class StatusDisplayItem{
 			}
 		}
 
+		SpoilerStatusDisplayItem spoilerItem;
 		ArrayList<StatusDisplayItem> contentItems;
 		if(!TextUtils.isEmpty(statusForContent.spoilerText)){
 			if (GlobalUserPreferences.alwaysExpandContentWarnings) statusForContent.spoilerRevealed = true;
-			SpoilerStatusDisplayItem spoilerItem=new SpoilerStatusDisplayItem(parentID, fragment, null, statusForContent, Type.SPOILER);
+			spoilerItem=new SpoilerStatusDisplayItem(parentID, fragment, null, statusForContent, Type.SPOILER);
 			items.add(spoilerItem);
 			contentItems=spoilerItem.contentItems;
 		}else{
@@ -238,13 +241,14 @@ public abstract class StatusDisplayItem{
 			}
 		}
 
+		int indexWhereTheTextWouldBe = -1;
 		if(!TextUtils.isEmpty(statusForContent.content)){
 			SpannableStringBuilder parsedText=HtmlParser.parse(statusForContent.content, statusForContent.emojis, statusForContent.mentions, statusForContent.tags, accountID);
 			HtmlParser.applyFilterHighlights(fragment.getActivity(), parsedText, status.filtered);
 			TextStatusDisplayItem text=new TextStatusDisplayItem(parentID, HtmlParser.parse(statusForContent.content, statusForContent.emojis, statusForContent.mentions, statusForContent.tags, accountID), fragment, statusForContent, (flags & FLAG_NO_TRANSLATE) != 0);
 			contentItems.add(text);
-		} else if (header!=null){
-			header.needBottomPadding=true;
+		} else {
+			indexWhereTheTextWouldBe = contentItems.size();
 		}
 
 		List<Attachment> imageAttachments=statusForContent.mediaAttachments.stream().filter(att->att.type.isImage()).collect(Collectors.toList());
@@ -271,6 +275,15 @@ public abstract class StatusDisplayItem{
 		if(statusForContent.card!=null && statusForContent.mediaAttachments.isEmpty()){
 			contentItems.add(new LinkCardStatusDisplayItem(parentID, fragment, statusForContent));
 		}
+
+		if (TextUtils.isEmpty(statusForContent.content) && contentItems.indexOf(header) != contentItems.size() - 1) {
+			header.needBottomPadding = false;
+		}
+		// adding back the padding that the text status display item usually provides
+		if (indexWhereTheTextWouldBe >= 0 && contentItems.size() > indexWhereTheTextWouldBe) {
+			contentItems.get(indexWhereTheTextWouldBe).needTopPadding = true;
+		}
+
 		if(contentItems!=items && statusForContent.spoilerRevealed){
 			items.addAll(contentItems);
 		}
@@ -290,7 +303,7 @@ public abstract class StatusDisplayItem{
 			item.index=i++;
 		}
 		// add dummy item that provides the missing top margin. workarounds, huh
-		if (inset) items.add(0, new InsetDummyStatusDisplayItem(parentID, fragment, true));
+//		if (inset) items.add(0, new InsetDummyStatusDisplayItem(parentID, fragment, true));
 		if(items!=contentItems && !statusForContent.spoilerRevealed){
 			for(StatusDisplayItem item:contentItems){
 				item.inset=inset;
@@ -298,7 +311,7 @@ public abstract class StatusDisplayItem{
 			}
 		}
 
-		Filter applyingFilter = null;
+		LegacyFilter applyingFilter = null;
 		if (!statusForContent.filterRevealed) {
 			StatusFilterPredicate predicate = new StatusFilterPredicate(accountID, filterContext, FilterAction.WARN);
 			statusForContent.filterRevealed = predicate.test(status);
@@ -364,6 +377,16 @@ public abstract class StatusDisplayItem{
 		@Override
 		public boolean isEnabled(){
 			return item.parentFragment.isItemEnabled(item.parentID);
+		}
+
+		protected void applyRequestedTopMargin(ViewGroup.MarginLayoutParams params) {
+			applyRequestedTopMargin(params, 0);
+		}
+
+		protected void applyRequestedTopMargin(ViewGroup.MarginLayoutParams params, int defaultValue) {
+			params.setMargins(params.leftMargin, item.needTopPadding ? V.dp(16) : defaultValue,
+					params.rightMargin, params.bottomMargin);
+			itemView.setLayoutParams(params);
 		}
 	}
 }

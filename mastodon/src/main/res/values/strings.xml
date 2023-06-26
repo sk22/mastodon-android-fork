@@ -16,11 +16,11 @@
 	<string name="in_reply_to">In reply to %s</string>
 	<string name="notifications">Notifications</string>
 
-	<string name="user_followed_you">followed you</string>
-	<string name="user_sent_follow_request">sent you a follow request</string>
-	<string name="user_favorited">favorited your post</string>
-	<string name="notification_boosted">boosted your post</string>
-	<string name="poll_ended">poll ended</string>
+	<string name="user_followed_you">%s followed you</string>
+	<string name="user_sent_follow_request">%s sent you a follow request</string>
+	<string name="user_favorited">%s favorited your post</string>
+	<string name="notification_boosted">%s boosted your post</string>
+	<string name="poll_ended">See the results of a poll you voted in</string>
 
 	<string name="time_seconds">%ds</string>
 	<string name="time_minutes">%dm</string>
@@ -487,4 +487,5 @@
 	<string name="downloading_update">Downloading (%d%%)</string>
 	<!-- Shown like a content warning, %s is the name of the filter -->
 	<string name="post_matches_filter_x">Matches filter “%s”</string>
+	<string name="mark_all_notifications_read">Mark all as read</string>
 </resources>

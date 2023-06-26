@@ -1,7 +1,7 @@
 package org.joinmastodon.android.utils;
 
 import org.joinmastodon.android.api.session.AccountSessionManager;
-import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.LegacyFilter;
 import org.joinmastodon.android.model.FilterAction;
 import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Status;
@@ -14,23 +14,23 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class StatusFilterPredicate implements Predicate<Status>{
-	private final List<Filter> filters;
+	private final List<LegacyFilter> filters;
 	private final FilterContext context;
 	private final FilterAction action;
-	private Filter applyingFilter;
+	private LegacyFilter applyingFilter;
 
 	/**
 	 * @param context null makes the predicate pass automatically
 	 * @param action defines what the predicate should check:
 	 * 	             status should not be hidden or should not display with warning
 	 */
-	public StatusFilterPredicate(List<Filter> filters, FilterContext context, FilterAction action){
+	public StatusFilterPredicate(List<LegacyFilter> filters, FilterContext context, FilterAction action){
 		this.filters = filters;
 		this.context = context;
 		this.action = action;
 	}
 
-	public StatusFilterPredicate(List<Filter> filters, FilterContext context){
+	public StatusFilterPredicate(List<LegacyFilter> filters, FilterContext context){
 		this(filters, context, FilterAction.HIDE);
 	}
 
@@ -62,13 +62,13 @@ public class StatusFilterPredicate implements Predicate<Status>{
 	public boolean test(Status status){
 		if (context == null) return true;
 
-		Stream<Filter> matchingFilters = status.filtered != null
+		Stream<LegacyFilter> matchingFilters = status.filtered != null
 				// use server-provided per-status info (status.filtered) if available
 				? status.filtered.stream().map(f -> f.filter)
 				// or fall back to cached filters
 				: filters.stream().filter(filter -> filter.matches(status));
 
-		Optional<Filter> applyingFilter = matchingFilters
+		Optional<LegacyFilter> applyingFilter = matchingFilters
 				// discard expired filters
 				.filter(filter -> filter.expiresAt == null || filter.expiresAt.isAfter(Instant.now()))
 				// only apply filters for given context
@@ -81,7 +81,7 @@ public class StatusFilterPredicate implements Predicate<Status>{
 		return applyingFilter.isEmpty();
 	}
 
-	public Filter getApplyingFilter() {
+	public LegacyFilter getApplyingFilter() {
 		return applyingFilter;
 	}
 }

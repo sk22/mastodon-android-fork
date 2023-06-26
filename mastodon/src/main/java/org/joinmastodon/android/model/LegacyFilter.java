@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 @Parcel
-public class Filter extends BaseModel{
+public class LegacyFilter extends BaseModel{
 	public String id;
 	public String phrase;
 	public String title;

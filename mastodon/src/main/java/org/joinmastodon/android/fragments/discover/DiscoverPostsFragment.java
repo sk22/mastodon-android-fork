@@ -6,7 +6,6 @@ import android.view.View;
 
 import org.joinmastodon.android.api.requests.trends.GetTrendingStatuses;
 import org.joinmastodon.android.fragments.StatusListFragment;
-import org.joinmastodon.android.model.Filter;
 import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.utils.DiscoverInfoBannerHelper;

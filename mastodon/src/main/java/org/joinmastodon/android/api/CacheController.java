@@ -16,10 +16,11 @@ import org.joinmastodon.android.api.requests.timelines.GetHomeTimeline;
 import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.model.CacheablePaginatedResponse;
-import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.LegacyFilter;
 import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Notification;
+import org.joinmastodon.android.model.PaginatedResponse;
 import org.joinmastodon.android.model.SearchResult;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.utils.StatusFilterPredicate;
@@ -44,6 +45,8 @@ public class CacheController{
 	private final String accountID;
 	private DatabaseHelper db;
 	private final Runnable databaseCloseRunnable=this::closeDatabase;
+	private boolean loadingNotifications;
+	private final ArrayList<Callback<PaginatedResponse<List<Notification>>>> pendingNotificationsCallbacks=new ArrayList<>();
 
 	private static final int POST_FLAG_GAP_AFTER=1;
 
@@ -59,7 +62,7 @@ public class CacheController{
 		cancelDelayedClose();
 		databaseThread.postRunnable(()->{
 			try{
-				List<Filter> filters=AccountSessionManager.getInstance().getAccount(accountID).wordFilters.stream().filter(f->f.context.contains(FilterContext.HOME)).collect(Collectors.toList());
+				List<LegacyFilter> filters=AccountSessionManager.getInstance().getAccount(accountID).wordFilters.stream().filter(f->f.context.contains(FilterContext.HOME)).collect(Collectors.toList());
 				if(!forceReload){
 					SQLiteDatabase db=getOrOpenDatabase();
 					try(Cursor cursor=db.query("home_timeline", new String[]{"json", "flags"}, maxID==null ? null : "`id`<?", maxID==null ? null : new String[]{maxID}, null, null, "`time` DESC", count+"")){
@@ -127,56 +130,72 @@ public class CacheController{
 		});
 	}
 
-	public void getNotifications(String maxID, int count, boolean onlyMentions, boolean onlyPosts, boolean forceReload, Callback<CacheablePaginatedResponse<List<Notification>>> callback){
+	public void getNotifications(String maxID, int count, boolean onlyMentions, boolean onlyPosts, boolean forceReload, Callback<PaginatedResponse<List<Notification>>> callback){
 		cancelDelayedClose();
 		databaseThread.postRunnable(()->{
 			try{
-				AccountSession accountSession=AccountSessionManager.getInstance().getAccount(accountID);
-				List<Filter> filters=accountSession.wordFilters.stream().filter(f->f.context.contains(FilterContext.NOTIFICATIONS)).collect(Collectors.toList());
+				if(!onlyMentions && loadingNotifications){
+					synchronized(pendingNotificationsCallbacks){
+						pendingNotificationsCallbacks.add(callback);
+					}
+					return;
+				}
 				if(!forceReload){
 					SQLiteDatabase db=getOrOpenDatabase();
-					String table=onlyPosts ? "notifications_posts" : onlyMentions ? "notifications_mentions" : "notifications_all";
-					try(Cursor cursor=db.query(table, new String[]{"json"}, maxID==null ? null : "`id`<?", maxID==null ? null : new String[]{maxID}, null, null, "`time` DESC", count+"")){
+					try(Cursor cursor=db.query(onlyMentions ? "notifications_mentions" : "notifications_all", new String[]{"json"}, maxID==null ? null : "`id`<?", maxID==null ? null : new String[]{maxID}, null, null, "`time` DESC", count+"")){
 						if(cursor.getCount()==count){
 							ArrayList<Notification> result=new ArrayList<>();
 							cursor.moveToFirst();
 							String newMaxID;
-							outer:
 							do{
 								Notification ntf=MastodonAPIController.gson.fromJson(cursor.getString(0), Notification.class);
 								ntf.postprocess();
 								newMaxID=ntf.id;
-								if(ntf.status!=null){
-									if (!new StatusFilterPredicate(filters, FilterContext.NOTIFICATIONS).test(ntf.status))
-										continue outer;
-								}
 								result.add(ntf);
 							}while(cursor.moveToNext());
 							String _newMaxID=newMaxID;
-							uiHandler.post(()->callback.onSuccess(new CacheablePaginatedResponse<>(result, _newMaxID, true)));
+							AccountSessionManager.get(accountID).filterStatusContainingObjects(result, n->n.status, FilterContext.NOTIFICATIONS);
+							uiHandler.post(()->callback.onSuccess(new PaginatedResponse<>(result, _newMaxID)));
 							return;
 						}
 					}catch(IOException x){
 						Log.w(TAG, "getNotifications: corrupted notification object in database", x);
 					}
 				}
-				Instance instance=AccountSessionManager.getInstance().getInstanceInfo(accountSession.domain);
-				new GetNotifications(maxID, count, onlyPosts ? EnumSet.of(Notification.Type.STATUS) : onlyMentions ? EnumSet.of(Notification.Type.MENTION): EnumSet.allOf(Notification.Type.class), instance.isAkkoma())
+				if(!onlyMentions)
+					loadingNotifications=true;
+				new GetNotifications(maxID, count, onlyPosts ? EnumSet.of(Notification.Type.STATUS) : onlyMentions ? EnumSet.of(Notification.Type.MENTION): EnumSet.allOf(Notification.Type.class), AccountSessionManager.get(accountID).getInstance().map(Instance::isAkkoma).orElse(false))
 						.setCallback(new Callback<>(){
 							@Override
 							public void onSuccess(List<Notification> result){
-								callback.onSuccess(new CacheablePaginatedResponse<>(result.stream().filter(ntf->{
-									if(ntf.status!=null){
-										return new StatusFilterPredicate(filters, FilterContext.NOTIFICATIONS).test(ntf.status);
-									}
-									return true;
-								}).collect(Collectors.toList()), result.isEmpty() ? null : result.get(result.size()-1).id, false));
+								ArrayList<Notification> filtered=new ArrayList<>(result);
+								AccountSessionManager.get(accountID).filterStatusContainingObjects(filtered, n->n.status, FilterContext.NOTIFICATIONS);
+								PaginatedResponse<List<Notification>> res=new PaginatedResponse<>(filtered, result.isEmpty() ? null : result.get(result.size()-1).id);
+								callback.onSuccess(res);
 								putNotifications(result, onlyMentions, onlyPosts, maxID==null);
+								if(!onlyMentions){
+									loadingNotifications=false;
+									synchronized(pendingNotificationsCallbacks){
+										for(Callback<PaginatedResponse<List<Notification>>> cb:pendingNotificationsCallbacks){
+											cb.onSuccess(res);
+										}
+										pendingNotificationsCallbacks.clear();
+									}
+								}
 							}
 
 							@Override
 							public void onError(ErrorResponse error){
 								callback.onError(error);
+								if(!onlyMentions){
+									loadingNotifications=false;
+									synchronized(pendingNotificationsCallbacks){
+										for(Callback<PaginatedResponse<List<Notification>>> cb:pendingNotificationsCallbacks){
+											cb.onError(error);
+										}
+										pendingNotificationsCallbacks.clear();
+									}
+								}
 							}
 						})
 						.exec(accountID);

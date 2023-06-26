@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import me.grishka.appkit.imageloader.ImageLoaderViewHolder;
 import me.grishka.appkit.imageloader.requests.ImageLoaderRequest;
+import me.grishka.appkit.utils.V;
 
 public class SpoilerStatusDisplayItem extends StatusDisplayItem{
 	public final Status status;

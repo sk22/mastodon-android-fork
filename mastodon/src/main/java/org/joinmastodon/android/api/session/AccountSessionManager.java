@@ -26,17 +26,14 @@ import org.joinmastodon.android.api.requests.accounts.GetWordFilters;
 import org.joinmastodon.android.api.requests.instance.GetCustomEmojis;
 import org.joinmastodon.android.api.requests.accounts.GetOwnAccount;
 import org.joinmastodon.android.api.requests.instance.GetInstance;
-import org.joinmastodon.android.api.requests.markers.GetMarkers;
 import org.joinmastodon.android.api.requests.oauth.CreateOAuthApp;
 import org.joinmastodon.android.events.EmojiUpdatedEvent;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Application;
 import org.joinmastodon.android.model.Emoji;
 import org.joinmastodon.android.model.EmojiCategory;
-import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.LegacyFilter;
 import org.joinmastodon.android.model.Instance;
-import org.joinmastodon.android.model.Marker;
-import org.joinmastodon.android.model.Markers;
 import org.joinmastodon.android.model.Preferences;
 import org.joinmastodon.android.model.Token;
 
@@ -50,7 +47,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -282,7 +278,6 @@ public class AccountSessionManager{
 			if(now-session.filtersLastUpdated>3600_000L || session == activeSession){
 				updateSessionWordFilters(session);
 			}
-			updateSessionMarkers(session);
 		}
 		if(loadedInstances){
 			maybeUpdateCustomEmojis(domains, activeSession != null ? activeSession.domain : null);
@@ -345,7 +340,7 @@ public class AccountSessionManager{
 		new GetWordFilters()
 				.setCallback(new Callback<>(){
 					@Override
-					public void onSuccess(List<Filter> result){
+					public void onSuccess(List<LegacyFilter> result){
 						session.wordFilters=result;
 						session.filtersLastUpdated=System.currentTimeMillis();
 						writeAccountsFile();
@@ -357,21 +352,6 @@ public class AccountSessionManager{
 					}
 				})
 				.exec(session.getID());
-	}
-
-	private void updateSessionMarkers(AccountSession session) {
-		new GetMarkers(EnumSet.allOf(Marker.Type.class)).setCallback(new Callback<>() {
-			@Override
-			public void onSuccess(Markers markers) {
-				session.markers = markers;
-				writeAccountsFile();
-			}
-
-			@Override
-			public void onError(ErrorResponse error) {
-
-			}
-		}).exec(session.getID());
 	}
 
 	public void updateInstanceInfo(String domain){

@@ -12,7 +12,6 @@ import org.joinmastodon.android.events.RemoveAccountPostsEvent;
 import org.joinmastodon.android.events.StatusCreatedEvent;
 import org.joinmastodon.android.events.StatusUnpinnedEvent;
 import org.joinmastodon.android.model.Account;
-import org.joinmastodon.android.model.Filter;
 import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.displayitems.HeaderStatusDisplayItem;

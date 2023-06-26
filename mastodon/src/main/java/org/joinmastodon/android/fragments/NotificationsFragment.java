@@ -24,6 +24,8 @@ import org.joinmastodon.android.E;
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.accounts.GetFollowRequests;
+import org.joinmastodon.android.api.requests.markers.SaveMarkers;
+import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.FollowRequestHandledEvent;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.HeaderPaginationList;
@@ -31,6 +33,7 @@ import org.joinmastodon.android.ui.SimpleViewHolder;
 import org.joinmastodon.android.ui.tabs.TabLayout;
 import org.joinmastodon.android.ui.tabs.TabLayoutMediator;
 import org.joinmastodon.android.ui.utils.UiUtils;
+import org.joinmastodon.android.utils.ObjectIdComparator;
 import org.joinmastodon.android.utils.ProvidesAssistContent;
 
 import me.grishka.appkit.Nav;
@@ -49,6 +52,8 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 	private NotificationsListFragment allNotificationsFragment, mentionsFragment;
 
 	private String accountID;
+	private MenuItem markAllReadItem;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -76,7 +81,9 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
 		inflater.inflate(R.menu.notifications, menu);
 		menu.findItem(R.id.clear_notifications).setVisible(GlobalUserPreferences.enableDeleteNotifications);
-		UiUtils.enableOptionsMenuIcons(getActivity(), menu, R.id.follow_requests);
+		markAllReadItem=menu.findItem(R.id.mark_all_read);
+		updateMarkAllReadButton();
+		UiUtils.enableOptionsMenuIcons(getActivity(), menu, R.id.follow_requests, R.id.mark_all_read);
 	}
 
 	@Override
@@ -93,8 +100,24 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 				}
 			});
 			return true;
+		} else if (item.getItemId()==R.id.mark_all_read){
+			markAsRead();
 		}
 		return false;
+	}
+
+	void markAsRead(){
+		Fragment f = getFragmentForPage(pager.getCurrentItem());
+		if (f instanceof NotificationsListFragment n) {
+			n.resetUnreadBackground();
+			String id = n.getData().get(0).id;
+			if(ObjectIdComparator.INSTANCE.compare(id, n.getRealUnreadMarker())>0){
+				new SaveMarkers(null, id).exec(accountID);
+				AccountSessionManager.get(accountID).setNotificationsMarker(id, true);
+				n.setRealUnreadMarker(id);
+				if (getParentFragment() instanceof NotificationsFragment p) p.updateMarkAllReadButton();
+			}
+		}
 	}
 
 	@Override
@@ -182,6 +205,12 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 		tabLayoutMediator.attach();
 
 		return view;
+	}
+
+	void updateMarkAllReadButton(){
+		markAllReadItem.setVisible(false); // TODO: remove once it's working
+		markAllReadItem.setEnabled(!allNotificationsFragment.getData().isEmpty() &&
+				!allNotificationsFragment.getRealUnreadMarker().equals(allNotificationsFragment.getData().get(0).id));
 	}
 
 	public void refreshFollowRequestsBadge() {
