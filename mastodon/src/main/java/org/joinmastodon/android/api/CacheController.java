@@ -13,13 +13,12 @@ import org.joinmastodon.android.BuildConfig;
 import org.joinmastodon.android.MastodonApp;
 import org.joinmastodon.android.api.requests.notifications.GetNotifications;
 import org.joinmastodon.android.api.requests.timelines.GetHomeTimeline;
-import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.model.CacheablePaginatedResponse;
-import org.joinmastodon.android.model.LegacyFilter;
 import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Notification;
+import org.joinmastodon.android.model.PaginatedResponse;
 import org.joinmastodon.android.model.SearchResult;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.utils.StatusFilterPredicate;
@@ -29,7 +28,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
@@ -44,6 +42,8 @@ public class CacheController{
 	private final String accountID;
 	private DatabaseHelper db;
 	private final Runnable databaseCloseRunnable=this::closeDatabase;
+	private boolean loadingNotifications;
+	private final ArrayList<Callback<PaginatedResponse<List<Notification>>>> pendingNotificationsCallbacks=new ArrayList<>();
 
 	private static final int POST_FLAG_GAP_AFTER=1;
 
@@ -59,7 +59,6 @@ public class CacheController{
 		cancelDelayedClose();
 		databaseThread.postRunnable(()->{
 			try{
-				List<LegacyFilter> filters=AccountSessionManager.getInstance().getAccount(accountID).wordFilters.stream().filter(f->f.context.contains(FilterContext.HOME)).collect(Collectors.toList());
 				if(!forceReload){
 					SQLiteDatabase db=getOrOpenDatabase();
 					try(Cursor cursor=db.query("home_timeline", new String[]{"json", "flags"}, maxID==null ? null : "`id`<?", maxID==null ? null : new String[]{maxID}, null, null, "`time` DESC", count+"")){
@@ -67,18 +66,16 @@ public class CacheController{
 							ArrayList<Status> result=new ArrayList<>();
 							cursor.moveToFirst();
 							String newMaxID;
-							outer:
 							do{
 								Status status=MastodonAPIController.gson.fromJson(cursor.getString(0), Status.class);
 								status.postprocess();
 								int flags=cursor.getInt(1);
 								status.hasGapAfter=((flags & POST_FLAG_GAP_AFTER)!=0);
 								newMaxID=status.id;
-								if (!new StatusFilterPredicate(filters, FilterContext.HOME).test(status))
-									continue outer;
 								result.add(status);
 							}while(cursor.moveToNext());
 							String _newMaxID=newMaxID;
+							AccountSessionManager.get(accountID).filterStatuses(result, FilterContext.HOME);
 							uiHandler.post(()->callback.onSuccess(new CacheablePaginatedResponse<>(result, _newMaxID, true)));
 							return;
 						}
@@ -90,7 +87,9 @@ public class CacheController{
 						.setCallback(new Callback<>(){
 							@Override
 							public void onSuccess(List<Status> result){
-								callback.onSuccess(new CacheablePaginatedResponse<>(result.stream().filter(new StatusFilterPredicate(filters, FilterContext.HOME)).collect(Collectors.toList()), result.isEmpty() ? null : result.get(result.size()-1).id, false));
+								ArrayList<Status> filtered=new ArrayList<>(result);
+								AccountSessionManager.get(accountID).filterStatuses(filtered, FilterContext.HOME);
+								callback.onSuccess(new CacheablePaginatedResponse<>(filtered, result.isEmpty() ? null : result.get(result.size()-1).id, false));
 								putHomeTimeline(result, maxID==null);
 							}
 
@@ -127,12 +126,16 @@ public class CacheController{
 		});
 	}
 
-	public void getNotifications(String maxID, int count, boolean onlyMentions, boolean onlyPosts, boolean forceReload, Callback<CacheablePaginatedResponse<List<Notification>>> callback){
+	public void getNotifications(String maxID, int count, boolean onlyMentions, boolean onlyPosts, boolean forceReload, Callback<PaginatedResponse<List<Notification>>> callback){
 		cancelDelayedClose();
 		databaseThread.postRunnable(()->{
 			try{
-				AccountSession accountSession=AccountSessionManager.getInstance().getAccount(accountID);
-				List<LegacyFilter> filters=accountSession.wordFilters.stream().filter(f->f.context.contains(FilterContext.NOTIFICATIONS)).collect(Collectors.toList());
+				if(!onlyMentions && !onlyPosts && loadingNotifications){
+					synchronized(pendingNotificationsCallbacks){
+						pendingNotificationsCallbacks.add(callback);
+					}
+					return;
+				}
 				if(!forceReload){
 					SQLiteDatabase db=getOrOpenDatabase();
 					String table=onlyPosts ? "notifications_posts" : onlyMentions ? "notifications_mentions" : "notifications_all";
@@ -141,42 +144,56 @@ public class CacheController{
 							ArrayList<Notification> result=new ArrayList<>();
 							cursor.moveToFirst();
 							String newMaxID;
-							outer:
 							do{
 								Notification ntf=MastodonAPIController.gson.fromJson(cursor.getString(0), Notification.class);
 								ntf.postprocess();
 								newMaxID=ntf.id;
-								if(ntf.status!=null){
-									if (!new StatusFilterPredicate(filters, FilterContext.NOTIFICATIONS).test(ntf.status))
-										continue outer;
-								}
 								result.add(ntf);
 							}while(cursor.moveToNext());
 							String _newMaxID=newMaxID;
-							uiHandler.post(()->callback.onSuccess(new CacheablePaginatedResponse<>(result, _newMaxID, true)));
+							AccountSessionManager.get(accountID).filterStatusContainingObjects(result, n->n.status, FilterContext.NOTIFICATIONS);
+							uiHandler.post(()->callback.onSuccess(new PaginatedResponse<>(result, _newMaxID)));
 							return;
 						}
 					}catch(IOException x){
 						Log.w(TAG, "getNotifications: corrupted notification object in database", x);
 					}
 				}
+				if(!onlyMentions && !onlyPosts)
+					loadingNotifications=true;
 				Instance instance=AccountSessionManager.getInstance().getInstanceInfo(accountSession.domain);
 				new GetNotifications(maxID, count, onlyPosts ? EnumSet.of(Notification.Type.STATUS) : onlyMentions ? EnumSet.of(Notification.Type.MENTION): EnumSet.allOf(Notification.Type.class), instance.isAkkoma())
 						.setCallback(new Callback<>(){
 							@Override
 							public void onSuccess(List<Notification> result){
-								callback.onSuccess(new CacheablePaginatedResponse<>(result.stream().filter(ntf->{
-									if(ntf.status!=null){
-										return new StatusFilterPredicate(filters, FilterContext.NOTIFICATIONS).test(ntf.status);
+								ArrayList<Notification> filtered=new ArrayList<>(result);
+								AccountSessionManager.get(accountID).filterStatusContainingObjects(filtered, n->n.status, FilterContext.NOTIFICATIONS);
+								PaginatedResponse<List<Notification>> res=new PaginatedResponse<>(filtered, result.isEmpty() ? null : result.get(result.size()-1).id);
+								callback.onSuccess(res);
+								putNotifications(result, onlyMentions, maxID==null);
+								if(!onlyMentions){
+									loadingNotifications=false;
+									synchronized(pendingNotificationsCallbacks){
+										for(Callback<PaginatedResponse<List<Notification>>> cb:pendingNotificationsCallbacks){
+											cb.onSuccess(res);
+										}
+										pendingNotificationsCallbacks.clear();
 									}
-									return true;
-								}).collect(Collectors.toList()), result.isEmpty() ? null : result.get(result.size()-1).id, false));
-								putNotifications(result, onlyMentions, onlyPosts, maxID==null);
+								}
 							}
 
 							@Override
 							public void onError(ErrorResponse error){
 								callback.onError(error);
+								if(!onlyMentions){
+									loadingNotifications=false;
+									synchronized(pendingNotificationsCallbacks){
+										for(Callback<PaginatedResponse<List<Notification>>> cb:pendingNotificationsCallbacks){
+											cb.onError(error);
+										}
+										pendingNotificationsCallbacks.clear();
+									}
+								}
 							}
 						})
 						.exec(accountID);
@@ -328,7 +345,7 @@ public class CacheController{
 				createRecentSearchesTable(db);
 			}
 			if(oldVersion<3){
-				// MEGALODON-SPECIFIC
+				// MEGALODON
 				createPostsNotificationsTable(db);
 			}
 			if(oldVersion<4){
