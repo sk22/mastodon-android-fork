@@ -74,7 +74,6 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		E.register(this);
 		accountID=getArguments().getString("account");
 		setTitle(R.string.sk_app_name);
 		isAkkoma = getInstance().map(Instance::isAkkoma).orElse(false);
@@ -130,9 +129,6 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 		tabBarAvatar.setClipToOutline(true);
 		Account self=AccountSessionManager.getInstance().getAccount(accountID).self;
 		ViewImageLoader.loadWithoutAnimation(tabBarAvatar, null, new UrlImageLoaderRequest(self.avatar, V.dp(24), V.dp(24)));
-
-		notificationsBadge=tabBar.findViewById(R.id.notifications_badge);
-		notificationsBadge.setVisibility(View.GONE);
 
 		if(savedInstanceState==null){
 			getChildFragmentManager().beginTransaction()
