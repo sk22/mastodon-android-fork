@@ -228,6 +228,10 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 		};
 	}
 
+	public Fragment getCurrentFragment() {
+		return getFragmentForPage(pager.getCurrentItem());
+	}
+
 	@Override
 	public void onProvideAssistContent(AssistContent assistContent) {
 		callFragmentToProvideAssistContent(getFragmentForPage(pager.getCurrentItem()), assistContent);

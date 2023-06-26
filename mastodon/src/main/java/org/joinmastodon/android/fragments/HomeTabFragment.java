@@ -69,6 +69,7 @@ import me.grishka.appkit.Nav;
 import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
 import me.grishka.appkit.fragments.BaseRecyclerFragment;
+import me.grishka.appkit.fragments.LoaderFragment;
 import me.grishka.appkit.fragments.OnBackPressedListener;
 import me.grishka.appkit.utils.CubicBezierInterpolator;
 import me.grishka.appkit.utils.V;
@@ -696,6 +697,10 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 
 	public Collection<Hashtag> getHashtags() {
 		return hashtagsItems.values();
+	}
+
+	public Fragment getCurrentFragment() {
+		return fragments[pager.getCurrentItem()];
 	}
 
 	public ImageButton getFab() {

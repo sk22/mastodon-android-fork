@@ -169,7 +169,7 @@ public class HomeTimelineFragment extends StatusListFragment {
 				.exec(accountID);
 
 		if (parent.getParentFragment() instanceof HomeFragment homeFragment) {
-			homeFragment.updateNotificationBadge();
+			homeFragment.reloadNotificationsForUnreadCount();
 		}
 	}
 
