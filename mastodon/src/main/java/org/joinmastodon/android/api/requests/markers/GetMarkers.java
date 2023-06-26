@@ -1,17 +1,12 @@
 package org.joinmastodon.android.api.requests.markers;
 
-import org.joinmastodon.android.api.ApiUtils;
 import org.joinmastodon.android.api.MastodonAPIRequest;
-import org.joinmastodon.android.model.Marker;
-import org.joinmastodon.android.model.Markers;
+import org.joinmastodon.android.model.TimelineMarkers;
 
-import java.util.EnumSet;
-
-public class GetMarkers extends MastodonAPIRequest<Markers> {
-	public GetMarkers(EnumSet<Marker.Type> timelines) {
-		super(HttpMethod.GET, "/markers", Markers.class);
-		for (String type : ApiUtils.enumSetToStrings(timelines, Marker.Type.class)){
-			addQueryParameter("timeline[]", type);
-		}
+public class GetMarkers extends MastodonAPIRequest<TimelineMarkers>{
+	public GetMarkers(){
+		super(HttpMethod.GET, "/markers", TimelineMarkers.class);
+		addQueryParameter("timeline[]", "home");
+		addQueryParameter("timeline[]", "notifications");
 	}
 }
