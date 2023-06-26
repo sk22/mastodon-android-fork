@@ -1,6 +1,6 @@
 package org.joinmastodon.android.utils;
 
-import static org.joinmastodon.android.model.LegacyFilter.FilterAction.*;
+import static org.joinmastodon.android.model.FilterAction.*;
 import static org.joinmastodon.android.model.FilterContext.*;
 import static org.junit.Assert.*;
 
