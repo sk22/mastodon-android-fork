@@ -161,8 +161,8 @@ public class CacheController{
 				}
 				if(!onlyMentions && !onlyPosts)
 					loadingNotifications=true;
-				Instance instance=AccountSessionManager.getInstance().getInstanceInfo(accountSession.domain);
-				new GetNotifications(maxID, count, onlyPosts ? EnumSet.of(Notification.Type.STATUS) : onlyMentions ? EnumSet.of(Notification.Type.MENTION): EnumSet.allOf(Notification.Type.class), instance.isAkkoma())
+				boolean isAkkoma = AccountSessionManager.get(accountID).getInstance().map(Instance::isAkkoma).orElse(false);
+				new GetNotifications(maxID, count, onlyPosts ? EnumSet.of(Notification.Type.STATUS) : onlyMentions ? EnumSet.of(Notification.Type.MENTION): EnumSet.allOf(Notification.Type.class), isAkkoma)
 						.setCallback(new Callback<>(){
 							@Override
 							public void onSuccess(List<Notification> result){
@@ -170,7 +170,7 @@ public class CacheController{
 								AccountSessionManager.get(accountID).filterStatusContainingObjects(filtered, n->n.status, FilterContext.NOTIFICATIONS);
 								PaginatedResponse<List<Notification>> res=new PaginatedResponse<>(filtered, result.isEmpty() ? null : result.get(result.size()-1).id);
 								callback.onSuccess(res);
-								putNotifications(result, onlyMentions, maxID==null);
+								putNotifications(result, onlyMentions, onlyPosts, maxID==null);
 								if(!onlyMentions){
 									loadingNotifications=false;
 									synchronized(pendingNotificationsCallbacks){
