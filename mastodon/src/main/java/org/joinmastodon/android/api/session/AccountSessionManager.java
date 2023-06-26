@@ -21,12 +21,10 @@ import org.joinmastodon.android.MastodonApp;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.MastodonAPIController;
 import org.joinmastodon.android.api.PushSubscriptionManager;
-import org.joinmastodon.android.api.requests.accounts.GetPreferences;
-import org.joinmastodon.android.api.requests.accounts.GetWordFilters;
+import org.joinmastodon.android.api.requests.filters.GetLegacyFilters;
 import org.joinmastodon.android.api.requests.instance.GetCustomEmojis;
 import org.joinmastodon.android.api.requests.accounts.GetOwnAccount;
 import org.joinmastodon.android.api.requests.instance.GetInstance;
-import org.joinmastodon.android.api.requests.markers.GetMarkers;
 import org.joinmastodon.android.api.requests.oauth.CreateOAuthApp;
 import org.joinmastodon.android.events.EmojiUpdatedEvent;
 import org.joinmastodon.android.model.Account;
@@ -35,9 +33,6 @@ import org.joinmastodon.android.model.Emoji;
 import org.joinmastodon.android.model.EmojiCategory;
 import org.joinmastodon.android.model.LegacyFilter;
 import org.joinmastodon.android.model.Instance;
-import org.joinmastodon.android.model.Marker;
-import org.joinmastodon.android.model.Markers;
-import org.joinmastodon.android.model.Preferences;
 import org.joinmastodon.android.model.Token;
 
 import java.io.File;
@@ -50,7 +45,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -196,13 +190,21 @@ public class AccountSessionManager{
 		AccountSession session=getAccount(id);
 		session.getCacheController().closeDatabase();
 		MastodonApp.context.deleteDatabase(id+".db");
+		// TODO: remove when all account-specific settings moved to local preferences
 		GlobalUserPreferences.removeAccount(id);
+		MastodonApp.context.getSharedPreferences(id, 0).edit().clear().commit();
+		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N){
+			MastodonApp.context.deleteSharedPreferences(id);
+		}else{
+			new File(MastodonApp.context.getDir("shared_prefs", Context.MODE_PRIVATE), id+".xml").delete();
+		}
 		sessions.remove(id);
 		if(lastActiveAccountID.equals(id)){
 			if(sessions.isEmpty())
 				lastActiveAccountID=null;
 			else
 				lastActiveAccountID=getLoggedInAccounts().get(0).getID();
+			prefs.edit().putString("lastActiveAccount", lastActiveAccountID).apply();
 		}
 		writeAccountsFile();
 		String domain=session.domain.toLowerCase();
@@ -275,14 +277,13 @@ public class AccountSessionManager{
 		HashSet<String> domains=new HashSet<>();
 		for(AccountSession session:sessions.values()){
 			domains.add(session.domain.toLowerCase());
-			if(now-session.infoLastUpdated>24L*3600_000L || session == activeSession){
-				updateSessionPreferences(session);
+			if(session == activeSession || now-session.infoLastUpdated>24L*3600_000L){
+				session.reloadPreferences(null);
 				updateSessionLocalInfo(session);
 			}
-			if(now-session.filtersLastUpdated>3600_000L || session == activeSession){
+			if(session == activeSession || (session.getLocalPreferences().serverSideFiltersSupported && now-session.filtersLastUpdated>3600_000L)){
 				updateSessionWordFilters(session);
 			}
-			updateSessionMarkers(session);
 		}
 		if(loadedInstances){
 			maybeUpdateCustomEmojis(domains, activeSession != null ? activeSession.domain : null);
@@ -293,20 +294,12 @@ public class AccountSessionManager{
 		long now=System.currentTimeMillis();
 		for(String domain:domains){
 			Long lastUpdated=instancesLastUpdated.get(domain);
-			if(lastUpdated==null || now-lastUpdated>24L*3600_000L || domain.equals(activeDomain)){
+			if(domain.equals(activeDomain) || lastUpdated==null || now-lastUpdated>24L*3600_000L){
 				updateInstanceInfo(domain);
 			}
 		}
 	}
 
-	private void preferencesFromSource(AccountSession session, Account account) {
-		if (account != null && account.source != null && session.preferences != null) {
-			if (account.source.privacy != null)
-				session.preferences.postingDefaultVisibility = account.source.privacy;
-			if (account.source.language != null)
-				session.preferences.postingDefaultLanguage = account.source.language;
-		}
-	}
 
 	private void updateSessionLocalInfo(AccountSession session){
 		new GetOwnAccount()
@@ -315,34 +308,20 @@ public class AccountSessionManager{
 					public void onSuccess(Account result){
 						session.self=result;
 						session.infoLastUpdated=System.currentTimeMillis();
-						preferencesFromSource(session, result);
+						session.preferencesFromAccountSource(result);
 						writeAccountsFile();
 					}
 
 					@Override
-					public void onError(ErrorResponse error){}
+					public void onError(ErrorResponse error){
+
+					}
 				})
 				.exec(session.getID());
 	}
 
-	private void updateSessionPreferences(AccountSession session){
-		new GetPreferences().setCallback(new Callback<>() {
-			@Override
-			public void onSuccess(Preferences preferences) {
-				session.preferences=preferences;
-				preferencesFromSource(session, session.self);
-			}
-
-			@Override
-			public void onError(ErrorResponse error) {
-				session.preferences = new Preferences();
-				preferencesFromSource(session, session.self);
-			}
-		}).exec(session.getID());
-	}
-
 	private void updateSessionWordFilters(AccountSession session){
-		new GetWordFilters()
+		new GetLegacyFilters()
 				.setCallback(new Callback<>(){
 					@Override
 					public void onSuccess(List<LegacyFilter> result){
@@ -357,21 +336,6 @@ public class AccountSessionManager{
 					}
 				})
 				.exec(session.getID());
-	}
-
-	private void updateSessionMarkers(AccountSession session) {
-		new GetMarkers(EnumSet.allOf(Marker.Type.class)).setCallback(new Callback<>() {
-			@Override
-			public void onSuccess(Markers markers) {
-				session.markers = markers;
-				writeAccountsFile();
-			}
-
-			@Override
-			public void onError(ErrorResponse error) {
-
-			}
-		}).exec(session.getID());
 	}
 
 	public void updateInstanceInfo(String domain){
