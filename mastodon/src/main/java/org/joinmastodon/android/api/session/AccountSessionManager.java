@@ -33,7 +33,7 @@ import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Application;
 import org.joinmastodon.android.model.Emoji;
 import org.joinmastodon.android.model.EmojiCategory;
-import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.LegacyFilter;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Marker;
 import org.joinmastodon.android.model.Markers;
@@ -345,7 +345,7 @@ public class AccountSessionManager{
 		new GetWordFilters()
 				.setCallback(new Callback<>(){
 					@Override
-					public void onSuccess(List<Filter> result){
+					public void onSuccess(List<LegacyFilter> result){
 						session.wordFilters=result;
 						session.filtersLastUpdated=System.currentTimeMillis();
 						writeAccountsFile();

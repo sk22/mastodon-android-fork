@@ -17,7 +17,6 @@ import org.joinmastodon.android.api.requests.tags.GetHashtag;
 import org.joinmastodon.android.api.requests.tags.SetHashtagFollowed;
 import org.joinmastodon.android.api.requests.timelines.GetHashtagTimeline;
 import org.joinmastodon.android.events.HashtagUpdatedEvent;
-import org.joinmastodon.android.model.Filter;
 import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Hashtag;
 import org.joinmastodon.android.model.Status;

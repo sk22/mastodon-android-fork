@@ -2,6 +2,8 @@ package org.joinmastodon.android.model;
 
 import android.text.TextUtils;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.joinmastodon.android.api.ObjectValidationException;
 import org.joinmastodon.android.api.RequiredField;
 import org.parceler.Parcel;
@@ -13,17 +15,18 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 @Parcel
-public class Filter extends BaseModel{
+public class LegacyFilter extends BaseModel{
 	public String id;
 	public String phrase;
 	public String title;
-
-	@RequiredField
-	public EnumSet<FilterContext> context;
-
+	public transient EnumSet<FilterContext> context=EnumSet.noneOf(FilterContext.class);
 	public Instant expiresAt;
 	public boolean irreversible;
 	public boolean wholeWord;
+
+	@SerializedName("context")
+	private List<FilterContext> _context;
+
 	public FilterAction filterAction;
 
 	public List<FilterKeyword> keywords=new ArrayList<>();
@@ -35,14 +38,16 @@ public class Filter extends BaseModel{
 	@Override
 	public void postprocess() throws ObjectValidationException{
 		super.postprocess();
+		if(_context==null)
+			throw new ObjectValidationException();
+		for(FilterContext c:_context){
+			if(c!=null)
+				context.add(c);
+		}
 		for(FilterKeyword keyword:keywords)
 			keyword.postprocess();
 		for(FilterStatus status:statuses)
 			status.postprocess();
-	}
-
-	public boolean isActive(){
-		return expiresAt==null || expiresAt.isAfter(Instant.now());
 	}
 
 	public boolean matches(CharSequence text){
@@ -60,6 +65,10 @@ public class Filter extends BaseModel{
 
 	public boolean matches(Status status){
 		return matches(status.getContentStatus().getStrippedText());
+	}
+
+	public boolean isActive(){
+		return expiresAt==null || expiresAt.isAfter(Instant.now());
 	}
 
 	@Override

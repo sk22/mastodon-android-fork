@@ -1,6 +1,5 @@
 package org.joinmastodon.android.fragments;
 
-import android.app.assist.AssistContent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
@@ -14,7 +13,6 @@ import org.joinmastodon.android.events.StatusCountersUpdatedEvent;
 import org.joinmastodon.android.events.StatusCreatedEvent;
 import org.joinmastodon.android.events.StatusDeletedEvent;
 import org.joinmastodon.android.events.StatusUpdatedEvent;
-import org.joinmastodon.android.model.Filter;
 import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.displayitems.ExtendedFooterStatusDisplayItem;

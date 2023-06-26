@@ -7,7 +7,7 @@ import java.util.List;
 
 @Parcel
 public class FilterResult extends BaseModel {
-    public Filter filter;
+    public LegacyFilter filter;
 
     public List<String> keywordMatches;
 

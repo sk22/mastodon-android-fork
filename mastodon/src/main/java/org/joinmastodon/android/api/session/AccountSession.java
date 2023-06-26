@@ -8,7 +8,7 @@ import org.joinmastodon.android.api.PushSubscriptionManager;
 import org.joinmastodon.android.api.StatusInteractionController;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Application;
-import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.LegacyFilter;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Markers;
 import org.joinmastodon.android.model.Preferences;
@@ -32,7 +32,7 @@ public class AccountSession{
 	public PushSubscription pushSubscription;
 	public boolean needUpdatePushSettings;
 	public long filtersLastUpdated;
-	public List<Filter> wordFilters=new ArrayList<>();
+	public List<LegacyFilter> wordFilters=new ArrayList<>();
 	public String pushAccountID;
 	public Preferences preferences;
 	public AccountActivationInfo activationInfo;
