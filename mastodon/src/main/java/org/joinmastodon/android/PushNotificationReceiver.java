@@ -25,7 +25,6 @@ import org.joinmastodon.android.api.requests.statuses.SetStatusFavorited;
 import org.joinmastodon.android.api.requests.statuses.SetStatusReblogged;
 import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
-import org.joinmastodon.android.events.NotificationReceivedEvent;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Mention;
 import org.joinmastodon.android.model.NotificationAction;
@@ -90,7 +89,6 @@ public class PushNotificationReceiver extends BroadcastReceiver{
 						}
 						String accountID=account.getID();
 						PushNotification pn=AccountSessionManager.getInstance().getAccount(accountID).getPushSubscriptionManager().decryptNotification(k, p, s);
-						E.post(new NotificationReceivedEvent(accountID, pn.notificationId+""));
 						new GetNotificationByID(pn.notificationId+"")
 								.setCallback(new Callback<>(){
 									@Override

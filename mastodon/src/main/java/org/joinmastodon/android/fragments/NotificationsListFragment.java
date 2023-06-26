@@ -1,6 +1,9 @@
 package org.joinmastodon.android.fragments;
 
 import android.app.Activity;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -10,19 +13,15 @@ import com.squareup.otto.Subscribe;
 
 import org.joinmastodon.android.E;
 import org.joinmastodon.android.R;
-import org.joinmastodon.android.api.requests.markers.SaveMarkers;
-import org.joinmastodon.android.api.requests.notifications.PleromaMarkNotificationsRead;
 import org.joinmastodon.android.api.session.AccountSessionManager;
-import org.joinmastodon.android.events.AllNotificationsSeenEvent;
 import org.joinmastodon.android.events.PollUpdatedEvent;
 import org.joinmastodon.android.events.RemoveAccountPostsEvent;
 import org.joinmastodon.android.events.StatusCountersUpdatedEvent;
 import org.joinmastodon.android.model.Account;
-import org.joinmastodon.android.model.CacheablePaginatedResponse;
 import org.joinmastodon.android.model.Emoji;
 import org.joinmastodon.android.model.FilterContext;
-import org.joinmastodon.android.model.Markers;
 import org.joinmastodon.android.model.Notification;
+import org.joinmastodon.android.model.PaginatedResponse;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.displayitems.AccountCardStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.ExtendedFooterStatusDisplayItem;
@@ -34,6 +33,7 @@ import org.joinmastodon.android.ui.text.HtmlParser;
 import org.joinmastodon.android.ui.utils.DiscoverInfoBannerHelper;
 import org.joinmastodon.android.ui.utils.InsetStatusItemDecoration;
 import org.joinmastodon.android.ui.utils.UiUtils;
+import org.joinmastodon.android.utils.ObjectIdComparator;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -44,6 +44,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import me.grishka.appkit.api.SimpleCallback;
 
@@ -51,6 +52,7 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 	private boolean onlyMentions;
 	private boolean onlyPosts;
 	private String maxID;
+	private boolean reloadingFromCache;
 	private final DiscoverInfoBannerHelper bannerHelper = new DiscoverInfoBannerHelper(DiscoverInfoBannerHelper.BannerType.POST_NOTIFICATIONS);
 
 	@Override
@@ -62,6 +64,10 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		E.register(this);
+		if(savedInstanceState!=null){
+			onlyMentions=savedInstanceState.getBoolean("onlyMentions", false);
+			onlyPosts=getArguments().getBoolean("onlyPosts", false);
+		}
 	}
 
 	@Override
@@ -73,18 +79,10 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 	@Override
 	public void onAttach(Activity activity){
 		super.onAttach(activity);
-		onlyMentions=getArguments().getBoolean("onlyMentions", false);
-		onlyPosts=getArguments().getBoolean("onlyPosts", false);
+		setTitle(R.string.notifications);
 	}
 
-	@Override
-	public void onRefresh() {
-		super.onRefresh();
-		if (getParentFragment() instanceof NotificationsFragment notificationsFragment) {
-			notificationsFragment.refreshFollowRequestsBadge();
-		}
-	}
-
+	// TODO: merge from upstream
 	@Override
 	protected List<StatusDisplayItem> buildDisplayItems(Notification n){
 		Account reportTarget = n.report == null ? null : n.report.targetAccount == null ? null :
@@ -142,52 +140,35 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 	protected void doLoadData(int offset, int count){
 		AccountSessionManager.getInstance()
 				.getAccount(accountID).getCacheController()
-				.getNotifications(offset>0 ? maxID : null, count, onlyMentions, onlyPosts, refreshing, new SimpleCallback<>(this){
+				.getNotifications(offset>0 ? maxID : null, count, onlyMentions, onlyPosts, refreshing && !reloadingFromCache, new SimpleCallback<>(this){
 					@Override
-					public void onSuccess(CacheablePaginatedResponse<List<Notification>> result){
-						if (getActivity() == null) return;
-						if(refreshing)
-							relationships.clear();
+					public void onSuccess(PaginatedResponse<List<Notification>> result){
+						if(getActivity()==null)
+							return;
 						onDataLoaded(result.items.stream().filter(n->n.type!=null).collect(Collectors.toList()), !result.items.isEmpty());
-						Set<String> needRelationships=result.items.stream()
-								.filter(ntf->ntf.status==null && !relationships.containsKey(ntf.account.id))
-								.map(ntf->ntf.account.id)
-								.collect(Collectors.toSet());
-						loadRelationships(needRelationships);
 						maxID=result.maxID;
-
-						Markers markers = AccountSessionManager.getInstance().getAccount(accountID).markers;
-						if(offset==0 && !result.items.isEmpty() && !result.isFromCache() && markers != null && markers.notifications != null){
-							E.post(new AllNotificationsSeenEvent());
-							new SaveMarkers(null, result.items.get(0).id).exec(accountID);
-							AccountSessionManager.getInstance().getAccount(accountID).markers
-									.notifications.lastReadId = result.items.get(0).id;
-							AccountSessionManager.getInstance().writeAccountsFile();
-
-							if (isInstanceAkkoma()) {
-								new PleromaMarkNotificationsRead(result.items.get(0).id).exec(accountID);
-							}
-						}
+						reloadingFromCache=false;
 					}
 				});
 	}
 
 	@Override
-	protected void onRelationshipsLoaded(){
-		if(getActivity()==null)
-			return;
-		for(int i=0;i<list.getChildCount();i++){
-			RecyclerView.ViewHolder holder=list.getChildViewHolder(list.getChildAt(i));
-			if(holder instanceof AccountCardStatusDisplayItem.Holder accountHolder)
-				accountHolder.rebind();
+	protected void onShown(){
+		super.onShown();
+		if(!dataLoading){
+			if(onlyMentions){
+				refresh();
+			}else{
+				reloadingFromCache=true;
+				refresh();
+			}
 		}
 	}
 
 	@Override
-	protected void onShown(){
-		super.onShown();
-//		if(!getArguments().getBoolean("noAutoLoad") && !loaded && !dataLoading)
-//			loadData();
+	protected void onHidden(){
+		super.onHidden();
+		resetUnreadBackground();
 	}
 
 	@Override
@@ -204,6 +185,51 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 		super.onViewCreated(view, savedInstanceState);
 		list.addItemDecoration(new InsetStatusItemDecoration(this));
 		if (onlyPosts) bannerHelper.maybeAddBanner(contentWrap);
+
+		list.addItemDecoration(new RecyclerView.ItemDecoration(){
+			private Paint paint=new Paint();
+			private Rect tmpRect=new Rect();
+
+			{
+				paint.setColor(UiUtils.getThemeColor(getActivity(), R.attr.colorM3SurfaceVariant));
+			}
+
+			@Override
+			public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state){
+				if (getParentFragment() instanceof NotificationsFragment nf) {
+					if(TextUtils.isEmpty(nf.unreadMarker))
+						return;
+					for(int i=0;i<parent.getChildCount();i++){
+						View child=parent.getChildAt(i);
+						if(parent.getChildViewHolder(child) instanceof StatusDisplayItem.Holder<?> holder){
+							String itemID=holder.getItemID();
+							if(ObjectIdComparator.INSTANCE.compare(itemID, nf.unreadMarker)>0){
+								parent.getDecoratedBoundsWithMargins(child, tmpRect);
+								c.drawRect(tmpRect, paint);
+							}
+						}
+					}
+				}
+			}
+		}, 0);
+	}
+
+	@Override
+	protected List<View> getViewsForElevationEffect(){
+		if (getParentFragment() instanceof NotificationsFragment nf) {
+			ArrayList<View> views=new ArrayList<>(super.getViewsForElevationEffect());
+			views.add(nf.tabLayout);
+			return views;
+		} else {
+			return super.getViewsForElevationEffect();
+		}
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState){
+		super.onSaveInstanceState(outState);
+		outState.putBoolean("onlyMentions", onlyMentions);
+		outState.putBoolean("onlyPosts", onlyPosts);
 	}
 
 	private Notification getNotificationByID(String id){
@@ -286,6 +312,30 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 		displayItems.subList(index, lastIndex).clear();
 		adapter.notifyItemRangeRemoved(index, lastIndex-index);
 	}
+
+	@Override
+	protected boolean needDividerForExtraItem(View child, View bottomSibling, RecyclerView.ViewHolder holder, RecyclerView.ViewHolder siblingHolder){
+		return super.needDividerForExtraItem(child, bottomSibling, holder, siblingHolder) || (siblingHolder!=null && siblingHolder.getAbsoluteAdapterPosition()>=adapter.getItemCount());
+	}
+
+	void resetUnreadBackground(){
+		if (getParentFragment() instanceof NotificationsFragment nf) {
+			nf.unreadMarker=nf.realUnreadMarker;
+			list.invalidate();
+		}
+	}
+
+	@Override
+	public void onRefresh(){
+		super.onRefresh();
+		resetUnreadBackground();
+		if (getParentFragment() instanceof NotificationsFragment nf) {
+			AccountSessionManager.get(accountID).reloadNotificationsMarker(m->{
+				nf.unreadMarker=nf.realUnreadMarker=m;
+			});
+		}
+	}
+
 
 	@Override
 	public Uri getWebUri(Uri.Builder base) {

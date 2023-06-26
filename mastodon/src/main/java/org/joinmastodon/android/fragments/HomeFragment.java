@@ -130,6 +130,9 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 		Account self=AccountSessionManager.getInstance().getAccount(accountID).self;
 		ViewImageLoader.loadWithoutAnimation(tabBarAvatar, null, new UrlImageLoaderRequest(self.avatar, V.dp(24), V.dp(24)));
 
+		notificationsBadge=tabBar.findViewById(R.id.notifications_badge);
+		notificationsBadge.setVisibility(View.GONE);
+
 		if(savedInstanceState==null){
 			getChildFragmentManager().beginTransaction()
 					.add(me.grishka.appkit.R.id.fragment_wrap, homeTabFragment)

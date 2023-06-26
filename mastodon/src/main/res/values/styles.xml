@@ -108,6 +108,12 @@
 		<item name="colorButtonBackgroundSecondaryLightOnDarkDisabled">?colorGray300</item>
 		<item name="colorButtonTextSecondaryLightOnDark">?colorGray50</item>
 		<item name="colorButtonTextSecondaryLightOnDarkDisabled">?colorGray400</item>
+
+		<item name="colorFavorite">@color/favorite_selected</item>
+		<item name="colorBoost">@color/boost_selected</item>
+		<item name="colorFollow">#4746e3</item>
+		<item name="colorPoll">@color/bookmark_selected</item>
+
 		<item name="colorSensitiveOverlay">#a6ffffff</item>
 	</style>
 
@@ -211,6 +217,12 @@
 		<item name="colorButtonBackgroundSecondaryLightOnDarkDisabled">?colorGray300</item>
 		<item name="colorButtonTextSecondaryLightOnDark">?colorGray50</item>
 		<item name="colorButtonTextSecondaryLightOnDarkDisabled">?colorGray400</item>
+
+		<item name="colorFavorite">@color/favorite_selected</item>
+		<item name="colorBoost">@color/boost_selected</item>
+		<item name="colorFollow">#4746e3</item>
+		<item name="colorPoll">@color/bookmark_selected</item>
+
 		<item name="colorSensitiveOverlay">#80000000</item>
 	</style>
 
@@ -457,6 +469,30 @@
 		<item name="android:textColor">?colorM3OnSurface</item>
 	</style>
 
+	<style name="Widget.Mastodon.M3.SegmentedButtonContainer" parent="">
+		<item name="android:divider">@drawable/divider_vertical_outline</item>
+		<item name="android:showDividers">middle</item>
+		<item name="android:foreground">@drawable/fg_segmented_button_container</item>
+	</style>
+
+	<style name="Widget.Mastodon.M3.SegmentedButton" parent="">
+		<item name="android:layout_width">0dp</item>
+		<item name="android:layout_height">match_parent</item>
+		<item name="android:layout_weight">1</item>
+		<item name="android:background">@drawable/bg_segmented_button</item>
+	</style>
+
+	<style name="Widget.Mastodon.M3.SegmentedButtonText" parent="">
+		<item name="android:textAppearance">@style/m3_label_large</item>
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">match_parent</item>
+		<item name="android:layout_gravity">center_horizontal</item>
+		<item name="android:gravity">center_vertical</item>
+		<item name="android:drawablePadding">8dp</item>
+		<item name="android:textColor">@color/text_segmented_button</item>
+		<item name="android:duplicateParentState">true</item>
+	</style>
+
 	<style name="alert_title">
 		<item name="android:textColor">?android:textColorPrimary</item>
 		<item name="android:textSize">24sp</item>
@@ -498,6 +534,13 @@
 		<item name="android:fontFamily">sans-serif-medium</item>
 		<item name="android:textSize">14sp</item>
 		<item name="android:textColor">?android:textColorSecondary</item>
+	</style>
+
+	<style name="m3_label_small">
+		<item name="android:fontFamily">sans-serif-medium</item>
+		<item name="android:textSize">11dp</item>
+		<item name="android:textColor">?android:textColorSecondary</item>
+		<item name="android:lineSpacingExtra">3dp</item>
 	</style>
 
 	<style name="m3_label_medium">

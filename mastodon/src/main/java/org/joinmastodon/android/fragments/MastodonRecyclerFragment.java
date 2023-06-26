@@ -57,4 +57,8 @@ public abstract class MastodonRecyclerFragment<T> extends BaseRecyclerFragment<T
 	protected boolean wantsElevationOnScrollEffect(){
 		return true;
 	}
+
+	public List<T> getData() {
+		return data;
+	}
 }
