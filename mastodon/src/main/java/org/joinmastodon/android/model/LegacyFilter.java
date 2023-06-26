@@ -25,7 +25,7 @@ public class LegacyFilter extends BaseModel{
 	public boolean wholeWord;
 
 	@SerializedName("context")
-	private List<FilterContext> _context;
+	protected List<FilterContext> _context;
 
 	public FilterAction filterAction;
 
