@@ -100,8 +100,8 @@ public class InsetStatusItemDecoration extends RecyclerView.ItemDecoration{
 				// see InsetDummyStatusDisplayItem#onBinds
 //				if(!topSiblingInset)
 //					outRect.top=pad;
-				if(!bottomSiblingInset)
-					outRect.bottom=pad;
+//				if(!bottomSiblingInset)
+//					outRect.bottom=pad;
 			}
 		}
 	}

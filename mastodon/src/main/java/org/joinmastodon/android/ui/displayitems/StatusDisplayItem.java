@@ -254,7 +254,7 @@ public abstract class StatusDisplayItem{
 			MediaGridStatusDisplayItem mediaGrid=new MediaGridStatusDisplayItem(parentID, fragment, layout, imageAttachments, statusForContent);
 			if((flags & FLAG_MEDIA_FORCE_HIDDEN)!=0)
 				mediaGrid.sensitiveTitle=fragment.getString(R.string.media_hidden);
-			else if(statusForContent.sensitive && GlobalUserPreferences.alwaysExpandContentWarnings) // TODO: !AccountSessionManager.get(accountID).getLocalPreferences().hideSensitiveMedia)
+			else if(statusForContent.sensitive && GlobalUserPreferences.alwaysExpandContentWarnings && !AccountSessionManager.get(accountID).getLocalPreferences().hideSensitiveMedia)
 				statusForContent.sensitiveRevealed=true;
 			contentItems.add(mediaGrid);
 		}
@@ -285,13 +285,15 @@ public abstract class StatusDisplayItem{
 		int i=1;
 		boolean inset=(flags & FLAG_INSET)!=0;
 		// add inset dummy so last content item doesn't clip out of inset bounds
-		if (inset) items.add(new InsetDummyStatusDisplayItem(parentID, fragment, false));
+		if (inset) {
+			items.add(new InsetDummyStatusDisplayItem(parentID, fragment,
+					!contentItems.isEmpty() && contentItems
+							.get(contentItems.size() - 1) instanceof MediaGridStatusDisplayItem));
+		}
 		for(StatusDisplayItem item:items){
 			item.inset=inset;
 			item.index=i++;
 		}
-		// add dummy item that provides the missing top margin. workarounds, huh
-		if (inset) items.add(0, new InsetDummyStatusDisplayItem(parentID, fragment, true));
 		if(items!=contentItems && !statusForContent.spoilerRevealed){
 			for(StatusDisplayItem item:contentItems){
 				item.inset=inset;
