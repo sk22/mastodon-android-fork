@@ -547,6 +547,10 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 		if (mediaGrid != null) {
 			if (!status.sensitiveRevealed) mediaGrid.revealSensitive();
 			else mediaGrid.hideSensitive();
+		} else {
+			// media grid's methods normally change the status' state - we still want to be able
+			// to do this if the media grid is not bound, tho - so, doing it ourselves here
+			status.sensitiveRevealed = !status.sensitiveRevealed;
 		}
 		holder.rebind();
 	}
