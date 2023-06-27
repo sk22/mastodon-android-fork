@@ -58,7 +58,7 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 		E.register(this);
 		if(savedInstanceState!=null){
 			onlyMentions=savedInstanceState.getBoolean("onlyMentions", false);
-			onlyPosts=getArguments().getBoolean("onlyPosts", false);
+			onlyPosts=savedInstanceState.getBoolean("onlyPosts", false);
 		}
 	}
 
@@ -71,6 +71,8 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 	@Override
 	public void onAttach(Activity activity){
 		super.onAttach(activity);
+		onlyMentions=getArguments().getBoolean("onlyMentions", false);
+		onlyPosts=getArguments().getBoolean("onlyPosts", false);
 		setTitle(R.string.notifications);
 	}
 
