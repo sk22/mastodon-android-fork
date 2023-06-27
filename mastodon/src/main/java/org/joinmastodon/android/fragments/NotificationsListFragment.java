@@ -81,10 +81,6 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 			titleItem=null;
 		}else{
 			titleItem=new NotificationHeaderStatusDisplayItem(n.id, this, n, accountID);
-			if(n.status!=null){
-				n.status.card=null;
-				n.status.spoilerText=null;
-			}
 		}
 		if(n.status!=null){
 			int flags=titleItem==null ? 0 : (StatusDisplayItem.FLAG_NO_FOOTER | StatusDisplayItem.FLAG_INSET); // | StatusDisplayItem.FLAG_NO_HEADER);
