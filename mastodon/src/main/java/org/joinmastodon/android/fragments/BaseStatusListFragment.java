@@ -28,9 +28,11 @@ import org.joinmastodon.android.model.Poll;
 import org.joinmastodon.android.model.Relationship;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.BetterItemAnimator;
+import org.joinmastodon.android.ui.displayitems.AccountStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.ExtendedFooterStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.FooterStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.GapStatusDisplayItem;
+import org.joinmastodon.android.ui.displayitems.HashtagStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.HeaderStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.MediaGridStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.PollFooterStatusDisplayItem;
@@ -65,6 +67,7 @@ import me.grishka.appkit.imageloader.ImageLoaderRecyclerAdapter;
 import me.grishka.appkit.imageloader.ImageLoaderViewHolder;
 import me.grishka.appkit.imageloader.requests.ImageLoaderRequest;
 import me.grishka.appkit.utils.BindableViewHolder;
+import me.grishka.appkit.utils.MergeRecyclerAdapter;
 import me.grishka.appkit.utils.V;
 import me.grishka.appkit.views.UsableRecyclerView;
 
@@ -428,6 +431,9 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 	}
 
 	protected int getMainAdapterOffset(){
+		if(list.getAdapter() instanceof MergeRecyclerAdapter mergeAdapter){
+			return mergeAdapter.getPositionForAdapter(adapter);
+		}
 		return 0;
 	}
 
@@ -784,7 +790,7 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 		@NonNull
 		@Override
 		public BindableViewHolder<StatusDisplayItem> onCreateViewHolder(@NonNull ViewGroup parent, int viewType){
-			BindableViewHolder<StatusDisplayItem> holder=(BindableViewHolder<StatusDisplayItem>) StatusDisplayItem.createViewHolder(StatusDisplayItem.Type.values()[viewType & (~0x80000000)], getActivity(), parent);
+			BindableViewHolder<StatusDisplayItem> holder=(BindableViewHolder<StatusDisplayItem>) StatusDisplayItem.createViewHolder(StatusDisplayItem.Type.values()[viewType & (~0x80000000)], getActivity(), parent, BaseStatusListFragment.this);
 			onModifyItemViewHolder(holder);
 			return holder;
 		}
@@ -832,14 +838,23 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 				View bottomSibling=parent.getChildAt(i+1);
 				RecyclerView.ViewHolder holder=parent.getChildViewHolder(child);
 				RecyclerView.ViewHolder siblingHolder=parent.getChildViewHolder(bottomSibling);
-				if((holder instanceof StatusDisplayItem.Holder<?> ih && siblingHolder instanceof StatusDisplayItem.Holder<?> sh
-						&& (!ih.getItemID().equals(sh.getItemID()) || sh instanceof ExtendedFooterStatusDisplayItem.Holder) && ih.getItem().getType()!=StatusDisplayItem.Type.GAP)
-						|| needDividerForExtraItem(child, bottomSibling, holder, siblingHolder)){
-					if (holder instanceof StatusDisplayItem.Holder<?> ih &&
-							!ih.getItem().isMainStatus && ih.getItem().hasDescendantNeighbor) continue;
+				if(needDrawDivider(holder, siblingHolder)){
 					drawDivider(child, bottomSibling, holder, siblingHolder, parent, c, dividerPaint);
 				}
 			}
+		}
+
+		private boolean needDrawDivider(RecyclerView.ViewHolder holder, RecyclerView.ViewHolder siblingHolder){
+			if(needDividerForExtraItem(holder.itemView, siblingHolder.itemView, holder, siblingHolder))
+				return true;
+			if(holder instanceof StatusDisplayItem.Holder<?> ih && siblingHolder instanceof StatusDisplayItem.Holder<?> sh){
+				// Do not draw dividers between hashtag and/or account rows
+				if((ih instanceof HashtagStatusDisplayItem.Holder || ih instanceof AccountStatusDisplayItem.Holder) && (sh instanceof HashtagStatusDisplayItem.Holder || sh instanceof AccountStatusDisplayItem.Holder))
+					return false;
+				if (!ih.getItem().isMainStatus && ih.getItem().hasDescendantNeighbor) return false;
+				return (!ih.getItemID().equals(sh.getItemID()) || sh instanceof ExtendedFooterStatusDisplayItem.Holder) && ih.getItem().getType()!=StatusDisplayItem.Type.GAP;
+			}
+			return false;
 		}
 	}
 }
