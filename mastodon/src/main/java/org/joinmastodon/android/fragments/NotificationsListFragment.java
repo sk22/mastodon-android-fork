@@ -20,6 +20,7 @@ import org.joinmastodon.android.events.StatusCountersUpdatedEvent;
 import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.PaginatedResponse;
 import org.joinmastodon.android.model.Status;
+import org.joinmastodon.android.ui.displayitems.AccountCardStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.ExtendedFooterStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.FooterStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.NotificationHeaderStatusDisplayItem;
@@ -83,6 +84,12 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 			titleItem=null;
 		}else{
 			titleItem=new NotificationHeaderStatusDisplayItem(n.id, this, n, accountID);
+		}
+		if (n.type == Notification.Type.FOLLOW_REQUEST) {
+			ArrayList<StatusDisplayItem> items = new ArrayList<>();
+			items.add(titleItem);
+			items.add(new AccountCardStatusDisplayItem(n.id, this, n.account, n));
+			return items;
 		}
 		if(n.status!=null){
 			int flags=titleItem==null ? 0 : (StatusDisplayItem.FLAG_NO_FOOTER | StatusDisplayItem.FLAG_INSET); // | StatusDisplayItem.FLAG_NO_HEADER);
