@@ -48,9 +48,9 @@ public class AccountTimelineFragment extends StatusListFragment{
 
 	@Override
 	public void onAttach(Activity activity){
-		super.onAttach(activity);
 		user=Parcels.unwrap(getArguments().getParcelable("profileAccount"));
 		filter=GetAccountStatuses.Filter.valueOf(getArguments().getString("filter"));
+		super.onAttach(activity);
 	}
 
 	@Override
@@ -72,6 +72,7 @@ public class AccountTimelineFragment extends StatusListFragment{
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState){
 		super.onViewCreated(view, savedInstanceState);
+		view.setBackground(null); // prevents unnecessary overdraw
 	}
 
 	@Override
