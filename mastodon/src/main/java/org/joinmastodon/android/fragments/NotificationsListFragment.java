@@ -116,6 +116,9 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 						onDataLoaded(result.items.stream().filter(n->n.type!=null).collect(Collectors.toList()), !result.items.isEmpty());
 						maxID=result.maxID;
 						reloadingFromCache=false;
+						if (getParentFragment() instanceof NotificationsFragment nf) {
+							nf.updateMarkAllReadButton();
+						}
 					}
 				});
 	}
@@ -300,6 +303,7 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 		if (getParentFragment() instanceof NotificationsFragment nf) {
 			AccountSessionManager.get(accountID).reloadNotificationsMarker(m->{
 				nf.unreadMarker=nf.realUnreadMarker=m;
+				nf.updateMarkAllReadButton();
 			});
 		}
 	}
