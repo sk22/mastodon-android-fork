@@ -36,6 +36,7 @@ import org.joinmastodon.android.utils.ObjectIdComparator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -261,7 +262,8 @@ public class AccountSession{
 				if(s.filtered==null)
 					return false;
 				// don't hide own posts in own profile
-				if (self.id.equals(profile.id) && self.id.equals(s.account.id))
+				if (self != null && profile != null && s.account != null &&
+						Objects.equals(self.id, profile.id) && Objects.equals(self.id, s.account.id))
 					return false;
 				for(FilterResult filter:s.filtered){
 					if(filter.filter.isActive() && filter.filter.filterAction==FilterAction.HIDE)
