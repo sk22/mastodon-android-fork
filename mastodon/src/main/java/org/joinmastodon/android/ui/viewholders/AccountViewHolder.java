@@ -49,9 +49,9 @@ import me.grishka.appkit.utils.BindableViewHolder;
 import me.grishka.appkit.views.UsableRecyclerView;
 
 public class AccountViewHolder extends BindableViewHolder<AccountViewModel> implements ImageLoaderViewHolder, UsableRecyclerView.Clickable, UsableRecyclerView.LongClickable{
-	private final TextView name, username, followers, bio; // TODO verifiedLink
+	private final TextView name, username, followers, bio; // disabled in megalodon: verifiedLink
 	private final ImageView avatar;
-	private final Button button; // TODO: ProgressBarButton
+	private final ProgressBarButton button;
 	private final PopupMenu contextMenu;
 	private final View menuAnchor;
 	private final TypefaceSpan mediumSpan=new TypefaceSpan("sans-serif-medium");
@@ -81,7 +81,6 @@ public class AccountViewHolder extends BindableViewHolder<AccountViewModel> impl
 		button=findViewById(R.id.button);
 		menuAnchor=findViewById(R.id.menu_anchor);
 		followers=findViewById(R.id.followers_count);
-		// TODO
 //		verifiedLink=findViewById(R.id.verified_link);
 		bio=findViewById(R.id.bio);
 		checkbox=findViewById(R.id.checkbox);
@@ -113,15 +112,15 @@ public class AccountViewHolder extends BindableViewHolder<AccountViewModel> impl
 			followersFormatted.setSpan(mediumSpan, index, index+followersNum.length(), 0);
 		}
 		followers.setText(followersFormatted);
-		boolean hasVerifiedLink=item.verifiedLink!=null;
-//		if(!hasVerifiedLink)
-//			verifiedLink.setText(R.string.no_verified_link);
-//		else
-//			verifiedLink.setText(item.verifiedLink);
-//		verifiedLink.setCompoundDrawablesRelativeWithIntrinsicBounds(hasVerifiedLink ? R.drawable.ic_check_small_16px : R.drawable.ic_help_16px, 0, 0, 0);
-//		int tintColor=UiUtils.getThemeColor(fragment.getActivity(), hasVerifiedLink ? R.attr.colorM3Primary : R.attr.colorM3Secondary);
-//		verifiedLink.setTextColor(tintColor);
-//		verifiedLink.setCompoundDrawableTintList(ColorStateList.valueOf(tintColor));
+		/* boolean hasVerifiedLink=item.verifiedLink!=null;
+		if(!hasVerifiedLink)
+			verifiedLink.setText(R.string.no_verified_link);
+		else
+			verifiedLink.setText(item.verifiedLink);
+		verifiedLink.setCompoundDrawablesRelativeWithIntrinsicBounds(hasVerifiedLink ? R.drawable.ic_fluent_checkmark_16_filled : R.drawable.ic_help_16px, 0, 0, 0);
+		int tintColor=UiUtils.getThemeColor(fragment.getActivity(), hasVerifiedLink ? R.attr.colorM3Primary : R.attr.colorM3Secondary);
+		verifiedLink.setTextColor(tintColor);
+		verifiedLink.setCompoundDrawableTintList(ColorStateList.valueOf(tintColor)); */
 		bindRelationship();
 		if(showBio){
 			bio.setText(item.parsedBio);
