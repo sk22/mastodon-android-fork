@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
@@ -51,6 +52,7 @@ import me.grishka.appkit.views.UsableRecyclerView;
 public class AccountViewHolder extends BindableViewHolder<AccountViewModel> implements ImageLoaderViewHolder, UsableRecyclerView.Clickable, UsableRecyclerView.LongClickable{
 	private final TextView name, username, followers, bio; // disabled in megalodon: verifiedLink
 	private final ImageView avatar;
+	private final FrameLayout accessory;
 	private final ProgressBarButton button;
 	private final PopupMenu contextMenu;
 	private final View menuAnchor;
@@ -78,6 +80,7 @@ public class AccountViewHolder extends BindableViewHolder<AccountViewModel> impl
 		name=findViewById(R.id.name);
 		username=findViewById(R.id.username);
 		avatar=findViewById(R.id.avatar);
+		accessory=findViewById(R.id.accessory);
 		button=findViewById(R.id.button);
 		menuAnchor=findViewById(R.id.menu_anchor);
 		followers=findViewById(R.id.followers_count);
@@ -90,6 +93,7 @@ public class AccountViewHolder extends BindableViewHolder<AccountViewModel> impl
 		avatar.setClipToOutline(true);
 
 		button.setOnClickListener(this::onButtonClick);
+		accessory.setOnClickListener(v -> button.performClick());
 
 		contextMenu=new PopupMenu(fragment.getActivity(), menuAnchor);
 		contextMenu.inflate(R.menu.profile);
