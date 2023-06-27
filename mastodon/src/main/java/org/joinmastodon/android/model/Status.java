@@ -5,6 +5,8 @@ import static org.joinmastodon.android.api.MastodonAPIController.gsonWithoutDese
 
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -52,8 +54,6 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 	public long favouritesCount;
 	public long repliesCount;
 	public Instant editedAt;
-	// might not be provided (by older mastodon servers),
-	// so megalodon will use the locally cached filters if filtered == null
 	public List<FilterResult> filtered;
 
 	public String url;
@@ -83,6 +83,8 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 	public transient boolean translationShown;
 	private transient String strippedText;
 
+	public Status(){}
+
 	@Override
 	public void postprocess() throws ObjectValidationException{
 		super.postprocess();
@@ -105,11 +107,11 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 		if(reblog!=null)
 			reblog.postprocess();
 		if(filtered!=null)
-			for(FilterResult fr : filtered)
+			for(FilterResult fr:filtered)
 				fr.postprocess();
 
 		if (!TextUtils.isEmpty(spoilerText)) sensitive = true;
-		spoilerRevealed=GlobalUserPreferences.alwaysExpandContentWarnings || !sensitive;
+		spoilerRevealed=GlobalUserPreferences.alwaysExpandContentWarnings;
 		sensitiveRevealed=GlobalUserPreferences.alwaysExpandContentWarnings || !sensitive;
 		if (visibility.equals(StatusPrivacy.LOCAL)) localOnly = true;
 	}
@@ -133,6 +135,7 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 				", reblogsCount="+reblogsCount+
 				", favouritesCount="+favouritesCount+
 				", repliesCount="+repliesCount+
+				", editedAt="+editedAt+
 				", url='"+url+'\''+
 				", inReplyToId='"+inReplyToId+'\''+
 				", inReplyToAccountId='"+inReplyToAccountId+'\''+
@@ -141,11 +144,15 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 				", card="+card+
 				", language='"+language+'\''+
 				", text='"+text+'\''+
+				", filtered="+filtered+
 				", favourited="+favourited+
 				", reblogged="+reblogged+
 				", muted="+muted+
 				", bookmarked="+bookmarked+
 				", pinned="+pinned+
+				", spoilerRevealed="+spoilerRevealed+
+				", hasGapAfter="+hasGapAfter+
+				", strippedText='"+strippedText+'\''+
 				'}';
 	}
 

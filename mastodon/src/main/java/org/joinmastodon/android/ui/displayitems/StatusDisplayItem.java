@@ -226,7 +226,6 @@ public abstract class StatusDisplayItem{
 			SpoilerStatusDisplayItem spoilerItem=new SpoilerStatusDisplayItem(parentID, fragment, null, status, statusForContent, Type.SPOILER);
 			items.add(spoilerItem);
 			contentItems=spoilerItem.contentItems;
-			status.spoilerRevealed=false;
 		}else{
 			contentItems=items;
 		}
