@@ -161,13 +161,21 @@ public class NotificationHeaderStatusDisplayItem extends StatusDisplayItem{
 				case POLL -> R.attr.colorPoll;
 				default -> android.R.attr.colorAccent;
 			})));
-			itemView.setBackgroundResource(item.notification.type != Notification.Type.POLL ?
+			itemView.setBackgroundResource(item.notification.type != Notification.Type.POLL
+					&& item.notification.type != Notification.Type.REPORT ?
 					selectableItemBackground : 0);
 			itemView.setClickable(item.notification.type != Notification.Type.POLL);
 		}
 
 		public void onItemClick(View v) {
-			UiUtils.showFragmentForNotification(item.parentFragment.getContext(), item.notification, item.accountID, null);
+			if (item.notification.type == Notification.Type.REPORT) {
+				UiUtils.showFragmentForNotification(item.parentFragment.getContext(), item.notification, item.accountID, null);
+				return;
+			}
+			Bundle args=new Bundle();
+			args.putString("account", item.accountID);
+			args.putParcelable("profileAccount", Parcels.wrap(item.notification.account));
+			Nav.go(item.parentFragment.getActivity(), ProfileFragment.class, args);
 		}
 	}
 }
