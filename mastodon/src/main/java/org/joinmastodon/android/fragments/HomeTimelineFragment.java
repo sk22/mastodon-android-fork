@@ -16,6 +16,7 @@ import org.joinmastodon.android.events.StatusCreatedEvent;
 import org.joinmastodon.android.model.CacheablePaginatedResponse;
 import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Status;
+import org.joinmastodon.android.model.TimelineMarkers;
 import org.joinmastodon.android.ui.displayitems.GapStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.StatusDisplayItem;
 import org.joinmastodon.android.utils.StatusFilterPredicate;
@@ -110,7 +111,7 @@ public class HomeTimelineFragment extends StatusListFragment {
 				new SaveMarkers(topPostID, null)
 						.setCallback(new Callback<>(){
 							@Override
-							public void onSuccess(SaveMarkers.Response result){
+							public void onSuccess(TimelineMarkers result){
 							}
 
 							@Override
@@ -151,8 +152,7 @@ public class HomeTimelineFragment extends StatusListFragment {
 							result.get(result.size()-1).hasGapAfter=true;
 							toAdd=result;
 						}
-						StatusFilterPredicate filterPredicate=new StatusFilterPredicate(accountID, getFilterContext());
-						toAdd=toAdd.stream().filter(filterPredicate).collect(Collectors.toList());
+						AccountSessionManager.get(accountID).filterStatuses(toAdd, getFilterContext());
 						if(!toAdd.isEmpty()){
 							prependItems(toAdd, true);
 							if (parent != null && GlobalUserPreferences.showNewPostsButton) parent.showNewPostsButton();
@@ -239,6 +239,7 @@ public class HomeTimelineFragment extends StatusListFragment {
 									insertedPosts.add(s);
 								}
 							}
+							AccountSessionManager.get(accountID).filterStatuses(insertedPosts, getFilterContext());
 							if(targetList.isEmpty()){
 								// oops. We didn't add new posts, but at least we know there are none.
 								adapter.notifyItemRemoved(getMainAdapterOffset()+gapPos);

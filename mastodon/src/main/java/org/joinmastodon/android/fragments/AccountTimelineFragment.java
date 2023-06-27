@@ -55,20 +55,15 @@ public class AccountTimelineFragment extends StatusListFragment{
 
 	@Override
 	protected void doLoadData(int offset, int count){
-		if(user==null) // TODO figure out why this happens
-			return;
 		currentRequest=new GetAccountStatuses(user.id, offset>0 ? getMaxID() : null, null, count, filter)
 				.setCallback(new SimpleCallback<>(this){
 					@Override
 					public void onSuccess(List<Status> result){
 						if(getActivity()==null) return;
 						AccountSessionManager asm = AccountSessionManager.getInstance();
-						result=result.stream().filter(status -> {
-							// don't hide own posts in own profile
-							if (asm.isSelf(accountID, user) && asm.isSelf(accountID, status.account)) return true;
-							else return new StatusFilterPredicate(accountID, getFilterContext()).test(status);
-						}).collect(Collectors.toList());
-						onDataLoaded(result, !result.isEmpty());
+						boolean empty=result.isEmpty();
+						AccountSessionManager.get(accountID).filterStatuses(result, getFilterContext(), user);
+						onDataLoaded(result, !empty);
 					}
 				})
 				.exec(accountID);

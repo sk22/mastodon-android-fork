@@ -239,10 +239,19 @@ public class AccountSession{
 	}
 
 	public void filterStatuses(List<Status> statuses, FilterContext context){
-		filterStatusContainingObjects(statuses, Function.identity(), context);
+		filterStatuses(statuses, context, null);
+	}
+
+	public void filterStatuses(List<Status> statuses, FilterContext context, Account profile){
+		filterStatusContainingObjects(statuses, Function.identity(), context, profile);
 	}
 
 	public <T> void filterStatusContainingObjects(List<T> objects, Function<T, Status> extractor, FilterContext context){
+		filterStatusContainingObjects(objects, extractor, context, null);
+	}
+
+	public <T> void filterStatusContainingObjects(List<T> objects, Function<T, Status> extractor, FilterContext context, Account profile){
+		AccountSessionManager asm = AccountSessionManager.getInstance();
 		if(getLocalPreferences().serverSideFiltersSupported){
 			// Even with server-side filters, clients are expected to remove statuses that match a filter that hides them
 			objects.removeIf(o->{
@@ -250,6 +259,9 @@ public class AccountSession{
 				if(s==null)
 					return false;
 				if(s.filtered==null)
+					return false;
+				// don't hide own posts in own profile
+				if (self.id.equals(profile.id) && self.id.equals(s.account.id))
 					return false;
 				for(FilterResult filter:s.filtered){
 					if(filter.filter.isActive() && filter.filter.filterAction==FilterAction.HIDE)
@@ -272,6 +284,9 @@ public class AccountSession{
 		objects.removeIf(o->{
 			Status s=extractor.apply(o);
 			if(s==null)
+				return false;
+			// don't hide own posts in own profile
+			if (self.id.equals(profile.id) && self.id.equals(s.account.id))
 				return false;
 			for(LegacyFilter filter:wordFilters){
 				if(filter.context.contains(context) && filter.matches(s) && filter.isActive())
