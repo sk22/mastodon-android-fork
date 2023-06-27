@@ -37,8 +37,7 @@ import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.utils.ObjectIdComparator;
 import org.joinmastodon.android.utils.ProvidesAssistContent;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 import me.grishka.appkit.Nav;
 import me.grishka.appkit.api.Callback;
@@ -134,7 +133,7 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 
 	public void updateMarkAllReadButton(){
 		markAllReadItem.setVisible(!allNotificationsFragment.getData().isEmpty() &&
-				!realUnreadMarker.equals(allNotificationsFragment.getData().get(0).id));
+				!Objects.equals(realUnreadMarker, allNotificationsFragment.getData().get(0).id));
 	}
 
 	@Override

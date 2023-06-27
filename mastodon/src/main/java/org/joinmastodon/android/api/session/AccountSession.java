@@ -40,6 +40,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
@@ -252,7 +253,9 @@ public class AccountSession{
 	}
 
 	public <T> void filterStatusContainingObjects(List<T> objects, Function<T, Status> extractor, FilterContext context, Account profile){
-		AccountSessionManager asm = AccountSessionManager.getInstance();
+		Predicate<Status> statusIsOnOwnProfile = (s) -> self != null && profile != null && s.account != null
+				&& Objects.equals(self.id, profile.id) && Objects.equals(self.id, s.account.id);
+
 		if(getLocalPreferences().serverSideFiltersSupported){
 			// Even with server-side filters, clients are expected to remove statuses that match a filter that hides them
 			objects.removeIf(o->{
@@ -262,8 +265,7 @@ public class AccountSession{
 				if(s.filtered==null)
 					return false;
 				// don't hide own posts in own profile
-				if (self != null && profile != null && s.account != null &&
-						Objects.equals(self.id, profile.id) && Objects.equals(self.id, s.account.id))
+				if (statusIsOnOwnProfile.test(s))
 					return false;
 				for(FilterResult filter:s.filtered){
 					if(filter.filter.isActive() && filter.filter.filterAction==FilterAction.HIDE)
@@ -288,7 +290,7 @@ public class AccountSession{
 			if(s==null)
 				return false;
 			// don't hide own posts in own profile
-			if (self.id.equals(profile.id) && self.id.equals(s.account.id))
+			if (statusIsOnOwnProfile.test(s))
 				return false;
 			for(LegacyFilter filter:wordFilters){
 				if(filter.context.contains(context) && filter.matches(s) && filter.isActive())
