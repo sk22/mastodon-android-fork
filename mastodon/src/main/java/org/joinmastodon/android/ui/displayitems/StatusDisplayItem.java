@@ -110,12 +110,12 @@ public abstract class StatusDisplayItem{
 			case FILE -> new FileStatusDisplayItem.Holder(activity, parent);
 			case SPOILER, FILTER_SPOILER -> new SpoilerStatusDisplayItem.Holder(activity, parent, type);
 			case SECTION_HEADER -> null; // new SectionHeaderStatusDisplayItem.Holder(activity, parent);
-			case NOTIFICATION_HEADER -> null; // new NotificationHeaderStatusDisplayItem.Holder(activity, parent);
+			case NOTIFICATION_HEADER -> new NotificationHeaderStatusDisplayItem.Holder(activity, parent);
 			case DUMMY -> new InsetDummyStatusDisplayItem.Holder(activity);
 		};
 	}
 
-	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, Notification notification, boolean disableTranslate, FilterContext filterContext) {
+	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean addFooter, boolean disableTranslate, FilterContext filterContext) {
 		int flags=0;
 		if(inset)
 			flags|=FLAG_INSET;
@@ -123,7 +123,7 @@ public abstract class StatusDisplayItem{
 			flags|=FLAG_NO_FOOTER;
 		if (disableTranslate)
 			flags|=FLAG_NO_TRANSLATE;
-		return buildItems(fragment, status, accountID, parentObject, knownAccounts, null, filterContext, flags);
+		return buildItems(fragment, status, accountID, parentObject, knownAccounts, filterContext, flags);
 	}
 
 	public static ReblogOrReplyLineStatusDisplayItem buildReplyLine(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parent, Account account, boolean threadReply) {
@@ -141,7 +141,7 @@ public abstract class StatusDisplayItem{
 		);
 	}
 
-	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, Notification notification, FilterContext filterContext, int flags){
+	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, FilterContext filterContext, int flags){
 		String parentID=parentObject.getID();
 		ArrayList<StatusDisplayItem> items=new ArrayList<>();
 		Status statusForContent=status.getContentStatus();
@@ -205,7 +205,7 @@ public abstract class StatusDisplayItem{
 			if((flags & FLAG_CHECKABLE)!=0)
 				items.add(header=new CheckableHeaderStatusDisplayItem(parentID, statusForContent.account, statusForContent.createdAt, fragment, accountID, statusForContent, null));
 			else
-				items.add(header=new HeaderStatusDisplayItem(parentID, statusForContent.account, statusForContent.createdAt, fragment, accountID, statusForContent, null, notification, scheduledStatus));
+				items.add(header=new HeaderStatusDisplayItem(parentID, statusForContent.account, statusForContent.createdAt, fragment, accountID, statusForContent, null, null, scheduledStatus));
 		}
 
 		boolean filtered=false;

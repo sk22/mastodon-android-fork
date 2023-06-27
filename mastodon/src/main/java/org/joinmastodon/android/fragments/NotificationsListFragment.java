@@ -17,19 +17,13 @@ import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.PollUpdatedEvent;
 import org.joinmastodon.android.events.RemoveAccountPostsEvent;
 import org.joinmastodon.android.events.StatusCountersUpdatedEvent;
-import org.joinmastodon.android.model.Account;
-import org.joinmastodon.android.model.Emoji;
-import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.PaginatedResponse;
 import org.joinmastodon.android.model.Status;
-import org.joinmastodon.android.ui.displayitems.AccountCardStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.ExtendedFooterStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.FooterStatusDisplayItem;
-import org.joinmastodon.android.ui.displayitems.HeaderStatusDisplayItem;
+import org.joinmastodon.android.ui.displayitems.NotificationHeaderStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.StatusDisplayItem;
-import org.joinmastodon.android.ui.displayitems.TextStatusDisplayItem;
-import org.joinmastodon.android.ui.text.HtmlParser;
 import org.joinmastodon.android.ui.utils.DiscoverInfoBannerHelper;
 import org.joinmastodon.android.ui.utils.InsetStatusItemDecoration;
 import org.joinmastodon.android.ui.utils.UiUtils;
@@ -37,10 +31,8 @@ import org.joinmastodon.android.utils.ObjectIdComparator;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -82,50 +74,30 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 		setTitle(R.string.notifications);
 	}
 
-	// TODO: merge from upstream
 	@Override
 	protected List<StatusDisplayItem> buildDisplayItems(Notification n){
-		Account reportTarget = n.report == null ? null : n.report.targetAccount == null ? null :
-				n.report.targetAccount;
-		Emoji emoji = new Emoji();
-		if(n.emojiUrl!=null){
-			emoji.shortcode=n.emoji.substring(1,n.emoji.length()-1);
-			emoji.url=n.emojiUrl;
-			emoji.staticUrl=n.emojiUrl;
-			emoji.visibleInPicker=false;
+		NotificationHeaderStatusDisplayItem titleItem;
+		if(n.type==Notification.Type.MENTION || n.type==Notification.Type.STATUS){
+			titleItem=null;
+		}else{
+			titleItem=new NotificationHeaderStatusDisplayItem(n.id, this, n, accountID);
+			if(n.status!=null){
+				n.status.card=null;
+				n.status.spoilerText=null;
+			}
 		}
-		String extraText=switch(n.type){
-			case FOLLOW -> getString(R.string.user_followed_you);
-			case FOLLOW_REQUEST -> getString(R.string.user_sent_follow_request);
-			case MENTION, STATUS -> null;
-			case REBLOG -> getString(R.string.notification_boosted);
-			case FAVORITE -> getString(R.string.user_favorited);
-			case POLL -> getString(R.string.poll_ended);
-			case UPDATE -> getString(R.string.sk_post_edited);
-			case SIGN_UP -> getString(R.string.sk_signed_up);
-			case REPORT -> getString(R.string.sk_reported);
-			case REACTION, PLEROMA_EMOJI_REACTION ->
-					n.emoji != null ? getString(R.string.sk_reacted_with, n.emoji) : getString(R.string.sk_reacted);
-		};
-		HeaderStatusDisplayItem titleItem=extraText!=null ? new HeaderStatusDisplayItem(n.id, n.account, n.createdAt, this, accountID, n.status, n.emojiUrl!=null ? HtmlParser.parseCustomEmoji(extraText, Collections.singletonList(emoji)) : extraText, n, null) : null;
 		if(n.status!=null){
-			ArrayList<StatusDisplayItem> items=StatusDisplayItem.buildItems(this, n.status, accountID, n, knownAccounts, titleItem!=null, titleItem==null, n, false, FilterContext.NOTIFICATIONS);
+			int flags=titleItem==null ? 0 : (StatusDisplayItem.FLAG_NO_FOOTER | StatusDisplayItem.FLAG_INSET); // | StatusDisplayItem.FLAG_NO_HEADER);
+			ArrayList<StatusDisplayItem> items=StatusDisplayItem.buildItems(this, n.status, accountID, n, knownAccounts, null, flags);
 			if(titleItem!=null)
 				items.add(0, titleItem);
 			return items;
 		}else if(titleItem!=null){
-			AccountCardStatusDisplayItem card=new AccountCardStatusDisplayItem(n.id, this,
-					reportTarget != null ? reportTarget : n.account, n);
-			TextStatusDisplayItem text = n.report != null && !TextUtils.isEmpty(n.report.comment) ?
-					new TextStatusDisplayItem(n.id, n.report.comment, this,
-							Status.ofFake(n.id, n.report.comment, n.createdAt), true) :
-					null;
-			return text == null ? Arrays.asList(titleItem, card) : Arrays.asList(titleItem, text, card);
+			return Collections.singletonList(titleItem);
 		}else{
 			return Collections.emptyList();
 		}
 	}
-
 	@Override
 	protected void addAccountToKnown(Notification s){
 		if(!knownAccounts.containsKey(s.account.id))
