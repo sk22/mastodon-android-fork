@@ -122,8 +122,8 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 					public void onSuccess(PaginatedResponse<List<Notification>> result){
 						if(getActivity()==null)
 							return;
-						onDataLoaded(result.items.stream().filter(n->n.type!=null).collect(Collectors.toList()), !result.items.isEmpty());
 						maxID=result.maxID;
+						onDataLoaded(result.items.stream().filter(n->n.type!=null).collect(Collectors.toList()), !result.items.isEmpty());
 						reloadingFromCache=false;
 						if (getParentFragment() instanceof NotificationsFragment nf) {
 							nf.updateMarkAllReadButton();
