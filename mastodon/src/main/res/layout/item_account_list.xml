@@ -10,7 +10,7 @@
 		android:layout_width="42sp"
 		android:layout_height="42sp"
 		android:layout_marginStart="16dp"
-		android:layout_marginEnd="10dp"
+		android:layout_marginEnd="12dp"
 		android:layout_marginVertical="8dp"
 		android:importantForAccessibility="no"
 		tools:src="#0f0"/>
@@ -97,9 +97,9 @@
 			android:layout_width="wrap_content"
 			android:layout_height="48dp"
 			android:layout_gravity="center_vertical"
-			android:paddingHorizontal="10dp"
-			android:minWidth="96dp"
-			android:maxWidth="150dp"
+			android:paddingHorizontal="12dp"
+			android:minWidth="100dp"
+			android:maxWidth="170dp"
 			style="@style/Widget.Mastodon.M3.Button.Filled"
 			tools:text="Follow back"/>
 		<ProgressBar
