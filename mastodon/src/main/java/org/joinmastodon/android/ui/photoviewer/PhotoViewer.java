@@ -19,7 +19,6 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.opengl.Visibility;
 import android.os.Build;
 import android.os.Environment;
 import android.os.SystemClock;
@@ -275,6 +274,10 @@ public class PhotoViewer implements ZoomPanView.Listener{
 		});
 	}
 
+	public void removeMenu(){
+		toolbar.getMenu().clear();
+	}
+
 	@Override
 	public void onTransitionAnimationUpdate(float translateX, float translateY, float scale){
 		listener.setTransitioningViewTransform(translateX, translateY, scale);
@@ -391,7 +394,6 @@ public class PhotoViewer implements ZoomPanView.Listener{
 		currentIndex=index;
 		Attachment att=attachments.get(index);
 		imageDescriptionButton.setVisible(att.description != null && !att.description.isEmpty());
-		toolbar.invalidate();
 		V.setVisibilityAnimated(videoControls, att.type!=Attachment.Type.IMAGE ? View.VISIBLE : View.GONE);
 		if(att.type==Attachment.Type.VIDEO){
 			videoSeekBar.setSecondaryProgress(0);
@@ -822,11 +824,11 @@ public class PhotoViewer implements ZoomPanView.Listener{
 				incKeepScreenOn();
 				keepingScreenOn=true;
 			}
-			if(getAbsoluteAdapterPosition()==currentIndex){
-				player.start();
-				startUpdatingVideoPosition(player);
-				hideUiDelayed();
-			}
+				if(getAbsoluteAdapterPosition()==currentIndex){
+					player.start();
+					startUpdatingVideoPosition(player);
+					hideUiDelayed();
+				}
 			if (item.type == Attachment.Type.GIFV) {
 				keepingScreenOn=false;
 				player.setLooping(true);
