@@ -5,6 +5,7 @@ import android.net.Uri;
 
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.statuses.GetBookmarkedStatuses;
+import org.joinmastodon.android.events.RemoveAccountPostsEvent;
 import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.HeaderPaginationList;
 import org.joinmastodon.android.model.Status;
@@ -36,6 +37,11 @@ public class BookmarkedStatusListFragment extends StatusListFragment{
 					}
 				})
 				.exec(accountID);
+	}
+
+	@Override
+	protected void onRemoveAccountPostsEvent(RemoveAccountPostsEvent ev){
+		// no-op
 	}
 
 	@Override
