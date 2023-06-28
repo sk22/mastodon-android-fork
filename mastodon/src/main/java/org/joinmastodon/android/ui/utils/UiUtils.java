@@ -37,6 +37,7 @@ import android.provider.OpenableColumns;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.TypefaceSpan;
 import android.util.Log;
 import android.util.Pair;
 import android.view.HapticFeedbackConstants;
@@ -112,6 +113,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -120,6 +123,8 @@ import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import androidx.annotation.AttrRes;
@@ -1450,5 +1455,53 @@ public class UiUtils {
 			return String.format("%d:%02d:%02d", seconds/3600, seconds%3600/60, seconds%60);
 		else
 			return String.format("%d:%02d", seconds/60, seconds%60);
+	}
+
+
+	private static final Pattern formatStringSubstitutionPattern = Pattern.compile("%(?:(\\d)\\$)?s");
+	public static CharSequence generateFormattedString(String format, CharSequence... args) {
+		if (format.startsWith(" ")) format = format.substring(1);
+		if (format.endsWith(" ")) format = format.substring(0, format.length() - 1);
+
+		Map<Integer, Integer> formatIndices = new HashMap<>();
+		String[] partsInBetween = formatStringSubstitutionPattern.split(format, -1);
+		SpannableStringBuilder text = new SpannableStringBuilder();
+
+		Matcher m = formatStringSubstitutionPattern.matcher(format);
+		int argsMaxIndex = 0;
+		while (m.find()) {
+			String group = m.groupCount() < 1 ? null : m.group(1);
+			int index = formatIndices.size();
+			try { index = Integer.parseInt(group); }
+			catch (Exception ignored) {}
+			formatIndices.put(index, argsMaxIndex++);
+		}
+
+		int formatOffset = formatIndices.size() > 0 ? Collections.min(formatIndices.keySet()) : 0;
+		int argsOffset = 0;
+
+		// say, string is just 'reacted with %s', but there are two arguments
+		if (args.length > argsMaxIndex) {
+			text.append(args[0], new TypefaceSpan("sans-serif-medium"), 0).append(' ');
+			argsOffset++;
+		}
+
+		// join the args with the parts in between
+		for (int i = 0; i < partsInBetween.length; i++) {
+			text.append(partsInBetween[i]);
+			Integer pos = formatIndices.get(i + formatOffset);
+			if (pos != null && pos < args.length) {
+				text.append(args[pos + argsOffset], new TypefaceSpan("sans-serif-medium"), 0);
+			}
+		}
+
+		// add additional args to the end of the string
+		if (args.length > argsMaxIndex + 1) {
+			for (int i = argsMaxIndex + 1; i < args.length; i++) {
+				text.append(' ').append(args[i], new TypefaceSpan("sans-serif-medium"), 0);
+			}
+		}
+
+		return text;
 	}
 }

@@ -103,4 +103,95 @@ public class UiUtilsTest {
 				"somewhere.else"
 		));
 	}
+
+	private final String[] args = new String[] { "Megalodon", "♡" };
+
+	private String gen(String format, CharSequence... args) {
+		return UiUtils.generateFormattedString(format, args).toString();
+	}
+	@Test
+	public void generateFormattedString() {
+		assertEquals(
+				"ordered substitution",
+				"Megalodon reacted with ♡",
+				gen("%s reacted with %s", args)
+		);
+
+		assertEquals(
+				"1 2 3 4 5",
+				gen("%s %s %s %s %s", "1", "2", "3", "4", "5")
+		);
+
+		assertEquals(
+				"indexed substitution",
+				"with ♡ was reacted by Megalodon",
+				gen("with %2$s was reacted by %1$s", args)
+		);
+
+		assertEquals(
+				"indexed substitution, in order",
+				"Megalodon reacted with ♡",
+				gen("%1$s reacted with %2$s", args)
+		);
+
+		assertEquals(
+				"indexed substitution, 0-based",
+				"Megalodon reacted with ♡",
+				gen("%0$s reacted with %1$s", args)
+		);
+
+		assertEquals(
+				"indexed substitution, 5 items",
+				"5 4 3 2 1",
+				gen("%5$s %4$s %3$s %2$s %1$s", "1", "2", "3", "4", "5")
+		);
+
+		assertEquals(
+				"one argument missing",
+				"Megalodon reacted with ♡",
+				gen("reacted with %s", args)
+		);
+
+		assertEquals(
+				"multiple arguments missing",
+				"Megalodon reacted with ♡",
+				gen("reacted with", args)
+		);
+
+		assertEquals(
+				"multiple arguments missing, numbers in expeced positions",
+				"1 2 x 3 4 5",
+				gen("%s x %s", "1", "2", "3", "4", "5")
+		);
+
+		assertEquals(
+				"one leading and trailing space",
+				"Megalodon reacted with ♡",
+				gen(" reacted with ", args)
+		);
+
+		assertEquals(
+				"multiple leading and trailing spaces",
+				"Megalodon  reacted  with  ♡",
+				gen("  reacted  with  ", args)
+		);
+
+		assertEquals(
+				"invalid format produces expected invalid result",
+				"Megalodon reacted with % s ♡",
+				gen("reacted with % s", args)
+		);
+
+		assertEquals(
+				"plain string as format, all arguments get added",
+				"a x b c",
+				gen("x", new String[] { "a", "b", "c" })
+		);
+
+		assertEquals("empty input produces empty output", "", gen(""));
+
+		// not supported:
+//		assertEquals("a b a", gen("%1$s %2$s %2$s %1$s", new String[] { "a", "b", "c" }));
+//		assertEquals("x", gen("%s %1$s %2$s %1$s %s", new String[] { "a", "b", "c" }));
+	}
 }

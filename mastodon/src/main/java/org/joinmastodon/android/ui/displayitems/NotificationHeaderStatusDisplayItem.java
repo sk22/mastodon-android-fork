@@ -1,15 +1,17 @@
 package org.joinmastodon.android.ui.displayitems;
 
 import static org.joinmastodon.android.MastodonApp.context;
+import static org.joinmastodon.android.model.Notification.Type.PLEROMA_EMOJI_REACTION;
+import static org.joinmastodon.android.ui.utils.UiUtils.generateFormattedString;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.style.TypefaceSpan;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,13 +22,15 @@ import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.fragments.ProfileFragment;
-import org.joinmastodon.android.model.Account;
+import org.joinmastodon.android.model.Emoji;
 import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.ui.OutlineProviders;
 import org.joinmastodon.android.ui.text.HtmlParser;
 import org.joinmastodon.android.ui.utils.CustomEmojiHelper;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.parceler.Parcels;
+
+import java.util.Collections;
 
 import me.grishka.appkit.Nav;
 import me.grishka.appkit.imageloader.ImageLoaderViewHolder;
@@ -37,9 +41,9 @@ import me.grishka.appkit.utils.V;
 public class NotificationHeaderStatusDisplayItem extends StatusDisplayItem{
 	public final Notification notification;
 	private ImageLoaderRequest avaRequest;
-	private String accountID;
-	private CustomEmojiHelper emojiHelper=new CustomEmojiHelper();
-	private CharSequence text;
+	private final String accountID;
+	private final CustomEmojiHelper emojiHelper=new CustomEmojiHelper();
+	private final CharSequence text;
 
 	public NotificationHeaderStatusDisplayItem(String parentID, BaseStatusListFragment parentFragment, Notification notification, String accountID){
 		super(parentID, parentFragment);
@@ -52,8 +56,7 @@ public class NotificationHeaderStatusDisplayItem extends StatusDisplayItem{
 			avaRequest=new UrlImageLoaderRequest(GlobalUserPreferences.playGifs ? notification.account.avatar : notification.account.avatarStatic, V.dp(50), V.dp(50));
 			SpannableStringBuilder parsedName=new SpannableStringBuilder(notification.account.displayName);
 			HtmlParser.parseCustomEmoji(parsedName, notification.account.emojis);
-			emojiHelper.setText(parsedName);
-			String[] parts=parentFragment.getString(switch(notification.type){
+			String str = parentFragment.getString(switch(notification.type){
 				case FOLLOW -> R.string.user_followed_you;
 				case FOLLOW_REQUEST -> R.string.user_sent_follow_request;
 				case REBLOG -> R.string.notification_boosted;
@@ -63,22 +66,23 @@ public class NotificationHeaderStatusDisplayItem extends StatusDisplayItem{
 				case SIGN_UP -> R.string.sk_signed_up;
 				case REPORT -> R.string.sk_reported;
 				case REACTION, PLEROMA_EMOJI_REACTION ->
-						notification.emoji != null ? R.string.sk_reacted_with : R.string.sk_reacted;
+						!TextUtils.isEmpty(notification.emoji) ? R.string.sk_reacted_with : R.string.sk_reacted;
 				default -> throw new IllegalStateException("Unexpected value: "+notification.type);
-			}).split("%s", 4);
-			SpannableStringBuilder text=new SpannableStringBuilder();
-			if(parts.length>1 && !TextUtils.isEmpty(parts[0]))
-				text.append(parts[0]);
-			text.append(parsedName, new TypefaceSpan("sans-serif-medium"), 0);
+			});
 
-			if(parts.length==1){
-				text.append(parts[0]);
-			}else if(!TextUtils.isEmpty(parts[1]) && parts.length < 3){
-				text.append(parts[1]);
-			} else if (parts.length == 3 && notification.emoji != null) {
-				text.append(parts[1]).append(notification.emoji);
+			if (!TextUtils.isEmpty(notification.emoji)) {
+				SpannableStringBuilder emoji = new SpannableStringBuilder(notification.emoji);
+				if (!TextUtils.isEmpty(notification.emojiUrl)) {
+					HtmlParser.parseCustomEmoji(emoji, Collections.singletonList(new Emoji(
+							notification.emoji, notification.emojiUrl, notification.emojiUrl
+					)));
+				}
+				this.text = generateFormattedString(str, parsedName, emoji);
+			} else {
+				this.text = generateFormattedString(str, parsedName);
 			}
-			this.text=text;
+
+			emojiHelper.setText(text);
 		}
 	}
 
