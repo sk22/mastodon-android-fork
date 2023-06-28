@@ -450,6 +450,11 @@
 		<item name="android:paddingRight">24dp</item>
 	</style>
 
+	<style name="Widget.Mastodon.M3.Button.Tonal.Error">
+		<item name="android:background">@drawable/bg_button_m3_tonal_error</item>
+		<item name="android:textColor">@color/button_text_m3_tonal_error</item>
+	</style>
+
 	<style name="Widget.Mastodon.M3.Button.Outlined">
 		<item name="android:background">@drawable/bg_button_m3_outlined</item>
 		<item name="android:textColor">@color/button_text_m3_text</item>
@@ -491,6 +496,10 @@
 		<item name="android:drawablePadding">8dp</item>
 		<item name="android:textColor">@color/text_segmented_button</item>
 		<item name="android:duplicateParentState">true</item>
+	</style>
+
+	<style name="Theme.Mastodon.Toolbar.ProgressBar">
+		<item name="android:disabledAlpha">0</item>
 	</style>
 
 	<style name="alert_title">
