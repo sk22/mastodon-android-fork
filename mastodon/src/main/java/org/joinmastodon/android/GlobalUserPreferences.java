@@ -21,6 +21,7 @@ import java.util.Set;
 public class GlobalUserPreferences{
 	public static boolean playGifs;
 	public static boolean useCustomTabs;
+	public static boolean altTextReminders, confirmUnfollow, confirmBoost, confirmDeletePost;
 	public static boolean trueBlackTheme;
 	public static boolean showReplies;
 	public static boolean showBoosts;
@@ -94,6 +95,10 @@ public class GlobalUserPreferences{
 		SharedPreferences prefs=getPrefs();
 		playGifs=prefs.getBoolean("playGifs", true);
 		useCustomTabs=prefs.getBoolean("useCustomTabs", true);
+		altTextReminders=prefs.getBoolean("altTextReminders", false);
+		confirmUnfollow=prefs.getBoolean("confirmUnfollow", false);
+		confirmBoost=prefs.getBoolean("confirmBoost", false);
+		confirmDeletePost=prefs.getBoolean("confirmDeletePost", true);
 		trueBlackTheme=prefs.getBoolean("trueBlackTheme", false);
 		showReplies=prefs.getBoolean("showReplies", true);
 		showBoosts=prefs.getBoolean("showBoosts", true);
@@ -154,6 +159,10 @@ public class GlobalUserPreferences{
 		getPrefs().edit()
 				.putBoolean("playGifs", playGifs)
 				.putBoolean("useCustomTabs", useCustomTabs)
+				.putBoolean("altTextReminders", altTextReminders)
+				.putBoolean("confirmUnfollow", confirmUnfollow)
+				.putBoolean("confirmBoost", confirmBoost)
+				.putBoolean("confirmDeletePost", confirmDeletePost)
 				.putBoolean("showReplies", showReplies)
 				.putBoolean("showBoosts", showBoosts)
 				.putBoolean("loadNewPosts", loadNewPosts)
