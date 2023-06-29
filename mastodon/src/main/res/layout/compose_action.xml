@@ -4,9 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:clipToPadding="false"
-    android:paddingHorizontal="16dp"
-    android:paddingTop="4dp"
-    android:paddingBottom="8dp">
+    android:paddingHorizontal="16dp">
 
     <ProgressBar
         android:id="@+id/send_progress"
@@ -29,32 +27,34 @@
 
     <Button
         android:id="@+id/language_btn"
+        style="@style/Widget.Mastodon.M3.Button.Text"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="8dp"
+        android:layout_height="48dp"
+        android:paddingHorizontal="12dp"
         android:drawableStart="@drawable/ic_fluent_local_language_16_regular"
         android:drawablePadding="8dp"
-        android:drawableTint="?android:textColorSecondary"
-        android:textColor="?android:textColorSecondary"
-        android:background="@drawable/bg_text_button" />
+        android:drawableTint="?colorM3OnSurfaceVariant"
+        android:textColor="?colorM3OnSurfaceVariant" />
 
-    <Button
+    <ImageButton
         android:id="@+id/drafts_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="8dp"
-        android:drawableStart="@drawable/ic_fluent_clock_20_regular"
-        android:drawableTint="?android:textColorSecondary"
-        android:textColor="?android:textColorSecondary"
-        android:background="@drawable/bg_text_button"
+        style="@style/Widget.Mastodon.M3.Button.Text"
+        android:background="@drawable/bg_button_m3_text_circle"
+        android:layout_width="40dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_fluent_clock_20_regular"
+        android:tint="?colorM3OnSurfaceVariant"
         android:contentDescription="@string/sk_schedule_or_draft"
         android:tooltipText="@string/sk_schedule_or_draft" />
 
     <Button
+        style="@style/Widget.Mastodon.M3.Button.Filled"
+        android:background="@drawable/bg_button_m3_filled_outlined"
         android:id="@+id/publish_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:elevation="4dp"
         android:singleLine="true"
         android:ellipsize="end" />
 
