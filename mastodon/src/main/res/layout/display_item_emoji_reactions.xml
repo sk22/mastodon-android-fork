@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<org.joinmastodon.android.ui.EmojiReactionsView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/reaction_layout"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingVertical="8dp"
-    android:paddingHorizontal="12dp">
-</LinearLayout>
+    android:layout_height="0dp"
+    android:paddingVertical="4dp"
+    android:paddingHorizontal="12dp"
+    android:columnWidth="50dp"
+    android:numColumns="7"
+    android:verticalSpacing="8dp"
+    android:stretchMode="spacingWidth">
+</org.joinmastodon.android.ui.EmojiReactionsView>

@@ -8,9 +8,13 @@ import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.LinearLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.MastodonAPIRequest;
@@ -21,6 +25,7 @@ import org.joinmastodon.android.fragments.account_list.StatusEmojiReactionsListF
 import org.joinmastodon.android.model.Emoji;
 import org.joinmastodon.android.model.EmojiReaction;
 import org.joinmastodon.android.model.Status;
+import org.joinmastodon.android.ui.EmojiReactionsView;
 import org.joinmastodon.android.ui.text.HtmlParser;
 import org.joinmastodon.android.ui.utils.CustomEmojiHelper;
 import org.joinmastodon.android.ui.utils.UiUtils;
@@ -37,6 +42,7 @@ import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
 import me.grishka.appkit.imageloader.ImageLoaderViewHolder;
 import me.grishka.appkit.imageloader.requests.ImageLoaderRequest;
+import me.grishka.appkit.utils.V;
 
 public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
     public final Status status;
@@ -58,7 +64,7 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
         SpannableStringBuilder ssb = new SpannableStringBuilder(emojiReaction.url != null ? ":" + name + ":" : name);
         ssb.append("\n").append(String.valueOf(emojiReaction.count));
         int countStartIndex = ssb.length() - String.valueOf(emojiReaction.count).length();
-        ssb.setSpan(new RelativeSizeSpan(1.6f), 0, countStartIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ssb.setSpan(new RelativeSizeSpan(1.4f), 0, countStartIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         ssb.setSpan(new RelativeSizeSpan(0.8f), countStartIndex, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         if (emojiReaction.url != null) {
             Emoji emoji = new Emoji();
@@ -87,28 +93,23 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
     }
 
     public static class Holder extends StatusDisplayItem.Holder<EmojiReactionsStatusDisplayItem> implements ImageLoaderViewHolder {
-        private final LinearLayout layout;
+        private final EmojiReactionsView grid;
         private final List<Button> buttons = new ArrayList<>();
+        private ArrayAdapter<Button> adapter;
 
         public Holder(Activity activity, ViewGroup parent) {
             super(activity, R.layout.display_item_emoji_reactions, parent);
-            this.layout = findViewById(R.id.reaction_layout);
+            this.grid = findViewById(R.id.reaction_layout);
         }
 
         @Override
         public void onBind(EmojiReactionsStatusDisplayItem item) {
-            layout.removeAllViews();
-
-            float density = layout.getContext().getResources().getDisplayMetrics().density;
-            LinearLayout.LayoutParams params =
-                    new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            params.setMargins(0, (int) (4 * density), 0, (int) (4 * density));
-            params.setMarginStart((int) (4 * density));
-            params.setMarginEnd((int) (4 * density));
+            buttons.clear();
 
             for (EmojiReactionDisplay reaction : item.reactions.values()) {
-                Button btn = new Button(layout.getContext());
-                btn.setPaddingRelative((int) (12 * density), 0, (int) (12 * density), 0);
+                Button btn = new Button(item.parentFragment.getContext());
+                btn.setHeight(V.dp(48));
+                btn.setPaddingRelative(V.dp(12), 0, V.dp(12), 0);
                 btn.setBackgroundResource(R.drawable.bg_button_primary_light_on_dark);
                 btn.setTextColor(item.parentFragment.getContext().getColor(R.color.gray_800));
                 btn.setText(reaction.text);
@@ -116,7 +117,6 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
                     btn.getBackground()
                             .setColorFilter(UiUtils.getThemeColor(item.parentFragment.getContext(), R.attr.colorAccentLightest), PorterDuff.Mode.SRC);
 
-                layout.addView(btn, params);
                 buttons.add(btn);
 
                 btn.setOnClickListener(e -> {
@@ -142,7 +142,7 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
 
                                 UiUtils.loadCustomEmojiInTextView(btn);
                             } else {
-                                layout.removeView(btn);
+                                adapter.remove(btn);
                             }
                         }
 
@@ -167,6 +167,13 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
 
                 UiUtils.loadCustomEmojiInTextView(btn);
             }
+
+            adapter = new ArrayAdapter<>(item.parentFragment.getContext(), 0, buttons) {
+                public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                    return getItem(position);
+                }
+            };
+            grid.setAdapter(adapter);
         }
 
         @Override
