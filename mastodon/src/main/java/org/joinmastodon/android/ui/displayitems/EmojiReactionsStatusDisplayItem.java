@@ -139,6 +139,8 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
                                             .setColorFilter(UiUtils.getThemeColor(item.parentFragment.getContext(), R.attr.colorAccentLightest), PorterDuff.Mode.SRC);
                                 else
                                     btn.getBackground().clearColorFilter();
+
+                                UiUtils.loadCustomEmojiInTextView(btn);
                             } else {
                                 layout.removeView(btn);
                             }
