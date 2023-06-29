@@ -86,7 +86,7 @@ public class ComposeAutocompleteViewController{
 		list=new UsableRecyclerView(activity);
 		list.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
 		list.setItemAnimator(new BetterItemAnimator());
-		list.setPadding(V.dp(16), V.dp(12), V.dp(16), V.dp(12));
+		list.setPadding(V.dp(16), V.dp(4), V.dp(16), V.dp(4));
 		list.setClipToPadding(false);
 		list.setSelector(null);
 		list.addItemDecoration(new RecyclerView.ItemDecoration(){
