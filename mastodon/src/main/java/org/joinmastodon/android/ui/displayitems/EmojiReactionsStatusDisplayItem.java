@@ -160,6 +160,7 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
                     args.putString("statusID", item.status.id);
                     int atSymbolIndex = emojiReaction.name.indexOf("@");
                     args.putString("emoji", atSymbolIndex != -1 ? emojiReaction.name.substring(0, atSymbolIndex) : emojiReaction.name);
+                    args.putString("url", emojiReaction.url);
                     args.putInt("count", emojiReaction.count);
                     Nav.go(item.parentFragment.getActivity(), StatusEmojiReactionsListFragment.class, args);
                     return true;
