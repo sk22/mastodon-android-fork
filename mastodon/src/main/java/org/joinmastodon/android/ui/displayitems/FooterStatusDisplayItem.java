@@ -41,6 +41,8 @@ import org.parceler.Parcels;
 import java.util.function.Consumer;
 
 import me.grishka.appkit.Nav;
+import me.grishka.appkit.api.Callback;
+import me.grishka.appkit.api.ErrorResponse;
 import me.grishka.appkit.utils.CubicBezierInterpolator;
 import me.grishka.appkit.utils.V;
 
@@ -150,8 +152,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 				public void onTextChanged(CharSequence s, int start, int before, int count) {
 					if (!s.toString().isEmpty()) {
 						imm.hideSoftInputFromWindow(reactInput.getWindowToken(), 0);
-						new PleromaAddStatusReaction(item.status.id, s.toString()).exec(item.accountID);
-						reactVisibilityState = ReactVisibilityState.HIDDEN;
+						addEmojiReaction(s.toString());
 						reactInput.getText().clear();
 					}
 				}
@@ -198,9 +199,8 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 			AccountSession accountSession = AccountSessionManager.getInstance().getAccount(item.accountID);
 			emojiKeyboard = new CustomEmojiPopupKeyboard(activity, AccountSessionManager.getInstance().getCustomEmojis(accountSession.domain), accountSession.domain);
 			emojiKeyboard.setListener(emoji -> {
-				new PleromaAddStatusReaction(item.status.id, emoji.shortcode).exec(item.accountID);
+				addEmojiReaction(emoji.shortcode);
 				emojiKeyboard.toggleKeyboardPopup(null);
-				reactVisibilityState = ReactVisibilityState.HIDDEN;
 			});
 
 			emojiKeyboardContainer.removeAllViews();
@@ -445,6 +445,21 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 			if(id==R.id.react_btn)
 				return R.string.sk_button_react;
 			return 0;
+		}
+
+		private void addEmojiReaction(String emoji) {
+			new PleromaAddStatusReaction(item.status.id, emoji)
+					.setCallback(new Callback<>() {
+						@Override
+						public void onSuccess(Status result) {
+							item.parentFragment.updateEmojiReactions(result, getItemID());
+						}
+
+						@Override
+						public void onError(ErrorResponse error) {}
+					})
+					.exec(item.accountID);
+			reactVisibilityState = ReactVisibilityState.HIDDEN;
 		}
 
 		private enum ReactVisibilityState {

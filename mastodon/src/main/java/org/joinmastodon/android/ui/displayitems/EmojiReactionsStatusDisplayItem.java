@@ -164,6 +164,8 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
                     Nav.go(item.parentFragment.getActivity(), StatusEmojiReactionsListFragment.class, args);
                     return true;
                 });
+
+                UiUtils.loadCustomEmojiInTextView(btn);
             }
         }
 

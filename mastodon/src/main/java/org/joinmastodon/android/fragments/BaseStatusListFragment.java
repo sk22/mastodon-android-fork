@@ -33,6 +33,7 @@ import org.joinmastodon.android.model.Poll;
 import org.joinmastodon.android.model.Relationship;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.BetterItemAnimator;
+import org.joinmastodon.android.ui.displayitems.EmojiReactionsStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.ExtendedFooterStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.FooterStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.GapStatusDisplayItem;
@@ -573,6 +574,14 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 		HeaderStatusDisplayItem.Holder header=findHolderOfType(itemID, HeaderStatusDisplayItem.Holder.class);
 		if (text != null) text.rebind();
 		if (header != null) header.rebind();
+	}
+
+	public void updateEmojiReactions(Status status, String itemID) {
+		EmojiReactionsStatusDisplayItem.Holder reactions = findHolderOfType(itemID, EmojiReactionsStatusDisplayItem.Holder.class);
+		if(reactions != null) {
+			EmojiReactionsStatusDisplayItem displayItem = new EmojiReactionsStatusDisplayItem(itemID, this, status);
+			reactions.onBind(displayItem);
+		}
 	}
 
 	protected void updateImagesSpoilerState(Status status, String itemID){
