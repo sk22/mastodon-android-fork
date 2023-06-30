@@ -181,6 +181,12 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 		return strippedText;
 	}
 
+	@NonNull
+	@Override
+	public Status clone(){
+		return (Status) super.clone();
+	}
+
 	public boolean isReblogPermitted(String accountID){
 		return visibility.isReblogPermitted(account.id.equals(
 				AccountSessionManager.getInstance().getAccount(accountID).self.id

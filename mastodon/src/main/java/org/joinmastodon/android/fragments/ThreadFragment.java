@@ -360,9 +360,9 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 		});
 	}
 
-	protected void onStatusCreated(StatusCreatedEvent ev){
-		if (ev.status.inReplyToId == null) return;
-		Status repliedToStatus = getStatusByID(ev.status.inReplyToId);
+	protected void onStatusCreated(Status status){
+		if (status.inReplyToId == null) return;
+		Status repliedToStatus = getStatusByID(status.inReplyToId);
 		if (repliedToStatus == null) return;
 		NeighborAncestryInfo ancestry = ancestryMap.get(repliedToStatus.id);
 
@@ -408,12 +408,12 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 		}
 
 		// update replied-to status' ancestry
-		if (ancestry != null) ancestry.descendantNeighbor = ev.status;
+		if (ancestry != null) ancestry.descendantNeighbor = status;
 
 		// add ancestry for newly created status before building its display items
-		ancestryMap.put(ev.status.id, new NeighborAncestryInfo(ev.status, null, repliedToStatus));
-		displayItems.addAll(nextDisplayItemsIndex, buildDisplayItems(ev.status));
-		data.add(nextDataIndex, ev.status);
+		ancestryMap.put(status.id, new NeighborAncestryInfo(status, null, repliedToStatus));
+		displayItems.addAll(nextDisplayItemsIndex, buildDisplayItems(status));
+		data.add(nextDataIndex, status);
 		adapter.notifyDataSetChanged();
 	}
 

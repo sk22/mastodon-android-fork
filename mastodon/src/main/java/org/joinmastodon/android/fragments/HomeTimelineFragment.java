@@ -124,8 +124,8 @@ public class HomeTimelineFragment extends StatusListFragment {
 		}
 	}
 
-	public void onStatusCreated(StatusCreatedEvent ev){
-		prependItems(Collections.singletonList(ev.status), true);
+	public void onStatusCreated(Status status){
+		prependItems(Collections.singletonList(status), true);
 	}
 
 	private void loadNewPosts(){
