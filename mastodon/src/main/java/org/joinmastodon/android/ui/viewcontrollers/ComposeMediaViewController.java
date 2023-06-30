@@ -167,6 +167,7 @@ public class ComposeMediaViewController{
 		}
 		fragment.updatePublishButtonState();
 		fragment.updateMediaPollStates();
+		fragment.updateSensitive();
 		return true;
 	}
 
@@ -393,6 +394,7 @@ public class ComposeMediaViewController{
 		}
 		fragment.updatePublishButtonState();
 		fragment.updateMediaPollStates();
+		fragment.updateSensitive();
 	}
 
 	private void onRetryOrCancelMediaUploadClick(View v){

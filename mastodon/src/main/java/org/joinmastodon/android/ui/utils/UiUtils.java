@@ -1062,13 +1062,11 @@ public class UiUtils {
 
 	public static boolean setExtraTextInfo(Context ctx, TextView extraText, StatusPrivacy visibility, boolean localOnly) {
 		List<String> extraParts = new ArrayList<>();
-		if (localOnly || (visibility != null && visibility.equals(StatusPrivacy.LOCAL)))
+		if (localOnly && (visibility == null || !visibility.equals(StatusPrivacy.LOCAL)))
 			extraParts.add(ctx.getString(R.string.sk_inline_local_only));
-		if (visibility != null && visibility.equals(StatusPrivacy.DIRECT))
-			extraParts.add(ctx.getString(R.string.sk_inline_direct));
 		if (!extraParts.isEmpty()) {
-			String sep = ctx.getString(R.string.sk_separator);
-			extraText.setText(String.join(" " + sep + " ", extraParts));
+			String sepp = ctx.getString(R.string.sk_separator);
+			extraText.setText(String.join(" " + sepp + " ", extraParts));
 			extraText.setVisibility(View.VISIBLE);
 			return true;
 		} else {
