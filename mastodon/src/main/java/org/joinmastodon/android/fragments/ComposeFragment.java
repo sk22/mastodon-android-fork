@@ -1165,9 +1165,9 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				maybeDeleteScheduledPost(() -> {
 					wm.removeView(sendingOverlay);
 					sendingOverlay=null;
-					if(editingStatus==null){
+					if(editingStatus==null || redraftStatus){
 						E.post(new StatusCreatedEvent(result, accountID));
-						if(replyTo!=null){
+						if(replyTo!=null && !redraftStatus){
 							replyTo.repliesCount++;
 							E.post(new StatusCountersUpdatedEvent(replyTo));
 						}
