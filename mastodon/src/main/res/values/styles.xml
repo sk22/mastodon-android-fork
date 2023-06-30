@@ -19,7 +19,7 @@
 		<item name="android:windowBackground">?colorWindowBackground</item>
 		<item name="android:editTextStyle">@style/Widget.Mastodon.EditText</item>
 
-		<item name="android:buttonStyle">@style/Widget.Mastodon.Button.Primary_DarkOnLight</item>
+		<item name="android:buttonStyle">@style/Widget.Mastodon.M3.Button.Filled</item>
 		<item name="secondaryButtonStyle">@style/Widget.Mastodon.Button.Secondary_DarkOnLight</item>
 		<item name="primaryLargeButtonStyle">@style/Widget.Mastodon.Button.Large.Primary_DarkOnLight</item>
 		<item name="secondaryLargeButtonStyle">@style/Widget.Mastodon.Button.Large.Secondary_DarkOnLight</item>
