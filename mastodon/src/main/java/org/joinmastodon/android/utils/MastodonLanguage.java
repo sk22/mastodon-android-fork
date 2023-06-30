@@ -7,8 +7,9 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.LocaleList;
 
-import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.model.Instance;
+import org.parceler.Parcel;
+import org.parceler.ParcelConstructor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +19,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Parcel
 public class MastodonLanguage {
 	// On an up-to-date Mastodon instance:
 	// copy(JSON.stringify(JSON.stringify(JSON.parse(document.getElementById('initial-state').textContent).languages)))
@@ -53,6 +55,7 @@ public class MastodonLanguage {
 	public final String languageTag, name, englishName;
 	public final Locale locale;
 
+	@ParcelConstructor
 	private MastodonLanguage(String languageTag, String englishName, String name) {
 		this.locale = new Locale(languageTag);
 		this.languageTag = languageTag.toLowerCase(Locale.ROOT);
