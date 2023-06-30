@@ -262,7 +262,7 @@ public class ComposeMediaViewController{
 
 		if(draft.state==AttachmentUploadState.ERROR){
 			draft.titleView.setText(R.string.upload_failed);
-			draft.editButton.setImageResource(R.drawable.ic_fluent_arrow_counterclockwise_dashes_24_regular);
+			draft.editButton.setImageResource(R.drawable.ic_fluent_arrow_counterclockwise_24_regular);
 			draft.editButton.setOnClickListener(this::onRetryOrCancelMediaUploadClick);
 			draft.progressBar.setVisibility(View.GONE);
 			draft.setUseErrorColors(true);
@@ -360,7 +360,7 @@ public class ComposeMediaViewController{
 //						attachment.retryButton.setContentDescription(fragment.getString(R.string.retry_upload));
 
 						V.setVisibilityAnimated(attachment.editButton, View.VISIBLE);
-						attachment.editButton.setImageResource(R.drawable.ic_fluent_arrow_counterclockwise_dashes_24_regular);
+						attachment.editButton.setImageResource(R.drawable.ic_fluent_arrow_counterclockwise_24_regular);
 						attachment.editButton.setOnClickListener(ComposeMediaViewController.this::onRetryOrCancelMediaUploadClick);
 						attachment.setUseErrorColors(true);
 						V.setVisibilityAnimated(attachment.progressBar, View.GONE);
