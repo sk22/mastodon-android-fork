@@ -444,6 +444,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 			} else if (reactVisibilityState == ReactVisibilityState.SYSTEM_KEYBOARD) {
 				imm.hideSoftInputFromWindow(reactInput.getWindowToken(), 0);
 				reactVisibilityState = ReactVisibilityState.HIDDEN;
+				v.startAnimation(opacityIn);
 			}
 		}
 
@@ -510,6 +511,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 					})
 					.exec(item.accountID);
 			reactVisibilityState = ReactVisibilityState.HIDDEN;
+			react.startAnimation(opacityIn);
 		}
 
 		private enum ReactVisibilityState {
