@@ -335,9 +335,9 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 	@SuppressLint("DefaultLocale")
 	private void updateUnreadCount(List<Notification> notifications, String marker){
 		if(notifications.isEmpty() || ObjectIdComparator.INSTANCE.compare(notifications.get(0).id, marker)<=0){
-			notificationsBadge.setVisibility(View.GONE);
+			V.setVisibilityAnimated(notificationsBadge, View.GONE);
 		}else{
-			notificationsBadge.setVisibility(View.VISIBLE);
+			V.setVisibilityAnimated(notificationsBadge, View.VISIBLE);
 			if(ObjectIdComparator.INSTANCE.compare(notifications.get(notifications.size()-1).id, marker)>0){
 				notificationsBadge.setText(String.format("%d+", notifications.size()));
 			}else{
@@ -357,7 +357,7 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 		if(!ev.accountID.equals(accountID))
 			return;
 		if(ev.clearUnread)
-			notificationsBadge.setVisibility(View.GONE);
+			V.setVisibilityAnimated(notificationsBadge, View.GONE);
 	}
 
 	@Subscribe
