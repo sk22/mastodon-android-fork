@@ -10,11 +10,15 @@
 			</item>
 		</ripple>
 	</item>
-	<item android:state_enabled="false" android:height="32dp" android:gravity="center_vertical">
-		<shape>
-			<corners android:radius="8dp"/>
-			<solid android:color="?colorM3DisabledBackground" android:width="1dp"/>
-		</shape>
+	<item android:state_enabled="false">
+		<layer-list>
+			<item android:height="32dp" android:gravity="center_vertical">
+				<shape>
+					<corners android:radius="8dp"/>
+					<stroke android:color="@color/m3_on_surface_alpha12" android:width="1dp" />
+				</shape>
+			</item>
+		</layer-list>
 	</item>
 	<item android:state_enabled="true">
 		<ripple android:color="@color/m3_on_surface_variant_overlay">

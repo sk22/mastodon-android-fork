@@ -27,7 +27,7 @@
 		android:layout_marginBottom="4dp"
 		android:layout_marginTop="-4dp"
 		android:enabled="false"
-		style="@style/Widget.Mastodon.M3.Button.Filled"
+		style="@style/Widget.Mastodon.M3.Button.Filled.Elevated"
 		android:text="@string/action_vote"/>
 
 </LinearLayout>
