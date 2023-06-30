@@ -52,11 +52,12 @@ public class MastodonLanguage {
 				.collect(Collectors.toList());
 	}
 
-	public final String languageTag, name, englishName;
-	public final Locale locale;
+	public String languageTag, name, englishName;
+	public Locale locale;
 
-	@ParcelConstructor
-	private MastodonLanguage(String languageTag, String englishName, String name) {
+	protected MastodonLanguage() {}
+
+	protected MastodonLanguage(String languageTag, String englishName, String name) {
 		this.locale = new Locale(languageTag);
 		this.languageTag = languageTag.toLowerCase(Locale.ROOT);
 		this.name = name;
