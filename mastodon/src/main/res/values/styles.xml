@@ -427,39 +427,57 @@
 		<item name="android:minHeight">48dp</item>
 		<item name="android:fontFamily">sans-serif-medium</item>
 		<item name="android:stateListAnimator">@null</item>
+		<item name="android:paddingStart">24dp</item>
+		<item name="android:paddingEnd">24dp</item>
+		<item name="android:drawablePadding">8dp</item>
+	</style>
+	<style name="Widget.Mastodon.M3.Button.Icon">
+		<item name="android:paddingStart">16dp</item>
 	</style>
 
 	<style name="Widget.Mastodon.M3.Button.Filled">
 		<item name="android:background">@drawable/bg_button_m3_filled</item>
 		<item name="android:textColor">@color/button_text_m3_filled</item>
-		<item name="android:paddingLeft">24dp</item>
-		<item name="android:paddingRight">24dp</item>
+		<item name="android:drawableTint">@color/button_text_m3_filled</item>
+	</style>
+	<style name="Widget.Mastodon.M3.Button.Filled.Icon">
+		<item name="android:paddingStart">16dp</item>
 	</style>
 
 	<style name="Widget.Mastodon.M3.Button.Text">
 		<item name="android:background">@drawable/bg_button_m3_text</item>
 		<item name="android:textColor">@color/button_text_m3_text</item>
-		<item name="android:paddingLeft">24dp</item>
-		<item name="android:paddingRight">24dp</item>
+		<item name="android:drawableTint">@color/button_text_m3_text</item>
+	</style>
+	<style name="Widget.Mastodon.M3.Button.Text.Icon">
+		<item name="android:paddingStart">16dp</item>
 	</style>
 
 	<style name="Widget.Mastodon.M3.Button.Tonal">
 		<item name="android:background">@drawable/bg_button_m3_tonal</item>
-		<item name="android:textColor">@color/button_text_m3_text</item>
-		<item name="android:paddingLeft">24dp</item>
-		<item name="android:paddingRight">24dp</item>
+		<item name="android:textColor">@color/button_text_m3_tonal</item>
+		<item name="android:drawableTint">@color/button_text_m3_tonal</item>
+	</style>
+	<style name="Widget.Mastodon.M3.Button.Tonal.Icon">
+		<item name="android:paddingStart">16dp</item>
 	</style>
 
 	<style name="Widget.Mastodon.M3.Button.Tonal.Error">
 		<item name="android:background">@drawable/bg_button_m3_tonal_error</item>
 		<item name="android:textColor">@color/button_text_m3_tonal_error</item>
+		<item name="android:drawableTint">@color/button_text_m3_tonal_error</item>
+	</style>
+	<style name="Widget.Mastodon.M3.Button.Tonal.Error.Icon">
+		<item name="android:paddingStart">16dp</item>
 	</style>
 
 	<style name="Widget.Mastodon.M3.Button.Outlined">
 		<item name="android:background">@drawable/bg_button_m3_outlined</item>
 		<item name="android:textColor">@color/button_text_m3_text</item>
-		<item name="android:paddingLeft">24dp</item>
-		<item name="android:paddingRight">24dp</item>
+		<item name="android:drawableTint">@color/button_text_m3_text</item>
+	</style>
+	<style name="Widget.Mastodon.M3.Button.Outlined.Icon">
+		<item name="android:paddingStart">16dp</item>
 	</style>
 
 	<style name="Widget.Mastodon.M3.EditText" parent="android:Widget.Material.EditText">
