@@ -75,10 +75,15 @@ public class GlobalUserPreferences{
 		return MastodonApp.context.getSharedPreferences("global", Context.MODE_PRIVATE);
 	}
 
-	private static <T> T fromJson(String json, Type type, T orElse) {
+	public static <T> T fromJson(String json, Type type, T orElse) {
 		if (json == null) return orElse;
 		try { return gson.fromJson(json, type); }
 		catch (JsonSyntaxException ignored) { return orElse; }
+	}
+
+	public static <T extends Enum<T>> T enumValue(Class<T> enumType, String name) {
+		try { return Enum.valueOf(enumType, name); }
+		catch (NullPointerException npe) { return null; }
 	}
 
 	public static void removeAccount(String accountId) {

@@ -1,6 +1,17 @@
 package org.joinmastodon.android.api.session;
 
+import static org.joinmastodon.android.GlobalUserPreferences.fromJson;
+import static org.joinmastodon.android.GlobalUserPreferences.enumValue;
+
 import android.content.SharedPreferences;
+
+import com.google.gson.reflect.TypeToken;
+
+import org.joinmastodon.android.model.ContentType;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AccountLocalPreferences{
 	private final SharedPreferences prefs;
@@ -11,6 +22,12 @@ public class AccountLocalPreferences{
 	public boolean hideSensitiveMedia;
 	public boolean serverSideFiltersSupported;
 
+	// MEGALODON
+	public List<String> recentLanguages;
+	public ContentType defaultContentType;
+
+	private final static Type recentLanguagesType = new TypeToken<List<String>>() {}.getType();
+
 	public AccountLocalPreferences(SharedPreferences prefs){
 		this.prefs=prefs;
 		showInteractionCounts=prefs.getBoolean("interactionCounts", true);
@@ -18,6 +35,10 @@ public class AccountLocalPreferences{
 		showCWs=prefs.getBoolean("showCWs", true);
 		hideSensitiveMedia=prefs.getBoolean("hideSensitive", true);
 		serverSideFiltersSupported=prefs.getBoolean("serverSideFilters", false);
+
+		// MEGALODON
+		recentLanguages=fromJson(prefs.getString("recentLanguages", null), recentLanguagesType, new ArrayList<>());
+		defaultContentType=enumValue(ContentType.class, prefs.getString("defaultContentType", null));
 	}
 
 	public long getNotificationsPauseEndTime(){
@@ -35,6 +56,8 @@ public class AccountLocalPreferences{
 				.putBoolean("showCWs", showCWs)
 				.putBoolean("hideSensitive", hideSensitiveMedia)
 				.putBoolean("serverSideFilters", serverSideFiltersSupported)
+				// MEGALODON
+				// todo: put recent languages, ...
 				.apply();
 	}
 }
