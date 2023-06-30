@@ -66,8 +66,8 @@ public class HomeTimelineFragment extends StatusListFragment {
 					public void onSuccess(CacheablePaginatedResponse<List<Status>> result){
 						if (getActivity() == null) return;
 						List<Status> filteredItems = filterPosts(result.items);
-						onDataLoaded(filteredItems, !result.items.isEmpty());
 						maxID=result.maxID;
+						onDataLoaded(filteredItems, !result.items.isEmpty());
 						if(result.isFromCache())
 							loadNewPosts();
 					}

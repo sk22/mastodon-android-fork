@@ -151,13 +151,13 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 						if (getActivity() == null) return;
 						if(refreshing)
 							relationships.clear();
+						maxID=result.maxID;
 						onDataLoaded(result.items.stream().filter(n->n.type!=null).collect(Collectors.toList()), !result.items.isEmpty());
 						Set<String> needRelationships=result.items.stream()
 								.filter(ntf->ntf.status==null && !relationships.containsKey(ntf.account.id))
 								.map(ntf->ntf.account.id)
 								.collect(Collectors.toSet());
 						loadRelationships(needRelationships);
-						maxID=result.maxID;
 
 						Markers markers = AccountSessionManager.getInstance().getAccount(accountID).markers;
 						if(offset==0 && !result.items.isEmpty() && !result.isFromCache() && markers != null && markers.notifications != null){
