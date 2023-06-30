@@ -770,6 +770,10 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 		if (more && d.size() < itemsPerPage) preloader.onScrolledToLastItem();
 	}
 
+	public void scrollBy(int x, int y) {
+		list.scrollBy(x, y);
+	}
+
 	protected class DisplayItemsAdapter extends UsableRecyclerView.Adapter<BindableViewHolder<StatusDisplayItem>> implements ImageLoaderRecyclerAdapter{
 
 		public DisplayItemsAdapter(){

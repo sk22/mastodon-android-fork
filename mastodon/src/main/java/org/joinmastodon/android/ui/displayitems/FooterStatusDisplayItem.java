@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,6 +36,7 @@ import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.fragments.ComposeFragment;
+import org.joinmastodon.android.fragments.RecyclerFragment;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.model.StatusPrivacy;
@@ -413,6 +416,14 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 				emojiKeyboard.toggleKeyboardPopup(null);
 				reactVisibilityState = ReactVisibilityState.CUSTOM_EMOJI_KEYBOARD;
 				Toast.makeText(activity, R.string.sk_again_for_system_keyboard, Toast.LENGTH_SHORT).show();
+				DisplayMetrics displayMetrics = new DisplayMetrics();
+				int[] locationOnScreen = new int[2];
+				activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+				v.getLocationOnScreen(locationOnScreen);
+				double fromScreenTop = (double) locationOnScreen[1] / displayMetrics.heightPixels;
+				if (fromScreenTop > 0.75) {
+					item.parentFragment.scrollBy(0, (int) (displayMetrics.heightPixels * 0.3));
+				}
 			} else if (reactVisibilityState == ReactVisibilityState.CUSTOM_EMOJI_KEYBOARD) {
 				reactInput.requestFocus();
 				imm.showSoftInput(reactInput, InputMethodManager.SHOW_FORCED);
