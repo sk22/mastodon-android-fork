@@ -308,13 +308,14 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 	@Override
 	public void onRefresh(){
 		super.onRefresh();
-		resetUnreadBackground();
 		if (getParentFragment() instanceof NotificationsFragment nf) {
-			AccountSessionManager.get(accountID).reloadNotificationsMarker(m->{
+			if (!onlyMentions && !onlyPosts) nf.markAsRead();
+			else AccountSessionManager.get(accountID).reloadNotificationsMarker(m->{
 				nf.unreadMarker=nf.realUnreadMarker=m;
 				nf.updateMarkAllReadButton();
 			});
 		}
+		resetUnreadBackground();
 	}
 
 
