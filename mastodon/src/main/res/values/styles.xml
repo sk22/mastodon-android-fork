@@ -568,7 +568,7 @@
 
 	<style name="m3_label_small">
 		<item name="android:fontFamily">sans-serif-medium</item>
-		<item name="android:textSize">11dp</item>
+		<item name="android:textSize">11sp</item>
 		<item name="android:textColor">?android:textColorSecondary</item>
 		<item name="android:lineSpacingExtra">3dp</item>
 	</style>

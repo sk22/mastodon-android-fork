@@ -34,13 +34,13 @@
 
 	<Button
 		android:id="@+id/read_more"
+		style="@style/Widget.Mastodon.M3.Button.Text"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:background="@drawable/bg_text_button"
-		android:textColor="?android:textColorSecondary"
+		android:layout_marginTop="-4dp"
 		android:layout_marginHorizontal="16dp"
-		android:paddingHorizontal="8dp"
-		android:textAppearance="@style/m3_label_medium"
+		android:minHeight="48dp"
+		android:textAppearance="@style/m3_label_small"
 		android:textAllCaps="true"
 		android:text="@string/sk_expand"
 		android:visibility="gone"
