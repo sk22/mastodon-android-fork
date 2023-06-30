@@ -24,6 +24,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.statuses.PleromaAddStatusReaction;
@@ -210,6 +213,20 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 			emojiKeyboard.setListener(emoji -> {
 				addEmojiReaction(emoji.shortcode);
 				emojiKeyboard.toggleKeyboardPopup(null);
+			});
+
+			((RecyclerView) emojiKeyboard.getView()).addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+				@Override
+				public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+					if (e.getAction() == MotionEvent.ACTION_MOVE) {
+						rv.getParent().requestDisallowInterceptTouchEvent(true);
+					}
+					return false;
+				}
+
+				@Override public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {}
+
+				@Override public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
 			});
 
 			emojiKeyboardContainer.removeAllViews();
