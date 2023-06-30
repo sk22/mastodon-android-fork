@@ -76,7 +76,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 	public static class Holder extends StatusDisplayItem.Holder<FooterStatusDisplayItem>{
 		private final FrameLayout reactLayout;
 		private final TextView replies, boosts, favorites;
-		private final View reply, boost, favorite, share, bookmark, react;
+		private final View reply, boost, favorite, share, bookmark, react, divider;
 		private final EditText reactInput;
 		private final InputMethodManager imm;
 		private CustomEmojiPopupKeyboard emojiKeyboard;
@@ -175,6 +175,11 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 				@Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 				@Override public void afterTextChanged(Editable s) {}
 			});
+
+			divider = new View(activity);
+			divider.setMinimumHeight(V.dp(2));
+			divider.setBackgroundColor(UiUtils.getThemeColor(activity, R.attr.colorGray500));
+			divider.setVisibility(View.GONE);
 		}
 
 		@Override
@@ -216,6 +221,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 			emojiKeyboard.setListener(emoji -> {
 				addEmojiReaction(emoji.shortcode);
 				emojiKeyboard.toggleKeyboardPopup(null);
+				divider.setVisibility(View.GONE);
 			});
 
 			((RecyclerView) emojiKeyboard.getView()).addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
@@ -234,6 +240,9 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 
 			emojiKeyboardContainer.removeAllViews();
 			emojiKeyboardContainer.addView(emojiKeyboard.getView());
+
+			divider.setVisibility(View.GONE);
+			emojiKeyboardContainer.addView(divider);
 		}
 
 		private void bindText(TextView btn, long count){
@@ -415,6 +424,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 			if (reactVisibilityState == ReactVisibilityState.HIDDEN) {
 				emojiKeyboard.toggleKeyboardPopup(null);
 				reactVisibilityState = ReactVisibilityState.CUSTOM_EMOJI_KEYBOARD;
+				divider.setVisibility(View.VISIBLE);
 				Toast.makeText(activity, R.string.sk_again_for_system_keyboard, Toast.LENGTH_SHORT).show();
 				DisplayMetrics displayMetrics = new DisplayMetrics();
 				int[] locationOnScreen = new int[2];
@@ -428,6 +438,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 				reactInput.requestFocus();
 				imm.showSoftInput(reactInput, InputMethodManager.SHOW_FORCED);
 				emojiKeyboard.toggleKeyboardPopup(null);
+				divider.setVisibility(View.GONE);
 				reactVisibilityState = ReactVisibilityState.SYSTEM_KEYBOARD;
 				Toast.makeText(activity, R.string.sk_select_emoji, Toast.LENGTH_SHORT).show();
 			} else if (reactVisibilityState == ReactVisibilityState.SYSTEM_KEYBOARD) {
