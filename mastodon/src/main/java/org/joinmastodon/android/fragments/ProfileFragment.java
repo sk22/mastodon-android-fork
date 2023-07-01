@@ -637,7 +637,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
 		if(isOwnProfile && isInEditMode){
-			Button cancelButton=new Button(getActivity(), null, 0, R.style.Widget_Mastodon_Button_Secondary_LightOnDark);
+			Button cancelButton=new Button(getActivity(), null, 0, R.style.Widget_Mastodon_M3_Button_Tonal);
 			cancelButton.setText(R.string.cancel);
 			cancelButton.setOnClickListener(v->exitEditMode());
 			FrameLayout wrap=new FrameLayout(getActivity());
@@ -791,8 +791,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		invalidateOptionsMenu();
 		actionButton.setVisibility(View.VISIBLE);
 		notifyButton.setVisibility(relationship.following ? View.VISIBLE : View.GONE);
-		UiUtils.setRelationshipToActionButton(relationship, actionButton);
-		UiUtils.setRelationshipToActionButton(relationship, notifyButton, true);
+		UiUtils.setRelationshipToActionButtonM3(relationship, actionButton);
 		actionProgress.setIndeterminateTintList(actionButton.getTextColors());
 		notifyProgress.setIndeterminateTintList(notifyButton.getTextColors());
 		followsYouView.setVisibility(relationship.followedBy ? View.VISIBLE : View.GONE);

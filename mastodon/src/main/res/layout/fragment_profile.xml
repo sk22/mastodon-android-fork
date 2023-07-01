@@ -82,18 +82,22 @@
 						android:layout_alignParentEnd="true">
 
 						<FrameLayout
-							android:clipToPadding="false"
-							android:paddingVertical="16dp"
-							android:paddingStart="16dp"
-							android:paddingEnd="4dp"
 							android:layout_width="wrap_content"
-							android:layout_height="wrap_content">
+							android:layout_height="wrap_content"
+							android:layout_below="@id/cover"
+							android:layout_alignParentEnd="true"
+							android:layout_marginTop="16dp"
+							android:layout_marginEnd="8dp">
+
 							<org.joinmastodon.android.ui.views.ProgressBarButton
 								android:id="@+id/notify_btn"
-								android:layout_width="wrap_content"
-								android:layout_height="wrap_content"
-								android:paddingHorizontal="8dp"
-								android:drawableStart="@drawable/ic_fluent_alert_24_selector" />
+								style="@style/Widget.Mastodon.M3.Button.Tonal"
+								android:background="@drawable/bg_button_m3_tonal_circle"
+								android:paddingStart="12dp"
+								android:drawableStart="@drawable/ic_fluent_alert_24_selector"
+								android:layout_width="48dp"
+								android:layout_height="48dp"
+								tools:text="Edit Profile" />
 
 							<ProgressBar
 								android:id="@+id/notify_progress"
@@ -103,22 +107,23 @@
 								android:layout_gravity="center"
 								android:elevation="10dp"
 								android:indeterminate="true"
-								android:indeterminateTint="?colorButtonText"
 								android:outlineProvider="none"
 								android:visibility="gone" />
 						</FrameLayout>
 
 						<FrameLayout
-							android:clipToPadding="false"
-							android:paddingVertical="16dp"
-							android:paddingEnd="16dp"
-							android:paddingStart="4dp"
 							android:layout_width="wrap_content"
-							android:layout_height="wrap_content">
+							android:layout_height="wrap_content"
+							android:layout_below="@id/cover"
+							android:layout_alignParentEnd="true"
+							android:layout_marginTop="16dp"
+							android:layout_marginEnd="16dp">
+
 							<org.joinmastodon.android.ui.views.ProgressBarButton
 								android:id="@+id/profile_action_btn"
+								style="@style/Widget.Mastodon.M3.Button.Filled"
 								android:layout_width="wrap_content"
-								android:layout_height="wrap_content"
+								android:layout_height="48dp"
 								tools:text="Edit Profile" />
 
 							<ProgressBar
@@ -129,7 +134,6 @@
 								android:layout_gravity="center"
 								android:elevation="10dp"
 								android:indeterminate="true"
-								android:indeterminateTint="?colorButtonText"
 								android:outlineProvider="none"
 								android:visibility="gone" />
 						</FrameLayout>
@@ -225,11 +229,11 @@
 						android:layout_height="0.5dp"
 						android:layout_below="@id/bio_container"
 						android:layout_marginTop="16dp"
-						android:background="?attr/colorPollVoted"/>
+						android:background="?attr/colorM3OutlineVariant"/>
 
 					<me.grishka.appkit.views.UsableRecyclerView
 						android:id="@+id/metadata"
-						android:background="?colorBackgroundLightest"
+						android:background="?colorM3SurfaceVariant"
 						android:layout_below="@id/border_top"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
@@ -237,7 +241,7 @@
 
 					<org.joinmastodon.android.ui.views.AutoOrientationLinearLayout
 						android:id="@+id/profile_counters"
-						android:background="?colorBackgroundLightest"
+						android:background="?colorM3SurfaceVariant"
 						android:layout_below="@id/metadata"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
@@ -335,7 +339,7 @@
 					android:layout_width="match_parent"
 					android:layout_height="38dp"
 					android:paddingHorizontal="4dp"
-					android:background="?colorBackgroundLightest"
+					android:background="?colorM3SurfaceVariant"
 					app:tabPaddingStart="12dp"
 					app:tabPaddingEnd="12dp"
 					app:tabMinWidth="0dp"
@@ -350,7 +354,7 @@
 					android:layout_width="match_parent"
 					android:layout_height="0.5dp"
 					android:layout_marginTop="-0.5dp"
-					android:background="?attr/colorPollVoted"/>
+					android:background="?attr/colorM3OutlineVariant"/>
 
 				<androidx.viewpager2.widget.ViewPager2
 					android:id="@+id/pager"
