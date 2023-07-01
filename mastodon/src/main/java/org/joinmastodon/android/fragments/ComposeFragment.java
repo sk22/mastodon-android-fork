@@ -1,62 +1,46 @@
 package org.joinmastodon.android.fragments;
 
-import static org.joinmastodon.android.GlobalUserPreferences.PrefixRepliesMode.*;
-import static org.joinmastodon.android.GlobalUserPreferences.recentLanguages;
+import static org.joinmastodon.android.GlobalUserPreferences.PrefixRepliesMode.ALWAYS;
+import static org.joinmastodon.android.GlobalUserPreferences.PrefixRepliesMode.TO_OTHERS;
 import static org.joinmastodon.android.api.requests.statuses.CreateStatus.DRAFTS_AFTER_INSTANT;
 import static org.joinmastodon.android.api.requests.statuses.CreateStatus.getDraftInstant;
-import static org.joinmastodon.android.ui.utils.UiUtils.isPhotoPickerAvailable;
-import static org.joinmastodon.android.utils.MastodonLanguage.allLanguages;
-import static org.joinmastodon.android.utils.MastodonLanguage.defaultRecentLanguages;
 
-import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.ClipData;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.Outline;
 import android.graphics.PixelFormat;
-import android.graphics.RenderEffect;
-import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.icu.text.BreakIterator;
-import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.provider.OpenableColumns;
 import android.text.Editable;
-import android.text.InputFilter;
-import android.text.Layout;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.HapticFeedbackConstants;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.ForegroundColorSpan;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.WindowManager;
-import android.view.animation.LinearInterpolator;
+import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -73,16 +57,12 @@ import com.twitter.twittertext.TwitterTextEmojiRegex;
 
 import org.joinmastodon.android.E;
 import org.joinmastodon.android.GlobalUserPreferences;
-import org.joinmastodon.android.MastodonApp;
 import org.joinmastodon.android.R;
-import org.joinmastodon.android.api.MastodonAPIController;
 import org.joinmastodon.android.api.MastodonErrorResponse;
-import org.joinmastodon.android.api.ProgressListener;
 import org.joinmastodon.android.api.requests.statuses.CreateStatus;
 import org.joinmastodon.android.api.requests.statuses.DeleteStatus;
 import org.joinmastodon.android.api.requests.statuses.EditStatus;
-import org.joinmastodon.android.api.requests.statuses.GetAttachmentByID;
-import org.joinmastodon.android.api.requests.statuses.UploadAttachment;
+import org.joinmastodon.android.api.session.AccountLocalPreferences;
 import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.ScheduledStatusCreatedEvent;
@@ -90,42 +70,38 @@ import org.joinmastodon.android.events.ScheduledStatusDeletedEvent;
 import org.joinmastodon.android.events.StatusCountersUpdatedEvent;
 import org.joinmastodon.android.events.StatusCreatedEvent;
 import org.joinmastodon.android.events.StatusUpdatedEvent;
+import org.joinmastodon.android.fragments.account_list.ComposeAccountSearchFragment;
 import org.joinmastodon.android.model.Account;
-import org.joinmastodon.android.model.Attachment;
 import org.joinmastodon.android.model.ContentType;
 import org.joinmastodon.android.model.Emoji;
 import org.joinmastodon.android.model.EmojiCategory;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Mention;
-import org.joinmastodon.android.model.Poll;
 import org.joinmastodon.android.model.Preferences;
 import org.joinmastodon.android.model.ScheduledStatus;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.model.StatusPrivacy;
-import org.joinmastodon.android.ui.ComposeAutocompleteViewController;
 import org.joinmastodon.android.ui.CustomEmojiPopupKeyboard;
 import org.joinmastodon.android.ui.M3AlertDialogBuilder;
+import org.joinmastodon.android.ui.OutlineProviders;
 import org.joinmastodon.android.ui.PopupKeyboard;
 import org.joinmastodon.android.ui.drawables.SpoilerStripesDrawable;
 import org.joinmastodon.android.ui.text.ComposeAutocompleteSpan;
 import org.joinmastodon.android.ui.text.ComposeHashtagOrMentionSpan;
 import org.joinmastodon.android.ui.text.HtmlParser;
 import org.joinmastodon.android.ui.utils.SimpleTextWatcher;
-import org.joinmastodon.android.utils.TransferSpeedTracker;
 import org.joinmastodon.android.ui.utils.UiUtils;
+import org.joinmastodon.android.ui.viewcontrollers.ComposeAutocompleteViewController;
+import org.joinmastodon.android.ui.viewcontrollers.ComposeLanguageAlertViewController;
+import org.joinmastodon.android.ui.viewcontrollers.ComposeMediaViewController;
+import org.joinmastodon.android.ui.viewcontrollers.ComposePollViewController;
 import org.joinmastodon.android.ui.views.ComposeEditText;
-import org.joinmastodon.android.ui.views.ComposeMediaLayout;
 import org.joinmastodon.android.ui.views.LinkedTextView;
-import org.joinmastodon.android.ui.views.ReorderableLinearLayout;
 import org.joinmastodon.android.ui.views.SizeListenerLinearLayout;
 import org.joinmastodon.android.utils.MastodonLanguage;
 import org.joinmastodon.android.utils.StatusTextEncoder;
-import org.parceler.Parcel;
 import org.parceler.Parcels;
 
-import java.io.InterruptedIOException;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -136,6 +112,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -153,22 +130,25 @@ import me.grishka.appkit.utils.V;
 public class ComposeFragment extends MastodonToolbarFragment implements OnBackPressedListener, ComposeEditText.SelectionListener, HasAccountID {
 
 	private static final int MEDIA_RESULT=717;
-	private static final int IMAGE_DESCRIPTION_RESULT=363;
+	public static final int IMAGE_DESCRIPTION_RESULT=363;
+	private static final int AUTOCOMPLETE_ACCOUNT_RESULT=779;
 	private static final int SCHEDULED_STATUS_OPENED_RESULT=161;
-	private static final int MAX_ATTACHMENTS=4;
+
 	private static final String GLITCH_LOCAL_ONLY_SUFFIX = "👁";
 	private static final Pattern GLITCH_LOCAL_ONLY_PATTERN = Pattern.compile("[\\s\\S]*" + GLITCH_LOCAL_ONLY_SUFFIX + "[\uFE00-\uFE0F]*");
+
 	private static final String TAG="ComposeFragment";
 
-	public static final Pattern MENTION_PATTERN=Pattern.compile("(^|[^\\/\\w])@(([a-z0-9_]+)@[a-z0-9\\.\\-]+[a-z0-9]+)", Pattern.CASE_INSENSITIVE);
+	private static final Pattern MENTION_PATTERN=Pattern.compile("(^|[^\\/\\w])@(([a-z0-9_]+)@[a-z0-9\\.\\-]+[a-z0-9]+)", Pattern.CASE_INSENSITIVE);
 
 	// from https://github.com/mastodon/mastodon-ios/blob/main/Mastodon/Helper/MastodonRegex.swift
-	public static final Pattern AUTO_COMPLETE_PATTERN=Pattern.compile("(?<!\\w)(?:@([a-zA-Z0-9_]+)(@[a-zA-Z0-9_.-]+)?|#([^\\s.]+)|:([a-zA-Z0-9_]+))");
-	public static final Pattern HIGHLIGHT_PATTERN=Pattern.compile("(?<!\\w)(?:@([a-zA-Z0-9_]+)(@[a-zA-Z0-9_.-]+)?|#([^\\s.]+))");
+	private static final Pattern AUTO_COMPLETE_PATTERN=Pattern.compile("(?<!\\w)(?:@([a-zA-Z0-9_]+)(@[a-zA-Z0-9_.-]+)?|#([^\\s.]+)|:([a-zA-Z0-9_]+))");
+	private static final Pattern HIGHLIGHT_PATTERN=Pattern.compile("(?<!\\w)(?:@([a-zA-Z0-9_]+)(@[a-zA-Z0-9_.-]+)?|#([^\\s.]+))");
 
 	@SuppressLint("NewApi") // this class actually exists on 6.0
 	private final BreakIterator breakIterator=BreakIterator.getCharacterInstance();
 
+	public LinearLayout mainLayout;
 	private SizeListenerLinearLayout contentView;
 	private TextView selfName, selfUsername, selfExtraText, extraText;
 	private ImageView selfAvatar;
@@ -180,28 +160,18 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	private String accountID;
 	private int charCount, charLimit, trimmedCharCount;
 
-	private Button publishButton, languageButton, scheduleTimeBtn, draftsBtn;
+	private Button publishButton, languageButton, scheduleTimeBtn;
 	private PopupMenu languagePopup, contentTypePopup, visibilityPopup, draftOptionsPopup;
-	private ImageButton mediaBtn, pollBtn, emojiBtn, spoilerBtn, visibilityBtn, scheduleDraftDismiss, contentTypeBtn;
-	private ImageView sensitiveIcon;
-	private ComposeMediaLayout attachmentsView;
-	private TextView replyText;
-	private ReorderableLinearLayout pollOptionsView;
-	private View pollWrap;
-	private View addPollOptionBtn;
+	private ImageButton mediaBtn, pollBtn, emojiBtn, spoilerBtn, draftsBtn, scheduleDraftDismiss, contentTypeBtn;
 	private View sensitiveItem;
-	private View pollAllowMultipleItem;
-	private View scheduleDraftView;
+	private TextView replyText;
+	private LinearLayout scheduleDraftView;
 	private ScrollView scrollView;
 	private boolean initiallyScrolled = false;
 	private TextView scheduleDraftText;
-	private CheckBox pollAllowMultipleCheckbox;
-	private TextView pollDurationView;
-	private MenuItem draftMenuItem, undraftMenuItem, scheduleMenuItem, unscheduleMenuItem;
-
-	private ArrayList<DraftPollOption> pollOptions=new ArrayList<>();
-
-	private ArrayList<DraftMediaAttachment> attachments=new ArrayList<>();
+	private Button visibilityBtn;
+	private LinearLayout bottomBar;
+	private View autocompleteDivider;
 
 	private List<EmojiCategory> customEmojis;
 	private CustomEmojiPopupKeyboard emojiKeyboard;
@@ -209,35 +179,45 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	private Status quote;
 	private String initialText;
 	private String uuid;
-	private int pollDuration=24*3600;
-	private String pollDurationStr;
 	private EditText spoilerEdit;
+	private View spoilerWrap;
 	private boolean hasSpoiler;
 	private boolean sensitive;
 	private Instant scheduledAt = null;
 	private ProgressBar sendProgress;
-	private ImageView sendError;
 	private View sendingOverlay;
 	private WindowManager wm;
 	private StatusPrivacy statusVisibility=StatusPrivacy.PUBLIC;
 	private boolean localOnly;
 	private ComposeAutocompleteSpan currentAutocompleteSpan;
 	private FrameLayout mainEditTextWrap;
-	private ComposeAutocompleteViewController autocompleteViewController;
-	private Instance instance;
-	private boolean attachmentsErrorShowing;
 
-	private Status editingStatus;
+	private ComposeLanguageAlertViewController.SelectedOption postLang;
+
+	private ComposeAutocompleteViewController autocompleteViewController;
+	private ComposePollViewController pollViewController=new ComposePollViewController(this);
+	private ComposeMediaViewController mediaViewController=new ComposeMediaViewController(this);
+	public Instance instance;
+
+	public Status editingStatus;
 	private ScheduledStatus scheduledStatus;
 	private boolean redraftStatus;
-	private boolean pollChanged;
-	private boolean creatingView;
-	private boolean ignoreSelectionChanges=false;
-	private Runnable updateUploadEtaRunnable;
 
-	private String language, encoding;
 	private ContentType contentType;
 	private MastodonLanguage.LanguageResolver languageResolver;
+
+	private boolean creatingView;
+	private boolean ignoreSelectionChanges=false;
+	private MenuItem actionItem;
+	private MenuItem draftMenuItem, undraftMenuItem, scheduleMenuItem, unscheduleMenuItem;
+	private boolean wasDetached;
+
+	private BackgroundColorSpan overLimitBG;
+	private ForegroundColorSpan overLimitFG;
+
+	public ComposeFragment(){
+		super(R.layout.toolbar_fragment_with_progressbar);
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -245,24 +225,30 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		setRetainInstance(true);
 
 		accountID=getArguments().getString("account");
-		contentType = GlobalUserPreferences.accountsDefaultContentTypes.get(accountID);
+		AccountSession session=AccountSessionManager.get(accountID);
 
-		AccountSession session=AccountSessionManager.getInstance().getAccount(accountID);
 		self=session.self;
 		instanceDomain=session.domain;
 		customEmojis=AccountSessionManager.getInstance().getCustomEmojis(instanceDomain);
 		instance=AccountSessionManager.getInstance().getInstanceInfo(instanceDomain);
 		languageResolver=new MastodonLanguage.LanguageResolver(instance);
 		redraftStatus=getArguments().getBoolean("redraftStatus", false);
-		if(getArguments().containsKey("editStatus"))
+		contentType=session.getLocalPreferences().defaultContentType;
+		if(getArguments().containsKey("editStatus")){
 			editingStatus=Parcels.unwrap(getArguments().getParcelable("editStatus"));
-		if(getArguments().containsKey("replyTo"))
+		}
+		if(getArguments().containsKey("replyTo")) {
 			replyTo=Parcels.unwrap(getArguments().getParcelable("replyTo"));
-		if(getArguments().containsKey("quote"))
+		}
+		if(getArguments().containsKey("quote")) {
 			quote=Parcels.unwrap(getArguments().getParcelable("quote"));
+		}
 		if(instance==null){
 			Nav.finish(this);
 			return;
+		}
+		if(customEmojis.isEmpty()){
+			AccountSessionManager.getInstance().updateInstanceInfo(instanceDomain);
 		}
 
 		Bundle bundle = savedInstanceState != null ? savedInstanceState : getArguments();
@@ -275,19 +261,16 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			charLimit=instance.configuration.statuses.maxCharacters;
 		else
 			charLimit=500;
+
+//		setTitle(editingStatus==null ? R.string.new_post : R.string.edit_post);
+		if(savedInstanceState!=null)
+			postLang=Parcels.unwrap(savedInstanceState.getParcelable("postLang"));
 	}
 
 	@Override
 	public void onDestroy(){
 		super.onDestroy();
-		for(DraftMediaAttachment att:attachments){
-			if(att.isUploadingOrProcessing())
-				att.cancelUpload();
-		}
-		if(updateUploadEtaRunnable!=null){
-			UiUtils.removeCallbacks(updateUploadEtaRunnable);
-			updateUploadEtaRunnable=null;
-		}
+		mediaViewController.cancelAllUploads();
 	}
 
 	@Override
@@ -295,6 +278,15 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		super.onAttach(activity);
 		setHasOptionsMenu(true);
 		wm=activity.getSystemService(WindowManager.class);
+
+		overLimitBG=new BackgroundColorSpan(UiUtils.getThemeColor(activity, R.attr.colorM3ErrorContainer));
+		overLimitFG=new ForegroundColorSpan(UiUtils.getThemeColor(activity, R.attr.colorM3Error));
+	}
+
+	@Override
+	public void onDetach(){
+		wasDetached=true;
+		super.onDetach();
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -302,9 +294,21 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	public View onCreateContentView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		creatingView=true;
 		emojiKeyboard=new CustomEmojiPopupKeyboard(getActivity(), customEmojis, instanceDomain);
-		emojiKeyboard.setListener(this::onCustomEmojiClick);
+		emojiKeyboard.setListener(new CustomEmojiPopupKeyboard.Listener(){
+			@Override
+			public void onEmojiSelected(Emoji emoji){
+				onCustomEmojiClick(emoji);
+			}
+
+			@Override
+			public void onBackspace(){
+				getActivity().dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
+				getActivity().dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DEL));
+			}
+		});
 
 		View view=inflater.inflate(R.layout.fragment_compose, container, false);
+		mainLayout=view.findViewById(R.id.compose_main_ll);
 		mainEditText=view.findViewById(R.id.toot_text);
 		mainEditTextWrap=view.findViewById(R.id.toot_text_wrap);
 		charCounter=view.findViewById(R.id.char_counter);
@@ -326,6 +330,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		};
 		selfAvatar.setOutlineProvider(roundCornersOutline);
 		selfAvatar.setClipToOutline(true);
+		bottomBar=view.findViewById(R.id.bottom_bar);
 
 		mediaBtn=view.findViewById(R.id.btn_media);
 		pollBtn=view.findViewById(R.id.btn_poll);
@@ -337,11 +342,10 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		scheduleDraftText=view.findViewById(R.id.schedule_draft_text);
 		scheduleDraftDismiss=view.findViewById(R.id.schedule_draft_dismiss);
 		scheduleTimeBtn=view.findViewById(R.id.scheduled_time_btn);
-		sensitiveIcon=view.findViewById(R.id.sensitive_icon);
 		sensitiveItem=view.findViewById(R.id.sensitive_item);
 		replyText=view.findViewById(R.id.reply_text);
 
-		if (isPhotoPickerAvailable()) {
+		if (UiUtils.isPhotoPickerAvailable()) {
 			PopupMenu attachPopup = new PopupMenu(getContext(), mediaBtn);
 			attachPopup.inflate(R.menu.attach);
 			attachPopup.setOnMenuItemClickListener(i -> {
@@ -358,6 +362,9 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		pollBtn.setOnClickListener(v->togglePoll());
 		emojiBtn.setOnClickListener(v->emojiKeyboard.toggleKeyboardPopup(mainEditText));
 		spoilerBtn.setOnClickListener(v->toggleSpoiler());
+		Drawable arrow=getResources().getDrawable(R.drawable.ic_baseline_arrow_drop_down_18, getActivity().getTheme()).mutate();
+		arrow.setTint(UiUtils.getThemeColor(getActivity(), R.attr.colorM3OnSurface));
+		visibilityBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, arrow, null);
 
 		localOnly = savedInstanceState != null ? savedInstanceState.getBoolean("localOnly") :
 				editingStatus != null ? editingStatus.localOnly : replyTo != null && replyTo.localOnly;
@@ -378,74 +385,35 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			@Override
 			public void onIconChanged(int icon){
 				emojiBtn.setSelected(icon!=PopupKeyboard.ICON_HIDDEN);
+				updateNavigationBarColor(icon!=PopupKeyboard.ICON_HIDDEN);
+				if(autocompleteViewController.getMode()==ComposeAutocompleteViewController.Mode.EMOJIS){
+					contentView.layout(contentView.getLeft(), contentView.getTop(), contentView.getRight(), contentView.getBottom());
+					if(icon==PopupKeyboard.ICON_HIDDEN)
+						showAutocomplete();
+					else
+						hideAutocomplete();
+				}
 			}
 		});
 
 		contentView=(SizeListenerLinearLayout) view;
 		contentView.addView(emojiKeyboard.getView());
-		emojiKeyboard.getView().setElevation(V.dp(2));
-
-		attachmentsView=view.findViewById(R.id.attachments);
-		pollOptionsView=view.findViewById(R.id.poll_options);
-		pollWrap=view.findViewById(R.id.poll_wrap);
-		addPollOptionBtn=view.findViewById(R.id.add_poll_option);
-		pollAllowMultipleItem=view.findViewById(R.id.poll_allow_multiple);
-		pollAllowMultipleCheckbox=view.findViewById(R.id.poll_allow_multiple_checkbox);
-		pollAllowMultipleItem.setOnClickListener(v->this.togglePollAllowMultiple());
-
-		addPollOptionBtn.setOnClickListener(v->{
-			createDraftPollOption().edit.requestFocus();
-			updatePollOptionHints();
-		});
-		pollOptionsView.setDragListener(this::onSwapPollOptions);
-		pollDurationView=view.findViewById(R.id.poll_duration);
-		pollDurationView.setOnClickListener(v->showPollDurationMenu());
-
-		pollOptions.clear();
-		if(savedInstanceState!=null && savedInstanceState.containsKey("pollOptions")){
-			pollBtn.setSelected(true);
-			mediaBtn.setEnabled(false);
-			pollWrap.setVisibility(View.VISIBLE);
-			updatePollAllowMultiple(savedInstanceState.getBoolean("pollAllowMultiple", false));
-			for(String oldText:savedInstanceState.getStringArrayList("pollOptions")){
-				DraftPollOption opt=createDraftPollOption();
-				opt.edit.setText(oldText);
-			}
-			updatePollOptionHints();
-			pollDurationView.setText(getString(R.string.compose_poll_duration, pollDurationStr));
-		}else if(savedInstanceState==null && editingStatus!=null && editingStatus.poll!=null){
-			pollBtn.setSelected(true);
-			mediaBtn.setEnabled(false);
-			pollWrap.setVisibility(View.VISIBLE);
-			updatePollAllowMultiple(editingStatus.poll.multiple);
-			for(Poll.Option eopt:editingStatus.poll.options){
-				DraftPollOption opt=createDraftPollOption();
-				opt.edit.setText(eopt.title);
-			}
-			pollDuration=scheduledStatus == null
-					? (int)editingStatus.poll.expiresAt.minus(System.currentTimeMillis(), ChronoUnit.MILLIS).getEpochSecond()
-					: Integer.parseInt(scheduledStatus.params.poll.expiresIn);
-			pollDurationStr=UiUtils.formatTimeLeft(getActivity(), scheduledStatus == null
-					? editingStatus.poll.expiresAt
-					: Instant.now().plus(pollDuration, ChronoUnit.SECONDS));
-			updatePollOptionHints();
-			pollDurationView.setText(getString(R.string.compose_poll_duration, pollDurationStr));
-		}else{
-			pollDurationView.setText(getString(R.string.compose_poll_duration, pollDurationStr=getResources().getQuantityString(R.plurals.x_days, 1, 1)));
-		}
 
 		spoilerEdit=view.findViewById(R.id.content_warning);
-		LayerDrawable spoilerBg=(LayerDrawable) spoilerEdit.getBackground().mutate();
+		spoilerWrap=view.findViewById(R.id.content_warning_wrap);
+		LayerDrawable spoilerBg=(LayerDrawable) spoilerWrap.getBackground().mutate();
 		spoilerBg.setDrawableByLayerId(R.id.left_drawable, new SpoilerStripesDrawable(false));
 		spoilerBg.setDrawableByLayerId(R.id.right_drawable, new SpoilerStripesDrawable(false));
-		spoilerEdit.setBackground(spoilerBg);
+		spoilerWrap.setBackground(spoilerBg);
+		spoilerWrap.setClipToOutline(true);
+		spoilerWrap.setOutlineProvider(OutlineProviders.roundedRect(8));
 		if((savedInstanceState!=null && savedInstanceState.getBoolean("hasSpoiler", false)) || hasSpoiler){
 			hasSpoiler=true;
-			spoilerEdit.setVisibility(View.VISIBLE);
+			spoilerWrap.setVisibility(View.VISIBLE);
 			spoilerBtn.setSelected(true);
 		}else if(editingStatus!=null && !TextUtils.isEmpty(editingStatus.spoilerText)){
 			hasSpoiler=true;
-			spoilerEdit.setVisibility(View.VISIBLE);
+			spoilerWrap.setVisibility(View.VISIBLE);
 			spoilerEdit.setText(getArguments().getString("sourceSpoiler", editingStatus.spoilerText));
 			spoilerBtn.setSelected(true);
 		}
@@ -454,22 +422,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				: savedInstanceState!=null && savedInstanceState.getBoolean("sensitive", false);
 		if (sensitive) {
 			sensitiveItem.setVisibility(View.VISIBLE);
-			sensitiveIcon.setSelected(true);
-		}
-
-		if(savedInstanceState!=null && savedInstanceState.containsKey("attachments")){
-			ArrayList<Parcelable> serializedAttachments=savedInstanceState.getParcelableArrayList("attachments");
-			for(Parcelable a:serializedAttachments){
-				DraftMediaAttachment att=Parcels.unwrap(a);
-				attachmentsView.addView(createMediaAttachmentView(att));
-				attachments.add(att);
-			}
-			attachmentsView.setVisibility(View.VISIBLE);
-		}else if(!attachments.isEmpty()){
-			attachmentsView.setVisibility(View.VISIBLE);
-			for(DraftMediaAttachment att:attachments){
-				attachmentsView.addView(createMediaAttachmentView(att));
-			}
+			sensitiveItem.setSelected(true);
 		}
 
 		if (savedInstanceState != null) {
@@ -490,7 +443,6 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		}).setChecked(true);
 		visibilityPopup.getMenu().findItem(R.id.local_only).setChecked(localOnly);
 
-
 		if (savedInstanceState != null && savedInstanceState.containsKey("contentType")) {
 			contentType = (ContentType) savedInstanceState.getSerializable("contentType");
 		} else if (getArguments().containsKey("sourceContentType")) {
@@ -505,10 +457,32 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		contentTypeBtn.setSelected(contentTypeId != R.id.content_type_null && contentTypeId != R.id.content_type_plain);
 
 		autocompleteViewController=new ComposeAutocompleteViewController(getActivity(), accountID);
-		autocompleteViewController.setCompletionSelectedListener(this::onAutocompleteOptionSelected);
+		autocompleteViewController.setCompletionSelectedListener(new ComposeAutocompleteViewController.AutocompleteListener(){
+			@Override
+			public void onCompletionSelected(String completion){
+				onAutocompleteOptionSelected(completion);
+			}
+
+			@Override
+			public void onSetEmojiPanelOpen(boolean open){
+				if(open!=emojiKeyboard.isVisible())
+					emojiKeyboard.toggleKeyboardPopup(mainEditText);
+			}
+
+			@Override
+			public void onLaunchAccountSearch(){
+				Bundle args=new Bundle();
+				args.putString("account", accountID);
+				Nav.goForResult(getActivity(), ComposeAccountSearchFragment.class, args, AUTOCOMPLETE_ACCOUNT_RESULT, ComposeFragment.this);
+			}
+		});
 		View autocompleteView=autocompleteViewController.getView();
-		autocompleteView.setVisibility(View.GONE);
-		mainEditTextWrap.addView(autocompleteView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, V.dp(178), Gravity.TOP));
+		autocompleteView.setVisibility(View.INVISIBLE);
+		bottomBar.addView(autocompleteView, 0, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, V.dp(56)));
+		autocompleteDivider=view.findViewById(R.id.bottom_bar_autocomplete_divider);
+
+		pollViewController.setView(view, savedInstanceState);
+		mediaViewController.setView(view, savedInstanceState);
 
 		creatingView=false;
 
@@ -518,31 +492,16 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	@Override
 	public void onSaveInstanceState(Bundle outState){
 		super.onSaveInstanceState(outState);
-		if(!pollOptions.isEmpty()){
-			ArrayList<String> opts=new ArrayList<>();
-			for(DraftPollOption opt:pollOptions){
-				opts.add(opt.edit.getText().toString());
-			}
-			outState.putStringArrayList("pollOptions", opts);
-			outState.putInt("pollDuration", pollDuration);
-			outState.putString("pollDurationStr", pollDurationStr);
-			outState.putBoolean("pollAllowMultiple", pollAllowMultipleItem.isSelected());
-		}
-		outState.putBoolean("sensitive", sensitive);
-		outState.putBoolean("localOnly", localOnly);
+		pollViewController.onSaveInstanceState(outState);
+		mediaViewController.onSaveInstanceState(outState);
 		outState.putBoolean("hasSpoiler", hasSpoiler);
-		outState.putString("language", language);
-		if(!attachments.isEmpty()){
-			ArrayList<Parcelable> serializedAttachments=new ArrayList<>(attachments.size());
-			for(DraftMediaAttachment att:attachments){
-				serializedAttachments.add(Parcels.wrap(att));
-			}
-			outState.putParcelableArrayList("attachments", serializedAttachments);
-		}
 		outState.putSerializable("visibility", statusVisibility);
-		outState.putSerializable("contentType", contentType);
-		if (scheduledAt != null) outState.putSerializable("scheduledAt", scheduledAt);
-		if (scheduledStatus != null) outState.putParcelable("scheduledStatus", Parcels.wrap(scheduledStatus));
+		outState.putParcelable("postLang", Parcels.wrap(postLang));
+		if(currentAutocompleteSpan!=null){
+			Editable e=mainEditText.getText();
+			outState.putInt("autocompleteStart", e.getSpanStart(currentAutocompleteSpan));
+			outState.putInt("autocompleteEnd", e.getSpanEnd(currentAutocompleteSpan));
+		}
 	}
 
 	@Override
@@ -556,9 +515,11 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		contentView.setSizeListener(emojiKeyboard::onContentViewSizeChanged);
 		InputMethodManager imm=getActivity().getSystemService(InputMethodManager.class);
 		mainEditText.requestFocus();
-		view.postDelayed(()->{
-			imm.showSoftInput(mainEditText, 0);
-		}, 100);
+		 view.postDelayed(()->{
+		 	imm.showSoftInput(mainEditText, 0);
+		 }, 100);
+		sendProgress=view.findViewById(R.id.progress);
+		sendProgress.setVisibility(View.GONE);
 
 		mainEditText.setSelectionListener(this);
 		mainEditText.addTextChangedListener(new TextWatcher(){
@@ -702,9 +663,15 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			else if (status.createdAt!=null) timestamp.setText(UiUtils.formatRelativeTimestamp(getContext(), status.createdAt));
 			else timestamp.setText("");
 			if (status.spoilerText != null && !status.spoilerText.isBlank()) {
-				// TODO
-//				view.findViewById(R.id.spoiler_header).setVisibility(View.VISIBLE);
-//				((TextView) view.findViewById(R.id.spoiler_title_inline)).setText(status.spoilerText);
+				TextView replyToSpoiler = view.findViewById(R.id.reply_to_spoiler);
+				replyToSpoiler.setVisibility(View.VISIBLE);
+				replyToSpoiler.setText(status.spoilerText);
+				LayerDrawable spoilerBg=(LayerDrawable) replyToSpoiler.getBackground().mutate();
+				spoilerBg.setDrawableByLayerId(R.id.left_drawable, new SpoilerStripesDrawable(false));
+				spoilerBg.setDrawableByLayerId(R.id.right_drawable, new SpoilerStripesDrawable(false));
+				replyToSpoiler.setBackground(spoilerBg);
+				replyToSpoiler.setClipToOutline(true);
+				replyToSpoiler.setOutlineProvider(OutlineProviders.roundedRect(8));
 			}
 
 			SpannableStringBuilder content = HtmlParser.parse(status.content, status.emojis, status.mentions, status.tags, accountID);
@@ -744,20 +711,16 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				ignoreSelectionChanges=false;
 				if(!TextUtils.isEmpty(status.spoilerText)){
 					hasSpoiler=true;
-					spoilerEdit.setVisibility(View.VISIBLE);
-					if ((GlobalUserPreferences.prefixReplies == ALWAYS
+					spoilerWrap.setVisibility(View.VISIBLE);
+					String prefix = (GlobalUserPreferences.prefixReplies == ALWAYS
 							|| (GlobalUserPreferences.prefixReplies == TO_OTHERS && !ownID.equals(status.account.id)))
-							&& !status.spoilerText.startsWith("re: ")) {
-						spoilerEdit.setText("re: " + status.spoilerText);
-					} else {
-						spoilerEdit.setText(status.spoilerText);
-					}
+							&& !status.spoilerText.startsWith("re: ") ? "re: " : "";
+					spoilerEdit.setText(prefix + replyTo.spoilerText);
 					spoilerBtn.setSelected(true);
 				}
-				if (status.language != null && !status.language.isEmpty()) updateLanguage(status.language);
+				if (status.language != null && !status.language.isEmpty()) setPostLanguage(status.language);
 			}
 		}else if (editingStatus==null || editingStatus.inReplyToId==null){
-			// TODO: remove workaround after https://github.com/mastodon/mastodon-android/issues/341 gets fixed
 			replyText.setVisibility(View.GONE);
 		}
 		if(savedInstanceState==null){
@@ -767,20 +730,8 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				ignoreSelectionChanges=true;
 				mainEditText.setSelection(mainEditText.length());
 				ignoreSelectionChanges=false;
-				updateLanguage(editingStatus.language);
-				if(!editingStatus.mediaAttachments.isEmpty()){
-					attachmentsView.setVisibility(View.VISIBLE);
-					for(Attachment att:editingStatus.mediaAttachments){
-						DraftMediaAttachment da=new DraftMediaAttachment();
-						da.serverAttachment=att;
-						da.description=att.description;
-						da.uri=att.previewUrl!=null ? Uri.parse(att.previewUrl) : null;
-						da.state=AttachmentUploadState.DONE;
-						attachmentsView.addView(createMediaAttachmentView(da));
-						attachments.add(da);
-					}
-					pollBtn.setEnabled(false);
-				}
+				setPostLanguage(editingStatus.language);
+				mediaViewController.onViewCreated(savedInstanceState);;
 			}else{
 				String prefilledText=getArguments().getString("prefilledText");
 				if(!TextUtils.isEmpty(prefilledText)){
@@ -798,7 +749,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				ArrayList<Uri> mediaUris=getArguments().getParcelableArrayList("mediaAttachments");
 				if(mediaUris!=null && !mediaUris.isEmpty()){
 					for(Uri uri:mediaUris){
-						addMediaAttachment(uri, null);
+						mediaViewController.addMediaAttachment(uri, null);
 					}
 				}
 			}
@@ -811,15 +762,28 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			updateCharCounter();
 			visibilityBtn.setEnabled(redraftStatus);
 		}
+		updateMediaPollStates();
+	}
+
+	@Override
+	public void onViewStateRestored(Bundle savedInstanceState){
+		super.onViewStateRestored(savedInstanceState);
+		if(savedInstanceState!=null && savedInstanceState.containsKey("autocompleteStart")){
+			int start=savedInstanceState.getInt("autocompleteStart"), end=savedInstanceState.getInt("autocompleteEnd");
+			currentAutocompleteSpan=new ComposeAutocompleteSpan();
+			mainEditText.getText().setSpan(currentAutocompleteSpan, start, end, Editable.SPAN_EXCLUSIVE_INCLUSIVE);
+			startAutocomplete(currentAutocompleteSpan);
+		}
 	}
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
-		MenuItem item=menu.add(editingStatus==null ? R.string.publish : R.string.save);
+		inflater.inflate(editingStatus==null ? R.menu.compose : R.menu.compose_edit, menu);
+		actionItem = menu.findItem(R.id.publish);
 		LinearLayout wrap=new LinearLayout(getActivity());
 		getActivity().getLayoutInflater().inflate(R.layout.compose_action, wrap);
-		item.setActionView(wrap);
-		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		actionItem.setActionView(wrap);
+		actionItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
 		draftsBtn = wrap.findViewById(R.id.drafts_btn);
 		draftOptionsPopup = new PopupMenu(getContext(), draftsBtn);
@@ -840,25 +804,31 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 
 		publishButton = wrap.findViewById(R.id.publish_btn);
 		languageButton = wrap.findViewById(R.id.language_btn);
-		sendProgress = wrap.findViewById(R.id.send_progress);
-		sendError = wrap.findViewById(R.id.send_error);
+		languageButton.setOnClickListener(v->showLanguageAlert());
 
-		publishButton.setOnClickListener(this::onPublishClick);
+		publishButton.setOnClickListener(v -> {
+			if(GlobalUserPreferences.altTextReminders)
+				checkAltTextsAndPublish();
+			else
+				publish();
+		});
 		draftsBtn.setOnClickListener(v-> draftOptionsPopup.show());
 		draftsBtn.setOnTouchListener(draftOptionsPopup.getDragToOpenListener());
 		updateScheduledAt(scheduledAt != null ? scheduledAt : scheduledStatus != null ? scheduledStatus.scheduledAt : null);
-		buildLanguageSelector(languageButton);
+
+		Preferences prefs = AccountSessionManager.get(accountID).preferences;
+		if (postLang != null) setPostLanguage(postLang);
+		else setPostLanguage(prefs != null && prefs.postingDefaultLanguage != null && prefs.postingDefaultLanguage.length() > 0
+				? languageResolver.from(prefs.postingDefaultLanguage)
+				: languageResolver.getDefault());
 
 		if (isInstancePixelfed()) spoilerBtn.setVisibility(View.GONE);
 		if (isInstancePixelfed() || (editingStatus != null && scheduledStatus == null)) {
 			// editing an already published post
 			draftsBtn.setVisibility(View.GONE);
 		}
-	}
 
-	@Override
-	public String getAccountID() {
-		return accountID;
+		updatePublishButtonState();
 	}
 
 	private void navigateToUnsentPosts() {
@@ -877,69 +847,6 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		}
 	}
 
-	private void updateLanguage(String lang) {
-		updateLanguage(lang == null ? languageResolver.getDefault() : languageResolver.from(lang));
-	}
-
-	private void updateLanguage(MastodonLanguage loc) {
-		updateLanguage(loc.getLanguage(), loc.getLanguageName(), loc.getDefaultName());
-	}
-
-	private void updateLanguage(String languageTag, String languageName, String defaultName) {
-		language = languageTag;
-		languageButton.setText(languageName);
-		languageButton.setContentDescription(getActivity().getString(R.string.sk_post_language, defaultName));
-	}
-
-	@SuppressLint("ClickableViewAccessibility")
-	private void buildLanguageSelector(Button btn) {
-		languagePopup=new PopupMenu(getActivity(), languageButton);
-		btn.setOnTouchListener(languagePopup.getDragToOpenListener());
-		btn.setOnClickListener(v->languagePopup.show());
-
-		Preferences prefs = AccountSessionManager.getInstance().getAccount(accountID).preferences;
-		if (language != null) updateLanguage(language);
-		else updateLanguage(prefs != null && prefs.postingDefaultLanguage != null && prefs.postingDefaultLanguage.length() > 0
-				? languageResolver.from(prefs.postingDefaultLanguage)
-				: languageResolver.getDefault());
-
-		Menu languageMenu = languagePopup.getMenu();
-		for (String recentLanguage : Optional.ofNullable(recentLanguages.get(accountID)).orElse(defaultRecentLanguages)) {
-			if (recentLanguage.equals("bottom")) {
-				addBottomLanguage(languageMenu);
-			} else {
-				MastodonLanguage l = languageResolver.from(recentLanguage);
-				languageMenu.add(0, allLanguages.indexOf(l), Menu.NONE, getActivity().getString(R.string.sk_language_name, l.getDefaultName(), l.getLanguageName()));
-			}
-		}
-
-		SubMenu allLanguagesMenu = languageMenu.addSubMenu(R.string.sk_available_languages);
-		for (int i = 0; i < allLanguages.size(); i++) {
-			MastodonLanguage l = allLanguages.get(i);
-			allLanguagesMenu.add(0, i, Menu.NONE, getActivity().getString(R.string.sk_language_name, l.getDefaultName(), l.getLanguageName()));
-		}
-
-		if (GlobalUserPreferences.bottomEncoding) addBottomLanguage(allLanguagesMenu);
-
-		btn.setOnLongClickListener(v->{
-			btn.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-			if (!GlobalUserPreferences.bottomEncoding) addBottomLanguage(allLanguagesMenu);
-			return false;
-		});
-
-		languagePopup.setOnMenuItemClickListener(i->{
-			if (i.hasSubMenu()) return false;
-			if (i.getItemId() == allLanguages.size()) {
-				updateLanguage(language, "\uD83E\uDD7A\uD83D\uDC49\uD83D\uDC48", "bottom");
-				encoding = "bottom";
-			} else {
-				updateLanguage(allLanguages.get(i.getItemId()));
-				encoding = null;
-			}
-			return true;
-		});
-	}
-
 	private int getContentTypeName(String id) {
 		return switch (id) {
 			case "text/plain" -> R.string.sk_content_type_plain;
@@ -949,12 +856,6 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			case "text/x.misskeymarkdown" -> R.string.sk_content_type_mfm;
 			default -> throw new IllegalArgumentException("Invalid content type");
 		};
-	}
-
-	private void addBottomLanguage(Menu menu) {
-		if (menu.findItem(allLanguages.size()) == null) {
-			menu.add(0, allLanguages.size(), Menu.NONE, "bottom (\uD83E\uDD7A\uD83D\uDC49\uD83D\uDC48)");
-		}
 	}
 
 	@Override
@@ -970,7 +871,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 
 	@SuppressLint("NewApi")
 	private void updateCharCounter(){
-		CharSequence text=mainEditText.getText();
+		Editable text=mainEditText.getText();
 
 		String countableText=TwitterTextEmojiRegex.VALID_EMOJI_PATTERN.matcher(
 				MENTION_PATTERN.matcher(
@@ -990,6 +891,19 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			charCount -= GLITCH_LOCAL_ONLY_SUFFIX.length();
 		}
 		charCounter.setText(String.valueOf(charLimit-charCount));
+
+		text.removeSpan(overLimitBG);
+		text.removeSpan(overLimitFG);
+		if(charCount>charLimit){
+			charCounter.setTextColor(UiUtils.getThemeColor(getActivity(), R.attr.colorM3Error));
+			int start=text.length()-(charCount-charLimit);
+			int end=text.length();
+			text.setSpan(overLimitFG, start, end, 0);
+			text.setSpan(overLimitBG, start, end, 0);
+		}else{
+			charCounter.setTextColor(UiUtils.getThemeColor(getActivity(), R.attr.colorM3OnSurface));
+		}
+
 		trimmedCharCount=text.toString().trim().length();
 		updatePublishButtonState();
 	}
@@ -1003,26 +917,23 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		}
 	}
 
-	private void updatePublishButtonState(){
+	public void updatePublishButtonState(){
 		uuid=null;
-		int nonEmptyPollOptionsCount=0;
-		for(DraftPollOption opt:pollOptions){
-			if(opt.edit.length()>0)
-				nonEmptyPollOptionsCount++;
-		}
 		if(publishButton==null)
 			return;
-		int nonDoneAttachmentCount=0;
-		for(DraftMediaAttachment att:attachments){
-			if(att.state!=AttachmentUploadState.DONE)
-				nonDoneAttachmentCount++;
-		}
-		publishButton.setEnabled((!isInstancePixelfed() || attachments.size() > 0) && (trimmedCharCount>0 || !attachments.isEmpty()) && charCount<=charLimit && nonDoneAttachmentCount==0 && (pollOptions.isEmpty() || nonEmptyPollOptionsCount>1));
-		sendError.setVisibility(View.GONE);
+		publishButton.setEnabled((!isInstancePixelfed() || !mediaViewController.isEmpty()) && (trimmedCharCount>0 || !mediaViewController.isEmpty()) && charCount<=charLimit && mediaViewController.getNonDoneAttachmentCount()==0 && (pollViewController.isEmpty() || pollViewController.getNonEmptyOptionsCount()>1));
 	}
 
 	private void onCustomEmojiClick(Emoji emoji){
 		if(getActivity().getCurrentFocus() instanceof EditText edit){
+			if(edit==mainEditText && currentAutocompleteSpan!=null && autocompleteViewController.getMode()==ComposeAutocompleteViewController.Mode.EMOJIS){
+				Editable text=mainEditText.getText();
+				int start=text.getSpanStart(currentAutocompleteSpan);
+				int end=text.getSpanEnd(currentAutocompleteSpan);
+				finishAutocomplete();
+				text.replace(start, end, ':'+emoji.shortcode+':');
+				return;
+			}
 			int start=edit.getSelectionStart();
 			String prefix=start>0 && !Character.isWhitespace(edit.getText().charAt(start-1)) ? " :" : ":";
 			edit.getText().replace(start, edit.getSelectionEnd(), prefix+emoji.shortcode+':');
@@ -1032,20 +943,26 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	@Override
 	protected void updateToolbar(){
 		super.updateToolbar();
-		getToolbar().setNavigationIcon(R.drawable.ic_fluent_dismiss_24_regular);
+		int color=UiUtils.alphaBlendThemeColors(getActivity(), R.attr.colorM3Background, R.attr.colorM3Primary, 0.11f);
+		getToolbar().setBackgroundColor(color);
+		setStatusBarColor(color);
+		bottomBar.setBackgroundColor(color);
+		updateNavigationBarColor(emojiKeyboard.isVisible());
 	}
 
-	private void onPublishClick(View v){
-		publish();
+	private void updateNavigationBarColor(boolean emojiKeyboardVisible){
+		int color=UiUtils.alphaBlendThemeColors(getActivity(), R.attr.colorM3Background, R.attr.colorM3Primary, emojiKeyboardVisible ? 0.08f : 0.11f);
+		setNavigationBarColor(color);
 	}
 
-	private void publishErrorCallback(ErrorResponse error) {
-		wm.removeView(sendingOverlay);
-		sendingOverlay=null;
-		sendProgress.setVisibility(View.GONE);
-		sendError.setVisibility(View.VISIBLE);
-		publishButton.setEnabled(true);
-		if (error != null) error.showToast(getActivity());
+	@Override
+	protected int getNavigationIconDrawableResource(){
+		return R.drawable.ic_baseline_close_24;
+	}
+
+	@Override
+	public boolean wantsCustomNavigationIcon(){
+		return true;
 	}
 
 	private void createScheduledStatusFinish(ScheduledStatus result) {
@@ -1068,7 +985,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 
 				@Override
 				public void onError(ErrorResponse error) {
-					publishErrorCallback(error);
+					handlePublishError(error);
 				}
 			}).exec(accountID);
 		} else {
@@ -1076,14 +993,52 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		}
 	}
 
-	private void publish(){
-		publish(false);
+	private void checkAltTextsAndPublish(){
+		int count=mediaViewController.getMissingAltTextAttachmentCount();
+		if(count==0){
+			publish();
+		}else{
+			String msg=getResources().getQuantityString(mediaViewController.areAllAttachmentsImages() ? R.plurals.alt_text_reminder_x_images : R.plurals.alt_text_reminder_x_attachments,
+					count, switch(count){
+						case 1 -> getString(R.string.count_one);
+						case 2 -> getString(R.string.count_two);
+						case 3 -> getString(R.string.count_three);
+						case 4 -> getString(R.string.count_four);
+						default -> String.valueOf(count);
+					});
+			new M3AlertDialogBuilder(getActivity())
+					.setTitle(R.string.alt_text_reminder_title)
+					.setMessage(msg)
+					.setPositiveButton(R.string.alt_text_reminder_post_anyway, (dlg, item)->publish())
+					.setNegativeButton(R.string.cancel, null)
+					.show();
+		}
 	}
 
-	private void publish(boolean force){
+	private void publish(){
+		sendingOverlay=new View(getActivity());
+		WindowManager.LayoutParams overlayParams=new WindowManager.LayoutParams();
+		overlayParams.type=WindowManager.LayoutParams.TYPE_APPLICATION_PANEL;
+		overlayParams.flags=WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR | WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
+		overlayParams.width=overlayParams.height=WindowManager.LayoutParams.MATCH_PARENT;
+		overlayParams.format=PixelFormat.TRANSLUCENT;
+		overlayParams.softInputMode=WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED;
+		overlayParams.token=mainEditText.getWindowToken();
+		wm.addView(sendingOverlay, overlayParams);
+
+		publishButton.setEnabled(false);
+		V.setVisibilityAnimated(sendProgress, View.VISIBLE);
+
+		mediaViewController.saveAltTextsBeforePublishing(this::actuallyPublish, this::handlePublishError);
+	}
+
+	private void actuallyPublish(){
+		actuallyPublish(false);
+	}
+	private void actuallyPublish(boolean force){
 		String text=mainEditText.getText().toString();
 		CreateStatus.Request req=new CreateStatus.Request();
-		if ("bottom".equals(encoding)) {
+		if ("bottom".equals(postLang.encoding)) {
 			text = new StatusTextEncoder(Bottom::encode).encode(text);
 			req.spoilerText = "bottom-encoded emoji spam";
 		}
@@ -1096,32 +1051,20 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		req.localOnly=localOnly;
 		req.visibility=localOnly && instance.isAkkoma() ? StatusPrivacy.LOCAL : statusVisibility;
 		req.sensitive=sensitive;
-		req.language=language;
 		req.contentType=contentType;
-		req.scheduledAt = scheduledAt;
-		if(!attachments.isEmpty()){
-			req.mediaIds=attachments.stream().map(a->a.serverAttachment.id).collect(Collectors.toList());
-			Optional<DraftMediaAttachment> withoutAltText = attachments.stream().filter(a -> a.description == null || a.description.isBlank()).findFirst();
-			boolean isDraft = scheduledAt != null && scheduledAt.isAfter(DRAFTS_AFTER_INSTANT);
-			if (!force && !GlobalUserPreferences.disableAltTextReminder && !isDraft && withoutAltText.isPresent()) {
-				new M3AlertDialogBuilder(getActivity())
-						.setTitle(R.string.sk_alt_text_missing_title)
-						.setMessage(R.string.sk_alt_text_missing)
-						.setPositiveButton(R.string.add_alt_text, (d, w) -> editMediaDescription(withoutAltText.get()))
-						.setNegativeButton(R.string.sk_publish_anyway, (d, w) -> publish(true))
-						.show();
-				return;
-			}
+		req.scheduledAt=scheduledAt;
+		if(!mediaViewController.isEmpty()){
+			req.mediaIds=mediaViewController.getAttachmentIDs();
 		}
 		// ask whether to publish now when editing an existing draft
 		if (!force && editingStatus != null && scheduledAt != null && scheduledAt.isAfter(DRAFTS_AFTER_INSTANT)) {
 			new M3AlertDialogBuilder(getActivity())
 					.setTitle(R.string.sk_save_draft)
 					.setMessage(R.string.sk_save_draft_message)
-					.setPositiveButton(R.string.save, (d, w) -> publish(true))
+					.setPositiveButton(R.string.save, (d, w) -> actuallyPublish(true))
 					.setNegativeButton(R.string.publish, (d, w) -> {
 						updateScheduledAt(null);
-						publish();
+						actuallyPublish();
 					})
 					.show();
 			return;
@@ -1129,15 +1072,14 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		if(replyTo!=null || (editingStatus != null && editingStatus.inReplyToId!=null)){
 			req.inReplyToId=editingStatus!=null ? editingStatus.inReplyToId : replyTo.id;
 		}
-		if(!pollOptions.isEmpty()){
-			req.poll=new CreateStatus.Request.Poll();
-			req.poll.expiresIn=pollDuration;
-			req.poll.multiple=pollAllowMultipleItem.isSelected();
-			for(DraftPollOption opt:pollOptions)
-				req.poll.options.add(opt.edit.getText().toString());
+		if(!pollViewController.isEmpty()){
+			req.poll=pollViewController.getPollForRequest();
 		}
 		if(hasSpoiler && spoilerEdit.length()>0){
 			req.spoilerText=spoilerEdit.getText().toString();
+		}
+		if(postLang!=null && postLang.language!=null){
+			req.language=postLang.language.getLanguage();
 		}
 		if(quote != null){
 			req.quoteId=quote.id;
@@ -1145,21 +1087,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		if(uuid==null)
 			uuid=UUID.randomUUID().toString();
 
-		sendingOverlay=new View(getActivity());
-		WindowManager.LayoutParams overlayParams=new WindowManager.LayoutParams();
-		overlayParams.type=WindowManager.LayoutParams.TYPE_APPLICATION_PANEL;
-		overlayParams.flags=WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR | WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
-		overlayParams.width=overlayParams.height=WindowManager.LayoutParams.MATCH_PARENT;
-		overlayParams.format=PixelFormat.TRANSLUCENT;
-		overlayParams.softInputMode=WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED;
-		overlayParams.token=mainEditText.getWindowToken();
-		wm.addView(sendingOverlay, overlayParams);
-
-		publishButton.setEnabled(false);
-		sendProgress.setVisibility(View.VISIBLE);
-		sendError.setVisibility(View.GONE);
-
-		Callback<Status> resCallback = new Callback<>(){
+		Callback<Status> resCallback=new Callback<>(){
 			@Override
 			public void onSuccess(Status result){
 				maybeDeleteScheduledPost(() -> {
@@ -1199,7 +1127,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 
 			@Override
 			public void onError(ErrorResponse error){
-				publishErrorCallback(error);
+				handlePublishError(error);
 			}
 		};
 
@@ -1227,7 +1155,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 
 						@Override
 						public void onError(ErrorResponse error) {
-							publishErrorCallback(error);
+							handlePublishError(error);
 						}
 					}).exec(accountID);
 		}else{
@@ -1236,25 +1164,42 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 					.setMessage(R.string.sk_scheduled_too_soon)
 					.setPositiveButton(R.string.ok, (a, b)->{})
 					.show();
-			publishErrorCallback(null);
+			handlePublishError(null);
 			publishButton.setEnabled(false);
 		}
 
-		if (replyTo == null) {
-			List<String> newRecentLanguages = new ArrayList<>(Optional.ofNullable(recentLanguages.get(accountID)).orElse(defaultRecentLanguages));
-			newRecentLanguages.remove(language);
-			newRecentLanguages.add(0, language);
-			if (encoding != null) {
-				newRecentLanguages.remove(encoding);
-				newRecentLanguages.add(0, encoding);
-			}
-			if ("bottom".equals(encoding) && !GlobalUserPreferences.bottomEncoding) {
-				GlobalUserPreferences.bottomEncoding = true;
-				GlobalUserPreferences.save();
-			}
-			recentLanguages.put(accountID, newRecentLanguages.stream().limit(4).collect(Collectors.toList()));
-			GlobalUserPreferences.save();
+		if (replyTo == null) updateRecentLanguages();
+	}
+
+	private void handlePublishError(ErrorResponse error){
+		wm.removeView(sendingOverlay);
+		sendingOverlay=null;
+		V.setVisibilityAnimated(sendProgress, View.GONE);
+		publishButton.setEnabled(true);
+		if(error instanceof MastodonErrorResponse me){
+			new M3AlertDialogBuilder(getActivity())
+					.setTitle(R.string.post_failed)
+					.setMessage(me.error)
+					.setPositiveButton(R.string.retry, (dlg, btn)->publish())
+					.setNegativeButton(R.string.cancel, null)
+					.show();
+		}else{
+			error.showToast(getActivity());
 		}
+	}
+
+	private void updateRecentLanguages() {
+		if (postLang == null || postLang.language == null) return;
+		String language = postLang.language.getLanguage();
+		AccountLocalPreferences prefs = AccountSessionManager.get(accountID).getLocalPreferences();
+		prefs.recentLanguages.remove(language);
+		prefs.recentLanguages.add(0, language);
+		if (postLang.encoding != null) {
+			prefs.recentLanguages.remove(postLang.encoding);
+			prefs.recentLanguages.add(0, postLang.encoding);
+		}
+		if ("bottom".equals(postLang.encoding) && !prefs.bottomEncoding) prefs.bottomEncoding = true;
+		prefs.save();
 	}
 
 	private boolean hasDraft(){
@@ -1263,16 +1208,15 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			if(!mainEditText.getText().toString().equals(initialText))
 				return true;
 			List<String> existingMediaIDs=editingStatus.mediaAttachments.stream().map(a->a.id).collect(Collectors.toList());
-			if(!existingMediaIDs.equals(attachments.stream().map(a->a.serverAttachment.id).collect(Collectors.toList())))
+			if(!existingMediaIDs.equals(mediaViewController.getAttachmentIDs()))
 				return true;
 			if(!statusVisibility.equals(editingStatus.visibility)) return true;
 			if(scheduledStatus != null && !scheduledStatus.scheduledAt.equals(scheduledAt)) return true;
-			return pollChanged;
+			if(sensitive != editingStatus.sensitive) return true;
+			return pollViewController.isPollChanged();
 		}
-		boolean pollFieldsHaveContent=false;
-		for(DraftPollOption opt:pollOptions)
-			pollFieldsHaveContent|=opt.edit.length()>0;
-		return (mainEditText.length()>0 && !mainEditText.getText().toString().equals(initialText)) || !attachments.isEmpty() || pollFieldsHaveContent;
+		boolean pollFieldsHaveContent=pollViewController.getNonEmptyOptionsCount()>0;
+		return (mainEditText.length()>0 && !mainEditText.getText().toString().equals(initialText)) || !mediaViewController.isEmpty() || pollFieldsHaveContent;
 	}
 
 	@Override
@@ -1302,22 +1246,24 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	@Override
 	public void onFragmentResult(int reqCode, boolean success, Bundle result){
 		if(reqCode==IMAGE_DESCRIPTION_RESULT && success){
-			Attachment updated=Parcels.unwrap(result.getParcelable("attachment"));
-			for(DraftMediaAttachment att:attachments){
-				if(att.serverAttachment.id.equals(updated.id)){
-					att.serverAttachment=updated;
-					att.description=updated.description;
-					att.descriptionView.setText(att.description);
-					break;
-				}
-			}
-		} else if (reqCode == SCHEDULED_STATUS_OPENED_RESULT && success && getActivity() != null) {
-			Nav.finish(this);
+			String attID=result.getString("attachment");
+			String text=result.getString("text");
+			mediaViewController.setAltTextByID(attID, text);
+		}else if(reqCode==AUTOCOMPLETE_ACCOUNT_RESULT && success){
+			Account acc=Parcels.unwrap(result.getParcelable("selectedAccount"));
+			if(currentAutocompleteSpan==null)
+				return;
+			Editable e=mainEditText.getText();
+			int start=e.getSpanStart(currentAutocompleteSpan);
+			int end=e.getSpanEnd(currentAutocompleteSpan);
+			e.removeSpan(currentAutocompleteSpan);
+			e.replace(start, end, '@'+acc.acct+' ');
+			finishAutocomplete();
 		}
 	}
 
 	private void confirmDiscardDraftAndFinish(){
-		boolean attachmentsPending = attachments.stream().anyMatch(att -> att.state != AttachmentUploadState.DONE);
+		boolean attachmentsPending = mediaViewController.areAnyAttachmentsNotDone();
 		if (attachmentsPending) new M3AlertDialogBuilder(getActivity())
 				.setTitle(R.string.sk_unfinished_attachments)
 				.setMessage(R.string.sk_unfinished_attachments_message)
@@ -1345,10 +1291,10 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	 */
 	private void openFilePicker(boolean photoPicker){
 		Intent intent;
-		boolean usePhotoPicker=photoPicker && isPhotoPickerAvailable();
+		boolean usePhotoPicker=photoPicker && UiUtils.isPhotoPickerAvailable();
 		if(usePhotoPicker){
 			intent=new Intent(MediaStore.ACTION_PICK_IMAGES);
-			intent.putExtra(MediaStore.EXTRA_PICK_IMAGES_MAX, MAX_ATTACHMENTS-getMediaAttachmentsCount());
+			intent.putExtra(MediaStore.EXTRA_PICK_IMAGES_MAX, mediaViewController.getMaxAttachments()-mediaViewController.getMediaAttachmentsCount());
 		}else{
 			intent=new Intent(Intent.ACTION_GET_CONTENT);
 			intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -1376,480 +1322,55 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		if(requestCode==MEDIA_RESULT && resultCode==Activity.RESULT_OK){
 			Uri single=data.getData();
 			if(single!=null){
-				addMediaAttachment(single, null);
+				mediaViewController.addMediaAttachment(single, null);
 			}else{
 				ClipData clipData=data.getClipData();
 				for(int i=0;i<clipData.getItemCount();i++){
-					addMediaAttachment(clipData.getItemAt(i).getUri(), null);
+					mediaViewController.addMediaAttachment(clipData.getItemAt(i).getUri(), null);
 				}
 			}
 		}
 	}
 
-	private boolean addMediaAttachment(Uri uri, String description){
-		if(getMediaAttachmentsCount()==MAX_ATTACHMENTS){
-			showMediaAttachmentError(getResources().getQuantityString(R.plurals.cant_add_more_than_x_attachments, MAX_ATTACHMENTS, MAX_ATTACHMENTS));
-			return false;
-		}
-		String type=getActivity().getContentResolver().getType(uri);
-		if(instance!=null && instance.configuration!=null && instance.configuration.mediaAttachments!=null){
-			if(instance.configuration.mediaAttachments.supportedMimeTypes!=null && !instance.configuration.mediaAttachments.supportedMimeTypes.contains(type)){
-				showMediaAttachmentError(getString(R.string.media_attachment_unsupported_type, UiUtils.getFileName(uri)));
-				return false;
-			}
-			if(!type.startsWith("image/")){
-				int sizeLimit=instance.configuration.mediaAttachments.videoSizeLimit;
-				int size;
-				try(Cursor cursor=MastodonApp.context.getContentResolver().query(uri, new String[]{OpenableColumns.SIZE}, null, null, null)){
-					cursor.moveToFirst();
-					size=cursor.getInt(0);
-				}catch(Exception x){
-					Log.w("ComposeFragment", x);
-					return false;
-				}
-				if(size>sizeLimit){
-					float mb=sizeLimit/(float) (1024*1024);
-					String sMb=String.format(Locale.getDefault(), mb%1f==0f ? "%.0f" : "%.2f", mb);
-					showMediaAttachmentError(getString(R.string.media_attachment_too_big, UiUtils.getFileName(uri), sMb));
-					return false;
-				}
-			}
-		}
-		pollBtn.setEnabled(false);
-		DraftMediaAttachment draft=new DraftMediaAttachment();
-		draft.uri=uri;
-		draft.mimeType=type;
-		draft.description=description;
 
-		attachmentsView.addView(createMediaAttachmentView(draft));
-		attachments.add(draft);
-		attachmentsView.setVisibility(View.VISIBLE);
-		draft.setOverlayVisible(true, false);
-
-		if(!areThereAnyUploadingAttachments()){
-			uploadNextQueuedAttachment();
-		}
-		updatePublishButtonState();
-		updateSensitive();
-		if(getMediaAttachmentsCount()==MAX_ATTACHMENTS)
-			mediaBtn.setEnabled(false);
-		return true;
-	}
-
-	private void showMediaAttachmentError(String text){
-		if(!attachmentsErrorShowing){
-			Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
-			attachmentsErrorShowing=true;
-			contentView.postDelayed(()->attachmentsErrorShowing=false, 2000);
-		}
-	}
-
-	private View createMediaAttachmentView(DraftMediaAttachment draft){
-		View thumb=getActivity().getLayoutInflater().inflate(R.layout.compose_media_thumb, attachmentsView, false);
-		ImageView img=thumb.findViewById(R.id.thumb);
-		if(draft.serverAttachment!=null){
-			if(draft.serverAttachment.previewUrl!=null)
-				ViewImageLoader.load(img, draft.serverAttachment.blurhashPlaceholder, new UrlImageLoaderRequest(draft.serverAttachment.previewUrl, V.dp(250), V.dp(250)));
-		}else{
-			if(draft.mimeType.startsWith("image/")){
-				ViewImageLoader.load(img, null, new UrlImageLoaderRequest(draft.uri, V.dp(250), V.dp(250)));
-			}else if(draft.mimeType.startsWith("video/")){
-				loadVideoThumbIntoView(img, draft.uri);
-			}
-		}
-		TextView fileName=thumb.findViewById(R.id.file_name);
-		fileName.setText(UiUtils.getFileName(draft.serverAttachment!=null ? Uri.parse(draft.serverAttachment.url) : draft.uri));
-
-		draft.view=thumb;
-		draft.imageView=img;
-		draft.progressBar=thumb.findViewById(R.id.progress);
-		draft.infoBar=thumb.findViewById(R.id.info_bar);
-		draft.overlay=thumb.findViewById(R.id.overlay);
-		draft.descriptionView=thumb.findViewById(R.id.description);
-		draft.uploadStateTitle=thumb.findViewById(R.id.state_title);
-		draft.uploadStateText=thumb.findViewById(R.id.state_text);
-		ImageButton btn=thumb.findViewById(R.id.remove_btn);
-		btn.setTag(draft);
-		btn.setOnClickListener(this::onRemoveMediaAttachmentClick);
-		btn=thumb.findViewById(R.id.remove_btn2);
-		btn.setTag(draft);
-		btn.setOnClickListener(this::onRemoveMediaAttachmentClick);
-		ImageButton retry=thumb.findViewById(R.id.retry_or_cancel_upload);
-		retry.setTag(draft);
-		retry.setOnClickListener(this::onRetryOrCancelMediaUploadClick);
-		draft.retryButton=retry;
-		draft.infoBar.setTag(draft);
-		draft.infoBar.setOnClickListener(this::onEditMediaDescriptionClick);
-
-		if(!TextUtils.isEmpty(draft.description))
-			draft.descriptionView.setText(draft.description);
-
-		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.S){
-			draft.overlay.setBackgroundColor(0xA6000000);
-		}
-
-		if(draft.state==AttachmentUploadState.UPLOADING || draft.state==AttachmentUploadState.PROCESSING || draft.state==AttachmentUploadState.QUEUED){
-			draft.progressBar.setVisibility(View.GONE);
-		}else if(draft.state==AttachmentUploadState.ERROR){
-			draft.setOverlayVisible(true, false);
-		}
-
-		return thumb;
-	}
-
-	public void addFakeMediaAttachment(Uri uri, String description){
-		pollBtn.setEnabled(false);
-		DraftMediaAttachment draft=new DraftMediaAttachment();
-		draft.uri=uri;
-		draft.description=description;
-		attachmentsView.addView(createMediaAttachmentView(draft));
-		attachments.add(draft);
-		attachmentsView.setVisibility(View.VISIBLE);
-	}
-
-	private void uploadMediaAttachment(DraftMediaAttachment attachment){
-		if(areThereAnyUploadingAttachments()){
-			 throw new IllegalStateException("there is already an attachment being uploaded");
-		}
-		attachment.state=AttachmentUploadState.UPLOADING;
-		attachment.progressBar.setVisibility(View.VISIBLE);
-		ObjectAnimator rotationAnimator=ObjectAnimator.ofFloat(attachment.progressBar, View.ROTATION, 0f, 360f);
-		rotationAnimator.setInterpolator(new LinearInterpolator());
-		rotationAnimator.setDuration(1500);
-		rotationAnimator.setRepeatCount(ObjectAnimator.INFINITE);
-		rotationAnimator.start();
-		attachment.progressBarAnimator=rotationAnimator;
-		int maxSize=0;
-		String contentType=getActivity().getContentResolver().getType(attachment.uri);
-		if(contentType!=null && contentType.startsWith("image/")){
-			maxSize=2_073_600; // TODO get this from instance configuration when it gets added there
-		}
-		attachment.uploadStateTitle.setText("");
-		attachment.uploadStateText.setText("");
-		attachment.progressBar.setProgress(0);
-		attachment.speedTracker.reset();
-		attachment.speedTracker.addSample(0);
-		attachment.uploadRequest=(UploadAttachment) new UploadAttachment(attachment.uri, maxSize, attachment.description)
-				.setProgressListener(new ProgressListener(){
-					@Override
-					public void onProgress(long transferred, long total){
-						if(updateUploadEtaRunnable==null){
-							// getting a NoSuchMethodError: No static method -$$Nest$mupdateUploadETAs(ComposeFragment;)V in class ComposeFragment
-							// when using method reference out of nowhere after changing code elsewhere. no idea. programming is awful, actually
-							// noinspection Convert2MethodRef
-							UiUtils.runOnUiThread(updateUploadEtaRunnable=()->ComposeFragment.this.updateUploadETAs(), 50);
-						}
-						int progress=Math.round(transferred/(float)total*attachment.progressBar.getMax());
-						if(Build.VERSION.SDK_INT>=24)
-							attachment.progressBar.setProgress(progress, true);
-						else
-							attachment.progressBar.setProgress(progress);
-
-						attachment.speedTracker.setTotalBytes(total);
-						attachment.uploadStateTitle.setText(getString(R.string.file_upload_progress, UiUtils.formatFileSize(getActivity(), transferred, true), UiUtils.formatFileSize(getActivity(), total, true)));
-						attachment.speedTracker.addSample(transferred);
-					}
-				})
-				.setCallback(new Callback<>(){
-					@Override
-					public void onSuccess(Attachment result){
-						attachment.serverAttachment=result;
-						if(TextUtils.isEmpty(result.url)){
-							attachment.state=AttachmentUploadState.PROCESSING;
-							attachment.processingPollingRunnable=()->pollForMediaAttachmentProcessing(attachment);
-							if(getActivity()==null)
-								return;
-							attachment.uploadStateTitle.setText(R.string.upload_processing);
-							attachment.uploadStateText.setText("");
-							UiUtils.runOnUiThread(attachment.processingPollingRunnable, 1000);
-							if(!areThereAnyUploadingAttachments())
-								uploadNextQueuedAttachment();
-						}else{
-							finishMediaAttachmentUpload(attachment);
-						}
-					}
-
-					@Override
-					public void onError(ErrorResponse error){
-						attachment.uploadRequest=null;
-						attachment.progressBarAnimator=null;
-						attachment.state=AttachmentUploadState.ERROR;
-						attachment.uploadStateTitle.setText(R.string.upload_failed);
-						if(error instanceof MastodonErrorResponse er){
-							if(er.underlyingException instanceof SocketException || er.underlyingException instanceof UnknownHostException || er.underlyingException instanceof InterruptedIOException)
-								attachment.uploadStateText.setText(R.string.upload_error_connection_lost);
-							else
-								attachment.uploadStateText.setText(er.error);
-						}else{
-							attachment.uploadStateText.setText("");
-						}
-						attachment.retryButton.setImageResource(R.drawable.ic_fluent_arrow_clockwise_24_filled);
-						attachment.retryButton.setContentDescription(getString(R.string.retry_upload));
-
-						rotationAnimator.cancel();
-						V.setVisibilityAnimated(attachment.retryButton, View.VISIBLE);
-						V.setVisibilityAnimated(attachment.progressBar, View.GONE);
-
-						if(!areThereAnyUploadingAttachments())
-							uploadNextQueuedAttachment();
-					}
-				})
-				.exec(accountID);
-	}
-
-	private void onRemoveMediaAttachmentClick(View v){
-		DraftMediaAttachment att=(DraftMediaAttachment) v.getTag();
-		if(att.isUploadingOrProcessing())
-			att.cancelUpload();
-		attachments.remove(att);
-		if(!areThereAnyUploadingAttachments())
-			uploadNextQueuedAttachment();
-		attachmentsView.removeView(att.view);
-		if(getMediaAttachmentsCount()==0)
-			attachmentsView.setVisibility(View.GONE);
-		updatePublishButtonState();
-		pollBtn.setEnabled(attachments.isEmpty());
-		mediaBtn.setEnabled(true);
-		updateSensitive();
-	}
-
-	private void onRetryOrCancelMediaUploadClick(View v){
-		DraftMediaAttachment att=(DraftMediaAttachment) v.getTag();
-		if(att.state==AttachmentUploadState.ERROR){
-			att.retryButton.setImageResource(R.drawable.ic_fluent_dismiss_24_filled);
-			att.retryButton.setContentDescription(getString(R.string.cancel));
-			V.setVisibilityAnimated(att.progressBar, View.VISIBLE);
-			att.state=AttachmentUploadState.QUEUED;
-			if(!areThereAnyUploadingAttachments()){
-				uploadNextQueuedAttachment();
-			}
-		}else{
-			onRemoveMediaAttachmentClick(v);
-		}
-	}
-
-	private void pollForMediaAttachmentProcessing(DraftMediaAttachment attachment){
-		attachment.processingPollingRequest=(GetAttachmentByID) new GetAttachmentByID(attachment.serverAttachment.id)
-				.setCallback(new Callback<>(){
-					@Override
-					public void onSuccess(Attachment result){
-						attachment.processingPollingRequest=null;
-						if(!TextUtils.isEmpty(result.url)){
-							attachment.processingPollingRunnable=null;
-							attachment.serverAttachment=result;
-							finishMediaAttachmentUpload(attachment);
-						}else if(getActivity()!=null){
-							UiUtils.runOnUiThread(attachment.processingPollingRunnable, 1000);
-						}
-					}
-
-					@Override
-					public void onError(ErrorResponse error){
-						attachment.processingPollingRequest=null;
-						if(getActivity()!=null)
-							UiUtils.runOnUiThread(attachment.processingPollingRunnable, 1000);
-					}
-				})
-				.exec(accountID);
-	}
-
-	private void finishMediaAttachmentUpload(DraftMediaAttachment attachment){
-		if(attachment.state!=AttachmentUploadState.PROCESSING && attachment.state!=AttachmentUploadState.UPLOADING)
-			throw new IllegalStateException("Unexpected state "+attachment.state);
-		attachment.uploadRequest=null;
-		attachment.state=AttachmentUploadState.DONE;
-		attachment.progressBar.setVisibility(View.GONE);
-		if(!areThereAnyUploadingAttachments())
-			uploadNextQueuedAttachment();
-		updatePublishButtonState();
-
-		if(attachment.progressBarAnimator!=null){
-			attachment.progressBarAnimator.cancel();
-			attachment.progressBarAnimator=null;
-		}
-		attachment.setOverlayVisible(false, true);
-	}
-
-	private void uploadNextQueuedAttachment(){
-		for(DraftMediaAttachment att:attachments){
-			if(att.state==AttachmentUploadState.QUEUED){
-				uploadMediaAttachment(att);
-				return;
-			}
-		}
-	}
-
-	private boolean areThereAnyUploadingAttachments(){
-		for(DraftMediaAttachment att:attachments){
-			if(att.state==AttachmentUploadState.UPLOADING)
-				return true;
-		}
-		return false;
-	}
-
-	private void updateUploadETAs(){
-		if(!areThereAnyUploadingAttachments()){
-			UiUtils.removeCallbacks(updateUploadEtaRunnable);
-			updateUploadEtaRunnable=null;
-			return;
-		}
-		for(DraftMediaAttachment att:attachments){
-			if(att.state==AttachmentUploadState.UPLOADING){
-				long eta=att.speedTracker.updateAndGetETA();
-//				Log.i(TAG, "onProgress: transfer speed "+UiUtils.formatFileSize(getActivity(), Math.round(att.speedTracker.getLastSpeed()), false)+" average "+UiUtils.formatFileSize(getActivity(), Math.round(att.speedTracker.getAverageSpeed()), false)+" eta "+eta);
-				String time=String.format("%d:%02d", eta/60, eta%60);
-				att.uploadStateText.setText(getString(R.string.file_upload_time_remaining, time));
-			}
-		}
-		UiUtils.runOnUiThread(updateUploadEtaRunnable, 50);
-	}
-
-	private void onEditMediaDescriptionClick(View v){
-		DraftMediaAttachment att=(DraftMediaAttachment) v.getTag();
-		if(att.serverAttachment==null)
-			return;
-		editMediaDescription(att);
-	}
-
-	private void editMediaDescription(DraftMediaAttachment att) {
-		Bundle args=new Bundle();
-		args.putString("account", accountID);
-		args.putString("attachment", att.serverAttachment.id);
-		args.putParcelable("uri", att.uri);
-		args.putString("existingDescription", att.description);
-		Nav.goForResult(getActivity(), ComposeImageDescriptionFragment.class, args, IMAGE_DESCRIPTION_RESULT, this);
+	public void updateMediaPollStates(){
+		pollBtn.setSelected(pollViewController.isShown());
+		mediaBtn.setEnabled(!pollViewController.isShown() && mediaViewController.canAddMoreAttachments());
+		pollBtn.setEnabled(mediaViewController.isEmpty());
 	}
 
 	private void togglePoll(){
-		if(pollOptions.isEmpty()){
-			pollBtn.setSelected(true);
-			mediaBtn.setEnabled(false);
-			pollWrap.setVisibility(View.VISIBLE);
-			for(int i=0;i<2;i++)
-				createDraftPollOption();
-			updatePollOptionHints();
-		}else{
-			pollBtn.setSelected(false);
-			mediaBtn.setEnabled(true);
-			pollWrap.setVisibility(View.GONE);
-			addPollOptionBtn.setVisibility(View.VISIBLE);
-			pollOptionsView.removeAllViews();
-			pollOptions.clear();
-			pollDuration=24*3600;
-		}
+		pollViewController.toggle();
 		updatePublishButtonState();
-	}
-
-	private DraftPollOption createDraftPollOption(){
-		DraftPollOption option=new DraftPollOption();
-		option.view=LayoutInflater.from(getActivity()).inflate(R.layout.compose_poll_option, pollOptionsView, false);
-		option.edit=option.view.findViewById(R.id.edit);
-		option.dragger=option.view.findViewById(R.id.dragger_thingy);
-		ImageView icon = option.view.findViewById(R.id.icon);
-		icon.setImageDrawable(getContext().getDrawable(pollAllowMultipleItem.isSelected() ?
-				R.drawable.ic_poll_checkbox_regular_selector :
-				R.drawable.ic_poll_option_button
-		));
-
-		option.dragger.setOnLongClickListener(v->{
-			pollOptionsView.startDragging(option.view);
-			return true;
-		});
-		option.edit.addTextChangedListener(new SimpleTextWatcher(e->{
-			if(!creatingView)
-				pollChanged=true;
-			updatePublishButtonState();
-		}));
-
-		int maxCharactersPerOption = 50;
-		if(instance.configuration!=null && instance.configuration.polls!=null && instance.configuration.polls.maxCharactersPerOption>0)
-			maxCharactersPerOption = instance.configuration.polls.maxCharactersPerOption;
-		else if(instance.pollLimits!=null && instance.pollLimits.maxOptionChars>0)
-			maxCharactersPerOption = instance.pollLimits.maxOptionChars;
-		option.edit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxCharactersPerOption)});
-
-		pollOptionsView.addView(option.view);
-		pollOptions.add(option);
-
-		int maxPollOptions = 4;
-		if(instance.configuration!=null && instance.configuration.polls!=null && instance.configuration.polls.maxOptions>0)
-			maxPollOptions = instance.configuration.polls.maxOptions;
-		else if (instance.pollLimits!=null && instance.pollLimits.maxOptions>0)
-			maxPollOptions = instance.pollLimits.maxOptions;
-
-		if(pollOptions.size()==maxPollOptions)
-			addPollOptionBtn.setVisibility(View.GONE);
-		return option;
-	}
-
-	private void updatePollOptionHints(){
-		int i=0;
-		for(DraftPollOption option:pollOptions){
-			option.edit.setHint(getString(R.string.poll_option_hint, ++i));
-		}
-	}
-
-	private void onSwapPollOptions(int oldIndex, int newIndex){
-		pollOptions.add(newIndex, pollOptions.remove(oldIndex));
-		updatePollOptionHints();
-		pollChanged=true;
-	}
-
-	private void showPollDurationMenu(){
-		PopupMenu menu=new PopupMenu(getActivity(), pollDurationView);
-		menu.getMenu().add(0, 1, 0, getResources().getQuantityString(R.plurals.x_minutes, 5, 5));
-		menu.getMenu().add(0, 2, 0, getResources().getQuantityString(R.plurals.x_minutes, 30, 30));
-		menu.getMenu().add(0, 3, 0, getResources().getQuantityString(R.plurals.x_hours, 1, 1));
-		menu.getMenu().add(0, 4, 0, getResources().getQuantityString(R.plurals.x_hours, 6, 6));
-		menu.getMenu().add(0, 5, 0, getResources().getQuantityString(R.plurals.x_hours, 12, 12));
-		menu.getMenu().add(0, 6, 0, getResources().getQuantityString(R.plurals.x_days, 1, 1));
-		menu.getMenu().add(0, 7, 0, getResources().getQuantityString(R.plurals.x_days, 3, 3));
-		menu.getMenu().add(0, 8, 0, getResources().getQuantityString(R.plurals.x_days, 7, 7));
-		menu.setOnMenuItemClickListener(item->{
-			pollDuration=switch(item.getItemId()){
-				case 1 -> 5*60;
-				case 2 -> 30*60;
-				case 3 -> 3600;
-				case 4 -> 6*3600;
-				case 5 -> 12*3600;
-				case 6 -> 24*3600;
-				case 7 -> 3*24*3600;
-				case 8 -> 7*24*3600;
-				default -> throw new IllegalStateException("Unexpected value: "+item.getItemId());
-			};
-			pollDurationView.setText(getString(R.string.compose_poll_duration, pollDurationStr=item.getTitle().toString()));
-			pollChanged=true;
-			return true;
-		});
-		menu.show();
+		updateMediaPollStates();
 	}
 
 	private void toggleSpoiler(){
 		hasSpoiler=!hasSpoiler;
 		if(hasSpoiler){
-			spoilerEdit.setVisibility(View.VISIBLE);
+			spoilerWrap.setVisibility(View.VISIBLE);
 			spoilerBtn.setSelected(true);
 			spoilerEdit.requestFocus();
 		}else{
-			spoilerEdit.setVisibility(View.GONE);
+			spoilerWrap.setVisibility(View.GONE);
 			spoilerEdit.setText("");
 			spoilerBtn.setSelected(false);
 			mainEditText.requestFocus();
 			updateCharCounter();
-			sensitiveIcon.setVisibility(getMediaAttachmentsCount() > 0 ? View.VISIBLE : View.GONE);
+			sensitiveItem.setVisibility(mediaViewController.getMediaAttachmentsCount() > 0 ? View.VISIBLE : View.GONE);
 		}
 		updateSensitive();
 	}
 
 	private void toggleSensitive() {
 		sensitive=!sensitive;
-		sensitiveIcon.setSelected(sensitive);
+		sensitiveItem.setSelected(sensitive);
 	}
 
-	private void updateSensitive() {
+	public void updateSensitive() {
 		sensitiveItem.setVisibility(View.GONE);
-		if (!attachments.isEmpty() && !hasSpoiler) sensitiveItem.setVisibility(View.VISIBLE);
-		if (attachments.isEmpty()) sensitive = false;
+		if (!mediaViewController.isEmpty() && !hasSpoiler) sensitiveItem.setVisibility(View.VISIBLE);
+		if (mediaViewController.isEmpty()) sensitive = false;
 	}
 
 	private void pickScheduledDateTime() {
@@ -1868,7 +1389,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	private void updateScheduledAt(Instant scheduledAt) {
 		this.scheduledAt = scheduledAt;
 		updatePublishButtonState();
-		scheduleDraftView.setVisibility(scheduledAt == null ? View.GONE : View.VISIBLE);
+		V.setVisibilityAnimated(scheduleDraftView, scheduledAt == null ? View.GONE : View.VISIBLE);
 		draftMenuItem.setVisible(true);
 		scheduleMenuItem.setVisible(true);
 		undraftMenuItem.setVisible(false);
@@ -1881,8 +1402,11 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				scheduleTimeBtn.setVisibility(View.GONE);
 				scheduleDraftText.setText(R.string.sk_compose_draft);
 				scheduleDraftText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_fluent_drafts_20_regular, 0, 0, 0);
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+					scheduleDraftDismiss.setTooltipText(getString(R.string.sk_compose_no_draft));
+				}
 				scheduleDraftDismiss.setContentDescription(getString(R.string.sk_compose_no_draft));
-				draftsBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_fluent_drafts_20_filled, 0, 0, 0);
+				draftsBtn.setImageResource(R.drawable.ic_fluent_drafts_20_filled);
 				publishButton.setText(scheduledStatus != null && scheduledStatus.scheduledAt.isAfter(DRAFTS_AFTER_INSTANT)
 						? R.string.save : R.string.sk_draft);
 			} else {
@@ -1893,19 +1417,18 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				scheduleTimeBtn.setText(at);
 				scheduleDraftText.setText(R.string.sk_compose_scheduled);
 				scheduleDraftText.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+					scheduleDraftDismiss.setTooltipText(getString(R.string.sk_compose_no_schedule));
+				}
 				scheduleDraftDismiss.setContentDescription(getString(R.string.sk_compose_no_schedule));
-				draftsBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_fluent_clock_20_filled, 0, 0, 0);
+				draftsBtn.setImageResource(R.drawable.ic_fluent_clock_20_filled);
 				publishButton.setText(scheduledStatus != null && scheduledStatus.scheduledAt.equals(scheduledAt)
 						? R.string.save : R.string.sk_schedule);
 			}
 		} else {
-			draftsBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_fluent_clock_20_regular, 0, 0, 0);
+			draftsBtn.setImageResource(R.drawable.ic_fluent_clock_20_regular);
 			resetPublishButtonText();
 		}
-	}
-
-	private int getMediaAttachmentsCount(){
-		return attachments.size();
 	}
 
 	private void updateHeaders() {
@@ -1993,11 +1516,30 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		}
 	}
 
-	private void loadDefaultStatusVisibility(Bundle savedInstanceState) {
+	private void onVisibilityClick(View v){
+		PopupMenu menu=new PopupMenu(getActivity(), v);
+		menu.inflate(R.menu.compose_visibility);
+		menu.setOnMenuItemClickListener(item->{
+			int id=item.getItemId();
+			if(id==R.id.vis_public){
+				statusVisibility=StatusPrivacy.PUBLIC;
+			}else if(id==R.id.vis_followers){
+				statusVisibility=StatusPrivacy.PRIVATE;
+			}else if(id==R.id.vis_private){
+				statusVisibility=StatusPrivacy.DIRECT;
+			}
+			item.setChecked(true);
+			updateVisibilityIcon();
+			return true;
+		});
+		menu.show();
+	}
+
+	private void loadDefaultStatusVisibility(Bundle savedInstanceState){
 		if(replyTo != null) statusVisibility = replyTo.visibility;
 
 		AccountSessionManager asm = AccountSessionManager.getInstance();
-		Preferences prefs = asm.getAccount(accountID).preferences;
+		Preferences prefs=asm.getAccount(accountID).preferences;
 		if (prefs != null) {
 			// Only override the reply visibility if our preference is more private
 			// (and we're not replying to ourselves, or not at all)
@@ -2006,45 +1548,29 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				statusVisibility = prefs.postingDefaultVisibility;
 			}
 		}
-
-		// A saved privacy setting from a previous compose session wins over all
-		if(savedInstanceState !=null){
-			statusVisibility = (StatusPrivacy) savedInstanceState.getSerializable("visibility");
-		}
 	}
 
 	private void updateVisibilityIcon(){
 		if(statusVisibility==null){ // TODO find out why this happens
 			statusVisibility=StatusPrivacy.PUBLIC;
 		}
-		visibilityBtn.setImageResource(switch(statusVisibility){
-			case PUBLIC -> R.drawable.ic_fluent_earth_24_regular;
-			case UNLISTED -> R.drawable.ic_fluent_lock_open_24_regular;
-			case PRIVATE -> R.drawable.ic_fluent_lock_closed_24_filled;
-			case DIRECT -> R.drawable.ic_fluent_mention_24_regular;
-			case LOCAL -> R.drawable.ic_fluent_eye_24_regular;
+		visibilityBtn.setText(switch(statusVisibility){
+			case PUBLIC -> R.string.visibility_public;
+			case UNLISTED -> R.string.sk_visibility_unlisted;
+			case PRIVATE -> R.string.visibility_followers_only;
+			case DIRECT -> R.string.visibility_private;
+			case LOCAL -> R.string.sk_local_only;
 		});
-	}
-
-	private void togglePollAllowMultiple() {
-		updatePollAllowMultiple(!pollAllowMultipleItem.isSelected());
-	}
-
-	private void updatePollAllowMultiple(boolean multiple){
-		pollAllowMultipleItem.setSelected(multiple);
-		pollAllowMultipleCheckbox.setChecked(multiple);
-		ImageView btn = addPollOptionBtn.findViewById(R.id.add_poll_option_icon);
-		btn.setImageDrawable(getContext().getDrawable(multiple ?
-				R.drawable.ic_fluent_add_square_24_regular :
-				R.drawable.ic_fluent_add_circle_24_regular
-		));
-		for (DraftPollOption opt:pollOptions) {
-			ImageView icon = opt.view.findViewById(R.id.icon);
-			icon.setImageDrawable(getContext().getDrawable(multiple ?
-					R.drawable.ic_poll_checkbox_regular_selector :
-					R.drawable.ic_poll_option_button
-			));
-		}
+		Drawable icon=getResources().getDrawable(switch(statusVisibility){
+			case PUBLIC -> R.drawable.ic_fluent_earth_20_regular;
+			case UNLISTED -> R.drawable.ic_fluent_lock_open_20_regular;
+			case PRIVATE -> R.drawable.ic_fluent_lock_closed_20_filled;
+			case DIRECT -> R.drawable.ic_fluent_mention_20_regular;
+			case LOCAL -> R.drawable.ic_fluent_eye_20_regular;
+		}, getActivity().getTheme()).mutate();
+		icon.setBounds(0, 0, V.dp(18), V.dp(18));
+		icon.setTint(UiUtils.getThemeColor(getActivity(), R.attr.colorM3Primary));
+		visibilityBtn.setCompoundDrawablesRelative(icon, null, visibilityBtn.getCompoundDrawablesRelative()[2], null);
 	}
 
 	@Override
@@ -2063,18 +1589,6 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 					String spanText=e.toString().substring(e.getSpanStart(span), e.getSpanEnd(span));
 					autocompleteViewController.setText(spanText);
 				}
-
-				View autocompleteView=autocompleteViewController.getView();
-				Layout layout=mainEditText.getLayout();
-				int line=layout.getLineForOffset(start);
-				int offsetY=layout.getLineBottom(line);
-				FrameLayout.LayoutParams lp=(FrameLayout.LayoutParams) autocompleteView.getLayoutParams();
-				if(lp.topMargin!=offsetY){
-					lp.topMargin=offsetY;
-					mainEditTextWrap.requestLayout();
-				}
-				int offsetX=Math.round(layout.getPrimaryHorizontal(start))+mainEditText.getPaddingLeft();
-				autocompleteViewController.setArrowOffset(offsetX);
 			}else if(currentAutocompleteSpan!=null){
 				finishAutocomplete();
 			}
@@ -2092,7 +1606,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 
 	@Override
 	public boolean onAddMediaAttachmentFromEditText(Uri uri, String description){
-		return addMediaAttachment(uri, description);
+		return mediaViewController.addMediaAttachment(uri, description);
 	}
 
 	private void startAutocomplete(ComposeAutocompleteSpan span){
@@ -2100,8 +1614,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		Editable e=mainEditText.getText();
 		String spanText=e.toString().substring(e.getSpanStart(span), e.getSpanEnd(span));
 		autocompleteViewController.setText(spanText);
-		View autocompleteView=autocompleteViewController.getView();
-		autocompleteView.setVisibility(View.VISIBLE);
+		showAutocomplete();
 	}
 
 	private void finishAutocomplete(){
@@ -2109,7 +1622,26 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			return;
 		autocompleteViewController.setText(null);
 		currentAutocompleteSpan=null;
-		autocompleteViewController.getView().setVisibility(View.GONE);
+		hideAutocomplete();
+	}
+
+	private void showAutocomplete(){
+		UiUtils.beginLayoutTransition(bottomBar);
+		UiUtils.beginLayoutTransition(scheduleDraftView);
+		View autocompleteView=autocompleteViewController.getView();
+		bottomBar.getLayoutParams().height=ViewGroup.LayoutParams.WRAP_CONTENT;
+		bottomBar.requestLayout();
+		autocompleteView.setVisibility(View.VISIBLE);
+		autocompleteDivider.setVisibility(View.VISIBLE);
+	}
+
+	private void hideAutocomplete(){
+		UiUtils.beginLayoutTransition(bottomBar);
+		UiUtils.beginLayoutTransition(scheduleDraftView);
+		bottomBar.getLayoutParams().height=V.dp(56);
+		bottomBar.requestLayout();
+		autocompleteViewController.getView().setVisibility(View.INVISIBLE);
+		autocompleteDivider.setVisibility(View.INVISIBLE);
 	}
 
 	private void onAutocompleteOptionSelected(String text){
@@ -2117,32 +1649,10 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		int start=e.getSpanStart(currentAutocompleteSpan);
 		int end=e.getSpanEnd(currentAutocompleteSpan);
 		e.replace(start, end, text+" ");
-		mainEditText.setSelection(start+text.length()+1);
 		finishAutocomplete();
-	}
-
-	private void loadVideoThumbIntoView(ImageView target, Uri uri){
-		MastodonAPIController.runInBackground(()->{
-			Context context=getActivity();
-			if(context==null)
-				return;
-			try{
-				MediaMetadataRetriever mmr=new MediaMetadataRetriever();
-				mmr.setDataSource(context, uri);
-				Bitmap frame=mmr.getFrameAtTime(3_000_000);
-				mmr.release();
-				int size=Math.max(frame.getWidth(), frame.getHeight());
-				int maxSize=V.dp(250);
-				if(size>maxSize){
-					float factor=maxSize/(float)size;
-					frame=Bitmap.createScaledBitmap(frame, Math.round(frame.getWidth()*factor), Math.round(frame.getHeight()*factor), true);
-				}
-				Bitmap finalFrame=frame;
-				target.post(()->target.setImageBitmap(finalFrame));
-			}catch(Exception x){
-				Log.w(TAG, "loadVideoThumbIntoView: error getting video frame", x);
-			}
-		});
+		InputConnection conn=mainEditText.getCurrentInputConnection();
+		if(conn!=null)
+			conn.finishComposingText();
 	}
 
 	@Override
@@ -2160,85 +1670,50 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		return !UiUtils.isDarkTheme();
 	}
 
-	@Parcel
-	static class DraftMediaAttachment{
-		public Attachment serverAttachment;
-		public Uri uri;
-		public transient UploadAttachment uploadRequest;
-		public transient GetAttachmentByID processingPollingRequest;
-		public String description;
-		public String mimeType;
-		public AttachmentUploadState state=AttachmentUploadState.QUEUED;
-
-		public transient View view;
-		public transient ProgressBar progressBar;
-		public transient TextView descriptionView;
-		public transient View overlay;
-		public transient View infoBar;
-		public transient ImageButton retryButton;
-		public transient ObjectAnimator progressBarAnimator;
-		public transient Runnable processingPollingRunnable;
-		public transient ImageView imageView;
-		public transient TextView uploadStateTitle, uploadStateText;
-		public transient TransferSpeedTracker speedTracker=new TransferSpeedTracker();
-
-		public void cancelUpload(){
-			switch(state){
-				case UPLOADING -> {
-					if(uploadRequest!=null){
-						uploadRequest.cancel();
-						uploadRequest=null;
-					}
-				}
-				case PROCESSING -> {
-					if(processingPollingRunnable!=null){
-						UiUtils.removeCallbacks(processingPollingRunnable);
-						processingPollingRunnable=null;
-					}
-					if(processingPollingRequest!=null){
-						processingPollingRequest.cancel();
-						processingPollingRequest=null;
-					}
-				}
-				default -> throw new IllegalStateException("Unexpected state "+state);
-			}
-		}
-
-		public boolean isUploadingOrProcessing(){
-			return state==AttachmentUploadState.UPLOADING || state==AttachmentUploadState.PROCESSING;
-		}
-
-		public void setOverlayVisible(boolean visible, boolean animated){
-			if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.S){
-				if(visible){
-					imageView.setRenderEffect(RenderEffect.createBlurEffect(V.dp(16), V.dp(16), Shader.TileMode.REPEAT));
-				}else{
-					imageView.setRenderEffect(null);
-				}
-			}
-			int infoBarVis=visible ? View.GONE : View.VISIBLE;
-			int overlayVis=visible ? View.VISIBLE : View.GONE;
-			if(animated){
-				V.setVisibilityAnimated(infoBar, infoBarVis);
-				V.setVisibilityAnimated(overlay, overlayVis);
-			}else{
-				infoBar.setVisibility(infoBarVis);
-				overlay.setVisibility(overlayVis);
-			}
-		}
+	public boolean getWasDetached(){
+		return wasDetached;
 	}
 
-	enum AttachmentUploadState{
-		QUEUED,
-		UPLOADING,
-		PROCESSING,
-		ERROR,
-		DONE
+	public boolean isCreatingView(){
+		return creatingView;
 	}
 
-	private static class DraftPollOption{
-		public EditText edit;
-		public View view;
-		public View dragger;
+	@Override
+	public String getAccountID(){
+		return accountID;
+	}
+
+	public void addFakeMediaAttachment(Uri uri, String description){
+		mediaViewController.addFakeMediaAttachment(uri, description);
+	}
+
+	private void showLanguageAlert(){
+		Preferences prefs=AccountSessionManager.getInstance().getAccount(accountID).preferences;
+		ComposeLanguageAlertViewController vc=new ComposeLanguageAlertViewController(getActivity(), prefs!=null ? prefs.postingDefaultLanguage : null, postLang, mainEditText.getText().toString(), languageResolver);
+		new M3AlertDialogBuilder(getActivity())
+				.setTitle(R.string.language)
+				.setView(vc.getView())
+				.setPositiveButton(R.string.ok, (dialog, which)->setPostLanguage(vc.getSelectedOption()))
+				.setNegativeButton(R.string.cancel, null)
+				.show();
+	}
+
+	private void setPostLanguage(String lang) {
+		setPostLanguage(lang == null ? languageResolver.getDefault() : languageResolver.from(lang));
+	}
+
+	private void setPostLanguage(MastodonLanguage lang) {
+		setPostLanguage(new ComposeLanguageAlertViewController.SelectedOption(lang));
+	}
+
+	private void setPostLanguage(ComposeLanguageAlertViewController.SelectedOption opt){
+		postLang=opt;
+		if (Objects.equals("bottom", opt.encoding)) {
+			languageButton.setText("\uD83E\uDD7A\uD83D\uDC49\uD83D\uDC48");
+			languageButton.setContentDescription(opt.encoding);
+			return;
+		}
+		languageButton.setText(opt.language.getLanguageName());
+		languageButton.setContentDescription(getActivity().getString(R.string.sk_post_language, opt.language.getDefaultName()));
 	}
 }

@@ -499,6 +499,14 @@ public class ComposeMediaViewController{
 		return false;
 	}
 
+	public boolean areAnyAttachmentsNotDone() {
+		for(DraftMediaAttachment att:attachments){
+			if(att.state!=AttachmentUploadState.DONE)
+				return true;
+		}
+		return false;
+	}
+
 	private void onEditMediaDescriptionClick(View v){
 		DraftMediaAttachment att=(DraftMediaAttachment) v.getTag();
 		if(att.serverAttachment==null)

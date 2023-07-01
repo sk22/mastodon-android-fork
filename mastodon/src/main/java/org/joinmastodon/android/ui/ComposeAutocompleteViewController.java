@@ -89,8 +89,8 @@ public class ComposeAutocompleteViewController{
 		progressLP.topMargin=V.dp(16);
 		contentView.addView(progress, progressLP);
 
-		usersDividers=new DividerItemDecoration(activity, R.attr.colorPollVoted, 1, 72, 16);
-		hashtagsDividers=new DividerItemDecoration(activity, R.attr.colorPollVoted, 1, 16, 16);
+		usersDividers=new DividerItemDecoration(activity, R.attr.colorM3OutlineVariant, 1, 72, 16);
+		hashtagsDividers=new DividerItemDecoration(activity, R.attr.colorM3OutlineVariant, 1, 16, 16);
 
 		imgLoader=new ListImageLoaderWrapper(activity, list, new RecyclerViewDelegate(list), null);
 	}
