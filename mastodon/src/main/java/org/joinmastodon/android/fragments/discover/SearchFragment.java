@@ -204,7 +204,7 @@ public class SearchFragment extends BaseStatusListFragment<SearchResult> {
 		super.onViewCreated(view, savedInstanceState);
 		tabLayout=view.findViewById(R.id.tabbar);
 		tabLayout.setTabTextSize(V.dp(16));
-		tabLayout.setTabTextColors(UiUtils.getThemeColor(getActivity(), R.attr.colorTabInactive), UiUtils.getThemeColor(getActivity(), android.R.attr.textColorPrimary));
+		tabLayout.setTabTextColors(UiUtils.getThemeColor(getActivity(), R.attr.colorM3Outline), UiUtils.getThemeColor(getActivity(), android.R.attr.textColorPrimary));
 		tabLayout.addTab(tabLayout.newTab().setText(R.string.search_all));
 		tabLayout.addTab(tabLayout.newTab().setText(R.string.search_people));
 		tabLayout.addTab(tabLayout.newTab().setText(R.string.hashtags));

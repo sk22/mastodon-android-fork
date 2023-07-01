@@ -252,7 +252,7 @@ public class DiscoverAccountsFragment extends RecyclerFragment<DiscoverAccountsF
 				actionWrap.setVisibility(View.GONE);
 			}else{
 				actionWrap.setVisibility(View.VISIBLE);
-				UiUtils.setRelationshipToActionButton(relationship, actionButton);
+				UiUtils.setRelationshipToActionButtonM3(relationship, actionButton);
 			}
 		}
 

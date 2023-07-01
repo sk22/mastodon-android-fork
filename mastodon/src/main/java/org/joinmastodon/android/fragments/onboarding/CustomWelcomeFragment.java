@@ -122,7 +122,7 @@ public class CustomWelcomeFragment extends InstanceCatalogFragment {
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		view.setBackgroundColor(UiUtils.getThemeColor(getActivity(), R.attr.colorWindowBackground));
+		view.setBackgroundColor(UiUtils.getThemeColor(getActivity(), R.attr.colorM3Surface));
 		list.setItemAnimator(new BetterItemAnimator());
 		((UsableRecyclerView) list).setSelector(null);
 	}

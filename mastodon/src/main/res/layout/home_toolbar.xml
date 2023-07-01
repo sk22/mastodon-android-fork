@@ -51,6 +51,7 @@
             android:ellipsize="end"
             android:lineSpacingMultiplier="0.8"
             android:textAppearance="@style/m3_title_medium"
+            android:textSize="16sp"
             android:text="@string/see_new_posts"
             android:textColor="@color/gray_25"
             android:background="@drawable/bg_button_new_posts"

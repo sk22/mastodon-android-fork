@@ -278,7 +278,7 @@ public class FollowRequestsListFragment extends RecyclerFragment<FollowRequestsL
 				actionWrap.setVisibility(View.VISIBLE);
 				acceptWrap.setVisibility(View.GONE);
 				rejectWrap.setVisibility(View.GONE);
-				UiUtils.setRelationshipToActionButton(relationship, actionButton);
+				UiUtils.setRelationshipToActionButtonM3(relationship, actionButton);
 			}
 		}
 

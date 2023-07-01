@@ -76,7 +76,7 @@ public class DiscoverNewsFragment extends RecyclerFragment<Card> implements Scro
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState){
 		super.onViewCreated(view, savedInstanceState);
-		list.addItemDecoration(new DividerItemDecoration(getActivity(), R.attr.colorPollVoted, 1, 0, 0));
+		list.addItemDecoration(new DividerItemDecoration(getActivity(), R.attr.colorM3OutlineVariant, 1, 0, 0));
 		bannerHelper.maybeAddBanner(contentWrap);
 	}
 

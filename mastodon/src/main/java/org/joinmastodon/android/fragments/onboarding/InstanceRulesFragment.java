@@ -60,7 +60,7 @@ public class InstanceRulesFragment extends ToolbarFragment implements ProvidesAs
 	@Override
 	public void onAttach(Activity activity){
 		super.onAttach(activity);
-		setNavigationBarColor(UiUtils.getThemeColor(activity, R.attr.colorWindowBackground));
+		setNavigationBarColor(UiUtils.getThemeColor(activity, R.attr.colorM3Surface));
 		instance=Parcels.unwrap(getArguments().getParcelable("instance"));
 		setTitle(R.string.instance_rules_title);
 	}
@@ -79,7 +79,7 @@ public class InstanceRulesFragment extends ToolbarFragment implements ProvidesAs
 		adapter.addAdapter(new SingleViewRecyclerAdapter(headerView));
 		adapter.addAdapter(new ItemsAdapter());
 		list.setAdapter(adapter);
-		list.addItemDecoration(new DividerItemDecoration(getActivity(), R.attr.colorPollVoted, 1, 56, 0, DividerItemDecoration.NOT_FIRST));
+		list.addItemDecoration(new DividerItemDecoration(getActivity(), R.attr.colorM3OutlineVariant, 1, 56, 0, DividerItemDecoration.NOT_FIRST));
 
 		btn=view.findViewById(R.id.btn_next);
 		btn.setOnClickListener(v->onButtonClick());

@@ -41,7 +41,7 @@
 			android:id="@+id/divider"
 			android:layout_width="match_parent"
 			android:layout_height="1dp"
-			android:background="?colorPollVoted" />
+			android:background="?colorM3OutlineVariant" />
 
 		<Button
 			android:id="@+id/advanced"
@@ -105,7 +105,7 @@
 				android:layout_height="wrap_content"
 				android:layout_marginHorizontal="24dp"
 				android:layout_marginBottom="16dp"
-				app:chipBackground="?colorAccentLightest"
+				app:chipBackground="?colorM3SecondaryContainer"
 				app:chipTextColor="?android:textColorPrimary" />
 
 			<TextView
@@ -128,7 +128,7 @@
 				android:layout_height="wrap_content"
 				android:layout_marginHorizontal="24dp"
 				android:layout_marginBottom="16dp"
-				app:chipBackground="?colorAccentLightest"
+				app:chipBackground="?colorM3SecondaryContainer"
 				app:chipTextColor="?android:textColorPrimary" />
 
 			<TextView
@@ -151,7 +151,7 @@
 				android:layout_height="wrap_content"
 				android:layout_marginHorizontal="24dp"
 				android:layout_marginBottom="16dp"
-				app:chipBackground="?colorAccentLightest"
+				app:chipBackground="?colorM3SecondaryContainer"
 				app:chipTextColor="?android:textColorPrimary" />
 
 			<TextView

@@ -6,7 +6,8 @@
 			android:shape="ring"
 			android:thickness="4dp"
 			android:useLevel="true">
-			<solid android:color="?colorSearchHint"/>
+			<!-- TODO -->
+			<solid android:color="@color/black"/>
 		</shape>
 	</item>
 </layer-list>

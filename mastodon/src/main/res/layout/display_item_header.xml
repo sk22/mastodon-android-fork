@@ -109,6 +109,7 @@
 			android:singleLine="true"
 			android:textAlignment="viewStart"
 			android:textAppearance="@style/m3_title_medium"
+			android:textColor="?colorM3OnSurface"
 			tools:text="Eugen" />
 
 		<TextView
@@ -121,6 +122,7 @@
 			android:singleLine="true"
 			android:textAlignment="viewStart"
 			android:textAppearance="@style/m3_title_medium"
+			android:textColor="?colorM3OnSurface"
 			tools:text="boosted your cat picture" />
 
 	</org.joinmastodon.android.ui.views.HeaderSubtitleLinearLayout>
@@ -144,6 +146,7 @@
 			android:ellipsize="end"
 			android:singleLine="true"
 			android:textAppearance="@style/m3_title_small"
+			android:textColor="?colorM3OnSurface"
 			tools:text="\@Gargron" />
 
 		<TextView
@@ -154,7 +157,8 @@
 			android:layout_marginRight="4sp"
 			android:importantForAccessibility="no"
 			android:text="@string/sk_separator"
-			android:textAppearance="@style/m3_title_small" />
+			android:textAppearance="@style/m3_title_small"
+			android:textColor="?colorM3OnSurface"/>
 
 		<TextView
 			android:id="@+id/timestamp"
@@ -162,6 +166,7 @@
 			android:layout_height="wrap_content"
 			android:singleLine="true"
 			android:textAppearance="@style/m3_title_small"
+			android:textColor="?colorM3OnSurface"
 			tools:text="3h" />
 
 	</org.joinmastodon.android.ui.views.HeaderSubtitleLinearLayout>

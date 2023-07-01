@@ -64,7 +64,7 @@ public class DiscoverHashtagsFragment extends RecyclerFragment<Hashtag> implemen
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState){
 		super.onViewCreated(view, savedInstanceState);
-		list.addItemDecoration(new DividerItemDecoration(getActivity(), R.attr.colorPollVoted, .5f, 16, 16));
+		list.addItemDecoration(new DividerItemDecoration(getActivity(), R.attr.colorM3OutlineVariant, .5f, 16, 16));
 		bannerHelper.maybeAddBanner(contentWrap);
 	}
 

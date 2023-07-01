@@ -7,7 +7,7 @@
 	</item>
 	<item android:height="2dp" android:gravity="bottom">
 		<shape>
-			<solid android:color="?colorPollVoted"/>
+			<solid android:color="?colorM3OutlineVariant"/>
 		</shape>
 	</item>
 </layer-list>

@@ -24,6 +24,7 @@ public class AccountLocalPreferences{
 
 	// MEGALODON
 	public List<String> recentLanguages;
+	public boolean bottomEncoding;
 	public ContentType defaultContentType;
 
 	private final static Type recentLanguagesType = new TypeToken<List<String>>() {}.getType();
@@ -38,6 +39,7 @@ public class AccountLocalPreferences{
 
 		// MEGALODON
 		recentLanguages=fromJson(prefs.getString("recentLanguages", null), recentLanguagesType, new ArrayList<>());
+		bottomEncoding=prefs.getBoolean("bottomEncoding", false);
 		defaultContentType=enumValue(ContentType.class, prefs.getString("defaultContentType", null));
 	}
 

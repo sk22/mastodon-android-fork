@@ -2,5 +2,5 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 	<item android:color="?android:colorAccent" android:state_selected="true"/>
 	<item android:color="?android:textColorSecondary" android:state_enabled="true"/>
-	<item android:color="?colorIconDisabled" />
+	<item android:color="@color/m3_on_surface_alpha38" />
 </selector>

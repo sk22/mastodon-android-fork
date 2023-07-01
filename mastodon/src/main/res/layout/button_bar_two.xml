@@ -15,7 +15,7 @@
 		android:layout_height="wrap_content"
 		android:layout_margin="16dp"
 		android:minWidth="145dp"
-		style="?secondaryLargeButtonStyle"
+		style="@style/Widget.Mastodon.M3.Button.Tonal"
 		android:text="@string/skip"/>
 
 	<Space
@@ -29,7 +29,7 @@
 		android:layout_height="wrap_content"
 		android:layout_margin="16dp"
 		android:minWidth="145dp"
-		style="?primaryLargeButtonStyle"
+		style="@style/Widget.Mastodon.M3.Button.Filled"
 		android:text="@string/next" />
 
 </LinearLayout>

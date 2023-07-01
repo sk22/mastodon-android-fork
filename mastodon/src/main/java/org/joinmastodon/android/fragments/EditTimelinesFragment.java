@@ -121,7 +121,7 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
         super.onViewCreated(view, savedInstanceState);
         itemTouchHelper.attachToRecyclerView(list);
         refreshLayout.setEnabled(false);
-        list.addItemDecoration(new DividerItemDecoration(getActivity(), R.attr.colorPollVoted, 0.5f, 56, 16));
+        list.addItemDecoration(new DividerItemDecoration(getActivity(), R.attr.colorM3OutlineVariant, 0.5f, 56, 16));
     }
 
     @Override

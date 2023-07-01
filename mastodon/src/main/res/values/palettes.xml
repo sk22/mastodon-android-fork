@@ -69,9 +69,79 @@
 		<item name="colorNeutral50t">@color/gray_50t</item>
 		<item name="colorNeutral50">@color/gray_50</item>
 		<item name="colorNeutral25">@color/gray_25</item>
+
+		<item name="colorM3Primary">?colorPrimary600</item>
+		<item name="colorM3OnPrimary">@color/white</item>
+		<item name="colorM3PrimaryContainer">?colorPrimary100</item>
+		<item name="colorM3OnPrimaryContainer">?colorPrimary900</item>
+		<item name="colorM3Secondary">?colorSecondary600</item>
+		<item name="colorM3OnSecondary">@color/white</item>
+		<item name="colorM3SecondaryContainer">?colorSecondary100</item>
+		<item name="colorM3OnSecondaryContainer">?colorSecondary900</item>
+		<item name="colorM3Tertiary">?colorTertiary600</item>
+		<item name="colorM3OnTertiary">@color/white</item>
+		<item name="colorM3TertiaryContainer">?colorTertiary100</item>
+		<item name="colorM3OnTertiaryContainer">?colorTertiary900</item>
+		<item name="colorM3Background">?colorGray25</item>
+		<item name="colorM3OnBackground">?colorGray900</item>
+		<item name="colorM3Surface">?colorGray25</item>
+		<item name="colorM3OnSurface">?colorGray900</item>
+		<item name="colorM3SurfaceVariant">?colorNeutral100</item>
+		<item name="colorM3OnSurfaceVariant">?colorNeutral700</item>
+		<item name="colorM3Outline">?colorNeutral500</item>
+		<item name="colorM3OutlineVariant">?colorNeutral200</item>
+		<item name="colorM3PressedOverlay">@color/white</item>
+	</style>
+
+	<style name="ColorPalette.Dark">
+		<item name="colorM3Primary">?colorPrimary200</item>
+		<item name="colorM3OnPrimary">?colorPrimary800</item>
+		<item name="colorM3PrimaryContainer">?colorPrimary700</item>
+		<item name="colorM3OnPrimaryContainer">?colorPrimary100</item>
+		<item name="colorM3Secondary">?colorSecondary200</item>
+		<item name="colorM3OnSecondary">?colorSecondary800</item>
+		<!-- TODO: replace this -->
+		<item name="colorM3SecondaryContainer">?colorNeutral600</item>
+		<item name="colorM3OnSecondaryContainer">?colorSecondary100</item>
+		<item name="colorM3Tertiary">?colorTertiary200</item>
+		<item name="colorM3OnTertiary">?colorTertiary800</item>
+		<item name="colorM3TertiaryContainer">?colorTertiary700</item>
+		<item name="colorM3OnTertiaryContainer">?colorTertiary100</item>
+		<item name="colorM3Background">?colorGray900</item>
+		<item name="colorM3OnBackground">?colorGray100</item>
+		<item name="colorM3Surface">?colorGray900</item>
+		<item name="colorM3OnSurface">?colorGray100</item>
+		<item name="colorM3SurfaceVariant">?colorNeutral700</item>
+		<item name="colorM3OnSurfaceVariant">?colorNeutral200</item>
+		<item name="colorM3Outline">?colorNeutral400</item>
+		<item name="colorM3OutlineVariant">?colorNeutral700</item>
+		<item name="colorM3PressedOverlay">?colorPrimary200</item>
 	</style>
 
 	<style name="ColorPalette.Material3">
+		<item name="colorM3Primary">@color/m3_sys_light_primary</item>
+		<item name="colorM3OnPrimary">@color/m3_sys_light_on_primary</item>
+		<item name="colorM3PrimaryContainer">@color/m3_sys_light_primary_container</item>
+		<item name="colorM3OnPrimaryContainer">@color/m3_sys_light_on_primary_container</item>
+		<item name="colorM3Secondary">@color/m3_sys_light_secondary</item>
+		<item name="colorM3OnSecondary">@color/m3_sys_light_on_secondary</item>
+		<item name="colorM3SecondaryContainer">@color/m3_sys_light_secondary_container</item>
+		<item name="colorM3OnSecondaryContainer">@color/m3_sys_light_on_secondary_container</item>
+		<item name="colorM3Tertiary">@color/m3_sys_light_tertiary</item>
+		<item name="colorM3OnTertiary">@color/m3_sys_light_on_tertiary</item>
+		<item name="colorM3TertiaryContainer">@color/m3_sys_light_tertiary_container</item>
+		<item name="colorM3OnTertiaryContainer">@color/m3_sys_light_on_tertiary_container</item>
+		<item name="colorM3Background">@color/m3_sys_light_background</item>
+		<item name="colorM3OnBackground">@color/m3_sys_light_on_background</item>
+		<item name="colorM3Surface">@color/m3_sys_light_surface</item>
+		<item name="colorM3OnSurface">@color/m3_sys_light_on_surface</item>
+		<item name="colorM3SurfaceVariant">@color/m3_sys_light_surface_variant</item>
+		<item name="colorM3OnSurfaceVariant">@color/m3_sys_light_on_surface_variant</item>
+		<item name="colorM3Outline">@color/m3_sys_light_outline</item>
+		<item name="colorM3OutlineVariant">@color/m3_sys_light_outline_variant</item>
+		<item name="colorM3PressedOverlay">@color/m3_sys_light_on_primary</item>
+		<item name="colorM3PrimaryInverse">@color/m3_sys_dark_primary</item>
+
 		<item name="colorPrimary25">@color/m3_accent1_25</item>
 		<item name="colorPrimary50">@color/m3_accent1_50</item>
 		<item name="colorPrimary100">@color/m3_accent1_100</item>
@@ -138,13 +208,40 @@
 	</style>
 
 	<style name="ColorPalette.Material3.Dark">
-		<item name="colorPollVoted">?colorGray700</item>
-		<item name="colorWindowBackground">?colorGray900</item>
-		<item name="colorBackgroundLight">?colorGray800</item>
-		<item name="colorBackgroundLightest">?colorGray900</item>
+		<item name="colorM3Primary">@color/m3_sys_dark_primary</item>
+		<item name="colorM3OnPrimary">@color/m3_sys_dark_on_primary</item>
+		<item name="colorM3PrimaryContainer">@color/m3_sys_dark_primary_container</item>
+		<item name="colorM3OnPrimaryContainer">@color/m3_sys_dark_on_primary_container</item>
+		<item name="colorM3Secondary">@color/m3_sys_dark_secondary</item>
+		<item name="colorM3OnSecondary">@color/m3_sys_dark_on_secondary</item>
+		<item name="colorM3SecondaryContainer">@color/m3_sys_dark_secondary_container</item>
+		<item name="colorM3OnSecondaryContainer">@color/m3_sys_dark_on_secondary_container</item>
+		<item name="colorM3Tertiary">@color/m3_sys_dark_tertiary</item>
+		<item name="colorM3OnTertiary">@color/m3_sys_dark_on_tertiary</item>
+		<item name="colorM3TertiaryContainer">@color/m3_sys_dark_tertiary_container</item>
+		<item name="colorM3OnTertiaryContainer">@color/m3_sys_dark_on_tertiary_container</item>
+		<item name="colorM3Background">@color/m3_sys_dark_background</item>
+		<item name="colorM3OnBackground">@color/m3_sys_dark_on_background</item>
+		<item name="colorM3Surface">@color/m3_sys_dark_surface</item>
+		<item name="colorM3OnSurface">@color/m3_sys_dark_on_surface</item>
+		<item name="colorM3SurfaceVariant">@color/m3_sys_dark_surface_variant</item>
+		<item name="colorM3OnSurfaceVariant">@color/m3_sys_dark_on_surface_variant</item>
+		<item name="colorM3Outline">@color/m3_sys_dark_outline</item>
+		<item name="colorM3OutlineVariant">@color/m3_sys_dark_outline_variant</item>
+		<item name="colorM3DisabledBackground">#1FE3E3E3</item>
+		<item name="colorM3PressedOverlay">@color/m3_sys_dark_primary</item>
+		<item name="colorM3Error">#F2B8B5</item>
+		<item name="colorM3OnError">#601410</item>
+		<item name="colorM3ErrorContainer">#8C1D18</item>
+		<item name="colorM3OnErrorContainer">#F9DEDC</item>
+		<item name="colorM3PrimaryInverse">@color/m3_sys_light_primary</item>
+		<!-- <item name="colorM3OutlineVariant">?colorGray700</item> -->
+		<!-- <item name="colorM3Surface">?colorGray900</item> -->
+		<!-- <item name="colorM3SurfaceVariant">?colorGray800</item> -->
+		<!-- <item name="colorM3SurfaceVariant">?colorGray900</item> -->
 		<item name="android:colorBackground">?colorGray800</item>
 		<item name="android:statusBarColor">?colorGray900</item>
-		<item name="toolbarBackground">?colorGray900</item>
+		<!-- <item name="colorM3Surface">?colorGray900</item> -->
 	</style>
 
 	<style name="ColorPalette.Pink">

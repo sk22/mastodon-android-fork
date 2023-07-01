@@ -79,7 +79,7 @@ public class ProfileAboutFragment extends Fragment implements WindowInsetsAwareF
 		list.setClipToPadding(false);
 		dividerPaint.setStyle(Paint.Style.STROKE);
 		dividerPaint.setStrokeWidth(V.dp(1));
-		dividerPaint.setColor(UiUtils.getThemeColor(getActivity(), R.attr.colorPollVoted));
+		dividerPaint.setColor(UiUtils.getThemeColor(getActivity(), R.attr.colorM3OutlineVariant));
 		list.addItemDecoration(new RecyclerView.ItemDecoration(){
 			@Override
 			public void onDrawOver(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state){
@@ -187,7 +187,7 @@ public class ProfileAboutFragment extends Fragment implements WindowInsetsAwareF
 
 		public BaseViewHolder(int layout){
 			super(getActivity(), layout, list);
-			background.getPaint().setColor(UiUtils.getThemeColor(getActivity(), R.attr.colorBackgroundLight));
+			background.getPaint().setColor(UiUtils.getThemeColor(getActivity(), R.attr.colorM3SurfaceVariant));
 			itemView.setBackground(background);
 		}
 
@@ -229,7 +229,7 @@ public class ProfileAboutFragment extends Fragment implements WindowInsetsAwareF
 				check.setTint(textColor);
 				value.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, check, null);
 			}else{
-				background.getPaint().setColor(UiUtils.getThemeColor(getActivity(), R.attr.colorBackgroundLight));
+				background.getPaint().setColor(UiUtils.getThemeColor(getActivity(), R.attr.colorM3SurfaceVariant));
 				value.setTextColor(UiUtils.getThemeColor(getActivity(), android.R.attr.textColorPrimary));
 				value.setLinkTextColor(UiUtils.getThemeColor(getActivity(), android.R.attr.colorAccent));
 				value.setCompoundDrawables(null, null, null, null);

@@ -46,7 +46,6 @@
 					android:layout_height="40dp"
 					android:layout_gravity="end|center_vertical"
 					android:background="@drawable/bg_update_download_progress"
-					android:tint="?colorSearchHint"
 					android:contentDescription="@string/cancel"
 					android:visibility="gone"
 					android:src="@drawable/ic_fluent_dismiss_16_filled"/>

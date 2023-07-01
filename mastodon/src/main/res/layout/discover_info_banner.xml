@@ -8,7 +8,7 @@
 	android:layout_gravity="top"
 	android:elevation="1dp"
 	android:outlineProvider="background"
-	android:background="?colorBackgroundLight">
+	android:background="?colorM3SurfaceVariant">
 
 	<TextView
 		android:id="@+id/banner_text"

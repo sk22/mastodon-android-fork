@@ -61,7 +61,7 @@ public abstract class BaseReportChoiceFragment extends MastodonToolbarFragment{
 	@Override
 	public void onAttach(Activity activity){
 		super.onAttach(activity);
-		setNavigationBarColor(UiUtils.getThemeColor(activity, R.attr.colorWindowBackground));
+		setNavigationBarColor(UiUtils.getThemeColor(activity, R.attr.colorM3Surface));
 		accountID=getArguments().getString("account");
 		reportAccount=Parcels.unwrap(getArguments().getParcelable("reportAccount"));
 		reportStatus=Parcels.unwrap(getArguments().getParcelable("status"));
@@ -88,7 +88,7 @@ public abstract class BaseReportChoiceFragment extends MastodonToolbarFragment{
 		adapter.addAdapter(new SingleViewRecyclerAdapter(headerView));
 		adapter.addAdapter(new ItemsAdapter());
 		list.setAdapter(adapter);
-		list.addItemDecoration(new DividerItemDecoration(getActivity(), R.attr.colorPollVoted, 1, 16, 16, DividerItemDecoration.NOT_FIRST));
+		list.addItemDecoration(new DividerItemDecoration(getActivity(), R.attr.colorM3OutlineVariant, 1, 16, 16, DividerItemDecoration.NOT_FIRST));
 
 		btn=view.findViewById(R.id.btn_next);
 		btn.setEnabled(!selectedIDs.isEmpty());

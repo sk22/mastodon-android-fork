@@ -672,49 +672,6 @@ public class UiUtils {
 						.exec(accountID));
 	}
 
-	public static void setRelationshipToActionButton(Relationship relationship, Button button) {
-		setRelationshipToActionButton(relationship, button, false);
-	}
-
-	public static void setRelationshipToActionButton(Relationship relationship, Button button, boolean keepText) {
-		CharSequence textBefore = keepText ? button.getText() : null;
-		boolean secondaryStyle;
-		if (relationship.blocking) {
-			button.setText(R.string.button_blocked);
-			secondaryStyle = true;
-//		} else if (relationship.blockedBy) {
-//			button.setText(R.string.button_follow);
-//			secondaryStyle = false;
-		} else if (relationship.requested) {
-			button.setText(R.string.button_follow_pending);
-			secondaryStyle = true;
-		} else if (!relationship.following) {
-			button.setText(relationship.followedBy ? R.string.follow_back : R.string.button_follow);
-			secondaryStyle = false;
-		} else {
-			button.setText(R.string.button_following);
-			secondaryStyle = true;
-		}
-
-		if (keepText) button.setText(textBefore);
-
-//		https://github.com/sk22/megalodon/issues/526
-//		button.setEnabled(!relationship.blockedBy);
-		int attr = secondaryStyle ? R.attr.secondaryButtonStyle : android.R.attr.buttonStyle;
-		TypedArray ta = button.getContext().obtainStyledAttributes(new int[]{attr});
-		int styleRes = ta.getResourceId(0, 0);
-		ta.recycle();
-		ta = button.getContext().obtainStyledAttributes(styleRes, new int[]{android.R.attr.background});
-		button.setBackground(ta.getDrawable(0));
-		ta.recycle();
-		ta = button.getContext().obtainStyledAttributes(styleRes, new int[]{android.R.attr.textColor});
-		if (relationship.blocking)
-			button.setTextColor(button.getResources().getColorStateList(R.color.error_600));
-		else
-			button.setTextColor(ta.getColorStateList(0));
-		ta.recycle();
-	}
-
 	public static void performToggleAccountNotifications(Activity activity, Account account, String accountID, Relationship relationship, Button button, Consumer<Boolean> progressCallback, Consumer<Relationship> resultCallback) {
 		progressCallback.accept(true);
 		new SetAccountFollowed(account.id, true, relationship.showingReblogs, !relationship.notifying)
