@@ -91,6 +91,7 @@
 		<item name="colorM3Outline">?colorNeutral500</item>
 		<item name="colorM3OutlineVariant">?colorNeutral200</item>
 		<item name="colorM3PressedOverlay">@color/white</item>
+		<item name="colorM3DarkOnSurface">@color/m3_sys_dark_on_surface</item>
 	</style>
 
 	<style name="ColorPalette.Dark">

@@ -187,7 +187,7 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 
 	@Override
 	public boolean wantsLightStatusBar(){
-		return currentTab!=R.id.tab_profile && !UiUtils.isDarkTheme();
+		return !UiUtils.isDarkTheme();
 	}
 
 	@Override

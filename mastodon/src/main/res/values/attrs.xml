@@ -33,7 +33,8 @@
 	<attr name="colorBoost" format="color" />
 	<attr name="colorFollow" format="color" />
 	<attr name="colorPoll" format="color" />
-	<attr name="profileHeaderBackground" format="color"/>
+	<attr name="colorProfileHeaderBackground" format="color"/>
+	<attr name="colorM3DarkOnSurface" format="color" />
 
 	<declare-styleable name="MaxWidthFrameLayout">
 		<attr name="android:maxWidth" format="dimension"/>
