@@ -46,6 +46,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingVertical="2dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="20dp"
             android:minHeight="32sp"
             android:maxLines="2"
             android:ellipsize="end"
