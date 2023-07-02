@@ -17,14 +17,26 @@
 		<!-- announcements-only -->
 		<ImageView
 			android:id="@+id/unread_indicator"
-			android:layout_width="20dp"
-			android:layout_height="20dp"
+			android:layout_width="36dp"
+			android:layout_height="48dp"
 			android:visibility="gone"
 			android:tint="?android:colorAccent"
 			android:scaleType="center"
 			android:src="@drawable/ic_fluent_circle_small_20_filled" />
 
-			<!-- on start because it's hidden based on if spoiler is revealed -->
+		<ImageView
+			android:id="@+id/mark_as_read"
+			android:layout_width="36dp"
+			android:layout_height="48dp"
+			android:background="?android:actionBarItemBackground"
+			android:scaleType="center"
+			android:src="@drawable/ic_fluent_checkmark_24_regular"
+			android:tint="?colorM3OnSurfaceVariant"
+			android:contentDescription="@string/sk_mark_as_read"
+			android:tooltipText="@string/sk_mark_as_read"
+			android:visibility="gone" />
+
+		<!-- on start because it's hidden based on if spoiler is revealed -->
 		<ImageView
 			android:id="@+id/visibility"
 			android:layout_width="36dp"
@@ -77,6 +89,7 @@
 			android:background="?android:actionBarItemBackground"
 			android:scaleType="center"
 			android:tint="?colorM3OnSurfaceVariant"
+			android:tooltipText="@string/more_options"
 			android:contentDescription="@string/more_options"
 			android:src="@drawable/ic_fluent_more_vertical_20_filled" />
 	</LinearLayout>

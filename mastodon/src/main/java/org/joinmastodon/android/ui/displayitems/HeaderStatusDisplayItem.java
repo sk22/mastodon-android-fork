@@ -135,7 +135,7 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 	public static class Holder extends StatusDisplayItem.Holder<HeaderStatusDisplayItem> implements ImageLoaderViewHolder{
 		private final TextView name, timeAndUsername, extraText;
 		private final View collapseBtn;
-		private final ImageView avatar, more, visibility, deleteNotification, unreadIndicator, collapseBtnIcon;
+		private final ImageView avatar, more, visibility, deleteNotification, unreadIndicator, markAsRead, collapseBtnIcon;
 		private final PopupMenu optionsMenu;
 		private Relationship relationship;
 		private APIRequest<?> currentRelationshipRequest;
@@ -153,6 +153,7 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 			visibility=findViewById(R.id.visibility);
 			deleteNotification=findViewById(R.id.delete_notification);
 			unreadIndicator=findViewById(R.id.unread_indicator);
+			markAsRead=findViewById(R.id.mark_as_read);
 			collapseBtn=findViewById(R.id.collapse_btn);
 			collapseBtnIcon=findViewById(R.id.collapse_btn_icon);
 			extraText=findViewById(R.id.extra_text);
@@ -351,20 +352,13 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 			}
 			relationship=null;
 
-			String desc;
 			if (item.announcement != null) {
-				if (unreadIndicator.getVisibility() == View.GONE) {
-					more.setAlpha(0f);
-					unreadIndicator.setAlpha(0f);
-					unreadIndicator.setVisibility(View.VISIBLE);
-				}
-				float alpha = item.announcement.read ? 0 : 1;
-				more.setImageResource(R.drawable.ic_fluent_checkmark_20_filled);
-				desc = item.parentFragment.getString(R.string.sk_mark_as_read);
-				more.animate().alpha(alpha);
-				unreadIndicator.animate().alpha(alpha);
-				more.setEnabled(!item.announcement.read);
-				more.setOnClickListener(v -> {
+				int vis = item.announcement.read ? View.GONE : View.VISIBLE;
+				V.setVisibilityAnimated(unreadIndicator, vis);
+				V.setVisibilityAnimated(markAsRead, vis);
+
+				markAsRead.setEnabled(!item.announcement.read);
+				markAsRead.setOnClickListener(v -> {
 					if (item.announcement.read) return;
 					new DismissAnnouncement(item.announcement.id).setCallback(new Callback<>() {
 						@Override
@@ -382,13 +376,11 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 					}).exec(item.accountID);
 				});
 			} else {
-				more.setImageResource(R.drawable.ic_fluent_more_vertical_20_filled);
-				desc = item.parentFragment.getString(R.string.more_options);
-				more.setOnClickListener(this::onMoreClick);
+				markAsRead.setVisibility(View.GONE);
 			}
 
-			more.setContentDescription(desc);
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) more.setTooltipText(desc);
+			more.setVisibility(item.announcement != null ? View.GONE : View.VISIBLE);
+			more.setOnClickListener(this::onMoreClick);
 
 			if (item.status == null || !item.status.textExpandable) {
 				collapseBtn.setVisibility(View.GONE);
