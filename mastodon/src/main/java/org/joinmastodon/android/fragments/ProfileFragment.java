@@ -466,7 +466,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 						refreshLayout.setEnabled(state!=ViewPager2.SCROLL_STATE_DRAGGING);
 					}
 				});
-				return true;merge all the styles! oh dear
+				return true;
 			}
 		});
 
