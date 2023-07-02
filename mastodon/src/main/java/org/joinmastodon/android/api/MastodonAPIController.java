@@ -117,6 +117,9 @@ public class MastodonAPIController{
 				synchronized(req){
 					req.okhttpCall=call;
 				}
+				if(req.timeout>0){
+					call.timeout().timeout(req.timeout, TimeUnit.MILLISECONDS);
+				}
 
 				if(BuildConfig.DEBUG)
 					Log.d(TAG, "["+(session==null ? "no-auth" : session.getID())+"] Sending request: "+hreq);
