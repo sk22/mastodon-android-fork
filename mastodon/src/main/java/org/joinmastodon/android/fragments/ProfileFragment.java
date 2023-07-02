@@ -1035,6 +1035,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 				.setCallback(new Callback<>(){
 					@Override
 					public void onSuccess(Account result){
+						savingEdits=false;
 						account=result;
 						AccountSessionManager.getInstance().updateAccountInfo(accountID, account);
 						if (getActivity() == null) return;
@@ -1044,6 +1045,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 
 					@Override
 					public void onError(ErrorResponse error){
+						savingEdits=false;
 						error.showToast(getActivity());
 						setActionProgressVisible(false);
 					}

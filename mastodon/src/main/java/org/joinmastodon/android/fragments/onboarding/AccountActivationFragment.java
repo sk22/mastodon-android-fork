@@ -50,6 +50,7 @@ public class AccountActivationFragment extends ToolbarFragment{
 	private APIRequest currentRequest;
 	private Runnable resendTimer=this::updateResendTimer;
 	private long lastResendTime;
+	private boolean visible;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -120,12 +121,14 @@ public class AccountActivationFragment extends ToolbarFragment{
 	@Override
 	protected void onShown(){
 		super.onShown();
+		visible=true;
 		tryGetAccount();
 	}
 
 	@Override
 	protected void onHidden(){
 		super.onHidden();
+		visible=false;
 		if(currentRequest!=null){
 			currentRequest.cancel();
 			currentRequest=null;
@@ -238,6 +241,8 @@ public class AccountActivationFragment extends ToolbarFragment{
 	}
 
 	private void proceed(){
+		if(!visible)
+			return;
 		Bundle args=new Bundle();
 		args.putString("account", accountID);
 //		Nav.goClearingStack(getActivity(), HomeFragment.class, args);

@@ -132,8 +132,7 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 	}
 
 	public void updateMarkAllReadButton(){
-		markAllReadItem.setVisible(!allNotificationsFragment.getData().isEmpty() &&
-				!Objects.equals(realUnreadMarker, allNotificationsFragment.getData().get(0).id));
+		markAllReadItem.setVisible(!allNotificationsFragment.getData().isEmpty() && realUnreadMarker!=null && !realUnreadMarker.equals(allNotificationsFragment.getData().get(0).id));
 	}
 
 	@Override

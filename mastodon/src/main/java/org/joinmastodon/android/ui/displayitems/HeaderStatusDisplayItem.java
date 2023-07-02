@@ -462,9 +462,11 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 		}
 
 		private void updateOptionsMenu(){
-			if (item.parentFragment.getActivity() == null) return;
+			if(item.parentFragment.getActivity()==null)
+				return;
 			if (item.announcement != null) return;
 			boolean hasMultipleAccounts = AccountSessionManager.getInstance().getLoggedInAccounts().size() > 1;
+			Account account=item.user;
 			Menu menu=optionsMenu.getMenu();
 
 			MenuItem openWithAccounts = menu.findItem(R.id.open_with_account);
@@ -479,7 +481,6 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 				openWithAccounts.setVisible(false);
 			}
 
-			Account account=item.user;
 			String username = account.getShortUsername();
 			boolean isOwnPost=AccountSessionManager.getInstance().isSelf(item.parentFragment.getAccountID(), account);
 			boolean isPostScheduled=item.scheduledStatus!=null;

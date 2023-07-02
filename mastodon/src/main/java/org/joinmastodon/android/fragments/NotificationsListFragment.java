@@ -318,7 +318,6 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 		resetUnreadBackground();
 	}
 
-
 	@Override
 	public Uri getWebUri(Uri.Builder base) {
 		return base.path(isInstanceAkkoma()
