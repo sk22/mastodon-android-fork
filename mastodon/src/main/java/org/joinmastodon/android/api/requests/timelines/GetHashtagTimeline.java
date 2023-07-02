@@ -13,19 +13,23 @@ import java.util.List;
 public class GetHashtagTimeline extends MastodonAPIRequest<List<Status>>{
 	public GetHashtagTimeline(String hashtag, String maxID, String minID, int limit, List<String> containsAny, List<String> containsAll, List<String> containsNone, boolean localOnly){
 		super(HttpMethod.GET, "/timelines/tag/"+hashtag, new TypeToken<>(){});
-		if (localOnly) addQueryParameter("local", "true");
+		if (localOnly)
+			addQueryParameter("local", "true");
 		if(maxID!=null)
 			addQueryParameter("max_id", maxID);
 		if(minID!=null)
 			addQueryParameter("min_id", minID);
 		if(limit>0)
 			addQueryParameter("limit", ""+limit);
-		if(containsAny!=null && !containsAny.isEmpty())
-			addQueryParameter("any[]", "[" + TextUtils.join(",", containsAny) + "]");
-		if(containsAll!=null && !containsAll.isEmpty())
-			addQueryParameter("all[]", "[" + TextUtils.join(",", containsAll) + "]");
-		if(containsNone!=null && !containsNone.isEmpty())
-			addQueryParameter("none[]", "[" + TextUtils.join(",", containsNone) + "]");
+		if(containsAny!=null)
+			for (String tag : containsAny)
+				addQueryParameter("any[]", tag);
+		if(containsAll!=null)
+			for (String tag : containsAll)
+				addQueryParameter("all[]", tag);
+		if(containsNone!=null)
+			for (String tag : containsNone)
+				addQueryParameter("none[]", tag);
 	}
 
 	public GetHashtagTimeline(String hashtag, String maxID, String minID, int limit){
