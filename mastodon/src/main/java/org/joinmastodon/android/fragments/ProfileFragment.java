@@ -147,7 +147,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 	private boolean isOwnProfile;
 	private ArrayList<AccountField> fields=new ArrayList<>();
 
-	private boolean isInEditMode;
+	private boolean isInEditMode, editDirty;
 	private Uri editNewAvatar, editNewCover;
 	private String profileAccountID;
 	private boolean refreshing;
@@ -350,6 +350,9 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		list.setAdapter(adapter=new MetadataAdapter());
 		list.setClipToPadding(false);
 
+		nameEdit.addTextChangedListener(new SimpleTextWatcher(e->editDirty=true));
+		bioEdit.addTextChangedListener(new SimpleTextWatcher(e->editDirty=true));
+
 		return sizeWrapper;
 	}
 
@@ -463,7 +466,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 						refreshLayout.setEnabled(state!=ViewPager2.SCROLL_STATE_DRAGGING);
 					}
 				});
-				return true;
+				return true;merge all the styles! oh dear
 			}
 		});
 
