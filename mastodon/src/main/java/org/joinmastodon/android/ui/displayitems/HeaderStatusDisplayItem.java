@@ -343,8 +343,10 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 				extraText.setVisibility(View.VISIBLE);
 				extraText.setText(item.extraText);
 			}
-			more.setVisibility(item.inset || (item.notification != null && item.notification.report != null)
+			more.setVisibility(item.announcement != null || item.inset ||
+					(item.notification != null && item.notification.report != null)
 					? View.GONE : View.VISIBLE);
+			more.setOnClickListener(this::onMoreClick);
 			avatar.setClickable(!item.inset);
 			avatar.setContentDescription(item.parentFragment.getString(R.string.avatar_description, item.user.acct));
 			if(currentRelationshipRequest!=null){
@@ -378,9 +380,6 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 			} else {
 				markAsRead.setVisibility(View.GONE);
 			}
-
-			more.setVisibility(item.announcement != null ? View.GONE : View.VISIBLE);
-			more.setOnClickListener(this::onMoreClick);
 
 			if (item.status == null || !item.status.textExpandable) {
 				collapseBtn.setVisibility(View.GONE);
