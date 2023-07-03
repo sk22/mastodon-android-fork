@@ -819,7 +819,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		languageButton.setOnClickListener(v->showLanguageAlert());
 
 		publishButton.setOnClickListener(v -> {
-			if(GlobalUserPreferences.altTextReminders)
+			if(GlobalUserPreferences.altTextReminders && editingStatus==null)
 				checkAltTextsAndPublish();
 			else
 				publish();
