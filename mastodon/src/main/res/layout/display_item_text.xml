@@ -57,12 +57,15 @@
 			android:id="@+id/action_btn_wrap"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginHorizontal="8dp"
+			android:layout_marginHorizontal="6dp"
 			android:clipToPadding="false">
 			<org.joinmastodon.android.ui.views.ProgressBarButton
 				android:id="@+id/translate_btn"
-				android:background="@drawable/bg_text_button"
-				android:textColor="?android:textColorSecondary"
+				style="@style/Widget.Mastodon.M3.Button.Text"
+				android:textColor="?colorM3OnSurfaceVariant"
+				android:paddingStart="10dp"
+				android:paddingEnd="10dp"
+				android:minWidth="0dp"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:paddingHorizontal="8dp"
@@ -76,7 +79,6 @@
 				style="?android:progressBarStyleSmall"
 				android:elevation="10dp"
 				android:outlineProvider="none"
-				android:indeterminateTint="?android:textColorPrimary"
 				android:visibility="gone"/>
 		</FrameLayout>
 
@@ -90,7 +92,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginHorizontal="16dp"
-			android:textColor="?android:textColorSecondary"
+			android:textColor="?colorM3OnSurfaceVariant"
 			android:textAlignment="textEnd"
 			tools:text="Translated using TranslateEngine" />
 
