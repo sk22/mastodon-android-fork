@@ -157,7 +157,7 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 		}
 
 		tabLayout.setTabTextSize(V.dp(16));
-		tabLayout.setTabTextColors(UiUtils.getThemeColor(getActivity(), R.attr.colorM3Outline), UiUtils.getThemeColor(getActivity(), android.R.attr.textColorPrimary));
+		tabLayout.setTabTextColors(UiUtils.getThemeColor(getActivity(), R.attr.colorM3OnSurfaceVariant), UiUtils.getThemeColor(getActivity(), R.attr.colorM3Primary));
 		tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 			@Override
 			public void onTabSelected(TabLayout.Tab tab) {}
@@ -214,7 +214,6 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 					case 1 -> R.string.mentions;
 					default -> throw new IllegalStateException("Unexpected value: "+position);
 				});
-				tab.view.textView.setAllCaps(true);
 			}
 		});
 		tabLayoutMediator.attach();
