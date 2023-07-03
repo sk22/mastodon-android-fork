@@ -646,8 +646,6 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				Nav.go(getActivity(), ProfileFragment.class, args);
 			});
 
-			((TextView) view.findViewById(R.id.name)).setText(status.account.displayName);
-			((TextView) view.findViewById(R.id.username)).setText(status.account.getDisplayUsername());
 			Drawable visibilityIcon = getActivity().getDrawable(switch(status.visibility){
 				case PUBLIC -> R.drawable.ic_fluent_earth_20_regular;
 				case UNLISTED -> R.drawable.ic_fluent_lock_open_20_regular;
@@ -658,10 +656,19 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			ImageView moreBtn = view.findViewById(R.id.more);
 			moreBtn.setImageDrawable(visibilityIcon);
 			moreBtn.setBackground(null);
-			TextView timestamp = view.findViewById(R.id.timestamp);
-			if (status.editedAt!=null) timestamp.setText(getString(R.string.edited_timestamp, UiUtils.formatRelativeTimestamp(getContext(), status.editedAt)));
-			else if (status.createdAt!=null) timestamp.setText(UiUtils.formatRelativeTimestamp(getContext(), status.createdAt));
-			else timestamp.setText("");
+
+			TextView name = view.findViewById(R.id.name);
+			name.setText(HtmlParser.parseCustomEmoji(status.account.displayName, status.account.emojis));
+			UiUtils.loadCustomEmojiInTextView(name);
+
+			String time = status==null || status.editedAt==null
+					? UiUtils.formatRelativeTimestamp(getContext(), status.createdAt)
+					: getString(R.string.edited_timestamp, UiUtils.formatRelativeTimestamp(getContext(), status.editedAt));
+
+			String sepp = getString(R.string.sk_separator);
+			String username = status.account.getDisplayUsername();
+			((TextView) view.findViewById(R.id.time_and_username)).setText(time == null ? username :
+					username + " " + sepp + " " + time);
 			if (status.spoilerText != null && !status.spoilerText.isBlank()) {
 				TextView replyToSpoiler = view.findViewById(R.id.reply_to_spoiler);
 				replyToSpoiler.setVisibility(View.VISIBLE);
@@ -676,8 +683,13 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 
 			SpannableStringBuilder content = HtmlParser.parse(status.content, status.emojis, status.mentions, status.tags, accountID);
 			LinkedTextView text = view.findViewById(R.id.text);
-			if (content.length() > 0) text.setText(content);
-			else view.findViewById(R.id.display_item_text).setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, V.dp(16)));
+			if (content.length() > 0) {
+				text.setText(content);
+				UiUtils.loadCustomEmojiInTextView(text);
+			} else {
+				view.findViewById(R.id.display_item_text)
+						.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, V.dp(16)));
+			}
 
 			replyText.setText(getString(quote!=null? R.string.sk_quoting_user : R.string.in_reply_to, status.account.displayName));
 			int visibilityNameRes = switch (status.visibility) {
