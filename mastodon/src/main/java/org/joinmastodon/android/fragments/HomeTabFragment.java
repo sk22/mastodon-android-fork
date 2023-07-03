@@ -12,6 +12,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.assist.AssistContent;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -107,6 +108,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 	private boolean announcementsBadged, settingsBadged;
 	private ImageButton fab;
 	private ElevationOnScrollListener elevationOnScrollListener;
+	private FragmentRootLinearLayout rootView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -130,9 +132,11 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 
 	@Override
 	public View onCreateContentView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-		FragmentRootLinearLayout root = new FragmentRootLinearLayout(getContext());
+		rootView = new FragmentRootLinearLayout(getContext());
+		rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 		FrameLayout view = new FrameLayout(getContext());
-		root.addView(view);
+		view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+		rootView.addView(view);
 		inflater.inflate(R.layout.compose_fab, view);
 		fab = view.findViewById(R.id.fab);
 		fab.setOnClickListener(this::onFabClick);
@@ -175,7 +179,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 		overflowActionView.setOnClickListener(l -> overflowPopup.show());
 		overflowActionView.setOnTouchListener(overflowPopup.getDragToOpenListener());
 
-		return root;
+		return rootView;
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -250,7 +254,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			});
 		}
 
-		elevationOnScrollListener=new ElevationOnScrollListener((FragmentRootLinearLayout) view, Collections.singletonList(getToolbar()));
+		elevationOnScrollListener=new ElevationOnScrollListener((FragmentRootLinearLayout) view, getToolbar());
 
 		if(GithubSelfUpdater.needSelfUpdating()){
 			updateUpdateState(GithubSelfUpdater.getInstance().getState());
@@ -477,6 +481,12 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 	public boolean isScrolling() {
 		return (fragments[pager.getCurrentItem()] instanceof HasFab fabulous)
 				&& fabulous.isScrolling();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		elevationOnScrollListener.setViews(getToolbar());
 	}
 
 	private void updateSwitcherIcon(int i) {
