@@ -34,6 +34,7 @@ import org.joinmastodon.android.ui.SimpleViewHolder;
 import org.joinmastodon.android.ui.tabs.TabLayout;
 import org.joinmastodon.android.ui.tabs.TabLayoutMediator;
 import org.joinmastodon.android.ui.utils.UiUtils;
+import org.joinmastodon.android.utils.ElevationOnScrollListener;
 import org.joinmastodon.android.utils.ObjectIdComparator;
 import org.joinmastodon.android.utils.ProvidesAssistContent;
 
@@ -44,8 +45,9 @@ import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
 import me.grishka.appkit.fragments.BaseRecyclerFragment;
 import me.grishka.appkit.utils.V;
+import me.grishka.appkit.views.FragmentRootLinearLayout;
 
-public class NotificationsFragment extends MastodonToolbarFragment implements ScrollableToTop, ProvidesAssistContent {
+public class NotificationsFragment extends MastodonToolbarFragment implements ScrollableToTop, ProvidesAssistContent, HasElevationOnScrollListener {
 
 	TabLayout tabLayout;
 	private ViewPager2 pager;
@@ -54,6 +56,7 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 	String unreadMarker, realUnreadMarker;
 	private MenuItem markAllReadItem;
 	private NotificationsListFragment allNotificationsFragment, mentionsFragment;
+	private ElevationOnScrollListener elevationOnScrollListener;
 
 	private String accountID;
 	@Override
@@ -177,6 +180,8 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 		pager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback(){
 			@Override
 			public void onPageSelected(int position){
+				if (elevationOnScrollListener != null && getCurrentFragment() instanceof IsOnTop f)
+					elevationOnScrollListener.handleScroll(getContext(), f.isOnTop());
 				if(position==0)
 					return;
 				Fragment _page=getFragmentForPage(position);
@@ -219,6 +224,17 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 		tabLayoutMediator.attach();
 
 		return view;
+	}
+
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		elevationOnScrollListener=new ElevationOnScrollListener((FragmentRootLinearLayout) view, getToolbar(), tabLayout);
+	}
+
+	@Override
+	public ElevationOnScrollListener getElevationOnScrollListener() {
+		return elevationOnScrollListener;
 	}
 
 	public void refreshFollowRequestsBadge() {

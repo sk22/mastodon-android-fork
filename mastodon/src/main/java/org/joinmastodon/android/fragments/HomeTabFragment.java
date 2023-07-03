@@ -78,7 +78,7 @@ import me.grishka.appkit.utils.CubicBezierInterpolator;
 import me.grishka.appkit.utils.V;
 import me.grishka.appkit.views.FragmentRootLinearLayout;
 
-public class HomeTabFragment extends MastodonToolbarFragment implements ScrollableToTop, OnBackPressedListener, HasFab, ProvidesAssistContent {
+public class HomeTabFragment extends MastodonToolbarFragment implements ScrollableToTop, OnBackPressedListener, HasFab, ProvidesAssistContent, HasElevationOnScrollListener {
 	private static final int ANNOUNCEMENTS_RESULT = 654;
 
 	private String accountID;
@@ -108,7 +108,6 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 	private boolean announcementsBadged, settingsBadged;
 	private ImageButton fab;
 	private ElevationOnScrollListener elevationOnScrollListener;
-	private FragmentRootLinearLayout rootView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -132,7 +131,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 
 	@Override
 	public View onCreateContentView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
-		rootView = new FragmentRootLinearLayout(getContext());
+		FragmentRootLinearLayout rootView = new FragmentRootLinearLayout(getContext());
 		rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 		FrameLayout view = new FrameLayout(getContext());
 		view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));

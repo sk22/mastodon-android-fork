@@ -28,6 +28,7 @@ import org.joinmastodon.android.ui.displayitems.StatusDisplayItem;
 import org.joinmastodon.android.ui.utils.DiscoverInfoBannerHelper;
 import org.joinmastodon.android.ui.utils.InsetStatusItemDecoration;
 import org.joinmastodon.android.ui.utils.UiUtils;
+import org.joinmastodon.android.utils.ElevationOnScrollListener;
 import org.joinmastodon.android.utils.ObjectIdComparator;
 import org.parceler.Parcels;
 
@@ -40,8 +41,9 @@ import java.util.stream.Stream;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import me.grishka.appkit.api.SimpleCallback;
+import me.grishka.appkit.views.FragmentRootLinearLayout;
 
-public class NotificationsListFragment extends BaseStatusListFragment<Notification>{
+public class NotificationsListFragment extends BaseStatusListFragment<Notification> {
 	private boolean onlyMentions;
 	private boolean onlyPosts;
 	private String maxID;
