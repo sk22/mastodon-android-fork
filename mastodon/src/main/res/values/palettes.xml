@@ -92,6 +92,10 @@
 		<item name="colorM3OutlineVariant">?colorNeutral200</item>
 		<item name="colorM3PressedOverlay">@color/white</item>
 		<item name="colorM3DarkOnSurface">@color/m3_sys_dark_on_surface</item>
+
+		<item name="colorFavorite">@color/favorite_selected</item>
+		<item name="colorBoost">?colorM3Primary</item>
+		<item name="colorPoll">@color/bookmark_selected</item>
 	</style>
 
 	<style name="ColorPalette.Dark">

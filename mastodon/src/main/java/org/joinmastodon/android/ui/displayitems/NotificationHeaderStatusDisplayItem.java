@@ -161,7 +161,6 @@ public class NotificationHeaderStatusDisplayItem extends StatusDisplayItem{
 			icon.setImageTintList(ColorStateList.valueOf(UiUtils.getThemeColor(item.parentFragment.getActivity(), switch(item.notification.type){
 				case FAVORITE -> R.attr.colorFavorite;
 				case REBLOG -> R.attr.colorBoost;
-				case FOLLOW, FOLLOW_REQUEST -> R.attr.colorFollow;
 				case POLL -> R.attr.colorPoll;
 				default -> android.R.attr.colorAccent;
 			})));

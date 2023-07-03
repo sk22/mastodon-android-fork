@@ -47,10 +47,6 @@
 		<item name="colorM3ErrorContainer">#F9DEDC</item>
 		<item name="colorM3OnErrorContainer">#410E0B</item>
 		<item name="colorWhite">#FFF</item>
-		<item name="colorFavorite">@color/favorite_selected</item>
-		<item name="colorBoost">@color/boost_selected</item>
-		<item name="colorFollow">#4746e3</item>
-		<item name="colorPoll">@color/bookmark_selected</item>
 
 		<item name="android:statusBarColor">?colorM3Background</item>
 		<item name="android:navigationBarColor">?colorM3Background</item>
@@ -90,10 +86,6 @@
 		<item name="colorM3ErrorContainer">#8C1D18</item>
 		<item name="colorM3OnErrorContainer">#F9DEDC</item>
 		<item name="colorWhite">#000</item>
-		<item name="colorFavorite">#ffb871</item>
-		<item name="colorBoost">#ffb4aa</item>
-		<item name="colorFollow">#c1c1ff</item>
-		<item name="colorPoll">#77daa1</item>
 
 		<item name="android:statusBarColor">?colorM3Background</item>
 		<item name="android:navigationBarColor">?colorM3Background</item>

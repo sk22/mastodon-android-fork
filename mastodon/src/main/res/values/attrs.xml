@@ -31,7 +31,6 @@
 	<attr name="colorWhite" format="color"/>
 	<attr name="colorFavorite" format="color" />
 	<attr name="colorBoost" format="color" />
-	<attr name="colorFollow" format="color" />
 	<attr name="colorPoll" format="color" />
 	<attr name="colorProfileHeaderBackground" format="color"/>
 	<attr name="colorM3DarkOnSurface" format="color" />
