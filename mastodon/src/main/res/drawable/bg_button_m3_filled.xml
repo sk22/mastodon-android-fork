@@ -14,7 +14,7 @@
 		<layer-list>
 			<item android:gravity="center_vertical" android:height="40dp">
 				<shape>
-					<solid android:color="@color/m3_on_surface_alpha12"/>
+					<solid android:color="@color/m3_on_surface_overlay"/>
 					<corners android:radius="20dp"/>
 				</shape>
 			</item>
