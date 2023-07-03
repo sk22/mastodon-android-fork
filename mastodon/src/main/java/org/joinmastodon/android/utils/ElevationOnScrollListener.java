@@ -88,7 +88,7 @@ public class ElevationOnScrollListener extends RecyclerView.OnScrollListener imp
 		handleScroll(v.getContext(), scrollY<=0);
 	}
 
-	private void handleScroll(Context context, boolean newAtTop){
+	public void handleScroll(Context context, boolean newAtTop){
 		if(newAtTop!=isAtTop){
 			isAtTop=newAtTop;
 			if(currentPanelsAnim!=null)

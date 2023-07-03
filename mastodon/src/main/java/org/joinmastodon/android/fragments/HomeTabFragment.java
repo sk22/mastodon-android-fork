@@ -55,9 +55,11 @@ import org.joinmastodon.android.model.TimelineDefinition;
 import org.joinmastodon.android.ui.SimpleViewHolder;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.updater.GithubSelfUpdater;
+import org.joinmastodon.android.utils.ElevationOnScrollListener;
 import org.joinmastodon.android.utils.ProvidesAssistContent;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,6 +75,7 @@ import me.grishka.appkit.fragments.LoaderFragment;
 import me.grishka.appkit.fragments.OnBackPressedListener;
 import me.grishka.appkit.utils.CubicBezierInterpolator;
 import me.grishka.appkit.utils.V;
+import me.grishka.appkit.views.FragmentRootLinearLayout;
 
 public class HomeTabFragment extends MastodonToolbarFragment implements ScrollableToTop, OnBackPressedListener, HasFab, ProvidesAssistContent {
 	private static final int ANNOUNCEMENTS_RESULT = 654;
@@ -103,6 +106,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 	private View overflowActionView = null;
 	private boolean announcementsBadged, settingsBadged;
 	private ImageButton fab;
+	private ElevationOnScrollListener elevationOnScrollListener;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -126,7 +130,9 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 
 	@Override
 	public View onCreateContentView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+		FragmentRootLinearLayout root = new FragmentRootLinearLayout(getContext());
 		FrameLayout view = new FrameLayout(getContext());
+		root.addView(view);
 		inflater.inflate(R.layout.compose_fab, view);
 		fab = view.findViewById(R.id.fab);
 		fab.setOnClickListener(this::onFabClick);
@@ -169,7 +175,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 		overflowActionView.setOnClickListener(l -> overflowPopup.show());
 		overflowActionView.setOnTouchListener(overflowPopup.getDragToOpenListener());
 
-		return view;
+		return root;
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -244,6 +250,8 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			});
 		}
 
+		elevationOnScrollListener=new ElevationOnScrollListener((FragmentRootLinearLayout) view, Collections.singletonList(getToolbar()));
+
 		if(GithubSelfUpdater.needSelfUpdating()){
 			updateUpdateState(GithubSelfUpdater.getInstance().getState());
 		}
@@ -288,6 +296,10 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 				error.showToast(getActivity());
 			}
 		}).exec(accountID);
+	}
+
+	public ElevationOnScrollListener getElevationOnScrollListener() {
+		return elevationOnScrollListener;
 	}
 
 	private void onFabClick(View v){
@@ -471,6 +483,9 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 		timelineIcon.setImageResource(timelines[i].getIcon().iconRes);
 		timelineTitle.setText(timelines[i].getTitle(getContext()));
 		showFab();
+		if (elevationOnScrollListener != null && getCurrentFragment() instanceof IsOnTop f) {
+			elevationOnScrollListener.handleScroll(getContext(), f.isOnTop());
+		}
 	}
 
 	@Override
