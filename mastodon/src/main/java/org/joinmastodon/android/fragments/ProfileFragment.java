@@ -57,13 +57,16 @@ import org.joinmastodon.android.api.requests.accounts.GetAccountStatuses;
 import org.joinmastodon.android.api.requests.accounts.GetOwnAccount;
 import org.joinmastodon.android.api.requests.accounts.SetAccountFollowed;
 import org.joinmastodon.android.api.requests.accounts.UpdateAccountCredentials;
+import org.joinmastodon.android.api.requests.instance.GetInstance;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.account_list.FollowerListFragment;
 import org.joinmastodon.android.fragments.account_list.FollowingListFragment;
 import org.joinmastodon.android.fragments.report.ReportReasonChoiceFragment;
+import org.joinmastodon.android.fragments.settings.SettingsServerFragment;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.AccountField;
 import org.joinmastodon.android.model.Attachment;
+import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Relationship;
 import org.joinmastodon.android.ui.BetterItemAnimator;
 import org.joinmastodon.android.ui.M3AlertDialogBuilder;
@@ -330,6 +333,31 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 
 		followersBtn.setOnClickListener(this::onFollowersOrFollowingClick);
 		followingBtn.setOnClickListener(this::onFollowersOrFollowingClick);
+
+		username.setOnClickListener(v->{
+			try {
+				new GetInstance()
+						.setCallback(new Callback<>(){
+							@Override
+							public void onSuccess(Instance result){
+								Bundle args = new Bundle();
+								args.putParcelable("instance", Parcels.wrap(result));
+								args.putString("account", accountID);
+								Nav.go(getActivity(), SettingsServerFragment.class, args);
+							}
+
+							@Override
+							public void onError(ErrorResponse error){
+								error.showToast(getContext());
+							}
+						})
+						.wrapProgress((Activity) getContext(), R.string.loading, true)
+						.execRemote(Uri.parse(account.url).getHost());
+			} catch (NullPointerException ignored) {
+				// maybe the url was malformed?
+				Toast.makeText(getContext(), R.string.error, Toast.LENGTH_SHORT);
+			}
+		});
 
 		username.setOnLongClickListener(v->{
 			String usernameString=account.acct;

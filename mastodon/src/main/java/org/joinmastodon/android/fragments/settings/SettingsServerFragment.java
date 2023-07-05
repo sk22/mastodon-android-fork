@@ -19,6 +19,7 @@ import org.joinmastodon.android.ui.tabs.TabLayout;
 import org.joinmastodon.android.ui.tabs.TabLayoutMediator;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.ui.views.NestedRecyclerScrollView;
+import org.parceler.Parcels;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,11 +45,17 @@ public class SettingsServerFragment extends AppKitFragment{
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		accountID=getArguments().getString("account");
-		setTitle(AccountSessionManager.get(accountID).domain);
+		instance=getArguments().containsKey("instance")
+				? Parcels.unwrap(getArguments().getParcelable("instance"))
+				: AccountSessionManager.getOptional(accountID)
+					.map(i->AccountSessionManager.getInstance().getInstanceInfo(i.domain))
+					.orElseThrow();
+		setTitle(instance.title);
 
 		Bundle args=new Bundle();
 		args.putString("account", accountID);
 		args.putBoolean("__is_tab", true);
+		args.putParcelable("instance", Parcels.wrap(instance));
 		aboutFragment=new SettingsServerAboutFragment();
 		aboutFragment.setArguments(args);
 		rulesFragment=new SettingsServerRulesFragment();

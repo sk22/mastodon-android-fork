@@ -24,7 +24,6 @@ import android.widget.Toast;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.MastodonAPIController;
 import org.joinmastodon.android.api.requests.instance.GetInstanceExtendedDescription;
-import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.viewmodel.AccountViewModel;
 import org.joinmastodon.android.model.viewmodel.ListItem;
@@ -34,6 +33,7 @@ import org.joinmastodon.android.ui.viewholders.AccountViewHolder;
 import org.joinmastodon.android.ui.viewholders.SimpleListItemViewHolder;
 import org.joinmastodon.android.ui.views.FixedAspectRatioImageView;
 import org.joinmastodon.android.utils.ViewImageLoaderHolderTarget;
+import org.parceler.Parcels;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -60,7 +60,7 @@ public class SettingsServerAboutFragment extends LoaderFragment{
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		accountID=getArguments().getString("account");
-		instance=AccountSessionManager.getInstance().getInstanceInfo(AccountSessionManager.get(accountID).domain);
+		instance=Parcels.unwrap(getArguments().getParcelable("instance"));
 		loadData();
 	}
 
@@ -197,7 +197,7 @@ public class SettingsServerAboutFragment extends LoaderFragment{
 						});
 					}
 				})
-				.exec(accountID);
+				.execRemote(instance.normalizedUri);
 	}
 
 	@Override
