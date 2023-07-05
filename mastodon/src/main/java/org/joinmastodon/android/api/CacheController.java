@@ -21,7 +21,6 @@ import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.PaginatedResponse;
 import org.joinmastodon.android.model.SearchResult;
 import org.joinmastodon.android.model.Status;
-import org.joinmastodon.android.utils.StatusFilterPredicate;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -123,6 +122,29 @@ public class CacheController{
 				values.put("time", s.createdAt.getEpochSecond());
 				db.insertWithOnConflict("home_timeline", null, values, SQLiteDatabase.CONFLICT_REPLACE);
 			}
+		});
+	}
+
+	public void updateStatus(Status status) {
+		runOnDbThread((db)->{
+			ContentValues statusUpdate=new ContentValues(1);
+			statusUpdate.put("json", MastodonAPIController.gson.toJson(status));
+			db.update("home_timeline", statusUpdate, "id = ?", new String[] { status.id });
+		});
+	}
+
+	public void updateNotification(Notification notification) {
+		runOnDbThread((db)->{
+			ContentValues notificationUpdate=new ContentValues(1);
+			notificationUpdate.put("json", MastodonAPIController.gson.toJson(notification));
+			String[] notificationArgs = new String[] { notification.id };
+			db.update("notifications_all", notificationUpdate, "id = ?", notificationArgs);
+			db.update("notifications_mentions", notificationUpdate, "id = ?", notificationArgs);
+			db.update("notifications_posts", notificationUpdate, "id = ?", notificationArgs);
+
+			ContentValues statusUpdate=new ContentValues(1);
+			statusUpdate.put("json", MastodonAPIController.gson.toJson(notification.status));
+			db.update("home_timeline", statusUpdate, "id = ?", new String[] { notification.status.id });
 		});
 	}
 

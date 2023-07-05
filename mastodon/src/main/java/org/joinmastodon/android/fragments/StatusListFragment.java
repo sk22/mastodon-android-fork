@@ -7,6 +7,7 @@ import com.squareup.otto.Subscribe;
 
 import org.joinmastodon.android.E;
 import org.joinmastodon.android.GlobalUserPreferences;
+import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.PollUpdatedEvent;
 import org.joinmastodon.android.events.RemoveAccountPostsEvent;
 import org.joinmastodon.android.events.StatusCountersUpdatedEvent;
@@ -215,6 +216,7 @@ public abstract class StatusListFragment extends BaseStatusListFragment<Status> 
 			for(Status s:data){
 				if(s.getContentStatus().id.equals(ev.id)){
 					s.getContentStatus().update(ev);
+					AccountSessionManager.get(accountID).getCacheController().updateStatus(s);
 					for(int i=0;i<list.getChildCount();i++){
 						RecyclerView.ViewHolder holder=list.getChildViewHolder(list.getChildAt(i));
 						if(holder instanceof FooterStatusDisplayItem.Holder footer && footer.getItem().status==s.getContentStatus()){
@@ -228,6 +230,7 @@ public abstract class StatusListFragment extends BaseStatusListFragment<Status> 
 			for(Status s:preloadedData){
 				if(s.getContentStatus().id.equals(ev.id)){
 					s.getContentStatus().update(ev);
+					AccountSessionManager.get(accountID).getCacheController().updateStatus(s);
 				}
 			}
 		}
