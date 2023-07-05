@@ -100,7 +100,7 @@ public class SearchViewHelper{
 
 	public void addDivider(ViewGroup contentView){
 		divider=new View(contentView.getContext());
-		divider.setBackgroundColor(UiUtils.getThemeColor(contentView.getContext(), R.attr.colorM3Outline));
+		divider.setBackgroundColor(UiUtils.getThemeColor(contentView.getContext(), R.attr.colorM3OutlineVariant));
 		contentView.addView(divider, 1, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, V.dp(1)));
 	}
 

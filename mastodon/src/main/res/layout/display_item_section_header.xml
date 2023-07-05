@@ -7,8 +7,8 @@
 	android:clipToPadding="false"
 	android:paddingLeft="16dp"
 	android:paddingRight="16dp"
-	android:paddingTop="16dp"
-	android:baselineAligned="false">
+	android:paddingTop="8dp"
+	android:baselineAligned="true">
 
 	<TextView
 		android:id="@+id/title"
@@ -24,8 +24,9 @@
 
 	<Button
 		android:id="@+id/action_btn"
+		style="@style/Widget.Mastodon.M3.Button.Text"
 		android:layout_width="wrap_content"
-		android:layout_height="24dp"
+		android:layout_height="wrap_content"
 		android:layout_marginEnd="-8dp"
 		android:textAppearance="@style/m3_label_large"
 		android:textColor="?colorM3Primary"
