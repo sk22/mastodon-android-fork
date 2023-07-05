@@ -118,7 +118,7 @@ public abstract class MastodonAPIRequest<T> extends APIRequest<T>{
 						.findAny())
 				.map(AccountSession::getID)
 				.map(this::exec)
-				.orElse(this.execNoAuth(domain));
+				.orElseGet(() -> this.execNoAuth(domain));
 	}
 
 	public MastodonAPIRequest<T> wrapProgress(Activity activity, @StringRes int message, boolean cancelable){
