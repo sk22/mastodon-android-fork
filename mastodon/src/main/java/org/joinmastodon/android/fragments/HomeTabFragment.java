@@ -253,7 +253,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			});
 		}
 
-		elevationOnScrollListener=new ElevationOnScrollListener((FragmentRootLinearLayout) view, getToolbar());
+		elevationOnScrollListener = new ElevationOnScrollListener((FragmentRootLinearLayout) view, getToolbar());
 
 		if(GithubSelfUpdater.needSelfUpdating()){
 			updateUpdateState(GithubSelfUpdater.getInstance().getState());
@@ -485,7 +485,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		elevationOnScrollListener.setViews(getToolbar());
+		if (elevationOnScrollListener != null) elevationOnScrollListener.setViews(getToolbar());
 	}
 
 	private void updateSwitcherIcon(int i) {

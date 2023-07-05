@@ -3,6 +3,7 @@ package org.joinmastodon.android.fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.assist.AssistContent;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -38,8 +39,6 @@ import org.joinmastodon.android.utils.ElevationOnScrollListener;
 import org.joinmastodon.android.utils.ObjectIdComparator;
 import org.joinmastodon.android.utils.ProvidesAssistContent;
 
-import java.util.Objects;
-
 import me.grishka.appkit.Nav;
 import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
@@ -52,6 +51,7 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 	TabLayout tabLayout;
 	private ViewPager2 pager;
 	private FrameLayout[] tabViews;
+	private View tabsDivider;
 	private TabLayoutMediator tabLayoutMediator;
 	String unreadMarker, realUnreadMarker;
 	private MenuItem markAllReadItem;
@@ -143,6 +143,7 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 		LinearLayout view=(LinearLayout) inflater.inflate(R.layout.fragment_notifications, container, false);
 
 		tabLayout=view.findViewById(R.id.tabbar);
+		tabsDivider=view.findViewById(R.id.tabs_divider);
 		pager=view.findViewById(R.id.pager);
 		UiUtils.reduceSwipeSensitivity(pager);
 
@@ -229,7 +230,18 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		elevationOnScrollListener=new ElevationOnScrollListener((FragmentRootLinearLayout) view, getToolbar(), tabLayout);
+		elevationOnScrollListener = new ElevationOnScrollListener((FragmentRootLinearLayout) view, getToolbar(), tabLayout);
+		elevationOnScrollListener.setDivider(tabsDivider);
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		if (elevationOnScrollListener == null) return;
+		elevationOnScrollListener.setViews(getToolbar(), tabLayout);
+		if (getCurrentFragment() instanceof IsOnTop f) {
+			elevationOnScrollListener.handleScroll(getContext(), f.isOnTop());
+		}
 	}
 
 	@Override

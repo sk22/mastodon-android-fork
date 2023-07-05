@@ -27,6 +27,7 @@ public class ElevationOnScrollListener extends RecyclerView.OnScrollListener imp
 	private boolean isAtTop;
 	private Animator currentPanelsAnim;
 	private List<View> views;
+	private View divider;
 	private FragmentRootLinearLayout fragmentRootLayout;
 	private Rect tmpRect=new Rect();
 
@@ -48,6 +49,10 @@ public class ElevationOnScrollListener extends RecyclerView.OnScrollListener imp
 				}
 			}
 		}
+	}
+
+	public void setDivider(View divider) {
+		this.divider = divider;
 	}
 
 	public void setViews(View... views){
@@ -113,6 +118,9 @@ public class ElevationOnScrollListener extends RecyclerView.OnScrollListener imp
 					color=UiUtils.alphaBlendColors(UiUtils.getThemeColor(context, R.attr.colorM3Background), UiUtils.getThemeColor(context, R.attr.colorM3Primary), 0.07843137f);
 				}
 				anims.add(ObjectAnimator.ofArgb(fragmentRootLayout, "statusBarColor", color));
+			}
+			if (divider != null) {
+				anims.add(ObjectAnimator.ofFloat(divider, View.ALPHA, newAtTop ? 1 : 0));
 			}
 			set.playTogether(anims);
 			set.setDuration(150);
