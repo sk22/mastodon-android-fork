@@ -31,7 +31,7 @@ public class AccountLocalPreferences{
 
 	public AccountLocalPreferences(SharedPreferences prefs){
 		this.prefs=prefs;
-		showInteractionCounts=prefs.getBoolean("interactionCounts", true);
+		showInteractionCounts=prefs.getBoolean("interactionCounts", false);
 		customEmojiInNames=prefs.getBoolean("emojiInNames", true);
 		showCWs=prefs.getBoolean("showCWs", true);
 		hideSensitiveMedia=prefs.getBoolean("hideSensitive", true);

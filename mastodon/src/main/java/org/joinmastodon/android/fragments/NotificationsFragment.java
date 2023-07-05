@@ -230,7 +230,7 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		elevationOnScrollListener = new ElevationOnScrollListener((FragmentRootLinearLayout) view, getToolbar(), tabLayout);
+		elevationOnScrollListener = new ElevationOnScrollListener((FragmentRootLinearLayout) view, getToolbar(), tabLayout, tabsDivider);
 		elevationOnScrollListener.setDivider(tabsDivider);
 	}
 

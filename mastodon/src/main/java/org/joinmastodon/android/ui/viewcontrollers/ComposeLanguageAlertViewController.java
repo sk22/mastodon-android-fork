@@ -22,7 +22,6 @@ import org.joinmastodon.android.ui.DividerItemDecoration;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.ui.views.CheckableLinearLayout;
 import org.joinmastodon.android.utils.MastodonLanguage;
-import org.joinmastodon.android.utils.StatusTextEncoder;
 import org.parceler.Parcel;
 
 import java.util.ArrayList;
@@ -50,21 +49,26 @@ public class ComposeLanguageAlertViewController{
 	private MastodonLanguage selectedLocale;
 	private String selectedEncoding;
 	private MastodonLanguage.LanguageResolver resolver;
+	private boolean hideEncodings;
 
 	public ComposeLanguageAlertViewController(Context context, String preferred, SelectedOption previouslySelected, String postText, MastodonLanguage.LanguageResolver resolver){
+		this(context, preferred, previouslySelected, postText, resolver, false);
+	}
+
+	public ComposeLanguageAlertViewController(Context context, String preferred, SelectedOption previouslySelected, String postText, MastodonLanguage.LanguageResolver resolver, boolean hideEncodings){
 		this.context=context;
 		this.resolver=resolver;
 
 		allLocales=MastodonLanguage.allLanguages.stream()
-				.map(l -> new LocaleInfo(l, getDisplayName(l)))
+				.map(l -> new LocaleInfo(l, l.getDisplayName(context)))
 				.sorted(Comparator.comparing(a->a.displayName))
 				.collect(Collectors.toList());
 
 		if(!TextUtils.isEmpty(preferred)){
-			MastodonLanguage lang = resolver.from(preferred);
+			MastodonLanguage lang = resolver.fromOrFallback(preferred);
 			specialLocales.add(new SpecialLocaleInfo(
 					lang,
-					getDisplayName(lang),
+					lang.getDisplayName(context),
 					context.getString(R.string.language_default)
 			));
 		}
@@ -73,7 +77,7 @@ public class ComposeLanguageAlertViewController{
 			MastodonLanguage lang = resolver.getDefault();
 			specialLocales.add(new SpecialLocaleInfo(
 					lang,
-					getDisplayName(lang),
+					lang.getDisplayName(context),
 					context.getString(R.string.language_system)
 			));
 		}
@@ -86,7 +90,7 @@ public class ComposeLanguageAlertViewController{
 			detectLanguage(detected, postText);
 		}
 
-		if (GlobalUserPreferences.bottomEncoding) {
+		if (GlobalUserPreferences.bottomEncoding && !hideEncodings) {
 			specialLocales.add(new SpecialLocaleInfo(null, "\uD83E\uDD7A\uD83D\uDC49\uD83D\uDC48", "bottom"));
 		}
 
@@ -99,7 +103,7 @@ public class ComposeLanguageAlertViewController{
 				int i=0;
 				boolean found=false;
 				for(SpecialLocaleInfo li:specialLocales){
-					if(li.language.equals(previouslySelected.language)){
+					if(previouslySelected.language != null && previouslySelected.language.equals(li.language)){
 						selectedLocale=li.language;
 						selectedIndex=i;
 						found=true;
@@ -129,12 +133,12 @@ public class ComposeLanguageAlertViewController{
 		list.setAdapter(adapter);
 		list.setLayoutManager(new LinearLayoutManager(context));
 
-		list.addItemDecoration(new DividerItemDecoration(context, R.attr.colorM3OutlineVariant, 1, 16, 16, vh->vh.getAbsoluteAdapterPosition()==specialLocales.size()-1));
+		list.addItemDecoration(new DividerItemDecoration(context, R.attr.colorM3Outline, 1, 0, 0, vh->vh.getAbsoluteAdapterPosition()==specialLocales.size()-1));
 		list.addItemDecoration(new RecyclerView.ItemDecoration(){
 			private Paint paint=new Paint();
 
 			{
-				paint.setColor(UiUtils.getThemeColor(context, R.attr.colorM3OutlineVariant));
+				paint.setColor(UiUtils.getThemeColor(context, R.attr.colorM3Outline));
 				paint.setStyle(Paint.Style.STROKE);
 				paint.setStrokeWidth(V.dp(1));
 			}
@@ -176,9 +180,9 @@ public class ComposeLanguageAlertViewController{
 				if(lang.getLocaleHypothesisCount()==0 || lang.getConfidenceScore(lang.getLocale(0))<0.75f){
 					info.displayName=context.getString(R.string.language_cant_detect);
 				}else{
-					MastodonLanguage language = resolver.from(lang.getLocale(0).toLanguageTag());
+					MastodonLanguage language = resolver.fromOrFallback(lang.getLocale(0).toLanguageTag());
 					info.language=language;
-					info.displayName=getDisplayName(language);
+					info.displayName=language.getDisplayName(context);
 					info.title=context.getString(R.string.language_detected);
 					info.enabled=true;
 					if(holder!=null)
@@ -197,10 +201,6 @@ public class ComposeLanguageAlertViewController{
 	// Needed because in some languages (e.g. Slavic ones) these names returned by the system start with a lowercase letter
 	private String capitalizeLanguageName(String name){
 		return name.substring(0, 1).toUpperCase(Locale.getDefault())+name.substring(1);
-	}
-
-	private String getDisplayName(MastodonLanguage l) {
-		return context.getString(R.string.sk_language_name, l.getDefaultName(), l.getLanguageName());
 	}
 
 	public SelectedOption getSelectedOption(){
@@ -368,6 +368,10 @@ public class ComposeLanguageAlertViewController{
 			this.index = index;
 			this.language = language;
 			this.encoding = encoding;
+		}
+
+		public SelectedOption(int index, MastodonLanguage language) {
+			this(index, language, null);
 		}
 
 		public SelectedOption(MastodonLanguage language) {

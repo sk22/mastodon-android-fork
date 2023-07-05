@@ -427,7 +427,7 @@ public class UiUtils {
 	}
 
 	public static void showConfirmationAlert(Context context, @StringRes int title, @StringRes int message, @StringRes int confirmButton, @DrawableRes int icon, Runnable onConfirmed) {
-		showConfirmationAlert(context, context.getString(title), context.getString(message), context.getString(confirmButton), icon, onConfirmed);
+		showConfirmationAlert(context, context.getString(title), message==0 ? null : context.getString(message), context.getString(confirmButton), icon, onConfirmed);
 	}
 
 	public static void showConfirmationAlert(Context context, CharSequence title, CharSequence message, CharSequence confirmButton, int icon, Runnable onConfirmed) {

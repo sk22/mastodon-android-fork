@@ -37,8 +37,7 @@
 		<item name="android:actionOverflowMenuStyle">@style/Widget.Mastodon.PopupMenu</item>
 		<item name="android:switchStyle">@style/Widget.Mastodon.M3.Switch</item>
 		<item name="android:windowActionModeOverlay">true</item>
-		<item name="android:actionModeBackground">?colorM3Primary</item>
-		<item name="android:actionModeStyle">@style/Widget.Mastodon.Toolbar.ActionMode</item>
+		<item name="android:actionModeBackground">?colorM3PrimaryContainer</item>
 		<item name="android:actionModeCloseDrawable">@drawable/ic_fluent_dismiss_24_regular</item>
 
 		<item name="colorM3DisabledBackground">#1F1F1F1F</item>
@@ -77,7 +76,7 @@
 		<item name="android:actionOverflowMenuStyle">@style/Widget.Mastodon.PopupMenu</item>
 		<item name="android:switchStyle">@style/Widget.Mastodon.M3.Switch</item>
 		<item name="android:windowActionModeOverlay">true</item>
-		<item name="android:actionModeBackground">@color/m3_sys_dark_primary</item>
+		<item name="android:actionModeBackground">?colorM3PrimaryContainer</item>
 		<item name="android:actionModeCloseDrawable">@drawable/ic_fluent_dismiss_24_regular</item>
 
 		<item name="colorM3DisabledBackground">#1FE3E3E3</item>
@@ -141,14 +140,6 @@
 
 	<style name="action_bar_subtitle" parent="m3_title_small">
 		<item name="android:textColor">?colorM3OnSurfaceVariant</item>
-	</style>
-
-	<style name="Widget.Mastodon.Toolbar.ActionMode" parent="android:Widget.Material.ActionMode">
-		<item name="android:titleTextStyle">@style/action_mode_title</item>
-	</style>
-
-	<style name="action_mode_title" parent="android:TextAppearance.Material.Widget.ActionMode.Title">
-		<item name="android:textColor">?colorM3OnPrimary</item>
 	</style>
 
 	<style name="Theme.Mastodon.Toolbar.Profile">

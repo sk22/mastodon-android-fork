@@ -42,6 +42,7 @@ import java.util.stream.Stream;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import me.grishka.appkit.api.SimpleCallback;
+import me.grishka.appkit.utils.MergeRecyclerAdapter;
 import me.grishka.appkit.views.FragmentRootLinearLayout;
 
 public class NotificationsListFragment extends BaseStatusListFragment<Notification> {
@@ -49,7 +50,7 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 	private boolean onlyPosts;
 	private String maxID;
 	private boolean reloadingFromCache;
-	private final DiscoverInfoBannerHelper bannerHelper = new DiscoverInfoBannerHelper(DiscoverInfoBannerHelper.BannerType.POST_NOTIFICATIONS);
+	private DiscoverInfoBannerHelper bannerHelper;
 
 	@Override
 	protected boolean wantsComposeButton() {
@@ -63,6 +64,9 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 		if(savedInstanceState!=null){
 			onlyMentions=savedInstanceState.getBoolean("onlyMentions", false);
 			onlyPosts=savedInstanceState.getBoolean("onlyPosts", false);
+		}
+		if (onlyPosts) {
+			bannerHelper=new DiscoverInfoBannerHelper(DiscoverInfoBannerHelper.BannerType.POST_NOTIFICATIONS, accountID);
 		}
 	}
 
@@ -167,8 +171,6 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 	public void onViewCreated(View view, Bundle savedInstanceState){
 		super.onViewCreated(view, savedInstanceState);
 		list.addItemDecoration(new InsetStatusItemDecoration(this));
-		if (onlyPosts) bannerHelper.maybeAddBanner(contentWrap);
-
 		list.addItemDecoration(new RecyclerView.ItemDecoration(){
 			private Paint paint=new Paint();
 			private Rect tmpRect=new Rect();
@@ -321,6 +323,15 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 			});
 		}
 		resetUnreadBackground();
+	}
+
+	@Override
+	protected RecyclerView.Adapter<?> getAdapter(){
+		if (bannerHelper == null) return super.getAdapter();
+		MergeRecyclerAdapter adapter=new MergeRecyclerAdapter();
+		bannerHelper.maybeAddBanner(list, adapter);
+		adapter.addAdapter(super.getAdapter());
+		return adapter;
 	}
 
 	@Override

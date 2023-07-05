@@ -30,4 +30,7 @@
 	<item name="list_item_checkbox" type="id"/>
 	<item name="list_item_radio" type="id"/>
 	<item name="list_item_account" type="id"/>
+
+	<item name="server_about" type="id"/>
+	<item name="server_rules" type="id"/>
 </resources>

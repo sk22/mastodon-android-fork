@@ -35,17 +35,6 @@
 	<attr name="colorProfileHeaderBackground" format="color"/>
 	<attr name="colorM3DarkOnSurface" format="color" />
 
-	<declare-styleable name="MaxWidthFrameLayout">
-		<attr name="android:maxWidth" format="dimension"/>
-		<attr name="defaultWidth" format="dimension" />
-	</declare-styleable>
-
-	<declare-styleable name="FloatingHintEditTextLayout">
-		<attr name="editTextOffsetY" format="dimension"/>
-		<attr name="android:labelTextSize" format="dimension"/>
-		<attr name="labelTextColor" format="color"/>
-	</declare-styleable>
-
 	<attr name="colorPrimary25" format="color" />
 	<attr name="colorPrimary50" format="color" />
 	<attr name="colorPrimary100" format="color" />
@@ -109,4 +98,19 @@
 	<attr name="colorNeutral800" format="color" />
 	<attr name="colorNeutral800t" format="color" />
 	<attr name="colorNeutral900" format="color" />
+
+	<declare-styleable name="MaxWidthFrameLayout">
+		<attr name="android:maxWidth" format="dimension"/>
+		<attr name="defaultWidth" format="dimension" />
+	</declare-styleable>
+
+	<declare-styleable name="FloatingHintEditTextLayout">
+		<attr name="editTextOffsetY" format="dimension"/>
+		<attr name="android:labelTextSize" format="dimension"/>
+		<attr name="labelTextColor" format="color"/>
+	</declare-styleable>
+
+	<declare-styleable name="NestedRecyclerScrollView">
+		<attr name="takePriorityOverChildViews" format="boolean"/>
+	</declare-styleable>
 </resources>

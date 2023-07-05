@@ -48,6 +48,7 @@ import org.joinmastodon.android.events.HashtagUpdatedEvent;
 import org.joinmastodon.android.events.ListDeletedEvent;
 import org.joinmastodon.android.events.ListUpdatedCreatedEvent;
 import org.joinmastodon.android.events.SelfUpdateStateChangedEvent;
+import org.joinmastodon.android.fragments.settings.SettingsMainFragment;
 import org.joinmastodon.android.model.Announcement;
 import org.joinmastodon.android.model.Hashtag;
 import org.joinmastodon.android.model.HeaderPaginationList;
@@ -509,7 +510,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			getToolbar().post(() -> overflowPopup.show());
 			return true;
 		} else if (id == R.id.settings || id == R.id.settings_action) {
-			Nav.go(getActivity(), SettingsFragment.class, args);
+			Nav.go(getActivity(), SettingsMainFragment.class, args);
 		} else if (id == R.id.announcements || id == R.id.announcements_action) {
 			Nav.goForResult(getActivity(), AnnouncementsFragment.class, args, ANNOUNCEMENTS_RESULT, this);
 		} else if (id == R.id.edit_timelines) {

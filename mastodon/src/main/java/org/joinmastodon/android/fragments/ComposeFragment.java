@@ -113,7 +113,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -831,7 +830,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		Preferences prefs = AccountSessionManager.get(accountID).preferences;
 		if (postLang != null) setPostLanguage(postLang);
 		else setPostLanguage(prefs != null && prefs.postingDefaultLanguage != null && prefs.postingDefaultLanguage.length() > 0
-				? languageResolver.from(prefs.postingDefaultLanguage)
+				? languageResolver.fromOrFallback(prefs.postingDefaultLanguage)
 				: languageResolver.getDefault());
 
 		if (isInstancePixelfed()) spoilerBtn.setVisibility(View.GONE);
@@ -1713,7 +1712,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	}
 
 	private void setPostLanguage(String lang) {
-		setPostLanguage(lang == null ? languageResolver.getDefault() : languageResolver.from(lang));
+		setPostLanguage(lang == null ? languageResolver.getDefault() : languageResolver.fromOrFallback(lang));
 	}
 
 	private void setPostLanguage(MastodonLanguage lang) {

@@ -37,7 +37,7 @@ public class GlobalUserPreferences{
 	public static boolean uniformNotificationIcon;
 	public static boolean reduceMotion;
 	public static boolean keepOnlyLatestNotification;
-	public static boolean disableAltTextReminder;
+	public static boolean disableAltTextReminder; // TODO: migrate to GlobalUserPreferences.altTextReminders
 	public static boolean showAltIndicator;
 	public static boolean showNoAltIndicator;
 	public static boolean enablePreReleases;
@@ -100,7 +100,7 @@ public class GlobalUserPreferences{
 		SharedPreferences prefs=getPrefs();
 		playGifs=prefs.getBoolean("playGifs", true);
 		useCustomTabs=prefs.getBoolean("useCustomTabs", true);
-		altTextReminders=prefs.getBoolean("altTextReminders", false);
+		altTextReminders=prefs.getBoolean("altTextReminders", true);
 		confirmUnfollow=prefs.getBoolean("confirmUnfollow", false);
 		confirmBoost=prefs.getBoolean("confirmBoost", false);
 		confirmDeletePost=prefs.getBoolean("confirmDeletePost", true);
