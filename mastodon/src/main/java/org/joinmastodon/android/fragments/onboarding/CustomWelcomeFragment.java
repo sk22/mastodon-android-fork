@@ -131,17 +131,15 @@ public class CustomWelcomeFragment extends InstanceCatalogFragment {
 	protected void doLoadData(int offset, int count) {}
 
 	@Override
-	protected RecyclerView.Adapter getAdapter(){
+	protected RecyclerView.Adapter<?> getAdapter(){
 		headerView=getActivity().getLayoutInflater().inflate(R.layout.header_welcome_custom, list, false);
 		searchEdit=headerView.findViewById(R.id.search_edit);
 		searchEdit.setOnEditorActionListener(this::onSearchEnterPressed);
 
 		headerView.findViewById(R.id.more).setVisibility(View.GONE);
 		headerView.findViewById(R.id.visibility).setVisibility(View.GONE);
-		headerView.findViewById(R.id.separator).setVisibility(View.GONE);
-		headerView.findViewById(R.id.timestamp).setVisibility(View.GONE);
 		headerView.findViewById(R.id.unread_indicator).setVisibility(View.GONE);
-		((TextView) headerView.findViewById(R.id.username)).setText(R.string.sk_app_username);
+		((TextView) headerView.findViewById(R.id.time_and_username)).setText(R.string.sk_app_username);
 		((TextView) headerView.findViewById(R.id.name)).setText(R.string.sk_app_name);
 		((ImageView) headerView.findViewById(R.id.avatar)).setImageDrawable(getActivity().getDrawable(R.mipmap.ic_launcher));
 		((FragmentStackActivity) getActivity()).invalidateSystemBarColors(this);
