@@ -3,6 +3,7 @@ package org.joinmastodon.android.ui.views;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.Gravity;
 
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.ui.utils.UiUtils;
@@ -25,6 +26,8 @@ public class FilterChipView extends CheckIconSelectableTextView{
 		setCompoundDrawablePadding(V.dp(8));
 		setBackgroundResource(R.drawable.bg_filter_chip);
 		setTextAppearance(R.style.m3_label_large);
+		setHeight(V.dp(48));
+		setGravity(Gravity.CENTER_VERTICAL);
 		setTextColor(getResources().getColorStateList(R.color.filter_chip_text, context.getTheme()));
 		updatePadding();
 	}
@@ -36,7 +39,7 @@ public class FilterChipView extends CheckIconSelectableTextView{
 	}
 
 	private void updatePadding(){
-		int vertical=V.dp(6);
+		int vertical=0;
 		Drawable[] drawables=getCompoundDrawablesRelative();
 		setPaddingRelative(V.dp(drawables[0]==null ? 16 : 8), vertical, V.dp(drawables[2]==null ? 16 : 8), vertical);
 	}
