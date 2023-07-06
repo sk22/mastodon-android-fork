@@ -437,10 +437,9 @@
 			android:id="@+id/bottom_bar_autocomplete_divider"
 			android:layout_width="match_parent"
 			android:layout_height="1dp"
-			android:layout_marginHorizontal="16dp"
 			android:layout_marginBottom="4dp"
 			android:visibility="invisible"
-			android:background="?colorM3OutlineVariant"/>
+			android:background="?colorM3Outline"/>
 
 		<LinearLayout
 			android:layout_width="match_parent"
