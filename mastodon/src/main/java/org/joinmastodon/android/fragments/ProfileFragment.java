@@ -1016,6 +1016,9 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		if(isInEditMode)
 			throw new IllegalStateException();
 		isInEditMode=true;
+		adapter.notifyDataSetChanged();
+		dragHelper.attachToRecyclerView(list);
+		editDirty=false;
 		invalidateOptionsMenu();
 		actionButton.setText(R.string.save_changes);
 		pager.setVisibility(View.GONE);
@@ -1315,7 +1318,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		this.fields=fields;
 		if(isInEditMode){
 			isInEditMode=false;
-			dragHelper.attachToRecyclerView(null);
+//			dragHelper.attachToRecyclerView(null);
 		}
 		if(adapter!=null)
 			adapter.notifyDataSetChanged();
