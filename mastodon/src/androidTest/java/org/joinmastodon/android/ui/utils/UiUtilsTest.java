@@ -2,15 +2,22 @@ package org.joinmastodon.android.ui.utils;
 
 import static org.junit.Assert.*;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.util.Pair;
 
+import org.joinmastodon.android.MastodonApp;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.model.Account;
+import org.joinmastodon.android.model.AccountField;
 import org.joinmastodon.android.model.Instance;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 public class UiUtilsTest {
@@ -193,5 +200,58 @@ public class UiUtilsTest {
 		// not supported:
 //		assertEquals("a b a", gen("%1$s %2$s %2$s %1$s", new String[] { "a", "b", "c" }));
 //		assertEquals("x", gen("%s %1$s %2$s %1$s %s", new String[] { "a", "b", "c" }));
+	}
+
+	private AccountField makeField(String name, String value) {
+		AccountField f = new AccountField();
+		f.name = name;
+		f.value = value;
+		return f;
+	}
+
+	private Account fakeAccount(AccountField... fields) {
+		Account a = new Account();
+		a.fields = Arrays.asList(fields);
+		return a;
+	}
+
+	@Test
+	public void extractPronouns() {
+		assertEquals("they", UiUtils.extractPronouns(MastodonApp.context, fakeAccount(
+				makeField("name and pronouns", "https://pronouns.site"),
+				makeField("pronouns", "they"),
+				makeField("pronouns something", "bla bla")
+		)).orElseThrow());
+
+		assertTrue(UiUtils.extractPronouns(MastodonApp.context, fakeAccount()).isEmpty());
+
+		assertEquals("it/its", UiUtils.extractPronouns(MastodonApp.context, fakeAccount(
+				makeField("pronouns pronouns pronouns", "hi hi hi"),
+				makeField("pronouns", "it/its"),
+				makeField("the pro's nouns", "professional")
+		)).orElseThrow());
+
+		assertEquals("she/he", UiUtils.extractPronouns(MastodonApp.context, fakeAccount(
+				makeField("my name is", "jeanette shork, apparently"),
+				makeField("my pronouns are", "she/he")
+		)).orElseThrow());
+
+		assertEquals("they/them", UiUtils.extractPronouns(MastodonApp.context, fakeAccount(
+				makeField("pronouns", "https://pronouns.cc/pronouns/they/them")
+		)).orElseThrow());
+
+		Context german = UiUtils.getLocalizedContext(MastodonApp.context, Locale.GERMAN);
+
+		assertEquals("sie/ihr", UiUtils.extractPronouns(german, fakeAccount(
+				makeField("pronomen lauten", "sie/ihr"),
+				makeField("pronouns are", "she/her"),
+				makeField("die pronomen", "stehen oben")
+		)).orElseThrow());
+
+		assertEquals("er/ihm", UiUtils.extractPronouns(german, fakeAccount(
+				makeField("die pronomen", "stehen unten"),
+				makeField("pronomen sind", "er/ihm"),
+				makeField("pronouns are", "he/him")
+		)).orElseThrow());
 	}
 }

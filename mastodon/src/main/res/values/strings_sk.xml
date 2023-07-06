@@ -330,4 +330,5 @@
     <string name="sk_advanced_options_show">Show advanced options</string>
     <string name="sk_advanced_options_hide">Hide advanced options</string>
     <string name="sk_spoiler_show">Show content</string>
+	<string name="sk_pronouns_label">Pronouns</string>
 </resources>

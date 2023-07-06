@@ -94,6 +94,7 @@ import org.joinmastodon.android.fragments.HashtagTimelineFragment;
 import org.joinmastodon.android.fragments.ProfileFragment;
 import org.joinmastodon.android.fragments.ThreadFragment;
 import org.joinmastodon.android.model.Account;
+import org.joinmastodon.android.model.AccountField;
 import org.joinmastodon.android.model.Emoji;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Notification;
@@ -105,6 +106,7 @@ import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.model.StatusPrivacy;
 import org.joinmastodon.android.ui.M3AlertDialogBuilder;
 import org.joinmastodon.android.ui.text.CustomEmojiSpan;
+import org.joinmastodon.android.ui.text.HtmlParser;
 import org.parceler.Parcels;
 
 import java.io.File;
@@ -122,15 +124,19 @@ import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.ToIntFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -1017,13 +1023,19 @@ public class UiUtils {
 		return back;
 	}
 
-	public static boolean setExtraTextInfo(Context ctx, TextView extraText, StatusPrivacy visibility, boolean localOnly) {
+	public static boolean setExtraTextInfo(Context ctx, TextView extraText, StatusPrivacy visibility, boolean localOnly, @Nullable Account account) {
 		List<String> extraParts = new ArrayList<>();
 		if (localOnly && (visibility == null || !visibility.equals(StatusPrivacy.LOCAL)))
 			extraParts.add(ctx.getString(R.string.sk_inline_local_only));
+		extractPronouns(ctx, account).ifPresent(extraParts::add);
 		if (!extraParts.isEmpty()) {
 			String sepp = ctx.getString(R.string.sk_separator);
-			extraText.setText(String.join(" " + sepp + " ", extraParts));
+			String text = String.join(" " + sepp + " ", extraParts);
+			if (account == null) {
+				extraText.setText(text);
+			} else {
+				HtmlParser.setTextWithCustomEmoji(extraText, text, account.emojis);
+			}
 			extraText.setVisibility(View.VISIBLE);
 			return true;
 		} else {
@@ -1550,5 +1562,67 @@ public class UiUtils {
 		}
 
 		return text;
+	}
+
+	private static final String[] pronounUrls = new String[] {
+			"pronouns.within.lgbt/",
+			"pronouns.cc/pronouns/",
+			"pronouns.page/"
+	};
+
+	private static String extractPronounFromField(String localizedPronouns, AccountField field) {
+		if(!field.name.toLowerCase().contains(localizedPronouns) &&
+				!field.name.toLowerCase().contains("pronouns")) return null;
+		String text=HtmlParser.strip(field.value);
+		if(field.value.toLowerCase().contains("https://")){
+			for(String pronounUrl : pronounUrls){
+				int index=text.indexOf(pronounUrl);
+				int beginPronouns=index+pronounUrl.length();
+				// we only want to display the info from the urls if they're not usernames
+				if(index>-1 && beginPronouns<text.length() && text.charAt(beginPronouns)!='@'){
+					return text.substring(beginPronouns);
+				}
+			}
+			// maybe it's like "they and them (https://pronouns.page/...)"
+			String[] parts=text.substring(0, text.toLowerCase().indexOf("https://"))
+					.split(" ");
+			return parts.length==0 ? null : String.join(" ", parts);
+		}
+		return field.value;
+	}
+
+	// https://stackoverflow.com/questions/9475589/how-to-get-string-from-different-locales-in-android
+	public static Context getLocalizedContext(Context context, Locale desiredLocale) {
+		Configuration conf = context.getResources().getConfiguration();
+		conf = new Configuration(conf);
+		conf.setLocale(desiredLocale);
+		return context.createConfigurationContext(conf);
+	}
+
+	public static Optional<String> extractPronouns(Context context, @Nullable Account account) {
+		if (account == null) return Optional.empty();
+		String localizedPronouns=context.getString(R.string.sk_pronouns_label).toLowerCase();
+
+		// higher = worse. the lowest number wins. also i'm sorry for writing this
+		ToIntFunction<AccountField> comparePronounFields=(f)->{
+			String t=f.name.toLowerCase();
+			int localizedIndex = t.indexOf(localizedPronouns);
+			int englishIndex = t.indexOf("pronouns");
+			// neutralizing an english fallback failure if the localized pronoun already succeeded
+			// -t.length() + t.length() = 0 -> so the low localized score doesn't get obscured
+			if (englishIndex < 0) englishIndex = localizedIndex > -1 ? -t.length() : t.length();
+			if (localizedIndex < 0) localizedIndex = t.length();
+			return (localizedIndex + t.length()) + (englishIndex + t.length()) * 100;
+		};
+
+		// debugging:
+//		List<Integer> ints = account.fields.stream().map(comparePronounFields::applyAsInt).collect(Collectors.toList());
+//		List<AccountField> sorted = account.fields.stream().sorted(Comparator.comparingInt(comparePronounFields)).collect(Collectors.toList());
+
+		return account.fields.stream()
+				.sorted(Comparator.comparingInt(comparePronounFields))
+				.map(f->UiUtils.extractPronounFromField(localizedPronouns, f))
+				.filter(Objects::nonNull)
+				.findFirst();
 	}
 }

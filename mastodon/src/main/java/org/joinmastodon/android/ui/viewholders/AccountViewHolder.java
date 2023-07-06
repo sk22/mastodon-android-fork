@@ -3,9 +3,7 @@ package org.joinmastodon.android.ui.viewholders;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -15,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -33,6 +30,7 @@ import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Relationship;
 import org.joinmastodon.android.model.viewmodel.AccountViewModel;
 import org.joinmastodon.android.ui.OutlineProviders;
+import org.joinmastodon.android.ui.text.HtmlParser;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.ui.views.CheckableRelativeLayout;
 import org.joinmastodon.android.ui.views.ProgressBarButton;
@@ -40,6 +38,7 @@ import org.parceler.Parcels;
 
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import me.grishka.appkit.Nav;
@@ -50,7 +49,7 @@ import me.grishka.appkit.utils.BindableViewHolder;
 import me.grishka.appkit.views.UsableRecyclerView;
 
 public class AccountViewHolder extends BindableViewHolder<AccountViewModel> implements ImageLoaderViewHolder, UsableRecyclerView.Clickable, UsableRecyclerView.LongClickable{
-	private final TextView name, username, followers, bio; // disabled in megalodon: verifiedLink
+	private final TextView name, username, followers, pronouns, bio;
 	private final ImageView avatar;
 	private final FrameLayout accessory;
 	private final ProgressBarButton button;
@@ -84,7 +83,7 @@ public class AccountViewHolder extends BindableViewHolder<AccountViewModel> impl
 		button=findViewById(R.id.button);
 		menuAnchor=findViewById(R.id.menu_anchor);
 		followers=findViewById(R.id.followers_count);
-//		verifiedLink=findViewById(R.id.verified_link);
+		pronouns=findViewById(R.id.pronouns);
 		bio=findViewById(R.id.bio);
 		checkbox=findViewById(R.id.checkbox);
 		actionProgress=findViewById(R.id.action_progress);
@@ -107,7 +106,9 @@ public class AccountViewHolder extends BindableViewHolder<AccountViewModel> impl
 	public void onBind(AccountViewModel item){
 		name.setText(item.parsedName);
 		username.setText("@"+item.account.acct);
-		String followersStr=fragment.getResources().getQuantityString(R.plurals.x_followers, item.account.followersCount>1000 ? 999 : (int)item.account.followersCount);
+		String followersStr = item.account.followersCount > -1
+				? fragment.getResources().getQuantityString(R.plurals.x_followers, item.account.followersCount>1000 ? 999 : (int)item.account.followersCount)
+				: fragment.getResources().getQuantityString(R.plurals.x_following, item.account.followingCount>1000 ? 999 : (int)item.account.followersCount);
 		String followersNum=UiUtils.abbreviateNumber(item.account.followersCount);
 		int index=followersStr.indexOf("%,d");
 		followersStr=followersStr.replace("%,d", followersNum);
@@ -115,8 +116,20 @@ public class AccountViewHolder extends BindableViewHolder<AccountViewModel> impl
 		if(index!=-1){
 			followersFormatted.setSpan(mediumSpan, index, index+followersNum.length(), 0);
 		}
-		followers.setText(followersFormatted);
-		/* boolean hasVerifiedLink=item.verifiedLink!=null;
+		if (item.account.followingCount > -1 || item.account.followersCount > -1) {
+			followers.setVisibility(View.VISIBLE);
+			followers.setText(followersFormatted);
+		} else {
+			followers.setVisibility(View.GONE);
+		}
+
+		// you know what's cooler than followers or verified links? yep. pronouns
+		Optional<String> pronounsString = UiUtils.extractPronouns(itemView.getContext(), item.account);
+		pronouns.setVisibility(pronounsString.isPresent() ? View.VISIBLE : View.GONE);
+		pronounsString.ifPresent(p -> HtmlParser.setTextWithCustomEmoji(pronouns, p, item.account.emojis));
+
+		/* unused in megalodon
+		boolean hasVerifiedLink=item.verifiedLink!=null;
 		if(!hasVerifiedLink)
 			verifiedLink.setText(R.string.no_verified_link);
 		else
@@ -124,7 +137,8 @@ public class AccountViewHolder extends BindableViewHolder<AccountViewModel> impl
 		verifiedLink.setCompoundDrawablesRelativeWithIntrinsicBounds(hasVerifiedLink ? R.drawable.ic_fluent_checkmark_16_filled : R.drawable.ic_help_16px, 0, 0, 0);
 		int tintColor=UiUtils.getThemeColor(fragment.getActivity(), hasVerifiedLink ? R.attr.colorM3Primary : R.attr.colorM3Secondary);
 		verifiedLink.setTextColor(tintColor);
-		verifiedLink.setCompoundDrawableTintList(ColorStateList.valueOf(tintColor)); */
+		verifiedLink.setCompoundDrawableTintList(ColorStateList.valueOf(tintColor));
+		*/
 		bindRelationship();
 		if(showBio){
 			bio.setText(item.parsedBio);

@@ -61,26 +61,28 @@
 		android:layout_below="@id/line1">
 
 		<TextView
+			android:id="@+id/pronouns"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginEnd="4dp"
+			android:singleLine="true"
+			android:ellipsize="end"
+			android:textAppearance="@style/m3_body_medium"
+			android:includeFontPadding="false"
+			android:gravity="center_vertical"
+			android:drawablePadding="2dp"
+			android:visibility="visible"
+			tools:text="they/them"/>
+
+		<TextView
 			android:id="@+id/followers_count"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:singleLine="true"
 			android:gravity="center_vertical"
 			android:textAppearance="@style/m3_body_medium"
 			android:textColor="?colorM3Secondary"
 			tools:text="123 followers"/>
-
-<!--		<TextView-->
-<!--			android:id="@+id/verified_link"-->
-<!--			android:layout_width="wrap_content"-->
-<!--			android:layout_height="20dp"-->
-<!--			android:layout_marginStart="4dp"-->
-<!--			android:singleLine="true"-->
-<!--			android:ellipsize="end"-->
-<!--			android:textAppearance="@style/m3_body_medium"-->
-<!--			android:includeFontPadding="false"-->
-<!--			android:gravity="center_vertical"-->
-<!--			android:drawablePadding="2dp"-->
-<!--			tools:text="example.com/example"/>-->
 	</LinearLayout>
 
 	<FrameLayout

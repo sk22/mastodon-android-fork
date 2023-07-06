@@ -337,7 +337,7 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 			itemView.setPadding(itemView.getPaddingLeft(), itemView.getPaddingTop(), itemView.getPaddingRight(), item.needBottomPadding ? V.dp(16) : 0);
 			if(TextUtils.isEmpty(item.extraText)){
 				if (item.status != null) {
-					UiUtils.setExtraTextInfo(item.parentFragment.getContext(), extraText, item.status.visibility, item.status.localOnly);
+					UiUtils.setExtraTextInfo(item.parentFragment.getContext(), extraText, item.status.visibility, item.status.localOnly, item.status.account);
 				}
 			}else{
 				extraText.setVisibility(View.VISIBLE);
