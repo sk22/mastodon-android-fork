@@ -7,11 +7,15 @@ import androidx.annotation.Nullable;
 
 import org.joinmastodon.android.api.ObjectValidationException;
 import org.joinmastodon.android.api.RequiredField;
+import org.joinmastodon.android.api.requests.instance.GetInstance;
 import org.parceler.Parcel;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
+
+import me.grishka.appkit.api.Callback;
+import me.grishka.appkit.api.ErrorResponse;
 
 /**
  * Represents a user of Mastodon and their associated profile.
@@ -56,7 +60,7 @@ public class Account extends BaseModel implements Searchable{
 	/**
 	 * An image icon that is shown next to statuses and in the profile.
 	 */
-	@RequiredField
+//	@RequiredField
 	public String avatar;
 	/**
 	 * A static version of the avatar. Equal to avatar if its value is a static image; different if avatar is an animated GIF.
@@ -167,6 +171,7 @@ public class Account extends BaseModel implements Searchable{
 		if(TextUtils.isEmpty(displayName))
 			displayName=username;
 		if(fqn == null) fqn = getFullyQualifiedName();
+		if (avatar == null) avatar = "";
 	}
 
 	public boolean isLocal(){

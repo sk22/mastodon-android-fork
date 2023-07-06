@@ -102,4 +102,10 @@ public class AccountSession{
 				.authority(getInstance().map(i -> i.normalizedUri).orElse(domain))
 				.build();
 	}
+
+	public String getDefaultAvatarUrl() {
+		Optional<Instance> optionalInstance = getInstance();
+		return optionalInstance.map(instance -> "https://" + domain + (instance.isAkkoma() ? "/images/avi.png" : "/avatars/original/missing.png"))
+				.orElse("");
+	}
 }

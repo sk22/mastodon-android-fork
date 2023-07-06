@@ -118,7 +118,7 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 				items.add(0, titleItem);
 			return items;
 		}else if(titleItem!=null){
-			AccountCardStatusDisplayItem card=new AccountCardStatusDisplayItem(n.id, this,
+			AccountCardStatusDisplayItem card=new AccountCardStatusDisplayItem(n.id, this, accountID,
 					reportTarget != null ? reportTarget : n.account, n);
 			TextStatusDisplayItem text = n.report != null && !TextUtils.isEmpty(n.report.comment) ?
 					new TextStatusDisplayItem(n.id, n.report.comment, this,

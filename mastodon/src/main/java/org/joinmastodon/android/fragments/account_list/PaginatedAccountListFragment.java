@@ -135,7 +135,7 @@ public abstract class PaginatedAccountListFragment<T> extends BaseAccountListFra
 						List<AccountItem> items = result.stream()
 								.filter(a -> d.size() > 1000 || d.stream()
 										.noneMatch(i -> i.account.url.equals(a.url)))
-								.map(AccountItem::new)
+								.map(account -> new AccountItem(account, accountID))
 								.collect(Collectors.toList());
 
 						boolean hasMore = nextMaxID != null;

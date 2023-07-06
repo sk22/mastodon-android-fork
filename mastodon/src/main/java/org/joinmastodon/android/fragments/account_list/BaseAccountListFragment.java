@@ -9,6 +9,7 @@ import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -423,9 +424,9 @@ public abstract class BaseAccountListFragment extends RecyclerFragment<BaseAccou
 		public final CustomEmojiHelper emojiHelper;
 		public final CharSequence parsedName;
 
-		public AccountItem(Account account){
+		public AccountItem(Account account, String accountID){
 			this.account=account;
-			avaRequest=new UrlImageLoaderRequest(GlobalUserPreferences.playGifs ? account.avatar : account.avatarStatic, V.dp(50), V.dp(50));
+			avaRequest=new UrlImageLoaderRequest(TextUtils.isEmpty(account.avatar) ? AccountSessionManager.getInstance().getAccount(accountID).getDefaultAvatarUrl() : GlobalUserPreferences.playGifs ? account.avatar : account.avatarStatic, V.dp(50), V.dp(50));
 			emojiHelper=new CustomEmojiHelper();
 			emojiHelper.setText(parsedName=HtmlParser.parseCustomEmoji(account.displayName, account.emojis));
 		}

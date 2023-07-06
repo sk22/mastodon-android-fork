@@ -16,6 +16,7 @@ import android.widget.TextView;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.accounts.GetAccountRelationships;
 import org.joinmastodon.android.api.requests.accounts.GetFollowSuggestions;
+import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.IsOnTop;
 import org.joinmastodon.android.fragments.ProfileFragment;
 import org.joinmastodon.android.fragments.RecyclerFragment;
@@ -308,8 +309,9 @@ public class DiscoverAccountsFragment extends RecyclerFragment<DiscoverAccountsF
 
 		public AccountWrapper(Account account){
 			this.account=account;
-			if(!TextUtils.isEmpty(account.avatar))
-				avaRequest=new UrlImageLoaderRequest(account.avatar, V.dp(50), V.dp(50));
+			avaRequest=new UrlImageLoaderRequest(
+					TextUtils.isEmpty(account.avatar) ? AccountSessionManager.getInstance().getAccount(accountID).getDefaultAvatarUrl() : account.avatar,
+					V.dp(50), V.dp(50));
 			if(!TextUtils.isEmpty(account.header))
 				coverRequest=new UrlImageLoaderRequest(account.header, 1000, 1000);
 			parsedBio=HtmlParser.parse(account.note, account.emojis, Collections.emptyList(), Collections.emptyList(), accountID);

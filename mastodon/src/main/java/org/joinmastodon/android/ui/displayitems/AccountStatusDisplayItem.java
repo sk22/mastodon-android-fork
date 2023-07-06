@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.joinmastodon.android.R;
+import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.ui.OutlineProviders;
@@ -26,13 +27,14 @@ public class AccountStatusDisplayItem extends StatusDisplayItem{
 	private CharSequence parsedName;
 	public ImageLoaderRequest avaRequest;
 
-	public AccountStatusDisplayItem(String parentID, BaseStatusListFragment parentFragment, Account account){
+	public AccountStatusDisplayItem(String parentID, BaseStatusListFragment parentFragment, String accountID, Account account){
 		super(parentID, parentFragment);
 		this.account=account;
 		parsedName=HtmlParser.parseCustomEmoji(account.displayName, account.emojis);
 		emojiHelper.setText(parsedName);
-		if(!TextUtils.isEmpty(account.avatar))
-			avaRequest=new UrlImageLoaderRequest(account.avatar, V.dp(50), V.dp(50));
+		avaRequest=new UrlImageLoaderRequest(
+				TextUtils.isEmpty(account.avatar) ? AccountSessionManager.getInstance().getAccount(accountID).getDefaultAvatarUrl() : account.avatar,
+				V.dp(50), V.dp(50));
 	}
 
 	@Override

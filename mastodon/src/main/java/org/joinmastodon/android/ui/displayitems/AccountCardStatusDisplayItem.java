@@ -15,6 +15,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.joinmastodon.android.R;
+import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Notification;
@@ -41,12 +42,13 @@ public class AccountCardStatusDisplayItem extends StatusDisplayItem{
 	public CustomEmojiHelper emojiHelper=new CustomEmojiHelper();
 	public CharSequence parsedName, parsedBio;
 
-	public AccountCardStatusDisplayItem(String parentID, BaseStatusListFragment parentFragment, Account account, Notification notification){
+	public AccountCardStatusDisplayItem(String parentID, BaseStatusListFragment parentFragment, String accountID, Account account, Notification notification){
 		super(parentID, parentFragment);
 		this.account=account;
 		this.notification=notification;
-		if(!TextUtils.isEmpty(account.avatar))
-			avaRequest=new UrlImageLoaderRequest(account.avatar, V.dp(50), V.dp(50));
+		avaRequest=new UrlImageLoaderRequest(
+				TextUtils.isEmpty(account.avatar) ? AccountSessionManager.getInstance().getAccount(accountID).getDefaultAvatarUrl() : account.avatar,
+				V.dp(50), V.dp(50));
 		if(!TextUtils.isEmpty(account.header))
 			coverRequest=new UrlImageLoaderRequest(account.header, 1000, 1000);
 		parsedBio=HtmlParser.parse(account.note, account.emojis, Collections.emptyList(), Collections.emptyList(), parentFragment.getAccountID());

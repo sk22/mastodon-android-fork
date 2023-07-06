@@ -17,8 +17,10 @@ import android.widget.TextView;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.accounts.GetAccountRelationships;
 import org.joinmastodon.android.api.requests.accounts.GetFollowRequests;
+import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.HeaderPaginationList;
+import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Relationship;
 import org.joinmastodon.android.ui.OutlineProviders;
 import org.joinmastodon.android.ui.text.HtmlParser;
@@ -349,8 +351,9 @@ public class FollowRequestsListFragment extends RecyclerFragment<FollowRequestsL
 
 		public AccountWrapper(Account account){
 			this.account=account;
-			if(!TextUtils.isEmpty(account.avatar))
-				avaRequest=new UrlImageLoaderRequest(account.avatar, V.dp(50), V.dp(50));
+				avaRequest=new UrlImageLoaderRequest(
+						TextUtils.isEmpty(account.avatar) ? AccountSessionManager.getInstance().getAccount(getAccountID()).getDefaultAvatarUrl() : account.avatar,
+						V.dp(50), V.dp(50));
 			if(!TextUtils.isEmpty(account.header))
 				coverRequest=new UrlImageLoaderRequest(account.header, 1000, 1000);
 			parsedBio=HtmlParser.parse(account.note, account.emojis, Collections.emptyList(), Collections.emptyList(), accountID);
