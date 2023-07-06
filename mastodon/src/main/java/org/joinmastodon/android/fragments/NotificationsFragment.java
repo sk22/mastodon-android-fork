@@ -122,6 +122,7 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 	}
 
 	void markAsRead(){
+		if(allNotificationsFragment.getData().isEmpty()) return;
 		String id=allNotificationsFragment.getData().get(0).id;
 		if(ObjectIdComparator.INSTANCE.compare(id, realUnreadMarker)>0){
 			new SaveMarkers(null, id).exec(accountID);
