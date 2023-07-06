@@ -12,6 +12,7 @@ import org.parceler.Parcel;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 import me.grishka.appkit.api.Callback;
@@ -27,22 +28,22 @@ public class Account extends BaseModel implements Searchable{
 	/**
 	 * The account id
 	 */
-	@RequiredField
+//	@RequiredField
 	public String id;
 	/**
 	 * The username of the account, not including domain.
 	 */
-	@RequiredField
+//	@RequiredField
 	public String username;
 	/**
 	 * The Webfinger account URI. Equal to username for local users, or username@domain for remote users.
 	 */
-	@RequiredField
+//	@RequiredField
 	public String acct;
 	/**
 	 * The location of the user's profile page.
 	 */
-	@RequiredField
+//	@RequiredField
 	public String url;
 
 	// Display attributes
@@ -55,7 +56,7 @@ public class Account extends BaseModel implements Searchable{
 	/**
 	 * The profile's bio / description.
 	 */
-	@RequiredField
+//	@RequiredField
 	public String note;
 	/**
 	 * An image icon that is shown next to statuses and in the profile.
@@ -168,10 +169,16 @@ public class Account extends BaseModel implements Searchable{
 		}
 		if(moved!=null)
 			moved.postprocess();
-		if(TextUtils.isEmpty(displayName))
-			displayName=username;
 		if(fqn == null) fqn = getFullyQualifiedName();
-		if (avatar == null) avatar = "";
+		if(id == null) id = "";
+		if(username == null) username = "";
+		if(TextUtils.isEmpty(displayName))
+			displayName = !TextUtils.isEmpty(username) ? username : "";
+		if(acct == null) acct = "";
+		if(url == null) url = "";
+		if(note == null) note = "";
+		if(avatar == null) avatar = "";
+		if(emojis == null) emojis = Collections.emptyList();
 	}
 
 	public boolean isLocal(){
@@ -196,6 +203,8 @@ public class Account extends BaseModel implements Searchable{
 	}
 
 	public String getFullyQualifiedName() {
+		if (TextUtils.isEmpty(acct))
+			return "";
 		return fqn != null ? fqn : acct.split("@")[0] + "@" + getDomainFromURL();
 	}
 

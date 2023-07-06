@@ -423,6 +423,8 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 		}
 
 		private void onAvaClick(View v){
+			if (TextUtils.isEmpty(item.user.url))
+				return;
 			if (item.announcement != null) {
 				UiUtils.openURL(item.parentFragment.getActivity(), item.parentFragment.getAccountID(), item.user.url);
 				return;
