@@ -106,10 +106,10 @@ public class AccountViewHolder extends BindableViewHolder<AccountViewModel> impl
 	public void onBind(AccountViewModel item){
 		name.setText(item.parsedName);
 		username.setText("@"+item.account.acct);
-		String followersStr = item.account.followersCount > -1
-				? fragment.getResources().getQuantityString(R.plurals.x_followers, item.account.followersCount>1000 ? 999 : (int)item.account.followersCount)
-				: fragment.getResources().getQuantityString(R.plurals.x_following, item.account.followingCount>1000 ? 999 : (int)item.account.followersCount);
-		String followersNum=UiUtils.abbreviateNumber(item.account.followersCount);
+		long num=item.account.followersCount > -1 ? item.account.followersCount : item.account.followingCount;
+		String followersStr = fragment.getResources().getQuantityString(item.account.followersCount > -1
+				? R.plurals.x_followers : R.plurals.x_following, num>1000 ? 999 : (int)num);
+		String followersNum=UiUtils.abbreviateNumber(num);
 		int index=followersStr.indexOf("%,d");
 		followersStr=followersStr.replace("%,d", followersNum);
 		SpannableStringBuilder followersFormatted=new SpannableStringBuilder(followersStr);
