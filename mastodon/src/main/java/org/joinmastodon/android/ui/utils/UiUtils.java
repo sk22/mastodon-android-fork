@@ -1023,22 +1023,29 @@ public class UiUtils {
 		return back;
 	}
 
-	public static boolean setExtraTextInfo(Context ctx, TextView extraText, StatusPrivacy visibility, boolean localOnly, @Nullable Account account) {
+	public static boolean setExtraTextInfo(Context ctx, TextView extraText, TextView pronouns, boolean mentionedOnly, boolean localOnly, @Nullable Account account) {
 		List<String> extraParts = new ArrayList<>();
-		if (localOnly && (visibility == null || !visibility.equals(StatusPrivacy.LOCAL)))
+		Optional<String> p=pronouns==null ? Optional.empty() : extractPronouns(ctx, account);
+		boolean setPronouns=false;
+		if(p.isPresent()) {
+			HtmlParser.setTextWithCustomEmoji(pronouns, p.get(), account.emojis);
+			setPronouns=true;
+			pronouns.setVisibility(View.VISIBLE);
+		}else if(pronouns!=null){
+			pronouns.setVisibility(View.GONE);
+		}
+		if(localOnly)
 			extraParts.add(ctx.getString(R.string.sk_inline_local_only));
-		extractPronouns(ctx, account).ifPresent(extraParts::add);
-		if (!extraParts.isEmpty()) {
+		if(mentionedOnly)
+			extraParts.add(ctx.getString(R.string.sk_inline_direct));
+		if(!extraParts.isEmpty()) {
 			String sepp = ctx.getString(R.string.sk_separator);
 			String text = String.join(" " + sepp + " ", extraParts);
-			if (account == null) {
-				extraText.setText(text);
-			} else {
-				HtmlParser.setTextWithCustomEmoji(extraText, text, account.emojis);
-			}
+			if(account == null) extraText.setText(text);
+			else HtmlParser.setTextWithCustomEmoji(extraText, text, account.emojis);
 			extraText.setVisibility(View.VISIBLE);
 			return true;
-		} else {
+		}else{
 			extraText.setVisibility(View.GONE);
 			return false;
 		}

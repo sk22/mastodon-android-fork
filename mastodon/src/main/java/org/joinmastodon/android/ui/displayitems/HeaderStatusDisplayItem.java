@@ -44,6 +44,7 @@ import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.Relationship;
 import org.joinmastodon.android.model.ScheduledStatus;
 import org.joinmastodon.android.model.Status;
+import org.joinmastodon.android.model.StatusPrivacy;
 import org.joinmastodon.android.ui.OutlineProviders;
 import org.joinmastodon.android.ui.text.HtmlParser;
 import org.joinmastodon.android.ui.utils.CustomEmojiHelper;
@@ -133,7 +134,7 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 	}
 
 	public static class Holder extends StatusDisplayItem.Holder<HeaderStatusDisplayItem> implements ImageLoaderViewHolder{
-		private final TextView name, timeAndUsername, extraText;
+		private final TextView name, timeAndUsername, extraText, pronouns;
 		private final View collapseBtn;
 		private final ImageView avatar, more, visibility, deleteNotification, unreadIndicator, markAsRead, collapseBtnIcon;
 		private final PopupMenu optionsMenu;
@@ -157,6 +158,7 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 			collapseBtn=findViewById(R.id.collapse_btn);
 			collapseBtnIcon=findViewById(R.id.collapse_btn_icon);
 			extraText=findViewById(R.id.extra_text);
+			pronouns=findViewById(R.id.pronouns);
 			avatar.setOnClickListener(this::onAvaClick);
 			avatar.setOutlineProvider(OutlineProviders.roundedRect(12));
 			avatar.setClipToOutline(true);
@@ -337,7 +339,7 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 			itemView.setPadding(itemView.getPaddingLeft(), itemView.getPaddingTop(), itemView.getPaddingRight(), item.needBottomPadding ? V.dp(16) : 0);
 			if(TextUtils.isEmpty(item.extraText)){
 				if (item.status != null) {
-					UiUtils.setExtraTextInfo(item.parentFragment.getContext(), extraText, item.status.visibility, item.status.localOnly, item.status.account);
+					UiUtils.setExtraTextInfo(item.parentFragment.getContext(), extraText, pronouns, item.status.visibility==StatusPrivacy.DIRECT, item.status.localOnly || item.status.visibility==StatusPrivacy.LOCAL, item.status.account);
 				}
 			}else{
 				extraText.setVisibility(View.VISIBLE);

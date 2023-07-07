@@ -124,6 +124,20 @@
 			tools:text="Eugen" />
 
 		<TextView
+			android:id="@+id/pronouns"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8sp"
+			android:maxWidth="161sp"
+			android:ellipsize="end"
+			android:singleLine="true"
+			android:textAppearance="@style/m3_title_medium"
+			android:fontFamily="sans-serif"
+			android:textAlignment="viewStart"
+			android:textColor="?colorM3OnSurface"
+			tools:text="they/them" />
+
+		<TextView
 			android:id="@+id/extra_text"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
