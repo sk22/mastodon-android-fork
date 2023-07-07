@@ -82,7 +82,7 @@ public class CacheController{
 						Log.w(TAG, "getHomeTimeline: corrupted status object in database", x);
 					}
 				}
-				new GetHomeTimeline(maxID, null, count, null)
+				new GetHomeTimeline(maxID, null, count, null, AccountSessionManager.get(accountID).getLocalPreferences().timelineReplyVisibility)
 						.setCallback(new Callback<>(){
 							@Override
 							public void onSuccess(List<Status> result){

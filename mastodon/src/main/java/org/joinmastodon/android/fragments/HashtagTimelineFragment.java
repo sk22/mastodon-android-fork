@@ -126,7 +126,7 @@ public class HashtagTimelineFragment extends PinnableStatusListFragment {
 
 	@Override
 	protected void doLoadData(int offset, int count){
-		currentRequest=new GetHashtagTimeline(hashtag, offset==0 ? null : getMaxID(), null, count, any, all, none, localOnly)
+		currentRequest=new GetHashtagTimeline(hashtag, offset==0 ? null : getMaxID(), null, count, any, all, none, localOnly, getLocalPrefs().timelineReplyVisibility)
 				.setCallback(new SimpleCallback<>(this){
 					@Override
 					public void onSuccess(List<Status> result){

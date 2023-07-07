@@ -47,6 +47,7 @@ import org.joinmastodon.android.api.MastodonAPIController;
 import org.joinmastodon.android.api.PushSubscriptionManager;
 import org.joinmastodon.android.api.requests.oauth.RevokeOauthToken;
 import org.joinmastodon.android.api.session.AccountActivationInfo;
+import org.joinmastodon.android.api.session.AccountLocalPreferences;
 import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.SelfUpdateStateChangedEvent;
@@ -109,6 +110,7 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 		imageCache = ImageCache.getInstance(getActivity());
 		accountID=getArguments().getString("account");
 		AccountSession session=AccountSessionManager.getInstance().getAccount(accountID);
+		AccountLocalPreferences prefs=session.getLocalPreferences();
 		Optional<Instance> instance = session.getInstance();
 		String instanceName = UiUtils.getInstanceName(accountID);
 
@@ -148,17 +150,17 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 				TextInputFrameLayout input = new TextInputFrameLayout(
 						getContext(),
 						getString(R.string.publish),
-						GlobalUserPreferences.publishButtonText.trim()
+						prefs.publishButtonText.trim()
 				);
 				new M3AlertDialogBuilder(getContext()).setTitle(R.string.sk_settings_publish_button_text_title).setView(input)
 						.setPositiveButton(R.string.save, (d, which) -> {
-							GlobalUserPreferences.publishButtonText = input.getEditText().getText().toString().trim();
-							GlobalUserPreferences.save();
+							prefs.publishButtonText = input.getEditText().getText().toString().trim();
+							prefs.save();
 							updatePublishText(b);
 						})
 						.setNeutralButton(R.string.clear, (d, which) -> {
-							GlobalUserPreferences.publishButtonText = "";
-							GlobalUserPreferences.save();
+							prefs.publishButtonText = "";
+							prefs.save();
 							updatePublishText(b);
 						})
 						.setNegativeButton(R.string.cancel, (d, which) -> {})
@@ -187,12 +189,12 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 			GlobalUserPreferences.useCustomTabs=i.checked;
 			GlobalUserPreferences.save();
 		}));
-		items.add(new SwitchItem(R.string.sk_settings_show_interaction_counts, R.drawable.ic_fluent_number_row_24_regular, GlobalUserPreferences.showInteractionCounts, i->{
-			GlobalUserPreferences.showInteractionCounts=i.checked;
+		items.add(new SwitchItem(R.string.sk_settings_show_interaction_counts, R.drawable.ic_fluent_number_row_24_regular, false, i->{
+//			GlobalUserPreferences.showInteractionCounts=i.checked;
 			GlobalUserPreferences.save();
 		}));
-		items.add(alwaysRevealSpoilersItem = new SwitchItem(R.string.sk_settings_always_reveal_content_warnings, R.drawable.ic_fluent_chat_warning_24_regular, GlobalUserPreferences.alwaysExpandContentWarnings, i->{
-			GlobalUserPreferences.alwaysExpandContentWarnings=i.checked;
+		items.add(alwaysRevealSpoilersItem = new SwitchItem(R.string.sk_settings_always_reveal_content_warnings, R.drawable.ic_fluent_chat_warning_24_regular, false, i->{
+//			GlobalUserPreferences.alwaysExpandContentWarnings=i.checked;
 			GlobalUserPreferences.save();
 			if (list.findViewHolderForAdapterPosition(items.indexOf(autoRevealSpoilersItem)) instanceof ButtonViewHolder bvh) bvh.rebind();
 		}));
@@ -214,8 +216,8 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 			GlobalUserPreferences.save();
 			needAppRestart=true;
 		}));
-		items.add(new SwitchItem(R.string.sk_settings_disable_alt_text_reminder, R.drawable.ic_fluent_image_alt_text_24_regular, GlobalUserPreferences.disableAltTextReminder, i->{
-			GlobalUserPreferences.disableAltTextReminder=i.checked;
+		items.add(new SwitchItem(R.string.sk_settings_disable_alt_text_reminder, R.drawable.ic_fluent_image_alt_text_24_regular, false, i->{
+//			GlobalUserPreferences.disableAltTextReminder=i.checked;
 			GlobalUserPreferences.save();
 		}));
 		items.add(new SwitchItem(R.string.sk_settings_single_notification, R.drawable.ic_fluent_convert_range_24_regular, GlobalUserPreferences.keepOnlyLatestNotification, i->{
@@ -235,8 +237,8 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 			});
 			GlobalUserPreferences.save();
 		}));
-		items.add(new SwitchItem(R.string.sk_settings_confirm_before_reblog, R.drawable.ic_fluent_checkmark_circle_24_regular, GlobalUserPreferences.confirmBeforeReblog, i->{
-			GlobalUserPreferences.confirmBeforeReblog=i.checked;
+		items.add(new SwitchItem(R.string.sk_settings_confirm_before_reblog, R.drawable.ic_fluent_checkmark_circle_24_regular, false, i->{
+//			GlobalUserPreferences.confirmBeforeReblog=i.checked;
 			GlobalUserPreferences.save();
 		}));
 		items.add(new SwitchItem(R.string.sk_settings_forward_report_default, R.drawable.ic_fluent_arrow_forward_24_regular, GlobalUserPreferences.forwardReportDefault, i->{
@@ -261,9 +263,9 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 				popupMenu.setOnMenuItemClickListener(item -> this.onReplyVisibilityChanged(item, b));
 				b.setOnTouchListener(popupMenu.getDragToOpenListener());
 				b.setOnClickListener(v->popupMenu.show());
-				b.setText(GlobalUserPreferences.replyVisibility == null ?
+				b.setText(prefs.timelineReplyVisibility == null ?
 						R.string.sk_settings_reply_visibility_all :
-						switch(GlobalUserPreferences.replyVisibility){
+						switch(prefs.timelineReplyVisibility){
 							case "following" -> R.string.sk_settings_reply_visibility_following;
 							case "self" -> R.string.sk_settings_reply_visibility_self;
 							default -> R.string.sk_settings_reply_visibility_all;
@@ -361,16 +363,16 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 				.orElse(getString(R.string.sk_instance_info_unavailable))));
 
 		items.add(new HeaderItem(R.string.sk_instance_features));
-		items.add(new SwitchItem(R.string.sk_settings_content_types, 0, GlobalUserPreferences.accountsWithContentTypesEnabled.contains(accountID), (i)->{
-			if (i.checked) {
-				GlobalUserPreferences.accountsWithContentTypesEnabled.add(accountID);
-				if (GlobalUserPreferences.accountsDefaultContentTypes.get(accountID) == null) {
-					GlobalUserPreferences.accountsDefaultContentTypes.put(accountID, ContentType.PLAIN);
-				}
-			} else {
-				GlobalUserPreferences.accountsWithContentTypesEnabled.remove(accountID);
-				GlobalUserPreferences.accountsDefaultContentTypes.remove(accountID);
-			}
+		items.add(new SwitchItem(R.string.sk_settings_content_types, 0, false, (i)->{
+//			if (i.checked) {
+//				GlobalUserPreferences.accountsWithContentTypesEnabled.add(accountID);
+//				if (GlobalUserPreferences.accountsDefaultContentTypes.get(accountID) == null) {
+//					GlobalUserPreferences.accountsDefaultContentTypes.put(accountID, ContentType.PLAIN);
+//				}
+//			} else {
+//				GlobalUserPreferences.accountsWithContentTypesEnabled.remove(accountID);
+//				GlobalUserPreferences.accountsDefaultContentTypes.remove(accountID);
+//			}
 			if (list.findViewHolderForAdapterPosition(items.indexOf(defaultContentTypeButtonItem))
 					instanceof ButtonViewHolder bvh) bvh.rebind();
 			GlobalUserPreferences.save();
@@ -382,38 +384,34 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 			popupMenu.setOnMenuItemClickListener(item -> this.onContentTypeChanged(item, b));
 			b.setOnTouchListener(popupMenu.getDragToOpenListener());
 			b.setOnClickListener(v->popupMenu.show());
-			ContentType contentType = GlobalUserPreferences.accountsDefaultContentTypes.get(accountID);
+			ContentType contentType = ContentType.PLAIN;
 			b.setText(getContentTypeString(contentType));
 			contentTypeMenu = popupMenu.getMenu();
 			contentTypeMenu.findItem(ContentType.getContentTypeRes(contentType)).setChecked(true);
 			instance.ifPresent(i -> ContentType.adaptMenuToInstance(contentTypeMenu, i));
 		}));
 		items.add(new SmallTextItem(getString(R.string.sk_settings_default_content_type_explanation)));
-		items.add(new SwitchItem(R.string.sk_settings_support_local_only, 0, GlobalUserPreferences.accountsWithLocalOnlySupport.contains(accountID), i->{
+		items.add(new SwitchItem(R.string.sk_settings_support_local_only, 0, false, i->{
 			glitchModeItem.enabled = i.checked;
-			if (i.checked) {
-				GlobalUserPreferences.accountsWithLocalOnlySupport.add(accountID);
-				if (!isInstanceAkkoma()) {
-					GlobalUserPreferences.accountsInGlitchMode.add(accountID);
-				}
-			} else {
-				GlobalUserPreferences.accountsWithLocalOnlySupport.remove(accountID);
-				GlobalUserPreferences.accountsInGlitchMode.remove(accountID);
-			}
-			glitchModeItem.checked = GlobalUserPreferences.accountsInGlitchMode.contains(accountID);
+//			if (i.checked) {
+//				GlobalUserPreferences.accountsWithLocalOnlySupport.add(accountID);
+//				if (!isInstanceAkkoma()) {
+//					GlobalUserPreferences.accountsInGlitchMode.add(accountID);
+//				}
+//			} else {
+//				GlobalUserPreferences.accountsWithLocalOnlySupport.remove(accountID);
+//				GlobalUserPreferences.accountsInGlitchMode.remove(accountID);
+//			}
+//			glitchModeItem.checked = GlobalUserPreferences.accountsInGlitchMode.contains(accountID);
 			if (list.findViewHolderForAdapterPosition(items.indexOf(glitchModeItem)) instanceof SwitchViewHolder svh) svh.rebind();
 			GlobalUserPreferences.save();
 		}));
 		items.add(new SmallTextItem(getString(R.string.sk_settings_local_only_explanation)));
-		items.add(glitchModeItem = new SwitchItem(R.string.sk_settings_glitch_instance, 0, GlobalUserPreferences.accountsInGlitchMode.contains(accountID), i->{
-			if (i.checked) {
-				GlobalUserPreferences.accountsInGlitchMode.add(accountID);
-			} else {
-				GlobalUserPreferences.accountsInGlitchMode.remove(accountID);
-			}
-			GlobalUserPreferences.save();
+		items.add(glitchModeItem = new SwitchItem(R.string.sk_settings_glitch_instance, 0, false, i->{
+			prefs.glitchInstance=i.checked;
+			prefs.save();
 		}));
-		glitchModeItem.enabled = GlobalUserPreferences.accountsWithLocalOnlySupport.contains(accountID);
+//		glitchModeItem.enabled = GlobalUserPreferences.accountsWithLocalOnlySupport.contains(accountID);
 		items.add(new SmallTextItem(getString(R.string.sk_settings_glitch_mode_explanation)));
 
 		items.add(new HeaderItem(R.string.sk_settings_about));
@@ -423,8 +421,8 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 		clearImageCacheItem = new TextItem(R.string.settings_clear_cache, UiUtils.formatFileSize(getContext(), cache != null ? cache.size() : 0, true), this::clearImageCache, 0);
 		items.add(clearImageCacheItem);
 		items.add(new TextItem(R.string.sk_clear_recent_languages, ()->UiUtils.showConfirmationAlert(getActivity(), R.string.sk_clear_recent_languages, R.string.sk_confirm_clear_recent_languages, R.string.clear, ()->{
-			GlobalUserPreferences.recentLanguages.remove(accountID);
-			GlobalUserPreferences.save();
+			prefs.recentLanguages=new ArrayList<>();
+			prefs.save();
 		})));
 		if (GithubSelfUpdater.needSelfUpdating()) {
 			items.add(new SwitchItem(R.string.sk_updater_enable_pre_releases, 0, GlobalUserPreferences.enablePreReleases, i->{
@@ -452,8 +450,8 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 	}
 
 	private void updatePublishText(Button btn) {
-		if (GlobalUserPreferences.publishButtonText.isBlank()) btn.setText(R.string.publish);
-		else btn.setText(GlobalUserPreferences.publishButtonText);
+		if (AccountSessionManager.get(accountID).getLocalPreferences().publishButtonText.isBlank()) btn.setText(R.string.publish);
+		else btn.setText(AccountSessionManager.get(accountID).getLocalPreferences().publishButtonText);
 	}
 
 	@Override
@@ -568,7 +566,7 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 		if (id == R.id.auto_reveal_threads) mode = AutoRevealMode.THREADS;
 		else if (id == R.id.auto_reveal_discussions) mode = AutoRevealMode.DISCUSSIONS;
 
-		GlobalUserPreferences.alwaysExpandContentWarnings = false;
+//		GlobalUserPreferences.alwaysExpandContentWarnings = false;
 		GlobalUserPreferences.autoRevealEqualSpoilers = mode;
 		GlobalUserPreferences.save();
 		onAutoRevealSpoilerChanged(btn);
@@ -576,19 +574,19 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 	}
 
 	private void onAutoRevealSpoilerChanged(Button b) {
-		if (GlobalUserPreferences.alwaysExpandContentWarnings) {
-			b.setText(R.string.sk_settings_auto_reveal_anyone);
-		} else {
-			b.setText(switch(GlobalUserPreferences.autoRevealEqualSpoilers){
-				case THREADS -> R.string.sk_settings_auto_reveal_author;
-				case DISCUSSIONS -> R.string.sk_settings_auto_reveal_anyone;
-				default -> R.string.sk_settings_auto_reveal_nobody;
-			});
-			if (alwaysRevealSpoilersItem.checked != GlobalUserPreferences.alwaysExpandContentWarnings) {
-				alwaysRevealSpoilersItem.checked = GlobalUserPreferences.alwaysExpandContentWarnings;
-				if (list.findViewHolderForAdapterPosition(items.indexOf(alwaysRevealSpoilersItem)) instanceof SwitchViewHolder svh) svh.rebind();
-			}
-		}
+//		if (GlobalUserPreferences.alwaysExpandContentWarnings) {
+//			b.setText(R.string.sk_settings_auto_reveal_anyone);
+//		} else {
+//			b.setText(switch(GlobalUserPreferences.autoRevealEqualSpoilers){
+//				case THREADS -> R.string.sk_settings_auto_reveal_author;
+//				case DISCUSSIONS -> R.string.sk_settings_auto_reveal_anyone;
+//				default -> R.string.sk_settings_auto_reveal_nobody;
+//			});
+//			if (alwaysRevealSpoilersItem.checked != GlobalUserPreferences.alwaysExpandContentWarnings) {
+//				alwaysRevealSpoilersItem.checked = GlobalUserPreferences.alwaysExpandContentWarnings;
+//				if (list.findViewHolderForAdapterPosition(items.indexOf(alwaysRevealSpoilersItem)) instanceof SwitchViewHolder svh) svh.rebind();
+//			}
+//		}
 	}
 
 	private void onTrueBlackThemeChanged(SwitchItem item){
@@ -628,7 +626,7 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 		else if (id == R.id.content_type_bbcode) contentType = ContentType.BBCODE;
 		else if (id == R.id.content_type_misskey_markdown) contentType = ContentType.MISSKEY_MARKDOWN;
 
-		GlobalUserPreferences.accountsDefaultContentTypes.put(accountID, contentType);
+//		GlobalUserPreferences.accountsDefaultContentTypes.put(accountID, contentType);
 		GlobalUserPreferences.save();
 		btn.setText(getContentTypeString(contentType));
 		item.setChecked(true);
@@ -642,11 +640,12 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 		if (id == R.id.reply_visibility_following) pref = "following";
 		else if (id == R.id.reply_visibility_self) pref = "self";
 
-		GlobalUserPreferences.replyVisibility=pref;
-		GlobalUserPreferences.save();
-		btn.setText(GlobalUserPreferences.replyVisibility == null ?
+		AccountLocalPreferences prefs=getLocalPrefs();
+		prefs.timelineReplyVisibility=pref;
+		prefs.save();
+		btn.setText(prefs == null ?
 				R.string.sk_settings_reply_visibility_all :
-				switch(GlobalUserPreferences.replyVisibility){
+				switch(prefs.timelineReplyVisibility){
 					case "following" -> R.string.sk_settings_reply_visibility_following;
 					case "self" -> R.string.sk_settings_reply_visibility_self;
 					default -> R.string.sk_settings_reply_visibility_all;

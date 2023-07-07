@@ -7,20 +7,21 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
+import org.joinmastodon.android.api.session.AccountLocalPreferences;
+import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.model.TimelineDefinition;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class PinnableStatusListFragment extends StatusListFragment {
-    protected List<TimelineDefinition> pinnedTimelines;
+    protected List<TimelineDefinition> timelines;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        pinnedTimelines = new ArrayList<>(GlobalUserPreferences.pinnedTimelines.getOrDefault(accountID, TimelineDefinition.getDefaultTimelines(accountID)));
+        timelines=new ArrayList<>(AccountSessionManager.get(accountID).getLocalPreferences().timelines);
     }
 
     @Override
@@ -30,7 +31,7 @@ public abstract class PinnableStatusListFragment extends StatusListFragment {
     }
 
     protected boolean isPinned() {
-        return pinnedTimelines.contains(makeTimelineDefinition());
+        return timelines.contains(makeTimelineDefinition());
     }
 
     protected void updatePinButton(MenuItem pin) {
@@ -57,11 +58,12 @@ public abstract class PinnableStatusListFragment extends StatusListFragment {
         getToolbar().performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK);
         TimelineDefinition def = makeTimelineDefinition();
         boolean pinned = isPinned();
-        if (pinned) pinnedTimelines.remove(def);
-        else pinnedTimelines.add(def);
+        if (pinned) timelines.remove(def);
+        else timelines.add(def);
         Toast.makeText(getContext(), pinned ? R.string.sk_unpinned_timeline : R.string.sk_pinned_timeline, Toast.LENGTH_SHORT).show();
-        GlobalUserPreferences.pinnedTimelines.put(accountID, pinnedTimelines);
-        GlobalUserPreferences.save();
+		AccountLocalPreferences prefs=AccountSessionManager.get(accountID).getLocalPreferences();
+		prefs.timelines=new ArrayList<>(timelines);
+        prefs.save();
         updatePinButton(pin);
     }
 

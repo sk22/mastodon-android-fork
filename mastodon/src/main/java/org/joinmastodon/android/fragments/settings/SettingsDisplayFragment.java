@@ -29,7 +29,7 @@ import me.grishka.appkit.FragmentStackActivity;
 public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 	private ImageView themeTransitionWindowView;
 	private ListItem<Void> themeItem;
-	private CheckableListItem<Void> showCWsItem, hideSensitiveMediaItem, interactionCountsItem, emojiInNamesItem;
+	private CheckableListItem<Void> revealCWsItem, hideSensitiveMediaItem, interactionCountsItem, emojiInNamesItem;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -39,7 +39,7 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 		AccountLocalPreferences lp=s.getLocalPreferences();
 		onDataLoaded(List.of(
 				themeItem=new ListItem<>(R.string.settings_theme, getAppearanceValue(), R.drawable.ic_fluent_weather_moon_24_regular, this::onAppearanceClick),
-				showCWsItem=new CheckableListItem<>(R.string.settings_show_cws, 0, CheckableListItem.Style.SWITCH, lp.showCWs, R.drawable.ic_fluent_chat_warning_24_regular, ()->toggleCheckableItem(showCWsItem)),
+				revealCWsItem=new CheckableListItem<>(R.string.sk_settings_always_reveal_content_warnings, 0, CheckableListItem.Style.SWITCH, lp.revealCWs, R.drawable.ic_fluent_chat_warning_24_regular, ()->toggleCheckableItem(revealCWsItem)),
 				hideSensitiveMediaItem=new CheckableListItem<>(R.string.settings_hide_sensitive_media, 0, CheckableListItem.Style.SWITCH, lp.hideSensitiveMedia, R.drawable.ic_fluent_flag_24_regular, ()->toggleCheckableItem(hideSensitiveMediaItem)),
 				interactionCountsItem=new CheckableListItem<>(R.string.settings_show_interaction_counts, 0, CheckableListItem.Style.SWITCH, lp.showInteractionCounts, R.drawable.ic_fluent_number_row_24_regular, ()->toggleCheckableItem(interactionCountsItem)),
 				emojiInNamesItem=new CheckableListItem<>(R.string.settings_show_emoji_in_names, 0, CheckableListItem.Style.SWITCH, lp.customEmojiInNames, R.drawable.ic_fluent_emoji_24_regular, ()->toggleCheckableItem(emojiInNamesItem))
@@ -64,7 +64,7 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 		super.onHidden();
 		AccountSession s=AccountSessionManager.get(accountID);
 		AccountLocalPreferences lp=s.getLocalPreferences();
-		lp.showCWs=showCWsItem.checked;
+		lp.revealCWs=revealCWsItem.checked;
 		lp.hideSensitiveMedia=hideSensitiveMediaItem.checked;
 		lp.showInteractionCounts=interactionCountsItem.checked;
 		lp.customEmojiInNames=emojiInNamesItem.checked;

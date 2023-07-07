@@ -111,8 +111,8 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 				fr.postprocess();
 
 		if (!TextUtils.isEmpty(spoilerText)) sensitive = true;
-		spoilerRevealed=GlobalUserPreferences.alwaysExpandContentWarnings;
-		sensitiveRevealed=GlobalUserPreferences.alwaysExpandContentWarnings || !sensitive;
+		spoilerRevealed=TextUtils.isEmpty(spoilerText);
+		sensitiveRevealed=!sensitive;
 		if (visibility.equals(StatusPrivacy.LOCAL)) localOnly = true;
 	}
 

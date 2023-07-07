@@ -134,7 +134,7 @@ public class ListTimelineFragment extends PinnableStatusListFragment {
 
     @Override
     protected void doLoadData(int offset, int count) {
-        currentRequest=new GetListTimeline(listID, offset==0 ? null : getMaxID(), null, count, null)
+        currentRequest=new GetListTimeline(listID, offset==0 ? null : getMaxID(), null, count, null, getLocalPrefs().timelineReplyVisibility)
                 .setCallback(new SimpleCallback<>(this) {
                     @Override
                     public void onSuccess(List<Status> result) {

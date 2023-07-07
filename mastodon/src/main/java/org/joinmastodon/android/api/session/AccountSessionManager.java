@@ -195,8 +195,6 @@ public class AccountSessionManager{
 		AccountSession session=getAccount(id);
 		session.getCacheController().closeDatabase();
 		MastodonApp.context.deleteDatabase(id+".db");
-		// TODO: remove when all account-specific settings moved to local preferences
-		GlobalUserPreferences.removeAccount(id);
 		MastodonApp.context.getSharedPreferences(id, 0).edit().clear().commit();
 		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N){
 			MastodonApp.context.deleteSharedPreferences(id);

@@ -149,7 +149,8 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 		}
 
 		private void bindText(TextView btn, long count){
-			if(GlobalUserPreferences.showInteractionCounts && count>0 && !item.hideCounts){
+			if(AccountSessionManager.get(item.accountID).getLocalPreferences().showInteractionCounts
+					&& count>0 && !item.hideCounts){
 				btn.setText(UiUtils.abbreviateNumber(count));
 				btn.setCompoundDrawablePadding(V.dp(8));
 			}else{
@@ -205,7 +206,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 		}
 
 		private void onBoostClick(View v){
-			if (GlobalUserPreferences.confirmBeforeReblog) {
+			if (GlobalUserPreferences.confirmBoost) {
 				v.startAnimation(opacityIn);
 				onBoostLongClick(v);
 				return;

@@ -39,6 +39,8 @@ import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.lists.GetLists;
 import org.joinmastodon.android.api.requests.tags.GetFollowedHashtags;
+import org.joinmastodon.android.api.session.AccountLocalPreferences;
+import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.model.Hashtag;
 import org.joinmastodon.android.model.HeaderPaginationList;
 import org.joinmastodon.android.model.ListTimeline;
@@ -200,10 +202,11 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
     }
 
     private void saveTimelines() {
-        updated = true;
-        GlobalUserPreferences.pinnedTimelines.put(accountID, data.size() > 0 ? data : List.of(TimelineDefinition.HOME_TIMELINE));
-        GlobalUserPreferences.save();
-    }
+        updated=true;
+		AccountLocalPreferences prefs=AccountSessionManager.get(accountID).getLocalPreferences();
+		prefs.timelines=data.size() > 0 ? data : List.of(TimelineDefinition.HOME_TIMELINE);
+		prefs.save();
+	}
 
     private void removeTimeline(int position) {
         data.remove(position);
@@ -214,7 +217,7 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
 
     @Override
     protected void doLoadData(int offset, int count){
-        onDataLoaded(GlobalUserPreferences.pinnedTimelines.getOrDefault(accountID, TimelineDefinition.getDefaultTimelines(accountID)), false);
+        onDataLoaded(AccountSessionManager.get(accountID).getLocalPreferences().timelines);
         updateOptionsMenu();
     }
 

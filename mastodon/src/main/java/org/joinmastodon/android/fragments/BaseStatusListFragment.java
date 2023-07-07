@@ -21,6 +21,7 @@ import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.accounts.GetAccountRelationships;
 import org.joinmastodon.android.api.requests.polls.SubmitPollVote;
+import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.PollUpdatedEvent;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.DisplayItemsParent;
@@ -562,7 +563,8 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 
 	protected void toggleSpoiler(Status status, String itemID){
 		status.spoilerRevealed=!status.spoilerRevealed;
-		if (!status.spoilerRevealed && !GlobalUserPreferences.alwaysExpandContentWarnings) status.sensitiveRevealed = false;
+		if (!status.spoilerRevealed && !AccountSessionManager.get(accountID).getLocalPreferences().revealCWs)
+			status.sensitiveRevealed = false;
 
 		SpoilerStatusDisplayItem.Holder spoiler=findHolderOfType(itemID, SpoilerStatusDisplayItem.Holder.class);
 		if(spoiler!=null)

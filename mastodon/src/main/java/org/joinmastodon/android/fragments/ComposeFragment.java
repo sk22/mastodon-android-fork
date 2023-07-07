@@ -899,7 +899,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		if(hasSpoiler){
 			charCount+=spoilerEdit.length();
 		}
-		if (localOnly && GlobalUserPreferences.accountsInGlitchMode.contains(accountID)) {
+		if (localOnly && AccountSessionManager.get(accountID).getLocalPreferences().glitchInstance) {
 			charCount -= GLITCH_LOCAL_ONLY_SUFFIX.length();
 		}
 		charCounter.setText(String.valueOf(charLimit-charCount));
@@ -922,8 +922,9 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 
 	private void resetPublishButtonText() {
 		int publishText = editingStatus==null || redraftStatus ? R.string.publish : R.string.save;
-		if (publishText == R.string.publish && !GlobalUserPreferences.publishButtonText.isEmpty()) {
-			publishButton.setText(GlobalUserPreferences.publishButtonText);
+		AccountLocalPreferences prefs=AccountSessionManager.get(accountID).getLocalPreferences();
+		if (publishText == R.string.publish && !TextUtils.isEmpty(prefs.publishButtonText)) {
+			publishButton.setText(prefs.publishButtonText);
 		} else {
 			publishButton.setText(publishText);
 		}
@@ -1055,7 +1056,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			req.spoilerText = "bottom-encoded emoji spam";
 		}
 		if (localOnly &&
-				GlobalUserPreferences.accountsInGlitchMode.contains(accountID) &&
+				AccountSessionManager.get(accountID).getLocalPreferences().glitchInstance &&
 				!GLITCH_LOCAL_ONLY_PATTERN.matcher(text).matches()) {
 			text += " " + GLITCH_LOCAL_ONLY_SUFFIX;
 		}
@@ -1452,27 +1453,28 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		visibilityPopup=new PopupMenu(getActivity(), v);
 		visibilityPopup.inflate(R.menu.compose_visibility);
 		Menu m=visibilityPopup.getMenu();
-		if (isInstancePixelfed()) {
+		if(isInstancePixelfed()){
 			m.findItem(R.id.vis_private).setVisible(false);
 		}
-		MenuItem localOnlyItem = visibilityPopup.getMenu().findItem(R.id.local_only);
-		boolean prefsSaysSupported = GlobalUserPreferences.accountsWithLocalOnlySupport.contains(accountID);
-		if (isInstanceAkkoma()) {
+		MenuItem localOnlyItem=visibilityPopup.getMenu().findItem(R.id.local_only);
+		AccountLocalPreferences prefs=AccountSessionManager.get(accountID).getLocalPreferences();
+		boolean prefsSaysSupported=prefs.localOnlySupported;
+		if(isInstanceAkkoma()){
 			m.findItem(R.id.vis_local).setVisible(true);
-		} else if (localOnly || prefsSaysSupported) {
+		}else if(localOnly || prefsSaysSupported){
 			localOnlyItem.setVisible(true);
 			localOnlyItem.setChecked(localOnly);
-			Status status = editingStatus != null ? editingStatus : replyTo;
-			if (!prefsSaysSupported) {
-				GlobalUserPreferences.accountsWithLocalOnlySupport.add(accountID);
-				if (GLITCH_LOCAL_ONLY_PATTERN.matcher(status.getStrippedText()).matches()) {
-					GlobalUserPreferences.accountsInGlitchMode.add(accountID);
+			Status status=editingStatus!=null ? editingStatus : replyTo;
+			if(!prefsSaysSupported){
+				prefs.localOnlySupported=true;
+				if(GLITCH_LOCAL_ONLY_PATTERN.matcher(status.getStrippedText()).matches()){
+					prefs.glitchInstance=true;
 				}
-				GlobalUserPreferences.save();
+				prefs.save();
 			}
 		}
 		UiUtils.enablePopupMenuIcons(getActivity(), visibilityPopup);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) m.setGroupDividerEnabled(true);
+		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.P) m.setGroupDividerEnabled(true);
 		visibilityPopup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener(){
 			@Override
 			public boolean onMenuItemClick(MenuItem item){
@@ -1488,10 +1490,10 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				}else if(id==R.id.vis_local){
 					statusVisibility=StatusPrivacy.LOCAL;
 				}
-				if (id == R.id.local_only) {
-					localOnly = !item.isChecked();
+				if(id==R.id.local_only){
+					localOnly=!item.isChecked();
 					item.setChecked(localOnly);
-				} else {
+				}else{
 					item.setChecked(true);
 				}
 				updateVisibilityIcon();
@@ -1523,7 +1525,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			return true;
 		});
 
-		if (!GlobalUserPreferences.accountsWithContentTypesEnabled.contains(accountID)) {
+		if (!AccountSessionManager.get(accountID).getLocalPreferences().contentTypesEnabled) {
 			btn.setVisibility(View.GONE);
 		}
 	}
@@ -1702,8 +1704,8 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	}
 
 	private void showLanguageAlert(){
-		Preferences prefs=AccountSessionManager.getInstance().getAccount(accountID).preferences;
-		ComposeLanguageAlertViewController vc=new ComposeLanguageAlertViewController(getActivity(), prefs!=null ? prefs.postingDefaultLanguage : null, postLang, mainEditText.getText().toString(), languageResolver);
+		AccountSession session=AccountSessionManager.get(accountID);
+		ComposeLanguageAlertViewController vc=new ComposeLanguageAlertViewController(getActivity(), session.preferences!=null ? session.preferences.postingDefaultLanguage : null, postLang, mainEditText.getText().toString(), languageResolver, session);
 		new M3AlertDialogBuilder(getActivity())
 				.setTitle(R.string.language)
 				.setView(vc.getView())

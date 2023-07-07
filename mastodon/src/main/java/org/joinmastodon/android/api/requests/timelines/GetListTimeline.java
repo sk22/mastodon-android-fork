@@ -2,14 +2,13 @@ package org.joinmastodon.android.api.requests.timelines;
 
 import com.google.gson.reflect.TypeToken;
 
-import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.api.MastodonAPIRequest;
 import org.joinmastodon.android.model.Status;
 
 import java.util.List;
 
 public class GetListTimeline extends MastodonAPIRequest<List<Status>> {
-    public GetListTimeline(String listID, String maxID, String minID, int limit, String sinceID) {
+    public GetListTimeline(String listID, String maxID, String minID, int limit, String sinceID, String replyVisibility) {
         super(HttpMethod.GET, "/timelines/list/"+listID, new TypeToken<>(){});
         if(maxID!=null)
             addQueryParameter("max_id", maxID);
@@ -19,7 +18,7 @@ public class GetListTimeline extends MastodonAPIRequest<List<Status>> {
             addQueryParameter("limit", ""+limit);
         if(sinceID!=null)
             addQueryParameter("since_id", sinceID);
-        if(GlobalUserPreferences.replyVisibility != null)
-            addQueryParameter("reply_visibility", GlobalUserPreferences.replyVisibility);
+        if(replyVisibility != null)
+            addQueryParameter("reply_visibility", replyVisibility);
     }
 }

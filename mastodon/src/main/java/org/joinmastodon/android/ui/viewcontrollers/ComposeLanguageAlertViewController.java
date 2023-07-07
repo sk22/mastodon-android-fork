@@ -18,6 +18,8 @@ import android.widget.TextView;
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.MastodonAPIController;
+import org.joinmastodon.android.api.session.AccountSession;
+import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.ui.DividerItemDecoration;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.ui.views.CheckableLinearLayout;
@@ -49,13 +51,12 @@ public class ComposeLanguageAlertViewController{
 	private MastodonLanguage selectedLocale;
 	private String selectedEncoding;
 	private MastodonLanguage.LanguageResolver resolver;
-	private boolean hideEncodings;
 
 	public ComposeLanguageAlertViewController(Context context, String preferred, SelectedOption previouslySelected, String postText, MastodonLanguage.LanguageResolver resolver){
-		this(context, preferred, previouslySelected, postText, resolver, false);
+		this(context, preferred, previouslySelected, postText, resolver, null);
 	}
 
-	public ComposeLanguageAlertViewController(Context context, String preferred, SelectedOption previouslySelected, String postText, MastodonLanguage.LanguageResolver resolver, boolean hideEncodings){
+	public ComposeLanguageAlertViewController(Context context, String preferred, SelectedOption previouslySelected, String postText, MastodonLanguage.LanguageResolver resolver, AccountSession session){
 		this.context=context;
 		this.resolver=resolver;
 
@@ -90,7 +91,7 @@ public class ComposeLanguageAlertViewController{
 			detectLanguage(detected, postText);
 		}
 
-		if (GlobalUserPreferences.bottomEncoding && !hideEncodings) {
+		if (session!=null && session.getLocalPreferences().bottomEncoding) {
 			specialLocales.add(new SpecialLocaleInfo(null, "\uD83E\uDD7A\uD83D\uDC49\uD83D\uDC48", "bottom"));
 		}
 

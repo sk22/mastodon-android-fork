@@ -2,7 +2,6 @@ package org.joinmastodon.android.fragments.discover;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -37,7 +36,7 @@ public class BubbleTimelineFragment extends StatusListFragment {
 
 	@Override
     protected void doLoadData(int offset, int count){
-        currentRequest=new GetBubbleTimeline(refreshing ? null : maxID, count)
+        currentRequest=new GetBubbleTimeline(refreshing ? null : maxID, count, getLocalPrefs().timelineReplyVisibility)
                 .setCallback(new SimpleCallback<>(this){
                     @Override
                     public void onSuccess(List<Status> result){

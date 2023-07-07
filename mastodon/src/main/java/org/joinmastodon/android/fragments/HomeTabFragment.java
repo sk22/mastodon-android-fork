@@ -44,6 +44,7 @@ import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.announcements.GetAnnouncements;
 import org.joinmastodon.android.api.requests.lists.GetLists;
 import org.joinmastodon.android.api.requests.tags.GetFollowedHashtags;
+import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.HashtagUpdatedEvent;
 import org.joinmastodon.android.events.ListDeletedEvent;
 import org.joinmastodon.android.events.ListUpdatedCreatedEvent;
@@ -61,7 +62,6 @@ import org.joinmastodon.android.utils.ElevationOnScrollListener;
 import org.joinmastodon.android.utils.ProvidesAssistContent;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +73,6 @@ import me.grishka.appkit.Nav;
 import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
 import me.grishka.appkit.fragments.BaseRecyclerFragment;
-import me.grishka.appkit.fragments.LoaderFragment;
 import me.grishka.appkit.fragments.OnBackPressedListener;
 import me.grishka.appkit.utils.CubicBezierInterpolator;
 import me.grishka.appkit.utils.V;
@@ -97,7 +96,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 	private PopupMenu switcherPopup;
 	private final Map<Integer, ListTimeline> listItems = new HashMap<>();
 	private final Map<Integer, Hashtag> hashtagsItems = new HashMap<>();
-	private List<TimelineDefinition> timelineDefinitions;
+	private List<TimelineDefinition> timelinesList;
 	private int count;
 	private Fragment[] fragments;
 	private FrameLayout[] tabViews;
@@ -115,13 +114,13 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 		super.onCreate(savedInstanceState);
 		E.register(this);
 		accountID = getArguments().getString("account");
-		timelineDefinitions = GlobalUserPreferences.pinnedTimelines.getOrDefault(accountID, TimelineDefinition.getDefaultTimelines(accountID));
-		assert timelineDefinitions != null;
-		if (timelineDefinitions.size() == 0) timelineDefinitions = List.of(TimelineDefinition.HOME_TIMELINE);
-		count = timelineDefinitions.size();
-		fragments = new Fragment[count];
-		tabViews = new FrameLayout[count];
-		timelines = new TimelineDefinition[count];
+		timelinesList=AccountSessionManager.get(accountID).getLocalPreferences().timelines;
+		assert timelinesList!=null;
+		if(timelinesList.isEmpty()) timelinesList=List.of(TimelineDefinition.HOME_TIMELINE);
+		count=timelinesList.size();
+		fragments=new Fragment[count];
+		tabViews=new FrameLayout[count];
+		timelines=new TimelineDefinition[count];
 	}
 
 	@Override
@@ -151,8 +150,8 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			args.putBoolean("__disable_fab", true);
 			args.putBoolean("onlyPosts", true);
 
-			for (int i = 0; i < timelineDefinitions.size(); i++) {
-				TimelineDefinition tl = timelineDefinitions.get(i);
+			for (int i=0; i < timelinesList.size(); i++) {
+				TimelineDefinition tl = timelinesList.get(i);
 				fragments[i] = tl.getFragment();
 				timelines[i] = tl;
 			}
@@ -659,8 +658,8 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 	@Override
 	protected void onShown() {
 		super.onShown();
-		Object pinnedTimelines = GlobalUserPreferences.pinnedTimelines.get(accountID);
-		if (pinnedTimelines != null && timelineDefinitions != pinnedTimelines) UiUtils.restartApp();
+		Object timelines = AccountSessionManager.get(accountID).getLocalPreferences().timelines;
+		if (timelines != null && timelinesList!= timelines) UiUtils.restartApp();
 	}
 
 	@Override

@@ -152,7 +152,7 @@ public abstract class StatusDisplayItem{
 		ScheduledStatus scheduledStatus = parentObject instanceof ScheduledStatus ? (ScheduledStatus) parentObject : null;
 
 		HeaderStatusDisplayItem header=null;
-		boolean hideCounts=!GlobalUserPreferences.showInteractionCounts;
+		boolean hideCounts=!AccountSessionManager.get(accountID).getLocalPreferences().showInteractionCounts;
 
 		if((flags & FLAG_NO_HEADER)==0){
 			ReblogOrReplyLineStatusDisplayItem replyLine = null;
@@ -222,7 +222,7 @@ public abstract class StatusDisplayItem{
 
 		ArrayList<StatusDisplayItem> contentItems;
 		if(!TextUtils.isEmpty(statusForContent.spoilerText)){
-			if (GlobalUserPreferences.alwaysExpandContentWarnings) statusForContent.spoilerRevealed = true;
+			if (AccountSessionManager.get(accountID).getLocalPreferences().revealCWs) statusForContent.spoilerRevealed = true;
 			SpoilerStatusDisplayItem spoilerItem=new SpoilerStatusDisplayItem(parentID, fragment, null, status, statusForContent, Type.SPOILER);
 			items.add(spoilerItem);
 			contentItems=spoilerItem.contentItems;
@@ -255,7 +255,7 @@ public abstract class StatusDisplayItem{
 			MediaGridStatusDisplayItem mediaGrid=new MediaGridStatusDisplayItem(parentID, fragment, layout, imageAttachments, statusForContent);
 			if((flags & FLAG_MEDIA_FORCE_HIDDEN)!=0)
 				mediaGrid.sensitiveTitle=fragment.getString(R.string.media_hidden);
-			else if(statusForContent.sensitive && GlobalUserPreferences.alwaysExpandContentWarnings && !AccountSessionManager.get(accountID).getLocalPreferences().hideSensitiveMedia)
+			else if(statusForContent.sensitive && AccountSessionManager.get(accountID).getLocalPreferences().revealCWs && !AccountSessionManager.get(accountID).getLocalPreferences().hideSensitiveMedia)
 				statusForContent.sensitiveRevealed=true;
 			contentItems.add(mediaGrid);
 		}

@@ -135,7 +135,7 @@ public class HomeTimelineFragment extends StatusListFragment {
 		// we'll get the currently topmost post as last in the response. This way we know there's no gap
 		// between the existing and newly loaded parts of the timeline.
 		String sinceID=data.size()>1 ? data.get(1).id : "1";
-		currentRequest=new GetHomeTimeline(null, null, 20, sinceID)
+		currentRequest=new GetHomeTimeline(null, null, 20, sinceID, getLocalPrefs().timelineReplyVisibility)
 				.setCallback(new Callback<>(){
 					@Override
 					public void onSuccess(List<Status> result){
@@ -182,7 +182,7 @@ public class HomeTimelineFragment extends StatusListFragment {
 		V.setVisibilityAnimated(item.text, View.GONE);
 		GapStatusDisplayItem gap=item.getItem();
 		dataLoading=true;
-		currentRequest=new GetHomeTimeline(item.getItemID(), null, 20, null)
+		currentRequest=new GetHomeTimeline(item.getItemID(), null, 20, null, getLocalPrefs().timelineReplyVisibility)
 				.setCallback(new Callback<>(){
 					@Override
 					public void onSuccess(List<Status> result){
