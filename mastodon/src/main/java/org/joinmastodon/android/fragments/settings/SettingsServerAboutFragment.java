@@ -42,6 +42,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import me.grishka.appkit.api.Callback;
+import me.grishka.appkit.api.ErrorResponse;
 import me.grishka.appkit.api.SimpleCallback;
 import me.grishka.appkit.fragments.LoaderFragment;
 import me.grishka.appkit.imageloader.ViewImageLoader;
@@ -160,7 +162,7 @@ public class SettingsServerAboutFragment extends LoaderFragment{
 	@Override
 	protected void doLoadData(){
 		new GetInstanceExtendedDescription()
-				.setCallback(new SimpleCallback<>(this){
+				.setCallback(new Callback<>(){
 					@Override
 					public void onSuccess(GetInstanceExtendedDescription.Response result){
 						MastodonAPIController.runInBackground(()->{
@@ -195,6 +197,12 @@ public class SettingsServerAboutFragment extends LoaderFragment{
 								webView.loadDataWithBaseURL(null, html, "text/html; charset=utf-8", null, null);
 							});
 						});
+					}
+
+					@Override
+					public void onError(ErrorResponse error){
+						// probably an akkoma instance where this isn't implemented
+						dataLoaded();
 					}
 				})
 				.execRemote(instance.normalizedUri);
