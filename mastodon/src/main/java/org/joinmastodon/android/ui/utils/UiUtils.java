@@ -1564,18 +1564,19 @@ public class UiUtils {
 		return text;
 	}
 
-	private static final String[] pronounUrls = new String[] {
+	private static final String[] pronounsUrls= new String[] {
 			"pronouns.within.lgbt/",
 			"pronouns.cc/pronouns/",
 			"pronouns.page/"
 	};
 
-	private static String extractPronounFromField(String localizedPronouns, AccountField field) {
+	private static final Pattern trimPronouns = Pattern.compile("\\W*(\\w.*\\w|\\w)\\W*");
+	private static String extractPronounsFromField(String localizedPronouns, AccountField field) {
 		if(!field.name.toLowerCase().contains(localizedPronouns) &&
 				!field.name.toLowerCase().contains("pronouns")) return null;
 		String text=HtmlParser.strip(field.value);
 		if(field.value.toLowerCase().contains("https://")){
-			for(String pronounUrl : pronounUrls){
+			for(String pronounUrl : pronounsUrls){
 				int index=text.indexOf(pronounUrl);
 				int beginPronouns=index+pronounUrl.length();
 				// we only want to display the info from the urls if they're not usernames
@@ -1586,9 +1587,13 @@ public class UiUtils {
 			// maybe it's like "they and them (https://pronouns.page/...)"
 			String[] parts=text.substring(0, text.toLowerCase().indexOf("https://"))
 					.split(" ");
-			return parts.length==0 ? null : String.join(" ", parts);
+			if (parts.length==0) return null;
+			text=String.join(" ", parts);
 		}
-		return field.value;
+
+		Matcher matcher=trimPronouns.matcher(text);
+		if(!matcher.find()) return null;
+		return matcher.group(1);
 	}
 
 	// https://stackoverflow.com/questions/9475589/how-to-get-string-from-different-locales-in-android
@@ -1621,7 +1626,7 @@ public class UiUtils {
 
 		return account.fields.stream()
 				.sorted(Comparator.comparingInt(comparePronounFields))
-				.map(f->UiUtils.extractPronounFromField(localizedPronouns, f))
+				.map(f->UiUtils.extractPronounsFromField(localizedPronouns, f))
 				.filter(Objects::nonNull)
 				.findFirst();
 	}
