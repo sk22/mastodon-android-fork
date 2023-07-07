@@ -30,7 +30,7 @@ public class FederatedTimelineFragment extends StatusListFragment{
 
 	@Override
 	protected void doLoadData(int offset, int count){
-		currentRequest=new GetPublicTimeline(true, false, refreshing ? null : maxID, count)
+		currentRequest=new GetPublicTimeline(false, false, refreshing ? null : maxID, count)
 				.setCallback(new SimpleCallback<>(this){
 					@Override
 					public void onSuccess(List<Status> result){
