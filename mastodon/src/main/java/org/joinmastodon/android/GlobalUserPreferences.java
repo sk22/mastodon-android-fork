@@ -80,7 +80,7 @@ public class GlobalUserPreferences{
 		useCustomTabs=prefs.getBoolean("useCustomTabs", true);
 		theme=ThemePreference.values()[prefs.getInt("theme", 0)];
 		altTextReminders=prefs.getBoolean("altTextReminders", true);
-		confirmUnfollow=prefs.getBoolean("confirmUnfollow", false);
+		confirmUnfollow=prefs.getBoolean("confirmUnfollow", true);
 		confirmBoost=prefs.getBoolean("confirmBoost", false);
 		confirmDeletePost=prefs.getBoolean("confirmDeletePost", true);
 
