@@ -29,7 +29,7 @@ public class SettingsBehaviorFragment extends BaseSettingsFragment<Void>{
 
 		AccountSession s=AccountSessionManager.get(accountID);
 		languageResolver = s.getInstance().map(MastodonLanguage.LanguageResolver::new).orElse(null);
-		postLanguage = s.preferences == null ? null :
+		postLanguage=s.preferences==null || s.preferences.postingDefaultLanguage==null ? null :
 				languageResolver.from(s.preferences.postingDefaultLanguage).orElse(null);
 
 		onDataLoaded(List.of(
