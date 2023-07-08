@@ -56,6 +56,7 @@ public class SettingsBehaviorFragment extends BaseSettingsFragment<Void>{
 					ComposeLanguageAlertViewController.SelectedOption opt=vc.getSelectedOption();
 					if(!opt.language.equals(postLanguage)){
 						newPostLanguage=opt;
+						postLanguage=newPostLanguage.language;
 						languageItem.subtitle=newPostLanguage.language.getDefaultName();
 						rebindItem(languageItem);
 					}
