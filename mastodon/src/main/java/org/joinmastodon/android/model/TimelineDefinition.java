@@ -337,20 +337,20 @@ public class TimelineDefinition {
         }
     };
 
-    public static List<TimelineDefinition> getDefaultTimelines(String accountId) {
+    public static ArrayList<TimelineDefinition> getDefaultTimelines(String accountId) {
         AccountSession session = AccountSessionManager.getInstance().getAccount(accountId);
         return DEFAULT_TIMELINES.stream()
                 .filter(tl -> tl.isCompatible(session) && tl.wantsDefault(session))
                 .map(TimelineDefinition::copy)
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public static List<TimelineDefinition> getAllTimelines(String accountId) {
+    public static ArrayList<TimelineDefinition> getAllTimelines(String accountId) {
         AccountSession session = AccountSessionManager.getInstance().getAccount(accountId);
         return ALL_TIMELINES.stream()
                 .filter(tl -> tl.isCompatible(session))
                 .map(TimelineDefinition::copy)
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private static final List<TimelineDefinition> DEFAULT_TIMELINES = List.of(

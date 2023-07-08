@@ -17,6 +17,8 @@ import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.TimelineDefinition;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -62,10 +64,14 @@ public class GlobalUserPreferences{
 		return MastodonApp.context.getSharedPreferences("global", Context.MODE_PRIVATE);
 	}
 
-	public static <T> T fromJson(String json, Type type, T orElse) {
-		if (json == null) return orElse;
-		try { return gson.fromJson(json, type); }
-		catch (JsonSyntaxException ignored) { return orElse; }
+	public static <T> T fromJson(String json, Type type, T orElse){
+		if(json==null) return orElse;
+		try{
+			T value=gson.fromJson(json, type);
+			return value==null ? orElse : value;
+		}catch(JsonSyntaxException ignored){
+			return orElse;
+		}
 	}
 
 	public static <T extends Enum<T>> T enumValue(Class<T> enumType, String name) {
@@ -171,8 +177,8 @@ public class GlobalUserPreferences{
 		Log.d(TAG, "Migrating preferences to upstream version 61!!");
 
 		Type accountsDefaultContentTypesType = new TypeToken<Map<String, ContentType>>() {}.getType();
-		Type pinnedTimelinesType = new TypeToken<Map<String, List<TimelineDefinition>>>() {}.getType();
-		Type recentLanguagesType = new TypeToken<Map<String, List<String>>>() {}.getType();
+		Type pinnedTimelinesType = new TypeToken<Map<String, ArrayList<TimelineDefinition>>>() {}.getType();
+		Type recentLanguagesType = new TypeToken<Map<String, ArrayList<String>>>() {}.getType();
 
 		// migrate global preferences
 		SharedPreferences prefs=getPrefs();
@@ -184,10 +190,10 @@ public class GlobalUserPreferences{
 		AccountSessionManager asm=AccountSessionManager.getInstance();
 		// reset: Set<String> accountsWithContentTypesEnabled=prefs.getStringSet("accountsWithContentTypesEnabled", new HashSet<>());
 		Map<String, ContentType> accountsDefaultContentTypes=fromJson(prefs.getString("accountsDefaultContentTypes", null), accountsDefaultContentTypesType, new HashMap<>());
-		Map<String, List<TimelineDefinition>> pinnedTimelines=fromJson(prefs.getString("pinnedTimelines", null), pinnedTimelinesType, new HashMap<>());
+		Map<String, ArrayList<TimelineDefinition>> pinnedTimelines=fromJson(prefs.getString("pinnedTimelines", null), pinnedTimelinesType, new HashMap<>());
 		Set<String> accountsWithLocalOnlySupport=prefs.getStringSet("accountsWithLocalOnlySupport", new HashSet<>());
 		Set<String> accountsInGlitchMode=prefs.getStringSet("accountsInGlitchMode", new HashSet<>());
-		Map<String, List<String>> recentLanguages=fromJson(prefs.getString("recentLanguages", null), recentLanguagesType, new HashMap<>());
+		Map<String, ArrayList<String>> recentLanguages=fromJson(prefs.getString("recentLanguages", null), recentLanguagesType, new HashMap<>());
 
 		for(AccountSession session : asm.getLoggedInAccounts()){
 			String accountID=session.getID();

@@ -421,7 +421,7 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 		clearImageCacheItem = new TextItem(R.string.settings_clear_cache, UiUtils.formatFileSize(getContext(), cache != null ? cache.size() : 0, true), this::clearImageCache, 0);
 		items.add(clearImageCacheItem);
 		items.add(new TextItem(R.string.sk_clear_recent_languages, ()->UiUtils.showConfirmationAlert(getActivity(), R.string.sk_clear_recent_languages, R.string.sk_confirm_clear_recent_languages, R.string.clear, ()->{
-			prefs.recentLanguages=new ArrayList<>();
+			prefs.recentLanguages.clear();
 			prefs.save();
 		})));
 		if (GithubSelfUpdater.needSelfUpdating()) {

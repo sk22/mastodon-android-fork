@@ -25,18 +25,18 @@ public class AccountLocalPreferences{
 	public boolean serverSideFiltersSupported;
 
 	// MEGALODON
-	public List<String> recentLanguages;
+	public ArrayList<String> recentLanguages;
 	public boolean bottomEncoding;
 	public ContentType defaultContentType;
 	public boolean contentTypesEnabled;
-	public List<TimelineDefinition> timelines;
+	public ArrayList<TimelineDefinition> timelines;
 	public boolean localOnlySupported;
 	public boolean glitchInstance;
 	public String publishButtonText;
 	public String timelineReplyVisibility; // akkoma-only
 
-	private final static Type recentLanguagesType = new TypeToken<List<String>>() {}.getType();
-	private final static Type timelinesType = new TypeToken<List<TimelineDefinition>>() {}.getType();
+	private final static Type recentLanguagesType = new TypeToken<ArrayList<String>>() {}.getType();
+	private final static Type timelinesType = new TypeToken<ArrayList<TimelineDefinition>>() {}.getType();
 
 	public AccountLocalPreferences(SharedPreferences prefs, AccountSession session){
 		this.prefs=prefs;

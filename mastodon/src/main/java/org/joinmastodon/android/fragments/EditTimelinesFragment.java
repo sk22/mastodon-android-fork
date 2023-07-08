@@ -189,7 +189,7 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
         makeBackItem(listsMenu);
         makeBackItem(hashtagsMenu);
 
-        TimelineDefinition.getAllTimelines(accountID).forEach(tl -> addTimelineToOptions(tl, timelinesMenu));
+        TimelineDefinition.getAllTimelines(accountID).stream().forEach(tl -> addTimelineToOptions(tl, timelinesMenu));
         listTimelines.stream().map(TimelineDefinition::ofList).forEach(tl -> addTimelineToOptions(tl, listsMenu));
         addHashtagItem = addOptionsItem(hashtagsMenu, getContext().getString(R.string.sk_timelines_add), R.drawable.ic_fluent_add_24_regular);
         hashtags.stream().map(TimelineDefinition::ofHashtag).forEach(tl -> addTimelineToOptions(tl, hashtagsMenu));
@@ -204,7 +204,8 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
     private void saveTimelines() {
         updated=true;
 		AccountLocalPreferences prefs=AccountSessionManager.get(accountID).getLocalPreferences();
-		prefs.timelines=data.size() > 0 ? data : List.of(TimelineDefinition.HOME_TIMELINE);
+		if(data.isEmpty()) data.add(TimelineDefinition.HOME_TIMELINE);
+		prefs.timelines=data;
 		prefs.save();
 	}
 
