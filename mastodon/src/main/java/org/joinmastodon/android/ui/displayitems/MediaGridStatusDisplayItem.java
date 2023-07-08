@@ -7,6 +7,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
@@ -14,6 +15,7 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -46,7 +48,7 @@ import me.grishka.appkit.utils.V;
 public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 	private static final String TAG="MediaGridDisplayItem";
 
-	private final PhotoLayoutHelper.TiledLayoutResult tiledLayout;
+	private PhotoLayoutHelper.TiledLayoutResult tiledLayout;
 	private final TypedObjectPool<GridItemType, MediaAttachmentViewController> viewPool;
 	private final List<Attachment> attachments;
 	private final ArrayList<ImageLoaderRequest> requests=new ArrayList<>();
@@ -212,6 +214,17 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 
 		@Override
 		public void setImage(int index, Drawable drawable){
+			if(item.attachments.get(index).meta==null){
+				Rect bounds=drawable.getBounds();
+				drawable.setBounds(bounds.left, bounds.top, bounds.left+drawable.getIntrinsicWidth(), bounds.top+drawable.getIntrinsicHeight());
+				Attachment.Metadata metadata = new Attachment.Metadata();
+				metadata.width=drawable.getIntrinsicWidth();
+				metadata.height=drawable.getIntrinsicHeight();
+				item.attachments.get(index).meta=metadata;
+				item.tiledLayout=PhotoLayoutHelper.processThumbs(item.attachments);
+				UiUtils.beginLayoutTransition((ViewGroup) itemView);
+				rebind();
+			}
 			controllers.get(index).setImage(drawable);
 		}
 

@@ -606,15 +606,6 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 		if (header != null) header.rebind();
 	}
 
-	// TODO: do we still need this?
-	public void onImageUpdated(MediaGridStatusDisplayItem.Holder holder, int index) {
-		holder.rebind();
-		MediaGridStatusDisplayItem.Holder mediaGrid = findHolderOfType(holder.getItemID(), MediaGridStatusDisplayItem.Holder.class);
-		if(mediaGrid!=null){
-			adapter.notifyItemChanged(mediaGrid.getAbsoluteAdapterPosition());
-		}
-	}
-
 	public void onGapClick(GapStatusDisplayItem.Holder item){}
 
 	public void onWarningClick(WarningFilteredStatusDisplayItem.Holder warning){
