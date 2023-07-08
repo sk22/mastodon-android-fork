@@ -161,10 +161,10 @@
 		android:layout_toStartOf="@id/buttons"
 		android:layout_toEndOf="@id/avatar"
 		android:layout_marginBottom="3sp"
+		android:textAlignment="viewStart"
 		android:singleLine="true"
 		android:ellipsize="end"
 		android:textAppearance="@style/m3_body_medium"
-		android:gravity="center_vertical"
 		android:textColor="?colorM3OnSurfaceVariant"
 		tools:text="9h ago · \@Gargron@mastodon.social"/>
 
