@@ -1577,7 +1577,7 @@ public class UiUtils {
 			"pronouns.page/"
 	};
 
-	private static final Pattern trimPronouns = Pattern.compile("\\W*(\\w.*\\w|\\w)\\W*");
+	private static final Pattern trimPronouns=Pattern.compile("\\W*(\\w.*\\w|\\w)\\W*");
 	private static String extractPronounsFromField(String localizedPronouns, AccountField field) {
 		if(!field.name.toLowerCase().contains(localizedPronouns) &&
 				!field.name.toLowerCase().contains("pronouns")) return null;
@@ -1600,7 +1600,14 @@ public class UiUtils {
 
 		Matcher matcher=trimPronouns.matcher(text);
 		if(!matcher.find()) return null;
-		return matcher.group(1);
+		String matched=matcher.group(1);
+		// crude fix to allow for pronouns like "it(/she)"
+		int missingClosingParens=0;
+		for(char c : matched.toCharArray()){
+			if(c=='(') missingClosingParens++;
+			if(c==')') missingClosingParens--;
+		}
+		return matched+")".repeat(missingClosingParens);
 	}
 
 	// https://stackoverflow.com/questions/9475589/how-to-get-string-from-different-locales-in-android
