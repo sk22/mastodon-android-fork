@@ -899,8 +899,8 @@ public class UiUtils {
 	public static void setUserPreferredTheme(Context context) {
 		context.setTheme(switch (theme) {
 			case LIGHT -> R.style.Theme_Mastodon_Light;
-			case DARK -> trueBlackTheme ? R.style.Theme_Mastodon_Dark_TrueBlack : R.style.Theme_Mastodon_Dark;
-			default -> trueBlackTheme ? R.style.Theme_Mastodon_AutoLightDark_TrueBlack : R.style.Theme_Mastodon_AutoLightDark;
+			case DARK -> R.style.Theme_Mastodon_Dark;
+			default -> R.style.Theme_Mastodon_AutoLightDark;
 		});
 
 		ColorPalette palette = ColorPalette.palettes.get(GlobalUserPreferences.color);

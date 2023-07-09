@@ -31,6 +31,9 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 	private ListItem<Void> themeItem;
 	private CheckableListItem<Void> revealCWsItem, hideSensitiveMediaItem, interactionCountsItem, emojiInNamesItem;
 
+	// MEGALODON
+	private CheckableListItem<Void> trueBlackModeItem;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -39,11 +42,13 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 		AccountLocalPreferences lp=s.getLocalPreferences();
 		onDataLoaded(List.of(
 				themeItem=new ListItem<>(R.string.settings_theme, getAppearanceValue(), R.drawable.ic_fluent_weather_moon_24_regular, this::onAppearanceClick),
+				trueBlackModeItem=new CheckableListItem<>(R.string.theme_true_black, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.trueBlackTheme, R.drawable.ic_fluent_dark_theme_24_regular, this::onTrueBlackModeClick),
 				revealCWsItem=new CheckableListItem<>(R.string.sk_settings_always_reveal_content_warnings, 0, CheckableListItem.Style.SWITCH, lp.revealCWs, R.drawable.ic_fluent_chat_warning_24_regular, ()->toggleCheckableItem(revealCWsItem)),
 				hideSensitiveMediaItem=new CheckableListItem<>(R.string.settings_hide_sensitive_media, 0, CheckableListItem.Style.SWITCH, lp.hideSensitiveMedia, R.drawable.ic_fluent_flag_24_regular, ()->toggleCheckableItem(hideSensitiveMediaItem)),
 				interactionCountsItem=new CheckableListItem<>(R.string.settings_show_interaction_counts, 0, CheckableListItem.Style.SWITCH, lp.showInteractionCounts, R.drawable.ic_fluent_number_row_24_regular, ()->toggleCheckableItem(interactionCountsItem)),
 				emojiInNamesItem=new CheckableListItem<>(R.string.settings_show_emoji_in_names, 0, CheckableListItem.Style.SWITCH, lp.customEmojiInNames, R.drawable.ic_fluent_emoji_24_regular, ()->toggleCheckableItem(emojiInNamesItem))
 		));
+		trueBlackModeItem.checkedChangeListener=checked->onTrueBlackModeClick();
 	}
 
 	@Override
@@ -69,6 +74,7 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 		lp.showInteractionCounts=interactionCountsItem.checked;
 		lp.customEmojiInNames=emojiInNamesItem.checked;
 		lp.save();
+		GlobalUserPreferences.save();
 		E.post(new StatusDisplaySettingsChangedEvent(accountID));
 	}
 
@@ -78,6 +84,14 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 			case LIGHT -> R.string.theme_light;
 			case DARK -> R.string.theme_dark;
 		};
+	}
+
+	private void onTrueBlackModeClick(){
+		toggleCheckableItem(trueBlackModeItem);
+		boolean previouslyBlack=GlobalUserPreferences.trueBlackTheme;
+		GlobalUserPreferences.ThemePreference prev=GlobalUserPreferences.theme;
+		GlobalUserPreferences.trueBlackTheme=trueBlackModeItem.checked;
+		maybeApplyNewThemeRightNow(prev, previouslyBlack);
 	}
 
 	private void onAppearanceClick(){
@@ -104,19 +118,20 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 						GlobalUserPreferences.save();
 						themeItem.subtitleRes=getAppearanceValue();
 						rebindItem(themeItem);
-						maybeApplyNewThemeRightNow(prev);
+						maybeApplyNewThemeRightNow(prev, GlobalUserPreferences.trueBlackTheme);
 					}
 				})
 				.setNegativeButton(R.string.cancel, null)
 				.show();
 	}
 
-	private void maybeApplyNewThemeRightNow(GlobalUserPreferences.ThemePreference prev){
+	private void maybeApplyNewThemeRightNow(GlobalUserPreferences.ThemePreference prev, boolean previouslyBlack){
 		boolean isCurrentDark=prev==GlobalUserPreferences.ThemePreference.DARK ||
 				(prev==GlobalUserPreferences.ThemePreference.AUTO && Build.VERSION.SDK_INT>=30 && getResources().getConfiguration().isNightModeActive());
 		boolean isNewDark=GlobalUserPreferences.theme==GlobalUserPreferences.ThemePreference.DARK ||
 				(GlobalUserPreferences.theme==GlobalUserPreferences.ThemePreference.AUTO && Build.VERSION.SDK_INT>=30 && getResources().getConfiguration().isNightModeActive());
-		if(isCurrentDark!=isNewDark){
+		boolean isNewBlack=GlobalUserPreferences.trueBlackTheme;
+		if(isCurrentDark!=isNewDark || (isNewDark && previouslyBlack!=isNewBlack)){
 			restartActivityToApplyNewTheme();
 		}
 	}

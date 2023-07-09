@@ -59,10 +59,12 @@ public class ColorPalette {
         if (light != 0 && theme.equals(ThemePreference.LIGHT)) t.applyStyle(light, true);
         else if (theme.equals(ThemePreference.DARK)) {
             t.applyStyle(R.style.ColorPalette_Dark, true);
+			if (trueBlackTheme) t.applyStyle(R.style.ColorPalette_Dark_TrueBlack, true);
             if (dark != 0 && !trueBlackTheme) t.applyStyle(dark, true);
             else if (black != 0 && trueBlackTheme) t.applyStyle(black, true);
         } else if (theme.equals(ThemePreference.AUTO)) {
             t.applyStyle(R.style.ColorPalette_AutoLightDark, true);
+			if (trueBlackTheme) t.applyStyle(R.style.ColorPalette_AutoLightDark_TrueBlack, true);
             if (autoDark != 0 && !trueBlackTheme) t.applyStyle(autoDark, true);
             else if (autoBlack != 0 && trueBlackTheme) t.applyStyle(autoBlack, true);
         }
