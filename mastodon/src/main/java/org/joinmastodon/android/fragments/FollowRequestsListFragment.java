@@ -313,6 +313,7 @@ public class FollowRequestsListFragment extends RecyclerFragment<FollowRequestsL
 		private void onFollowRequestButtonClick(View v) {
 			itemView.setHasTransientState(true);
 			UiUtils.handleFollowRequest((Activity) v.getContext(), item.account, accountID, null, v == acceptButton, relationship, rel -> {
+				if(getContext()==null) return;
 				itemView.setHasTransientState(false);
 				relationships.put(item.account.id, rel);
 				RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter = getBindingAdapter();
@@ -328,6 +329,7 @@ public class FollowRequestsListFragment extends RecyclerFragment<FollowRequestsL
 		private void onActionButtonClick(View v){
 			itemView.setHasTransientState(true);
 			UiUtils.performAccountAction(getActivity(), item.account, accountID, relationship, actionButton, this::setActionProgressVisible, rel->{
+				if(getContext()==null) return;
 				itemView.setHasTransientState(false);
 				relationships.put(item.account.id, rel);
 				rebind();

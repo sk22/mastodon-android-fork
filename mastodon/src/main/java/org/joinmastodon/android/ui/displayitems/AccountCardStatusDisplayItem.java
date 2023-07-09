@@ -163,6 +163,7 @@ public class AccountCardStatusDisplayItem extends StatusDisplayItem{
 		private void onFollowRequestButtonClick(View v) {
 			itemView.setHasTransientState(true);
 			UiUtils.handleFollowRequest((Activity) v.getContext(), item.account, item.parentFragment.getAccountID(), null, v == acceptButton, relationship, rel -> {
+				if(v.getContext()==null) return;
 				itemView.setHasTransientState(false);
 				item.parentFragment.putRelationship(item.account.id, rel);
 				RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter = getBindingAdapter();
@@ -180,6 +181,7 @@ public class AccountCardStatusDisplayItem extends StatusDisplayItem{
 		private void onActionButtonClick(View v){
 			itemView.setHasTransientState(true);
 			UiUtils.performAccountAction((Activity) v.getContext(), item.account, item.parentFragment.getAccountID(), relationship, actionButton, this::setActionProgressVisible, rel->{
+				if(v.getContext()==null) return;
 				itemView.setHasTransientState(false);
 				item.parentFragment.putRelationship(item.account.id, rel);
 				rebind();
