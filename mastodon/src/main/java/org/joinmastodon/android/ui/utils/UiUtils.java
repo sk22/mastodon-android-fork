@@ -1607,7 +1607,7 @@ public class UiUtils {
 			if(c=='(') missingClosingParens++;
 			if(c==')') missingClosingParens--;
 		}
-		return matched+")".repeat(missingClosingParens);
+		return matched+")".repeat(Math.max(0, missingClosingParens));
 	}
 
 	// https://stackoverflow.com/questions/9475589/how-to-get-string-from-different-locales-in-android
