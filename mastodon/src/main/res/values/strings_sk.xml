@@ -331,4 +331,5 @@
     <string name="sk_advanced_options_hide">Hide advanced options</string>
     <string name="sk_spoiler_show">Show content</string>
 	<string name="sk_pronouns_label">Pronouns</string>
+	<string name="sk_switch_timeline">Switch timeline</string>
 </resources>
