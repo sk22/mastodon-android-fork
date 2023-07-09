@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
@@ -775,7 +776,11 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 	protected void onDataLoaded(List<T> d, boolean more) {
 		super.onDataLoaded(d, more);
 		// more available, but the page isn't even full yet? seems wrong, let's load some more
-		if (more && d.size() < itemsPerPage) preloader.onScrolledToLastItem();
+		if (more && d.size() < itemsPerPage) {
+			Log.d("BaseStatusListFragment", "doing the 'loading more things' thing!!! ipp: "+itemsPerPage+", items size: "+ d.size());
+			new Exception().printStackTrace();
+			preloader.onScrolledToLastItem();
+		}
 	}
 
 	protected class DisplayItemsAdapter extends UsableRecyclerView.Adapter<BindableViewHolder<StatusDisplayItem>> implements ImageLoaderRecyclerAdapter{

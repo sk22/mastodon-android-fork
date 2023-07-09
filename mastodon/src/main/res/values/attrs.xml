@@ -34,6 +34,7 @@
 	<attr name="colorPoll" format="color" />
 	<attr name="colorProfileHeaderBackground" format="color"/>
 	<attr name="colorM3DarkOnSurface" format="color" />
+	<attr name="colorTabBarAlpha" format="color" />
 
 	<attr name="colorPrimary25" format="color" />
 	<attr name="colorPrimary50" format="color" />
@@ -58,7 +59,6 @@
 	<attr name="colorGray600" format="color" />
 	<attr name="colorGray700" format="color" />
 	<attr name="colorGray800" format="color" />
-	<attr name="colorGray800t" format="color" />
 	<attr name="colorGray900" format="color" />
 
 	<attr name="colorSecondary25" format="color" />
@@ -96,7 +96,6 @@
 	<attr name="colorNeutral600" format="color" />
 	<attr name="colorNeutral700" format="color" />
 	<attr name="colorNeutral800" format="color" />
-	<attr name="colorNeutral800t" format="color" />
 	<attr name="colorNeutral900" format="color" />
 
 	<declare-styleable name="MaxWidthFrameLayout">

@@ -162,7 +162,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	private Button publishButton, languageButton, scheduleTimeBtn;
 	private PopupMenu languagePopup, contentTypePopup, visibilityPopup, draftOptionsPopup;
 	private ImageButton mediaBtn, pollBtn, emojiBtn, spoilerBtn, draftsBtn, scheduleDraftDismiss, contentTypeBtn;
-	private View sensitiveItem;
+	private View sensitiveBtn;
 	private TextView replyText;
 	private LinearLayout scheduleDraftView;
 	private ScrollView scrollView;
@@ -342,7 +342,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		scheduleDraftText=view.findViewById(R.id.schedule_draft_text);
 		scheduleDraftDismiss=view.findViewById(R.id.schedule_draft_dismiss);
 		scheduleTimeBtn=view.findViewById(R.id.scheduled_time_btn);
-		sensitiveItem=view.findViewById(R.id.sensitive_item);
+		sensitiveBtn=view.findViewById(R.id.sensitive_item);
 		replyText=view.findViewById(R.id.reply_text);
 
 		if (UiUtils.isPhotoPickerAvailable()) {
@@ -380,7 +380,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		scheduleDraftDismiss.setOnClickListener(v->updateScheduledAt(null));
 		scheduleTimeBtn.setOnClickListener(v->pickScheduledDateTime());
 
-		sensitiveItem.setOnClickListener(v->toggleSensitive());
+		sensitiveBtn.setOnClickListener(v->toggleSensitive());
 		emojiKeyboard.setOnIconChangedListener(new PopupKeyboard.OnIconChangeListener(){
 			@Override
 			public void onIconChanged(int icon){
@@ -421,8 +421,8 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		sensitive = savedInstanceState==null && editingStatus != null ? editingStatus.sensitive
 				: savedInstanceState!=null && savedInstanceState.getBoolean("sensitive", false);
 		if (sensitive) {
-			sensitiveItem.setVisibility(View.VISIBLE);
-			sensitiveItem.setSelected(true);
+			sensitiveBtn.setVisibility(View.VISIBLE);
+			sensitiveBtn.setSelected(true);
 		}
 
 		if (savedInstanceState != null) {
@@ -1370,19 +1370,19 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			spoilerBtn.setSelected(false);
 			mainEditText.requestFocus();
 			updateCharCounter();
-			sensitiveItem.setVisibility(mediaViewController.getMediaAttachmentsCount() > 0 ? View.VISIBLE : View.GONE);
+			sensitiveBtn.setVisibility(mediaViewController.getMediaAttachmentsCount() > 0 ? View.VISIBLE : View.GONE);
 		}
 		updateSensitive();
 	}
 
 	private void toggleSensitive() {
 		sensitive=!sensitive;
-		sensitiveItem.setSelected(sensitive);
+		sensitiveBtn.setSelected(sensitive);
 	}
 
 	public void updateSensitive() {
-		sensitiveItem.setVisibility(View.GONE);
-		if (!mediaViewController.isEmpty() && !hasSpoiler) sensitiveItem.setVisibility(View.VISIBLE);
+		sensitiveBtn.setVisibility(View.GONE);
+		if (!mediaViewController.isEmpty() && !hasSpoiler) sensitiveBtn.setVisibility(View.VISIBLE);
 		if (mediaViewController.isEmpty()) sensitive = false;
 	}
 

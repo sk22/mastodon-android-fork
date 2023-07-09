@@ -54,6 +54,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import me.grishka.appkit.api.Callback;
@@ -260,7 +261,8 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
         Context ctx = getContext();
         View view = getActivity().getLayoutInflater().inflate(R.layout.edit_timeline, list, false);
 
-        Button advancedBtn = view.findViewById(R.id.advanced);
+		View divider = view.findViewById(R.id.divider);
+		Button advancedBtn = view.findViewById(R.id.advanced);
         EditText editText = view.findViewById(R.id.input);
         if (item != null) editText.setText(item.getCustomTitle());
         editText.setHint(item != null ? item.getDefaultTitle(ctx) : ctx.getString(R.string.sk_hashtag));
@@ -268,11 +270,12 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
         LinearLayout tagWrap = view.findViewById(R.id.tag_wrap);
         boolean advancedOptionsAvailable = item == null || item.getType() == TimelineDefinition.TimelineType.HASHTAG;
         advancedBtn.setVisibility(advancedOptionsAvailable ? View.VISIBLE : View.GONE);
-        view.findViewById(R.id.divider).setVisibility(advancedOptionsAvailable ? View.VISIBLE : View.GONE);
         advancedBtn.setOnClickListener(l -> {
             advancedBtn.setSelected(!advancedBtn.isSelected());
             advancedBtn.setText(advancedBtn.isSelected() ? R.string.sk_advanced_options_hide : R.string.sk_advanced_options_show);
+			divider.setVisibility(advancedBtn.isSelected() ? View.VISIBLE : View.GONE);
             tagWrap.setVisibility(advancedBtn.isSelected() ? View.VISIBLE : View.GONE);
+			UiUtils.beginLayoutTransition((ViewGroup) view);
         });
 
         Switch localOnlySwitch = view.findViewById(R.id.local_only_switch);
@@ -285,8 +288,9 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
         NachoTextView tagsNone = prepareChipTextView(view.findViewById(R.id.tags_none));
         if (item != null) {
             tagMain.setText(item.getHashtagName());
-            boolean hasAdvanced = setTagListContent(tagsAny, item.getHashtagAny());
-            hasAdvanced = setTagListContent(tagsAll, item.getHashtagAll()) || hasAdvanced;
+			boolean hasAdvanced = !TextUtils.isEmpty(item.getCustomTitle()) && !Objects.equals(item.getHashtagName(), item.getCustomTitle());
+			hasAdvanced = setTagListContent(tagsAny, item.getHashtagAny()) || hasAdvanced;
+			hasAdvanced = setTagListContent(tagsAll, item.getHashtagAll()) || hasAdvanced;
             hasAdvanced = setTagListContent(tagsNone, item.getHashtagNone()) || hasAdvanced;
             if (item.isHashtagLocalOnly()) {
                 localOnlySwitch.setChecked(true);
@@ -296,6 +300,7 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
                 advancedBtn.setSelected(true);
                 advancedBtn.setText(R.string.sk_advanced_options_hide);
                 tagWrap.setVisibility(View.VISIBLE);
+				divider.setVisibility(View.VISIBLE);
             }
         }
 

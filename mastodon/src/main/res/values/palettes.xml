@@ -14,7 +14,6 @@
 		<item name="colorPrimary900">@color/primary_900</item>
 
 		<item name="colorGray900">@color/gray_900</item>
-		<item name="colorGray800t">@color/gray_800t</item>
 		<item name="colorGray800">@color/gray_800</item>
 		<item name="colorGray700">@color/gray_700</item>
 		<item name="colorGray600">@color/gray_600</item>
@@ -57,7 +56,6 @@
 		<item name="colorTertiary900">@color/primary_900</item>
 
 		<item name="colorNeutral900">@color/gray_900</item>
-		<item name="colorNeutral800t">@color/gray_800t</item>
 		<item name="colorNeutral800">@color/gray_800</item>
 		<item name="colorNeutral700">@color/gray_700</item>
 		<item name="colorNeutral600">@color/gray_600</item>
@@ -96,6 +94,7 @@
 		<item name="colorFavorite">@color/favorite_selected</item>
 		<item name="colorBoost">?colorM3Primary</item>
 		<item name="colorPoll">@color/bookmark_selected</item>
+		<item name="colorTabBarAlpha">#14000000</item>
 	</style>
 
 	<style name="ColorPalette.Dark">
@@ -117,7 +116,7 @@
 		<item name="colorM3Surface">?colorGray900</item>
 		<item name="colorM3OnSurface">?colorGray100</item>
 		<item name="colorM3SurfaceVariant">?colorNeutral700</item>
-		<item name="colorM3OnSurfaceVariant">?colorNeutral200</item>
+		<item name="colorM3OnSurfaceVariant">?colorNeutral100</item>
 		<item name="colorM3Outline">?colorNeutral500</item>
 		<item name="colorM3OutlineVariant">?colorNeutral700</item>
 		<item name="colorM3PressedOverlay">?colorPrimary200</item>
@@ -130,6 +129,8 @@
 		<item name="android:windowBackground">@color/black</item>
 		<item name="colorM3Background">@color/black</item>
 		<item name="colorM3Surface">@color/black</item>
+		<item name="colorM3SurfaceVariant">?colorNeutral900</item>
+		<item name="colorTabBarAlpha">#00000000</item>
 	</style>
 
 	<style name="ColorPalette.Material3">
@@ -193,7 +194,6 @@
 		<item name="colorTertiary900">@color/m3_accent3_900</item>
 
 		<item name="colorGray900">@color/m3_neutral1_900</item>
-		<item name="colorGray800t">@color/m3_neutral1_800t</item>
 		<item name="colorGray800">@color/m3_neutral1_800</item>
 		<item name="colorGray700">@color/m3_neutral1_700</item>
 		<item name="colorGray600">@color/m3_neutral1_600</item>
@@ -207,7 +207,6 @@
 		<item name="colorGray25">@color/m3_neutral1_25</item>
 
 		<item name="colorNeutral900">@color/m3_neutral2_900</item>
-		<item name="colorNeutral800t">@color/m3_neutral2_800t</item>
 		<item name="colorNeutral800">@color/m3_neutral2_800</item>
 		<item name="colorNeutral700">@color/m3_neutral2_700</item>
 		<item name="colorNeutral600">@color/m3_neutral2_600</item>
@@ -300,7 +299,6 @@
 		<item name="colorPrimary900">@color/green_primary_900</item>
 
 		<item name="colorGray900">@color/brownish_gray_900</item>
-		<item name="colorGray800t">@color/brownish_gray_800t</item>
 		<item name="colorGray800">@color/brownish_gray_800</item>
 		<item name="colorGray700">@color/brownish_gray_700</item>
 		<item name="colorGray600">@color/brownish_gray_600</item>
@@ -351,7 +349,6 @@
 		<item name="colorPrimary900">@color/brown_primary_900</item>
 
 		<item name="colorGray900">@color/brownish_gray_900</item>
-		<item name="colorGray800t">@color/brownish_gray_800t</item>
 		<item name="colorGray800">@color/brownish_gray_800</item>
 		<item name="colorGray700">@color/brownish_gray_700</item>
 		<item name="colorGray600">@color/brownish_gray_600</item>
@@ -380,7 +377,6 @@
 		<item name="colorPrimary900">@color/yellow_primary_900</item>
 
 		<item name="colorGray900">@color/brownish_gray_900</item>
-		<item name="colorGray800t">@color/brownish_gray_800t</item>
 		<item name="colorGray800">@color/brownish_gray_800</item>
 		<item name="colorGray700">@color/brownish_gray_700</item>
 		<item name="colorGray600">@color/brownish_gray_600</item>
@@ -410,7 +406,6 @@
 		<item name="colorPrimary900">@color/red_primary_900</item>
 
 		<item name="colorGray900">@color/brownish_gray_900</item>
-		<item name="colorGray800t">@color/brownish_gray_800t</item>
 		<item name="colorGray800">@color/brownish_gray_800</item>
 		<item name="colorGray700">@color/brownish_gray_700</item>
 		<item name="colorGray600">@color/brownish_gray_600</item>

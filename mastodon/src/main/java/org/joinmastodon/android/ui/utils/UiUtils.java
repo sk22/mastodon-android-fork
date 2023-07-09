@@ -912,7 +912,12 @@ public class UiUtils {
 	}
 
 	public static int alphaBlendThemeColors(Context context, @AttrRes int color1, @AttrRes int color2, float alpha){
+		if(UiUtils.isTrueBlackTheme()) return getThemeColor(context, color1);
 		return alphaBlendColors(getThemeColor(context, color1), getThemeColor(context, color2), alpha);
+	}
+
+	public static boolean isTrueBlackTheme(){
+		return isDarkTheme() && trueBlackTheme;
 	}
 
 	public static boolean isDarkTheme() {

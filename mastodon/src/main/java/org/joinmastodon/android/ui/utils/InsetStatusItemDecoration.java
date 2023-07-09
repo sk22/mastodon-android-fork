@@ -27,7 +27,7 @@ public class InsetStatusItemDecoration extends RecyclerView.ItemDecoration{
 
 	public InsetStatusItemDecoration(BaseStatusListFragment<?> listFragment){
 		this.listFragment=listFragment;
-		bgColor=UiUtils.getThemeColor(listFragment.getActivity(), android.R.attr.colorBackground);
+		bgColor=UiUtils.getThemeColor(listFragment.getActivity(), R.attr.colorM3SurfaceVariant);
 		borderColor=UiUtils.getThemeColor(listFragment.getActivity(), R.attr.colorM3OutlineVariant);
 	}
 

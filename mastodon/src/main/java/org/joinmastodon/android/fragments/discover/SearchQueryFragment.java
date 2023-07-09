@@ -183,8 +183,8 @@ public class SearchQueryFragment extends MastodonRecyclerFragment<SearchResultVi
 
 		super.onViewCreated(view, savedInstanceState);
 
-		view.setBackgroundResource(R.drawable.bg_m3_surface3);
 		int color=UiUtils.alphaBlendThemeColors(getActivity(), R.attr.colorM3Surface, R.attr.colorM3Primary, 0.11f);
+		view.setBackgroundColor(color);
 		setStatusBarColor(color);
 		setNavigationBarColor(color);
 		if(currentQuery!=null){
