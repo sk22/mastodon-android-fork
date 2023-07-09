@@ -1577,7 +1577,7 @@ public class UiUtils {
 			"pronouns.page/"
 	};
 
-	private static final Pattern trimPronouns=Pattern.compile("\\W*(\\w.*\\w|\\w)\\W*");
+	private static final Pattern trimPronouns=Pattern.compile("[^\\w*]*([\\w*].*[\\w*]|[\\w*])\\W*");
 	private static String extractPronounsFromField(String localizedPronouns, AccountField field) {
 		if(!field.name.toLowerCase().contains(localizedPronouns) &&
 				!field.name.toLowerCase().contains("pronouns")) return null;

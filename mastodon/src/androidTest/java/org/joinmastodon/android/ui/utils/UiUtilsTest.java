@@ -253,5 +253,9 @@ public class UiUtilsTest {
 				makeField("pronomen sind", "er/ihm"),
 				makeField("pronouns are", "he/him")
 		)).orElseThrow());
+
+		assertEquals("* (asterisk)", UiUtils.extractPronouns(MastodonApp.context, fakeAccount(
+				makeField("pronouns", "-- * (asterisk) --")
+		)).orElseThrow());
 	}
 }
