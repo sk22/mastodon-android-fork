@@ -100,7 +100,7 @@
 			android:layout_height="48dp"
 			android:layout_gravity="center_vertical"
 			android:paddingHorizontal="12dp"
-			android:minWidth="100dp"
+			android:minWidth="110dp"
 			android:maxWidth="170dp"
 			style="@style/Widget.Mastodon.M3.Button.Filled"
 			tools:text="Follow back"/>
