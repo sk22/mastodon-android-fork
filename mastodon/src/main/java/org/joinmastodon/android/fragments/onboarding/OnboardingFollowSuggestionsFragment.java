@@ -9,8 +9,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -19,9 +17,8 @@ import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.accounts.GetAccountRelationships;
 import org.joinmastodon.android.api.requests.accounts.GetFollowSuggestions;
 import org.joinmastodon.android.api.requests.accounts.SetAccountFollowed;
-import org.joinmastodon.android.fragments.HomeFragment;
 import org.joinmastodon.android.fragments.ProfileFragment;
-import org.joinmastodon.android.fragments.RecyclerFragment;
+import org.joinmastodon.android.fragments.MastodonRecyclerFragment;
 import org.joinmastodon.android.model.FollowSuggestion;
 import org.joinmastodon.android.model.ParsedAccount;
 import org.joinmastodon.android.model.Relationship;
@@ -52,7 +49,7 @@ import me.grishka.appkit.utils.V;
 import me.grishka.appkit.views.FragmentRootLinearLayout;
 import me.grishka.appkit.views.UsableRecyclerView;
 
-public class OnboardingFollowSuggestionsFragment extends RecyclerFragment<ParsedAccount> {
+public class OnboardingFollowSuggestionsFragment extends MastodonRecyclerFragment<ParsedAccount> {
 	private String accountID;
 	private Map<String, Relationship> relationships=Collections.emptyMap();
 	private GetAccountRelationships relationshipsRequest;

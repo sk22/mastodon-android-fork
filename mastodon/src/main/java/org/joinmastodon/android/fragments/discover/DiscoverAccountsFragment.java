@@ -17,8 +17,8 @@ import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.accounts.GetAccountRelationships;
 import org.joinmastodon.android.api.requests.accounts.GetFollowSuggestions;
 import org.joinmastodon.android.fragments.IsOnTop;
+import org.joinmastodon.android.fragments.MastodonRecyclerFragment;
 import org.joinmastodon.android.fragments.ProfileFragment;
-import org.joinmastodon.android.fragments.RecyclerFragment;
 import org.joinmastodon.android.fragments.ScrollableToTop;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.FollowSuggestion;
@@ -51,7 +51,7 @@ import me.grishka.appkit.utils.BindableViewHolder;
 import me.grishka.appkit.utils.V;
 import me.grishka.appkit.views.UsableRecyclerView;
 
-public class DiscoverAccountsFragment extends RecyclerFragment<DiscoverAccountsFragment.AccountWrapper> implements ScrollableToTop, IsOnTop, ProvidesAssistContent.ProvidesWebUri {
+public class DiscoverAccountsFragment extends MastodonRecyclerFragment<DiscoverAccountsFragment.AccountWrapper> implements ScrollableToTop, IsOnTop, ProvidesAssistContent.ProvidesWebUri {
 	private String accountID;
 	private Map<String, Relationship> relationships=Collections.emptyMap();
 	private GetAccountRelationships relationshipsRequest;

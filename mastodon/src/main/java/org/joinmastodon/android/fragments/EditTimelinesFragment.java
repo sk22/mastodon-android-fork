@@ -16,7 +16,6 @@ import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -35,7 +34,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.hootsuite.nachos.NachoTextView;
 
-import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.lists.GetLists;
 import org.joinmastodon.android.api.requests.tags.GetFollowedHashtags;
@@ -62,7 +60,7 @@ import me.grishka.appkit.api.ErrorResponse;
 import me.grishka.appkit.utils.BindableViewHolder;
 import me.grishka.appkit.views.UsableRecyclerView;
 
-public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> implements ScrollableToTop {
+public class EditTimelinesFragment extends MastodonRecyclerFragment<TimelineDefinition> implements ScrollableToTop {
     private String accountID;
     private TimelinesAdapter adapter;
     private final ItemTouchHelper itemTouchHelper;

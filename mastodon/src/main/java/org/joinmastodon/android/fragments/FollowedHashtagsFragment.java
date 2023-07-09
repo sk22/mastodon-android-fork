@@ -21,7 +21,7 @@ import me.grishka.appkit.api.SimpleCallback;
 import me.grishka.appkit.utils.BindableViewHolder;
 import me.grishka.appkit.views.UsableRecyclerView;
 
-public class FollowedHashtagsFragment extends RecyclerFragment<Hashtag> implements ScrollableToTop, ProvidesAssistContent.ProvidesWebUri {
+public class FollowedHashtagsFragment extends MastodonRecyclerFragment<Hashtag> implements ScrollableToTop, ProvidesAssistContent.ProvidesWebUri {
     private String nextMaxID;
     private String accountID;
 

@@ -48,7 +48,7 @@ import me.grishka.appkit.utils.BindableViewHolder;
 import me.grishka.appkit.utils.V;
 import me.grishka.appkit.views.UsableRecyclerView;
 
-public class FollowRequestsListFragment extends RecyclerFragment<FollowRequestsListFragment.AccountWrapper> implements ScrollableToTop, ProvidesAssistContent.ProvidesWebUri {
+public class FollowRequestsListFragment extends MastodonRecyclerFragment<FollowRequestsListFragment.AccountWrapper> implements ScrollableToTop, ProvidesAssistContent.ProvidesWebUri {
 	private String accountID;
 	private Map<String, Relationship> relationships=Collections.emptyMap();
 	private GetAccountRelationships relationshipsRequest;
