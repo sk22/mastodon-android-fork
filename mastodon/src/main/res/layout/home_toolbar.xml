@@ -10,6 +10,7 @@
 		android:layout_height="match_parent"
 		android:layout_gravity="center_vertical|start"
 		android:layout_marginStart="4dp"
+		android:minWidth="48dp"
 		android:tooltipText="@string/sk_switch_timeline"
 		android:paddingStart="12dp"
 		android:paddingEnd="12dp">
