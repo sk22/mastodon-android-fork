@@ -338,7 +338,6 @@ public class SearchQueryFragment extends MastodonRecyclerFragment<SearchResultVi
 		anims.add(ObjectAnimator.ofFloat(outlineProvider, "radius", enter ? buttonRadius : screenRadius, enter ? screenRadius : buttonRadius));
 		anims.add(ObjectAnimator.ofFloat(toolbar, View.TRANSLATION_X, enter ? toolbarTX : 0, enter ? 0 : toolbarTX));
 		anims.add(ObjectAnimator.ofFloat(toolbar, View.TRANSLATION_Y, enter ? toolbarTY : 0, enter ? 0 : toolbarTY));
-		anims.add(ObjectAnimator.ofFloat(searchViewHelper.getSearchLayout(), View.TRANSLATION_X, enter ? V.dp(-4) : 0, enter ? 0 : V.dp(-4)));
 		anims.add(ObjectAnimator.ofFloat(searchViewHelper.getDivider(), View.ALPHA, enter ? 0 : 1, enter ? 1 : 0));
 		View parentContent=prev.findViewById(R.id.discover_content);
 		View parentContentParent=(View) parentContent.getParent();

@@ -45,13 +45,14 @@ public class SearchViewHelper{
 		searchEdit.setHint(hint);
 		searchEdit.setInputType(InputType.TYPE_TEXT_VARIATION_FILTER);
 		searchEdit.setBackground(null);
+		searchEdit.setPadding(0, 0, 0, 0);
 		searchEdit.addTextChangedListener(new SimpleTextWatcher(e->{
 			searchEdit.removeCallbacks(debouncer);
 			searchEdit.postDelayed(debouncer, 300);
 			boolean newIsEmpty=e.length()==0;
 			if(isEmpty!=newIsEmpty){
 				isEmpty=newIsEmpty;
-				V.setVisibilityAnimated(clearSearchButton, isEmpty ? View.INVISIBLE : View.VISIBLE);
+				V.setVisibilityAnimated(clearSearchButton, isEmpty ? View.GONE : View.VISIBLE);
 			}
 			if(listenerWithoutDebounce!=null)
 				listenerWithoutDebounce.accept(e.toString());
@@ -79,7 +80,7 @@ public class SearchViewHelper{
 			searchEdit.removeCallbacks(debouncer);
 			debouncer.run();
 		});
-		clearSearchButton.setVisibility(View.INVISIBLE);
+		clearSearchButton.setVisibility(View.GONE);
 		searchLayout.addView(clearSearchButton, new LinearLayout.LayoutParams(V.dp(56), ViewGroup.LayoutParams.MATCH_PARENT));
 	}
 

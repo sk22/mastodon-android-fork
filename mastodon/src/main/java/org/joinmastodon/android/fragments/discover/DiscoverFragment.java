@@ -166,9 +166,10 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 
 		searchBack=view.findViewById(R.id.search_back);
 		searchText=view.findViewById(R.id.search_text);
-		searchBack.setEnabled(searchActive);
 		searchBack.setImportantForAccessibility(searchActive ? View.IMPORTANT_FOR_ACCESSIBILITY_YES : View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-		searchBack.setOnClickListener(v->exitSearch());
+		searchBack.setOnClickListener(v->{
+			if(searchActive) exitSearch(); else openSearch();
+		});
 		if(searchActive){
 			searchBack.setImageResource(R.drawable.ic_fluent_arrow_left_24_regular);
 			pager.setVisibility(View.GONE);
