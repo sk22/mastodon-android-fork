@@ -85,7 +85,7 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 	public static class Holder extends StatusDisplayItem.Holder<TextStatusDisplayItem> implements ImageLoaderViewHolder{
 		private final LinkedTextView text;
 		private final TextView translateInfo, readMore;
-		private final View textWrap, translateWrap, translateProgress, spaceBelowText;
+		private final View textWrap, translateWrap, translateProgress;
 		private final Button translateButton;
 		private final ScrollView textScrollView;
 
@@ -104,7 +104,6 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 			translateProgress=findViewById(R.id.translate_progress);
 			textScrollView=findViewById(R.id.text_scroll_view);
 			readMore=findViewById(R.id.read_more);
-			spaceBelowText=findViewById(R.id.space_below_text);
 			textMaxHeight=activity.getResources().getDimension(R.dimen.text_max_height);
 			textCollapsedHeight=activity.getResources().getDimension(R.dimen.text_collapsed_height);
 			collapseParams=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) textCollapsedHeight);
@@ -193,7 +192,6 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 			});
 
 			readMore.setText(item.status.textExpanded ? R.string.sk_collapse : R.string.sk_expand);
-			spaceBelowText.setVisibility(translateVisible ? View.VISIBLE : View.GONE);
 
 			// remove additional padding when (transparently padded) translate button is visible
 			int nextPos = getAbsoluteAdapterPosition() + 1;
@@ -230,9 +228,10 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 				item.parentFragment.onEnableExpandable(Holder.this, expandable);
 			}
 
-			readMore.setVisibility(item.status.textExpandable && !item.status.textExpanded ? View.VISIBLE : View.GONE);
+			boolean expandButtonShown=item.status.textExpandable && !item.status.textExpanded;
+			translateWrap.setPadding(0, V.dp(expandButtonShown ? 0 : 4), 0, 0);
+			readMore.setVisibility(expandButtonShown ? View.VISIBLE : View.GONE);
 			textScrollView.setLayoutParams(item.status.textExpandable && !item.status.textExpanded ? collapseParams : wrapParams);
-			if (item.status.textExpandable && !translateVisible) spaceBelowText.setVisibility(View.VISIBLE);
 
 			// compensate for spoiler's bottom margin
 			ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) itemView.getLayoutParams();

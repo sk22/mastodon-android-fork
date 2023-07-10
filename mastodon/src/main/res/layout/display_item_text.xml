@@ -37,7 +37,6 @@
 		style="@style/Widget.Mastodon.M3.Button.Text"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_marginTop="-4dp"
 		android:layout_marginHorizontal="16dp"
 		android:minHeight="48dp"
 		android:textAppearance="@style/m3_label_small"
@@ -50,6 +49,7 @@
 		android:id="@+id/translate_wrap"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:paddingTop="6dp"
 		android:gravity="center_vertical"
 		android:visibility="gone">
 
@@ -68,7 +68,6 @@
 				android:minWidth="0dp"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:paddingHorizontal="8dp"
 				tools:text="@string/sk_translate_post"/>
 			<ProgressBar
 				android:id="@+id/translate_progress"
