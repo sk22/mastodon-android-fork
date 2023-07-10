@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<style name="ColorPalette">
+	<style name="ColorPalette.Fallback" parent="">
 		<item name="colorPrimary25">@color/primary_25</item>
 		<item name="colorPrimary50">@color/primary_50</item>
 		<item name="colorPrimary100">@color/primary_100</item>
@@ -25,49 +25,9 @@
 		<item name="colorGray50t">@color/gray_50t</item>
 		<item name="colorGray50">@color/gray_50</item>
 		<item name="colorGray25">@color/gray_25</item>
+	</style>
 
-		<!--
-		custom themes generally don't have secondary/tertiary accent colors -
-		falling back to primary colors
-		-->
-
-		<item name="colorSecondary25">@color/primary_25</item>
-		<item name="colorSecondary50">@color/primary_50</item>
-		<item name="colorSecondary100">@color/primary_100</item>
-		<item name="colorSecondary200">@color/primary_200</item>
-		<item name="colorSecondary300">@color/primary_300</item>
-		<item name="colorSecondary400">@color/primary_400</item>
-		<item name="colorSecondary500">@color/primary_500</item>
-		<item name="colorSecondary600">@color/primary_600</item>
-		<item name="colorSecondary700">@color/primary_700</item>
-		<item name="colorSecondary800">@color/primary_800</item>
-		<item name="colorSecondary900">@color/primary_900</item>
-
-		<item name="colorTertiary25">@color/primary_25</item>
-		<item name="colorTertiary50">@color/primary_50</item>
-		<item name="colorTertiary100">@color/primary_100</item>
-		<item name="colorTertiary200">@color/primary_200</item>
-		<item name="colorTertiary300">@color/primary_300</item>
-		<item name="colorTertiary400">@color/primary_400</item>
-		<item name="colorTertiary500">@color/primary_500</item>
-		<item name="colorTertiary600">@color/primary_600</item>
-		<item name="colorTertiary700">@color/primary_700</item>
-		<item name="colorTertiary800">@color/primary_800</item>
-		<item name="colorTertiary900">@color/primary_900</item>
-
-		<item name="colorNeutral900">@color/gray_900</item>
-		<item name="colorNeutral800">@color/gray_800</item>
-		<item name="colorNeutral700">@color/gray_700</item>
-		<item name="colorNeutral600">@color/gray_600</item>
-		<item name="colorNeutral500">@color/gray_500</item>
-		<item name="colorNeutral400">@color/gray_400</item>
-		<item name="colorNeutral300">@color/gray_300</item>
-		<item name="colorNeutral200">@color/gray_200</item>
-		<item name="colorNeutral100">@color/gray_100</item>
-		<item name="colorNeutral50t">@color/gray_50t</item>
-		<item name="colorNeutral50">@color/gray_50</item>
-		<item name="colorNeutral25">@color/gray_25</item>
-
+	<style name="ColorPalette">
 		<item name="colorM3Primary">?colorPrimary600</item>
 		<item name="colorM3OnPrimary">@color/white</item>
 		<item name="colorM3PrimaryContainer">?colorPrimary100</item>
@@ -95,6 +55,48 @@
 		<item name="colorBoost">?colorM3Primary</item>
 		<item name="colorPoll">@color/bookmark_selected</item>
 		<item name="colorTabBarAlpha">#14000000</item>
+
+		<!--
+		custom themes generally don't have secondary/tertiary accent colors -
+		falling back to primary colors
+		-->
+
+		<item name="colorSecondary25">?colorPrimary25</item>
+		<item name="colorSecondary50">?colorPrimary50</item>
+		<item name="colorSecondary100">?colorPrimary100</item>
+		<item name="colorSecondary200">?colorPrimary200</item>
+		<item name="colorSecondary300">?colorPrimary300</item>
+		<item name="colorSecondary400">?colorPrimary400</item>
+		<item name="colorSecondary500">?colorPrimary500</item>
+		<item name="colorSecondary600">?colorPrimary600</item>
+		<item name="colorSecondary700">?colorPrimary700</item>
+		<item name="colorSecondary800">?colorPrimary800</item>
+		<item name="colorSecondary900">?colorPrimary900</item>
+
+		<item name="colorTertiary25">?colorPrimary25</item>
+		<item name="colorTertiary50">?colorPrimary50</item>
+		<item name="colorTertiary100">?colorPrimary100</item>
+		<item name="colorTertiary200">?colorPrimary200</item>
+		<item name="colorTertiary300">?colorPrimary300</item>
+		<item name="colorTertiary400">?colorPrimary400</item>
+		<item name="colorTertiary500">?colorPrimary500</item>
+		<item name="colorTertiary600">?colorPrimary600</item>
+		<item name="colorTertiary700">?colorPrimary700</item>
+		<item name="colorTertiary800">?colorPrimary800</item>
+		<item name="colorTertiary900">?colorPrimary900</item>
+
+		<item name="colorNeutral900">?colorGray900</item>
+		<item name="colorNeutral800">?colorGray800</item>
+		<item name="colorNeutral700">?colorGray700</item>
+		<item name="colorNeutral600">?colorGray600</item>
+		<item name="colorNeutral500">?colorGray500</item>
+		<item name="colorNeutral400">?colorGray400</item>
+		<item name="colorNeutral300">?colorGray300</item>
+		<item name="colorNeutral200">?colorGray200</item>
+		<item name="colorNeutral100">?colorGray100</item>
+		<item name="colorNeutral50t">?colorGray50t</item>
+		<item name="colorNeutral50">?colorGray50</item>
+		<item name="colorNeutral25">?colorGray25</item>
 	</style>
 
 	<style name="ColorPalette.Dark">
