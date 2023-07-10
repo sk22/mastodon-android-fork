@@ -223,7 +223,7 @@ public abstract class StatusDisplayItem{
 		ArrayList<StatusDisplayItem> contentItems;
 		if(!TextUtils.isEmpty(statusForContent.spoilerText)){
 			if (AccountSessionManager.get(accountID).getLocalPreferences().revealCWs) statusForContent.spoilerRevealed = true;
-			SpoilerStatusDisplayItem spoilerItem=new SpoilerStatusDisplayItem(parentID, fragment, null, status, statusForContent, Type.SPOILER);
+			SpoilerStatusDisplayItem spoilerItem=new SpoilerStatusDisplayItem(parentID, fragment, null, statusForContent, Type.SPOILER);
 			items.add(spoilerItem);
 			contentItems=spoilerItem.contentItems;
 		}else{
@@ -273,7 +273,7 @@ public abstract class StatusDisplayItem{
 		if(statusForContent.card!=null && statusForContent.mediaAttachments.isEmpty()){
 			contentItems.add(new LinkCardStatusDisplayItem(parentID, fragment, statusForContent));
 		}
-		if(contentItems!=items && status.spoilerRevealed){
+		if(contentItems!=items && statusForContent.spoilerRevealed){
 			items.addAll(contentItems);
 		}
 		if((flags & FLAG_NO_FOOTER)==0){
