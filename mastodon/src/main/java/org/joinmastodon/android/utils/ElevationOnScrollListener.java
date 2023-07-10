@@ -1,7 +1,5 @@
 package org.joinmastodon.android.utils;
 
-import static org.joinmastodon.android.GlobalUserPreferences.trueBlackTheme;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -12,7 +10,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.view.View;
 
-import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.ui.utils.UiUtils;
 
@@ -97,9 +94,9 @@ public class ElevationOnScrollListener extends RecyclerView.OnScrollListener imp
 	}
 
 	public void handleScroll(Context context, boolean newAtTop){
+		if(UiUtils.isTrueBlackTheme()) newAtTop=true;
 		if(newAtTop!=isAtTop){
 			isAtTop=newAtTop;
-			boolean dontElevate=isAtTop || trueBlackTheme;
 			if(currentPanelsAnim!=null)
 				currentPanelsAnim.cancel();
 
@@ -109,14 +106,14 @@ public class ElevationOnScrollListener extends RecyclerView.OnScrollListener imp
 				if(v.getBackground() instanceof LayerDrawable ld){
 					Drawable overlay=ld.findDrawableByLayerId(R.id.color_overlay);
 					if(overlay!=null){
-						anims.add(ObjectAnimator.ofInt(overlay, "alpha", dontElevate ? 0 : 20));
+						anims.add(ObjectAnimator.ofInt(overlay, "alpha", newAtTop ? 0 : 20));
 					}
 				}
-				anims.add(ObjectAnimator.ofFloat(v, View.TRANSLATION_Z, dontElevate ? 0 : V.dp(3)));
+				anims.add(ObjectAnimator.ofFloat(v, View.TRANSLATION_Z, newAtTop ? 0 : V.dp(3)));
 			}
 			if(fragmentRootLayout!=null){
 				int color;
-				if(dontElevate){
+				if(newAtTop){
 					color=UiUtils.getThemeColor(context, R.attr.colorM3Background);
 				}else{
 					color=UiUtils.alphaBlendColors(UiUtils.getThemeColor(context, R.attr.colorM3Background), UiUtils.getThemeColor(context, R.attr.colorM3Primary), 0.07843137f);
@@ -124,7 +121,7 @@ public class ElevationOnScrollListener extends RecyclerView.OnScrollListener imp
 				anims.add(ObjectAnimator.ofArgb(fragmentRootLayout, "statusBarColor", color));
 			}
 			if(divider!=null){
-				anims.add(ObjectAnimator.ofFloat(divider, View.ALPHA, dontElevate ? 1 : 0));
+				anims.add(ObjectAnimator.ofFloat(divider, View.ALPHA, newAtTop ? 1 : 0));
 			}
 			set.playTogether(anims);
 			set.setDuration(150);
