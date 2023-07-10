@@ -518,6 +518,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 				scrollView.getViewTreeObserver().removeOnPreDrawListener(this);
 
 				tabBarIsAtTop=!scrollView.canScrollVertically(1) && scrollView.getHeight()>0;
+				if (UiUtils.isTrueBlackTheme()) tabBarIsAtTop=false;
 				tabsColorBackground.setAlpha(tabBarIsAtTop ? 20 : 0);
 				tabbar.setTranslationZ(tabBarIsAtTop ? V.dp(3) : 0);
 				tabsDivider.setAlpha(tabBarIsAtTop ? 0 : 1);
@@ -872,6 +873,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 
 		boolean newTabBarIsAtTop=!scrollView.canScrollVertically(1);
 		if(newTabBarIsAtTop!=tabBarIsAtTop){
+			if(UiUtils.isTrueBlackTheme()) newTabBarIsAtTop=false;
 			tabBarIsAtTop=newTabBarIsAtTop;
 
 			if(tabBarIsAtTop){
