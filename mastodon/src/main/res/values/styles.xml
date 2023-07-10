@@ -20,7 +20,7 @@
 		<item name="android:editTextStyle">@style/Widget.Mastodon.M3.EditText</item>
 		<item name="android:editTextBackground">@drawable/bg_m3_outlined_text_field</item>
 
-		<item name="android:buttonStyle">@style/Widget.Mastodon.M3.Button</item>
+		<item name="android:buttonStyle">@style/Widget.Mastodon.M3.Button.Filled</item>
 		<item name="android:actionBarTheme">@style/Theme.Mastodon.Toolbar</item>
 		<item name="android:colorPrimary">?colorGray800</item>
 		<item name="android:colorBackground">?colorGray100</item>
@@ -64,7 +64,7 @@
 		<item name="android:editTextStyle">@style/Widget.Mastodon.M3.EditText</item>
 		<item name="android:editTextBackground">@drawable/bg_m3_outlined_text_field</item>
 
-		<item name="android:buttonStyle">@style/Widget.Mastodon.M3.Button</item>
+		<item name="android:buttonStyle">@style/Widget.Mastodon.M3.Button.Filled</item>
 		<item name="android:actionBarTheme">@style/Theme.Mastodon.Toolbar</item>
 		<item name="android:alertDialogTheme">@style/Theme.Mastodon.Dialog.Alert.Dark</item>
 		<item name="android:datePickerDialogTheme">@style/Theme.Mastodon.Dialog.Alert.Dark</item>
