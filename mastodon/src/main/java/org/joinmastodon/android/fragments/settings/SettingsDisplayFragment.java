@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import androidx.annotation.StringRes;
+
 import org.joinmastodon.android.E;
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.MastodonApp;
@@ -20,7 +22,9 @@ import org.joinmastodon.android.events.StatusDisplaySettingsChangedEvent;
 import org.joinmastodon.android.model.viewmodel.CheckableListItem;
 import org.joinmastodon.android.model.viewmodel.ListItem;
 import org.joinmastodon.android.ui.M3AlertDialogBuilder;
+import org.joinmastodon.android.ui.utils.ColorPalette;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -33,6 +37,7 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 
 	// MEGALODON
 	private CheckableListItem<Void> trueBlackModeItem;
+	private ListItem<Void> colorItem;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -42,6 +47,7 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 		AccountLocalPreferences lp=s.getLocalPreferences();
 		onDataLoaded(List.of(
 				themeItem=new ListItem<>(R.string.settings_theme, getAppearanceValue(), R.drawable.ic_fluent_weather_moon_24_regular, this::onAppearanceClick),
+				colorItem=new ListItem<>(R.string.sk_settings_color_palette, getColorPaletteValue(), R.drawable.ic_fluent_color_24_regular, this::onColorClick),
 				trueBlackModeItem=new CheckableListItem<>(R.string.theme_true_black, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.trueBlackTheme, R.drawable.ic_fluent_dark_theme_24_regular, this::onTrueBlackModeClick),
 				revealCWsItem=new CheckableListItem<>(R.string.sk_settings_always_reveal_content_warnings, 0, CheckableListItem.Style.SWITCH, lp.revealCWs, R.drawable.ic_fluent_chat_warning_24_regular, ()->toggleCheckableItem(revealCWsItem)),
 				hideSensitiveMediaItem=new CheckableListItem<>(R.string.settings_hide_sensitive_media, 0, CheckableListItem.Style.SWITCH, lp.hideSensitiveMedia, R.drawable.ic_fluent_flag_24_regular, ()->toggleCheckableItem(hideSensitiveMediaItem)),
@@ -78,7 +84,7 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 		E.post(new StatusDisplaySettingsChangedEvent(accountID));
 	}
 
-	private int getAppearanceValue(){
+	private @StringRes int getAppearanceValue(){
 		return switch(GlobalUserPreferences.theme){
 			case AUTO -> R.string.theme_auto;
 			case LIGHT -> R.string.theme_light;
@@ -86,12 +92,24 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 		};
 	}
 
+	private @StringRes int getColorPaletteValue(){
+		return switch(GlobalUserPreferences.color){
+			case MATERIAL3 -> R.string.sk_color_palette_material3;
+			case PINK -> R.string.sk_color_palette_pink;
+			case PURPLE -> R.string.sk_color_palette_purple;
+			case GREEN -> R.string.sk_color_palette_green;
+			case BLUE -> R.string.sk_color_palette_blue;
+			case BROWN -> R.string.sk_color_palette_brown;
+			case RED -> R.string.sk_color_palette_red;
+			case YELLOW -> R.string.sk_color_palette_yellow;
+		};
+	}
+
 	private void onTrueBlackModeClick(){
 		toggleCheckableItem(trueBlackModeItem);
-		boolean previouslyBlack=GlobalUserPreferences.trueBlackTheme;
-		GlobalUserPreferences.ThemePreference prev=GlobalUserPreferences.theme;
+		boolean prev=GlobalUserPreferences.trueBlackTheme;
 		GlobalUserPreferences.trueBlackTheme=trueBlackModeItem.checked;
-		maybeApplyNewThemeRightNow(prev, previouslyBlack);
+		maybeApplyNewThemeRightNow(null, null, prev);
 	}
 
 	private void onAppearanceClick(){
@@ -118,20 +136,47 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 						GlobalUserPreferences.save();
 						themeItem.subtitleRes=getAppearanceValue();
 						rebindItem(themeItem);
-						maybeApplyNewThemeRightNow(prev, GlobalUserPreferences.trueBlackTheme);
+						maybeApplyNewThemeRightNow(prev, null, null);
 					}
 				})
 				.setNegativeButton(R.string.cancel, null)
 				.show();
 	}
 
-	private void maybeApplyNewThemeRightNow(GlobalUserPreferences.ThemePreference prev, boolean previouslyBlack){
-		boolean isCurrentDark=prev==GlobalUserPreferences.ThemePreference.DARK ||
-				(prev==GlobalUserPreferences.ThemePreference.AUTO && Build.VERSION.SDK_INT>=30 && getResources().getConfiguration().isNightModeActive());
+	private void onColorClick(){
+		int selected=GlobalUserPreferences.color.ordinal();
+		int[] newSelected={selected};
+		String[] names=Arrays.stream(GlobalUserPreferences.ColorPreference.values()).map(GlobalUserPreferences.ColorPreference::getName).map(this::getString).toArray(String[]::new);
+		new M3AlertDialogBuilder(getActivity())
+				.setTitle(R.string.settings_theme)
+				.setSingleChoiceItems(names,
+						selected, (dlg, item)->newSelected[0]=item)
+				.setPositiveButton(R.string.ok, (dlg, item)->{
+					GlobalUserPreferences.ColorPreference pref=GlobalUserPreferences.ColorPreference.values()[newSelected[0]];
+					if(pref!=GlobalUserPreferences.color){
+						GlobalUserPreferences.ColorPreference prev=GlobalUserPreferences.color;
+						GlobalUserPreferences.color=pref;
+						GlobalUserPreferences.save();
+						colorItem.subtitleRes=getColorPaletteValue();
+						rebindItem(colorItem);
+						maybeApplyNewThemeRightNow(null, prev, null);
+					}
+				})
+				.setNegativeButton(R.string.cancel, null)
+				.show();
+	}
+
+	private void maybeApplyNewThemeRightNow(GlobalUserPreferences.ThemePreference prevTheme, GlobalUserPreferences.ColorPreference prevColor, Boolean prevTrueBlack){
+		if(prevTheme==null) prevTheme=GlobalUserPreferences.theme;
+		if(prevTrueBlack==null) prevTrueBlack=GlobalUserPreferences.trueBlackTheme;
+		if(prevColor==null) prevColor=GlobalUserPreferences.color;
+
+		boolean isCurrentDark=prevTheme==GlobalUserPreferences.ThemePreference.DARK ||
+				(prevTheme==GlobalUserPreferences.ThemePreference.AUTO && Build.VERSION.SDK_INT>=30 && getResources().getConfiguration().isNightModeActive());
 		boolean isNewDark=GlobalUserPreferences.theme==GlobalUserPreferences.ThemePreference.DARK ||
 				(GlobalUserPreferences.theme==GlobalUserPreferences.ThemePreference.AUTO && Build.VERSION.SDK_INT>=30 && getResources().getConfiguration().isNightModeActive());
 		boolean isNewBlack=GlobalUserPreferences.trueBlackTheme;
-		if(isCurrentDark!=isNewDark || (isNewDark && previouslyBlack!=isNewBlack)){
+		if(isCurrentDark!=isNewDark || prevColor!=GlobalUserPreferences.color || (isNewDark && prevTrueBlack!=isNewBlack)){
 			restartActivityToApplyNewTheme();
 		}
 	}

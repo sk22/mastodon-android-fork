@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import androidx.annotation.StringRes;
+
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
@@ -226,7 +228,20 @@ public class GlobalUserPreferences{
 		BLUE,
 		BROWN,
 		RED,
-		YELLOW
+		YELLOW;
+
+		public @StringRes int getName() {
+			return switch(this){
+				case MATERIAL3 -> R.string.sk_color_palette_material3;
+				case PINK -> R.string.sk_color_palette_pink;
+				case PURPLE -> R.string.sk_color_palette_purple;
+				case GREEN -> R.string.sk_color_palette_green;
+				case BLUE -> R.string.sk_color_palette_blue;
+				case BROWN -> R.string.sk_color_palette_brown;
+				case RED -> R.string.sk_color_palette_red;
+				case YELLOW -> R.string.sk_color_palette_yellow;
+			};
+		}
 	}
 
 	public enum ThemePreference{
