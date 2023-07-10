@@ -270,7 +270,7 @@ public class EditTimelinesFragment extends MastodonRecyclerFragment<TimelineDefi
         advancedBtn.setVisibility(advancedOptionsAvailable ? View.VISIBLE : View.GONE);
         advancedBtn.setOnClickListener(l -> {
             advancedBtn.setSelected(!advancedBtn.isSelected());
-            advancedBtn.setText(advancedBtn.isSelected() ? R.string.sk_advanced_options_hide : R.string.sk_advanced_options_show);
+			advancedBtn.setText(advancedBtn.isSelected() ? R.string.sk_advanced_options_hide : R.string.sk_advanced_options_show);
 			divider.setVisibility(advancedBtn.isSelected() ? View.VISIBLE : View.GONE);
             tagWrap.setVisibility(advancedBtn.isSelected() ? View.VISIBLE : View.GONE);
 			UiUtils.beginLayoutTransition((ViewGroup) view);
@@ -297,7 +297,7 @@ public class EditTimelinesFragment extends MastodonRecyclerFragment<TimelineDefi
             if (hasAdvanced) {
                 advancedBtn.setSelected(true);
                 advancedBtn.setText(R.string.sk_advanced_options_hide);
-                tagWrap.setVisibility(View.VISIBLE);
+				tagWrap.setVisibility(View.VISIBLE);
 				divider.setVisibility(View.VISIBLE);
             }
         }
