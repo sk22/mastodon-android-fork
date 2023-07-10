@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.assist.AssistContent;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -28,6 +29,7 @@ import android.transition.ChangeBounds;
 import android.transition.Fade;
 import android.transition.TransitionManager;
 import android.transition.TransitionSet;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -577,9 +579,10 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			for (Account.Role role : account.roles) {
 				TextView roleText = new TextView(getActivity(), null, 0, R.style.role_label);
 				roleText.setText(role.name);
+				roleText.setGravity(Gravity.CENTER_VERTICAL);
 				if (!TextUtils.isEmpty(role.color) && role.color.startsWith("#")) try {
 					GradientDrawable bg = (GradientDrawable) roleText.getBackground().mutate();
-					bg.setStroke(V.dp(2), Color.parseColor(role.color));
+					bg.setStroke(V.dp(1), Color.parseColor(role.color));
 				} catch (Exception ignored) {}
 				rolesView.addView(roleText);
 			}
