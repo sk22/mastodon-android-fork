@@ -51,10 +51,7 @@ public abstract class BaseSettingsFragment<T> extends MastodonRecyclerFragment<L
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState){
 		super.onViewCreated(view, savedInstanceState);
-		list.addItemDecoration(new DividerItemDecoration(getActivity(), R.attr.colorM3OutlineVariant, 1, 0, 0, vh->{
-
-			return vh instanceof ListItemViewHolder<?> ivh && ivh.getItem().dividerAfter;
-		}));
+		list.addItemDecoration(new DividerItemDecoration(getActivity(), R.attr.colorM3OutlineVariant, 1, 0, 0, vh->vh instanceof ListItemViewHolder<?> ivh && ivh.getItem().dividerAfter));
 		list.setItemAnimator(new BetterItemAnimator());
 	}
 
