@@ -10,7 +10,7 @@
 &nbsp;
 <a href="#installation"><img height="50" alt="Get it on IzzyOnDroid" src="img/izzy-badge.png"></a>
 
-> A fork of the [Mastodon Android app](https://github.com/mastodon/mastodon-android) adding important features that are missing in the official app, focusing on [Glitch](https://glitch-soc.github.io/docs) compatibility, a pretty UI and adding new features that I feel make using the Fediverse a more pleasent experience.
+> A fork of the [Mastodon Android app](https://github.com/mastodon/mastodon-android) adding important features that are missing in the official app, focusing on [Glitch](https://glitch-soc.github.io/docs) compatibility, a pretty UI and adding new features that I feel make using the Fediverse a more pleasant experience.
 
 
 ## Key features
