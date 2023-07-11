@@ -34,6 +34,7 @@ public class AccountLocalPreferences{
 	public boolean glitchInstance;
 	public String publishButtonText;
 	public String timelineReplyVisibility; // akkoma-only
+	public boolean keepOnlyLatestNotification;
 
 	private final static Type recentLanguagesType = new TypeToken<ArrayList<String>>() {}.getType();
 	private final static Type timelinesType = new TypeToken<ArrayList<TimelineDefinition>>() {}.getType();
@@ -56,6 +57,7 @@ public class AccountLocalPreferences{
 		glitchInstance=prefs.getBoolean("glitchInstance", false);
 		publishButtonText=prefs.getString("publishButtonText", null);
 		timelineReplyVisibility=prefs.getString("timelineReplyVisibility", null);
+		keepOnlyLatestNotification=prefs.getBoolean("keepOnlyLatestNotification", false);
 	}
 
 	public long getNotificationsPauseEndTime(){
@@ -84,6 +86,7 @@ public class AccountLocalPreferences{
 				.putBoolean("glitchInstance", glitchInstance)
 				.putString("publishButtonText", publishButtonText)
 				.putString("timelineReplyVisibility", timelineReplyVisibility)
+				.putBoolean("keepOnlyLatestNotification", keepOnlyLatestNotification)
 				.apply();
 	}
 }

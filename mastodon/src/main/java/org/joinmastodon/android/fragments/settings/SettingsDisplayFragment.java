@@ -81,8 +81,6 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 	@Override
 	protected void onHidden(){
 		super.onHidden();
-		AccountSession s=AccountSessionManager.get(accountID);
-		AccountLocalPreferences lp=s.getLocalPreferences();
 		lp.revealCWs=revealCWsItem.checked;
 		lp.hideSensitiveMedia=hideSensitiveMediaItem.checked;
 		lp.showInteractionCounts=interactionCountsItem.checked;

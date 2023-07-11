@@ -37,7 +37,9 @@ import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -56,6 +58,7 @@ public class PushNotificationReceiver extends BroadcastReceiver{
 
 	private static final int SUMMARY_ID = 791;
 	private static int notificationId = 0;
+	private static Map<String, Integer> notificationIdsForAccounts = new HashMap<>();
 
 	@Override
 	public void onReceive(Context context, Intent intent){
@@ -147,7 +150,8 @@ public class PushNotificationReceiver extends BroadcastReceiver{
 
 	private void notify(Context context, PushNotification pn, String accountID, org.joinmastodon.android.model.Notification notification){
 		NotificationManager nm=context.getSystemService(NotificationManager.class);
-		Account self=AccountSessionManager.getInstance().getAccount(accountID).self;
+		AccountSession session=AccountSessionManager.get(accountID);
+		Account self=session.self;
 		String accountName="@"+self.username+"@"+AccountSessionManager.getInstance().getAccount(accountID).domain;
 		Notification.Builder builder;
 		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
@@ -217,7 +221,21 @@ public class PushNotificationReceiver extends BroadcastReceiver{
 			builder.setSubText(accountName);
 		}
 
-		int id = GlobalUserPreferences.keepOnlyLatestNotification ? NOTIFICATION_ID : notificationId++;
+		int id;
+		if(session.getLocalPreferences().keepOnlyLatestNotification){
+			if(notificationIdsForAccounts.containsKey(accountID)){
+				// we overwrite the existing notification
+				id=notificationIdsForAccounts.get(accountID);
+			}else{
+				// there's no existing notification, so we increment
+				id=notificationId++;
+				// and store the notification id for this account
+				notificationIdsForAccounts.put(accountID, id);
+			}
+		}else{
+			// we don't want to overwrite anything, therefore incrementing
+			id=notificationId++;
+		}
 
 		if (notification != null){
 			switch (pn.notificationType){

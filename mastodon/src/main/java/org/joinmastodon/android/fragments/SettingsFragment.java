@@ -220,10 +220,10 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 //			GlobalUserPreferences.disableAltTextReminder=i.checked;
 			GlobalUserPreferences.save();
 		}));
-		items.add(new SwitchItem(R.string.sk_settings_single_notification, R.drawable.ic_fluent_convert_range_24_regular, GlobalUserPreferences.keepOnlyLatestNotification, i->{
-			GlobalUserPreferences.keepOnlyLatestNotification=i.checked;
-			GlobalUserPreferences.save();
-		}));
+//		items.add(new SwitchItem(R.string.sk_settings_single_notification, R.drawable.ic_fluent_convert_range_24_regular, GlobalUserPreferences.keepOnlyLatestNotification, i->{
+//			GlobalUserPreferences.keepOnlyLatestNotification=i.checked;
+//			GlobalUserPreferences.save();
+//		}));
 		items.add(new ButtonItem(R.string.sk_settings_prefix_reply_cw_with_re, R.drawable.ic_fluent_arrow_reply_24_regular, b->{
 			PopupMenu popupMenu=new PopupMenu(getActivity(), b, Gravity.CENTER_HORIZONTAL);
 			popupMenu.inflate(R.menu.settings_prefix_reply_mode);

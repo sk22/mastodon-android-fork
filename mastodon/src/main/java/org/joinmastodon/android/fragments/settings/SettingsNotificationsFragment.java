@@ -16,6 +16,7 @@ import android.widget.TextView;
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.PushSubscriptionManager;
+import org.joinmastodon.android.api.session.AccountLocalPreferences;
 import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.model.PushSubscription;
@@ -54,10 +55,13 @@ public class SettingsNotificationsFragment extends BaseSettingsFragment<Void>{
 	private CheckableListItem<Void> uniformIconItem, deleteItem, onlyLatestItem;
 	private CheckableListItem<Void> postsItem, updateItem;
 
+	private AccountLocalPreferences lp;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setTitle(R.string.settings_notifications);
+		lp=AccountSessionManager.get(accountID).getLocalPreferences();
 
 		getPushSubscription();
 
@@ -75,7 +79,7 @@ public class SettingsNotificationsFragment extends BaseSettingsFragment<Void>{
 
 				uniformIconItem=new CheckableListItem<>(R.string.sk_settings_uniform_icon_for_notifications, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.uniformNotificationIcon, R.drawable.ic_ntf_logo, ()->toggleCheckableItem(uniformIconItem)),
 				deleteItem=new CheckableListItem<>(R.string.sk_settings_enable_delete_notifications, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.enableDeleteNotifications, R.drawable.ic_fluent_mail_inbox_dismiss_24_regular, ()->toggleCheckableItem(deleteItem)),
-				onlyLatestItem=new CheckableListItem<>(R.string.sk_settings_single_notification, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.keepOnlyLatestNotification, R.drawable.ic_fluent_convert_range_24_regular, ()->toggleCheckableItem(onlyLatestItem), true)
+				onlyLatestItem=new CheckableListItem<>(R.string.sk_settings_single_notification, 0, CheckableListItem.Style.SWITCH, lp.keepOnlyLatestNotification, R.drawable.ic_fluent_convert_range_24_regular, ()->toggleCheckableItem(onlyLatestItem), true)
 		));
 
 		typeItems=List.of(mentionsItem, boostsItem, favoritesItem, followersItem, pollsItem);
@@ -98,8 +102,9 @@ public class SettingsNotificationsFragment extends BaseSettingsFragment<Void>{
 				|| pollsItem.checked!=ps.alerts.poll;
 		GlobalUserPreferences.uniformNotificationIcon=uniformIconItem.checked;
 		GlobalUserPreferences.enableDeleteNotifications=deleteItem.checked;
-		GlobalUserPreferences.keepOnlyLatestNotification=onlyLatestItem.checked;
 		GlobalUserPreferences.save();
+		lp.keepOnlyLatestNotification=onlyLatestItem.checked;
+		lp.save();
 		if(needUpdateNotificationSettings && PushSubscriptionManager.arePushNotificationsAvailable()){
 			ps.alerts.mention=mentionsItem.checked;
 			ps.alerts.reblog=boostsItem.checked;

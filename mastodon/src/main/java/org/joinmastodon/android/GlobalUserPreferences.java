@@ -46,7 +46,6 @@ public class GlobalUserPreferences{
 	public static boolean translateButtonOpenedOnly;
 	public static boolean uniformNotificationIcon;
 	public static boolean reduceMotion;
-	public static boolean keepOnlyLatestNotification;
 	public static boolean showAltIndicator;
 	public static boolean showNoAltIndicator;
 	public static boolean enablePreReleases;
@@ -103,7 +102,6 @@ public class GlobalUserPreferences{
 		translateButtonOpenedOnly=prefs.getBoolean("translateButtonOpenedOnly", false);
 		uniformNotificationIcon=prefs.getBoolean("uniformNotificationIcon", false);
 		reduceMotion=prefs.getBoolean("reduceMotion", false);
-		keepOnlyLatestNotification=prefs.getBoolean("keepOnlyLatestNotification", false);
 		showAltIndicator=prefs.getBoolean("showAltIndicator", true);
 		showNoAltIndicator=prefs.getBoolean("showNoAltIndicator", true);
 		enablePreReleases=prefs.getBoolean("enablePreReleases", false);
@@ -157,7 +155,6 @@ public class GlobalUserPreferences{
 				.putBoolean("translateButtonOpenedOnly", translateButtonOpenedOnly)
 				.putBoolean("uniformNotificationIcon", uniformNotificationIcon)
 				.putBoolean("reduceMotion", reduceMotion)
-				.putBoolean("keepOnlyLatestNotification", keepOnlyLatestNotification)
 				.putBoolean("showAltIndicator", showAltIndicator)
 				.putBoolean("showNoAltIndicator", showNoAltIndicator)
 				.putBoolean("enablePreReleases", enablePreReleases)
@@ -209,6 +206,7 @@ public class GlobalUserPreferences{
 			localPrefs.localOnlySupported=accountsWithLocalOnlySupport.contains(accountID);
 			localPrefs.glitchInstance=accountsInGlitchMode.contains(accountID);
 			localPrefs.publishButtonText=prefs.getString("publishButtonText", null);
+			localPrefs.keepOnlyLatestNotification=prefs.getBoolean("keepOnlyLatestNotification", false);
 
 			if(session.getInstance().map(Instance::isAkkoma).orElse(false)){
 				localPrefs.timelineReplyVisibility=prefs.getString("replyVisibility", null);
