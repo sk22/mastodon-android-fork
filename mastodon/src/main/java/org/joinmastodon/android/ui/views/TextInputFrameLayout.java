@@ -40,7 +40,7 @@ public class TextInputFrameLayout extends FrameLayout {
         editText.setHint(hint);
         editText.setText(text);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.setMargins(V.dp(24), V.dp(4), V.dp(24), V.dp(16));
+        params.setMargins(V.dp(24), V.dp(4), V.dp(24), 0);
         editText.setLayoutParams(params);
         addView(editText);
     }

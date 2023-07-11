@@ -20,10 +20,8 @@ import org.joinmastodon.android.model.TimelineDefinition;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,7 +39,7 @@ public class GlobalUserPreferences{
 	public static boolean showBoosts;
 	public static boolean loadNewPosts;
 	public static boolean showNewPostsButton;
-	public static boolean disableMarquee;
+	public static boolean toolbarMarquee;
 	public static boolean disableSwipe;
 	public static boolean voteButtonForSingleChoice;
 	public static boolean enableDeleteNotifications;
@@ -98,7 +96,7 @@ public class GlobalUserPreferences{
 		showBoosts=prefs.getBoolean("showBoosts", true);
 		loadNewPosts=prefs.getBoolean("loadNewPosts", true);
 		showNewPostsButton=prefs.getBoolean("showNewPostsButton", true);
-		disableMarquee=prefs.getBoolean("disableMarquee", false);
+		toolbarMarquee=prefs.getBoolean("toolbarMarquee", true);
 		disableSwipe=prefs.getBoolean("disableSwipe", false);
 		voteButtonForSingleChoice=prefs.getBoolean("voteButtonForSingleChoice", true);
 		enableDeleteNotifications=prefs.getBoolean("enableDeleteNotifications", false);
@@ -153,7 +151,7 @@ public class GlobalUserPreferences{
 				.putBoolean("loadNewPosts", loadNewPosts)
 				.putBoolean("showNewPostsButton", showNewPostsButton)
 				.putBoolean("trueBlackTheme", trueBlackTheme)
-				.putBoolean("disableMarquee", disableMarquee)
+				.putBoolean("toolbarMarquee", toolbarMarquee)
 				.putBoolean("disableSwipe", disableSwipe)
 				.putBoolean("enableDeleteNotifications", enableDeleteNotifications)
 				.putBoolean("translateButtonOpenedOnly", translateButtonOpenedOnly)
@@ -186,6 +184,8 @@ public class GlobalUserPreferences{
 		SharedPreferences prefs=getPrefs();
 		altTextReminders=!prefs.getBoolean("disableAltTextReminder", false);
 		confirmBoost=prefs.getBoolean("confirmBeforeReblog", false);
+		toolbarMarquee=!prefs.getBoolean("disableMarquee", false);
+
 		save();
 
 		// migrate local preferences

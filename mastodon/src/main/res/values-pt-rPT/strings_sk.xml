@@ -30,7 +30,7 @@
     <string name="sk_follow_requests">Pedidos para seguir</string>
     <string name="sk_accept_follow_request">Aceitar pedido para seguir</string>
     <string name="sk_example_domain">exemplo.social</string>
-    <string name="sk_disable_marquee">Desligar deslocamento de texto nas barras de título</string>
+    <string name="sk_settings_enable_marquee">Desligar deslocamento de texto nas barras de título</string>
     <string name="sk_settings_contribute">Contribuir para o Megalodon</string>
     <string name="sk_bookmark_as">Guardar com outra conta</string>
     <string name="sk_bookmarked_as">Guardado como %s</string>
@@ -42,7 +42,7 @@
     <string name="sk_settings_rules">Regras</string>
     <string name="sk_settings_about">Sobre a aplicação</string>
     <string name="sk_settings_donate">Doar</string>
-    <string name="sk_tabs_disable_swipe">Desligar deslocação entre separadores</string>
+    <string name="sk_settings_tabs_disable_swipe">Desligar deslocação entre separadores</string>
     <string name="sk_settings_color_palette">Paleta de cores</string>
     <string name="sk_color_palette_material3">Sistema</string>
     <string name="sk_color_palette_pink">Rosa</string>
@@ -53,7 +53,7 @@
     <string name="sk_color_palette_red">Vermelho</string>
     <string name="sk_color_palette_yellow">Amarelo</string>
     <string name="sk_delete_notification_confirm">De certeza que quer apagar esta notificação\?</string>
-    <string name="sk_enable_delete_notifications">Ligar apagar notificações</string>
+    <string name="sk_settings_enable_delete_notifications">Ligar apagar notificações</string>
     <string name="sk_settings_publish_button_text">Texto do botão de publicar</string>
     <string name="sk_clear_all_notifications_confirm_action">Apagar tudo</string>
     <string name="sk_clear_all_notifications_confirm">De certeza que quer apagar todas as notificações\?</string>
@@ -201,7 +201,7 @@
     <string name="sk_no_update_available">Sem atualizações disponíveis</string>
     <string name="sk_settings_show_federated_timeline">Mostrar linha do tempo unificada</string>
     <string name="sk_notification_type_status">Publicações</string>
-    <string name="sk_notify_posts">Notificações de publicação</string>
+    <string name="sk_notification_type_posts">Notificações de publicação</string>
     <string name="sk_resource_not_found">Recurso não encontrado</string>
     <string name="sk_favorited_as">Adicionado aos favoritos como %s</string>
     <string name="sk_already_favorited">Já adicionado aos favoritos</string>

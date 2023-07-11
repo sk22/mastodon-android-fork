@@ -98,7 +98,7 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		if(GlobalUserPreferences.disableMarquee){
+		if(GlobalUserPreferences.toolbarMarquee){
 			setTitleMarqueeEnabled(false);
 			setSubtitleMarqueeEnabled(false);
 		}

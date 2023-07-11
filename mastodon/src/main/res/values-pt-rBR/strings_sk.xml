@@ -33,7 +33,7 @@
     <string name="sk_accept_follow_request">Aceitar solicitação para seguir</string>
     <string name="sk_reject_follow_request">Recusar solicitação para seguir</string>
     <string name="sk_settings_always_reveal_content_warnings">Sempre revelar avisos de conteúdo</string>
-    <string name="sk_disable_marquee">Desative o texto de rolagem nas barras de título</string>
+    <string name="sk_settings_enable_marquee">Desative o texto de rolagem nas barras de título</string>
     <string name="sk_settings_contribute">Contribua para o Megalodon</string>
     <string name="sk_settings_show_federated_timeline">Mostre a linha do tempo federada</string>
     <string name="sk_visibility_unlisted">Não-listado</string>
@@ -54,7 +54,7 @@
     <string name="sk_language_name">%1$s (%2$s)</string>
     <string name="sk_confirm_clear_recent_languages">Você tem certeza que deseja limpar os idiomas usados recentemente\?</string>
     <string name="sk_clear_recent_languages">Limpar idiomas usados recentemente</string>
-    <string name="sk_notify_posts">Notificações de publicações</string>
+    <string name="sk_notification_type_posts">Notificações de publicações</string>
     <string name="sk_poll_allow_multiple">Permitir múltiplas escolhas</string>
     <string name="sk_welcome_text">O tubarão te cumprimenta! Para começar, por favor, digite abaixo o nome de domínio de sua instância de origem.</string>
     <string name="sk_example_domain">exemplo.social</string>
@@ -63,14 +63,14 @@
     <string name="sk_color_palette_red">Vermelho</string>
     <string name="sk_settings_donate">Doar</string>
     <string name="sk_settings_rules">Regras</string>
-    <string name="sk_tabs_disable_swipe">Desativar deslizamento entre abas</string>
+    <string name="sk_settings_tabs_disable_swipe">Desativar deslizamento entre abas</string>
     <string name="sk_settings_profile">Configurar perfil</string>
     <string name="sk_settings_posting">Preferências de publicação</string>
     <string name="sk_settings_filters">Configurar filtros</string>
     <string name="sk_delete_notification_confirm">Você tem certeza que deseja excluir esta notificação\?</string>
     <string name="sk_delete_notification">Excluir notificação</string>
     <string name="sk_delete_notification_confirm_action">Excluir notificação</string>
-    <string name="sk_enable_delete_notifications">Habilitar a exclusão de notificações</string>
+    <string name="sk_settings_enable_delete_notifications">Habilitar a exclusão de notificações</string>
     <string name="sk_settings_publish_button_text_title">Customizar texto do botão publicar</string>
     <string name="sk_settings_translate_only_opened">Traduzir apenas publicações abertas</string>
     <string name="sk_settings_translation_availability_note_available">%s suporta tradução!</string>

@@ -41,7 +41,7 @@
     <string name="sk_translate_show_original">Mostrar orixinal</string>
     <string name="sk_translated_using">Traducido empregando %s</string>
     <string name="sk_post_language">Idioma: %s</string>
-    <string name="sk_disable_marquee">Desactivar desprazamento do texto na barra de título</string>
+    <string name="sk_settings_enable_marquee">Desactivar desprazamento do texto na barra de título</string>
     <string name="sk_welcome_title">¡Benvida!</string>
     <string name="sk_settings_contribute">Contribúe a Megalodon</string>
     <string name="sk_language_name">%1$s (%2$s)</string>
@@ -64,10 +64,10 @@
     <string name="sk_color_palette_yellow">Amarelo</string>
     <string name="sk_settings_color_palette">Paleta de cores</string>
     <string name="sk_clear_recent_languages">Quitar tódolos idiomas usados recentemente</string>
-    <string name="sk_tabs_disable_swipe">Desactivar desprazamento entre lapelas</string>
+    <string name="sk_settings_tabs_disable_swipe">Desactivar desprazamento entre lapelas</string>
     <string name="sk_settings_show_federated_timeline">Mostrar cronoloxía federada</string>
     <string name="sk_confirm_clear_recent_languages">Tes a certeza de querer limpar a lista de idioma usados recentemente\?</string>
-    <string name="sk_notify_posts">Notificación de publicacións</string>
+    <string name="sk_notification_type_posts">Notificación de publicacións</string>
     <string name="sk_welcome_text">¡A quenlla saúdate! Para comezar, escribe aquí o enderezo de internet da túa instancia.</string>
     <string name="sk_timeline_home">Inicio</string>
     <string name="sk_timeline_local">Local</string>
@@ -83,7 +83,7 @@
     <string name="sk_already_reblogged">Xa foi impulsado</string>
     <string name="sk_reply_as">Responder con outra conta</string>
     <string name="sk_settings_uniform_icon_for_notifications">Icona uniforme para tódalas notificacións</string>
-    <string name="sk_enable_delete_notifications">Activar a eliminación de notificacións</string>
+    <string name="sk_settings_enable_delete_notifications">Activar a eliminación de notificacións</string>
     <string name="sk_settings_publish_button_text">Texto do botón Publicar</string>
     <string name="sk_settings_publish_button_text_title">Personalizar o texto do botón de publicar</string>
     <string name="sk_settings_translation_availability_note_unavailable">%s non semella ter soporte para tradución.</string>

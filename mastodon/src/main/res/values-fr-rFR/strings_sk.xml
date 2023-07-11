@@ -27,7 +27,7 @@
     <string name="sk_reject_follow_request">Refuser la demande de suivi</string>
     <string name="sk_lists_with_user">Listes avec %s</string>
     <string name="sk_settings_always_reveal_content_warnings">Toujours afficher les avertissements de contenu</string>
-    <string name="sk_disable_marquee">Désactiver le défilement du texte dans les barres de titre</string>
+    <string name="sk_settings_enable_marquee">Désactiver le défilement du texte dans les barres de titre</string>
     <string name="sk_settings_contribute">Contribuez à Megalodon</string>
     <string name="sk_settings_show_federated_timeline">Afficher la timeline fédérée</string>
     <string name="sk_app_name">Megalodon</string>
@@ -39,7 +39,7 @@
     <string name="sk_federated_timeline">Fédération</string>
     <string name="sk_federated_timeline_info_banner">Ce sont les messages les plus récents des membres de votre fédération.</string>
     <string name="sk_notification_type_status">Messages</string>
-    <string name="sk_notify_posts">Notifications des messages</string>
+    <string name="sk_notification_type_posts">Notifications des messages</string>
     <string name="sk_color_palette_pink">Rose</string>
     <string name="sk_color_palette_purple">Violet</string>
     <string name="sk_color_palette_green">Vert</string>
@@ -68,13 +68,13 @@
     <string name="sk_settings_rules">Règles</string>
     <string name="sk_settings_about">À propos de l\'application</string>
     <string name="sk_settings_donate">Donner</string>
-    <string name="sk_tabs_disable_swipe">Désactiver le balayage entre les onglets</string>
+    <string name="sk_settings_tabs_disable_swipe">Désactiver le balayage entre les onglets</string>
     <string name="sk_delete_notification">Supprimer la notification</string>
     <string name="sk_delete_notification_confirm_action">Supprimer la notification</string>
     <string name="sk_delete_notification_confirm">Voulez-vous vraiment supprimer cette notification \?</string>
     <string name="sk_clear_all_notifications">Supprimer toutes les notifications</string>
     <string name="sk_clear_all_notifications_confirm_action">Tout supprimer</string>
-    <string name="sk_enable_delete_notifications">Activer la suppression des notifications</string>
+    <string name="sk_settings_enable_delete_notifications">Activer la suppression des notifications</string>
     <string name="sk_settings_publish_button_text_title">Personnaliser le texte du bouton Publier</string>
     <string name="sk_settings_publish_button_text">Texte du bouton Publier</string>
     <string name="sk_settings_translate_only_opened">Traduire uniquement les messages ouverts</string>

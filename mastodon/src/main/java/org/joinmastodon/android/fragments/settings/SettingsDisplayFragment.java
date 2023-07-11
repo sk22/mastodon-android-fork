@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -22,7 +23,7 @@ import org.joinmastodon.android.events.StatusDisplaySettingsChangedEvent;
 import org.joinmastodon.android.model.viewmodel.CheckableListItem;
 import org.joinmastodon.android.model.viewmodel.ListItem;
 import org.joinmastodon.android.ui.M3AlertDialogBuilder;
-import org.joinmastodon.android.ui.utils.ColorPalette;
+import org.joinmastodon.android.ui.views.TextInputFrameLayout;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,23 +37,30 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 	private CheckableListItem<Void> revealCWsItem, hideSensitiveMediaItem, interactionCountsItem, emojiInNamesItem;
 
 	// MEGALODON
-	private CheckableListItem<Void> trueBlackModeItem;
-	private ListItem<Void> colorItem;
+	private CheckableListItem<Void> trueBlackModeItem, marqueeItem, disableSwipeItem, reduceMotionItem;
+	private ListItem<Void> colorItem, publishTextItem, autoRevealCWsItem;
+
+	private AccountLocalPreferences lp;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setTitle(R.string.settings_display);
 		AccountSession s=AccountSessionManager.get(accountID);
-		AccountLocalPreferences lp=s.getLocalPreferences();
+		lp=s.getLocalPreferences();
 		onDataLoaded(List.of(
 				themeItem=new ListItem<>(R.string.settings_theme, getAppearanceValue(), R.drawable.ic_fluent_weather_moon_24_regular, this::onAppearanceClick),
 				colorItem=new ListItem<>(R.string.sk_settings_color_palette, getColorPaletteValue(), R.drawable.ic_fluent_color_24_regular, this::onColorClick),
-				trueBlackModeItem=new CheckableListItem<>(R.string.theme_true_black, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.trueBlackTheme, R.drawable.ic_fluent_dark_theme_24_regular, this::onTrueBlackModeClick),
+				trueBlackModeItem=new CheckableListItem<>(R.string.theme_true_black, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.trueBlackTheme, R.drawable.ic_fluent_dark_theme_24_regular, this::onTrueBlackModeClick, true),
+				publishTextItem=new ListItem<>(getString(R.string.sk_settings_publish_button_text), getPublishButtonText(), R.drawable.ic_fluent_send_24_regular, this::onPublishTextClick),
+				autoRevealCWsItem=new ListItem<>(R.string.sk_settings_auto_reveal_equal_spoilers, getAutoRevealSpoilersText(), R.drawable.ic_fluent_eye_24_regular, this::onAutoRevealSpoilersClick),
 				revealCWsItem=new CheckableListItem<>(R.string.sk_settings_always_reveal_content_warnings, 0, CheckableListItem.Style.SWITCH, lp.revealCWs, R.drawable.ic_fluent_chat_warning_24_regular, ()->toggleCheckableItem(revealCWsItem)),
 				hideSensitiveMediaItem=new CheckableListItem<>(R.string.settings_hide_sensitive_media, 0, CheckableListItem.Style.SWITCH, lp.hideSensitiveMedia, R.drawable.ic_fluent_flag_24_regular, ()->toggleCheckableItem(hideSensitiveMediaItem)),
 				interactionCountsItem=new CheckableListItem<>(R.string.settings_show_interaction_counts, 0, CheckableListItem.Style.SWITCH, lp.showInteractionCounts, R.drawable.ic_fluent_number_row_24_regular, ()->toggleCheckableItem(interactionCountsItem)),
-				emojiInNamesItem=new CheckableListItem<>(R.string.settings_show_emoji_in_names, 0, CheckableListItem.Style.SWITCH, lp.customEmojiInNames, R.drawable.ic_fluent_emoji_24_regular, ()->toggleCheckableItem(emojiInNamesItem))
+				emojiInNamesItem=new CheckableListItem<>(R.string.settings_show_emoji_in_names, 0, CheckableListItem.Style.SWITCH, lp.customEmojiInNames, R.drawable.ic_fluent_emoji_24_regular, ()->toggleCheckableItem(emojiInNamesItem)),
+				marqueeItem=new CheckableListItem<>(R.string.sk_settings_enable_marquee, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.toolbarMarquee, R.drawable.ic_fluent_text_more_24_regular, ()->toggleCheckableItem(marqueeItem)),
+				reduceMotionItem=new CheckableListItem<>(R.string.sk_settings_reduce_motion, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.reduceMotion, R.drawable.ic_fluent_star_emphasis_24_regular, ()->toggleCheckableItem(reduceMotionItem)),
+				disableSwipeItem=new CheckableListItem<>(R.string.sk_settings_tabs_disable_swipe, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.disableSwipe, R.drawable.ic_fluent_swipe_right_24_regular, ()->toggleCheckableItem(disableSwipeItem))
 		));
 		trueBlackModeItem.checkedChangeListener=checked->onTrueBlackModeClick();
 	}
@@ -80,6 +88,9 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 		lp.showInteractionCounts=interactionCountsItem.checked;
 		lp.customEmojiInNames=emojiInNamesItem.checked;
 		lp.save();
+		GlobalUserPreferences.toolbarMarquee=marqueeItem.checked;
+		GlobalUserPreferences.reduceMotion=reduceMotionItem.checked;
+		GlobalUserPreferences.disableSwipe=disableSwipeItem.checked;
 		GlobalUserPreferences.save();
 		E.post(new StatusDisplaySettingsChangedEvent(accountID));
 	}
@@ -102,6 +113,20 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 			case BROWN -> R.string.sk_color_palette_brown;
 			case RED -> R.string.sk_color_palette_red;
 			case YELLOW -> R.string.sk_color_palette_yellow;
+		};
+	}
+
+	private String getPublishButtonText() {
+		return TextUtils.isEmpty(AccountSessionManager.get(accountID).getLocalPreferences().publishButtonText)
+				? getContext().getString(R.string.publish)
+				: AccountSessionManager.get(accountID).getLocalPreferences().publishButtonText;
+	}
+
+	private @StringRes int getAutoRevealSpoilersText() {
+		return switch(GlobalUserPreferences.autoRevealEqualSpoilers){
+			case THREADS -> R.string.sk_settings_auto_reveal_author;
+			case DISCUSSIONS -> R.string.sk_settings_auto_reveal_anyone;
+			default -> R.string.sk_settings_auto_reveal_nobody;
 		};
 	}
 
@@ -161,6 +186,45 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 						rebindItem(colorItem);
 						maybeApplyNewThemeRightNow(null, prev, null);
 					}
+				})
+				.setNegativeButton(R.string.cancel, null)
+				.show();
+	}
+
+	private void onPublishTextClick(){
+		TextInputFrameLayout input = new TextInputFrameLayout(
+				getContext(),
+				getString(R.string.publish),
+				TextUtils.isEmpty(lp.publishButtonText) ? "" : lp.publishButtonText.trim()
+		);
+		new M3AlertDialogBuilder(getContext()).setTitle(R.string.sk_settings_publish_button_text_title).setView(input)
+				.setPositiveButton(R.string.save, (d, which) -> {
+					lp.publishButtonText=input.getEditText().getText().toString().trim();
+					lp.save();
+					publishTextItem.subtitle=getPublishButtonText();
+					rebindItem(publishTextItem);
+				})
+				.setNeutralButton(R.string.clear, (d, which) -> {
+					lp.publishButtonText=null;
+					lp.save();
+					publishTextItem.subtitle=getPublishButtonText();
+					rebindItem(publishTextItem);
+				})
+				.setNegativeButton(R.string.cancel, (d, which) -> {})
+				.show();
+	}
+
+	private void onAutoRevealSpoilersClick(){
+		int selected=GlobalUserPreferences.autoRevealEqualSpoilers.ordinal();
+		int[] newSelected={selected};
+		new M3AlertDialogBuilder(getActivity())
+				.setTitle(R.string.sk_settings_auto_reveal_equal_spoilers)
+				.setSingleChoiceItems((String[])IntStream.of(R.string.sk_settings_auto_reveal_nobody, R.string.sk_settings_auto_reveal_author, R.string.sk_settings_auto_reveal_anyone).mapToObj(this::getString).toArray(String[]::new),
+						selected, (dlg, item)->newSelected[0]=item)
+				.setPositiveButton(R.string.ok, (dlg, item)->{
+					GlobalUserPreferences.autoRevealEqualSpoilers=GlobalUserPreferences.AutoRevealMode.values()[newSelected[0]];
+					autoRevealCWsItem.subtitleRes=getAutoRevealSpoilersText();
+					rebindItem(autoRevealCWsItem);
 				})
 				.setNegativeButton(R.string.cancel, null)
 				.show();

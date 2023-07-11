@@ -35,11 +35,11 @@
     <string name="sk_accept_follow_request">Volgverzoek accepteren</string>
     <string name="sk_lists_with_user">Lijsten met %s</string>
     <string name="sk_settings_always_reveal_content_warnings">Onthul altijd inhoudswaarschuwingen</string>
-    <string name="sk_disable_marquee">Schakel scrollende tekst in titelbalken uit</string>
+    <string name="sk_settings_enable_marquee">Schakel scrollende tekst in titelbalken uit</string>
     <string name="sk_settings_contribute">Bijdragen aan Megalodon</string>
     <string name="sk_settings_show_federated_timeline">Toon gefedereerde tijdlijn</string>
     <string name="sk_notification_type_status">Berichten</string>
-    <string name="sk_notify_posts">Een bericht publiceert</string>
+    <string name="sk_notification_type_posts">Een bericht publiceert</string>
     <string name="sk_timeline_local">Lokaal</string>
     <string name="sk_timeline_home">Home</string>
     <string name="sk_timeline_federated">Federatie</string>
@@ -57,7 +57,7 @@
     <string name="sk_example_domain">example.social</string>
     <string name="sk_reply_as">Antwoord met ander account</string>
     <string name="sk_settings_uniform_icon_for_notifications">Zelfde icoon voor alle meldingen</string>
-    <string name="sk_tabs_disable_swipe">Swipen tussen tabs uitschakelen</string>
+    <string name="sk_settings_tabs_disable_swipe">Swipen tussen tabs uitschakelen</string>
     <string name="sk_settings_profile">Profiel instellen</string>
     <string name="sk_settings_posting">Bericht voorkeuren</string>
     <string name="sk_settings_filters">Filters instellen</string>
@@ -76,7 +76,7 @@
     <string name="sk_color_palette_yellow">Geel</string>
     <string name="sk_delete_notification_confirm_action">Verwijder melding</string>
     <string name="sk_delete_notification_confirm">Weet je zeker dat je de melding wilt verwijderen\?</string>
-    <string name="sk_enable_delete_notifications">Meldingen verwijderen inschakelen</string>
+    <string name="sk_settings_enable_delete_notifications">Meldingen verwijderen inschakelen</string>
     <string name="sk_settings_publish_button_text">Tekst op publiceerknop</string>
     <string name="sk_settings_publish_button_text_title">Tekst publiceerknop aanpassen</string>
     <string name="sk_settings_translation_availability_note_available">%s ondersteunt vertaling!</string>

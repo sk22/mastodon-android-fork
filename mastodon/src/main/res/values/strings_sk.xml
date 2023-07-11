@@ -41,11 +41,11 @@
     <string name="sk_reject_follow_request">Reject follow request</string>
     <string name="sk_lists_with_user">Lists with %s</string>
     <string name="sk_settings_always_reveal_content_warnings">Always reveal content warnings</string>
-    <string name="sk_disable_marquee">Disable scrolling text in title bars</string>
+    <string name="sk_settings_enable_marquee">Enable scrolling text in title bars</string>
     <string name="sk_settings_contribute">Contribute to Megalodon</string>
     <string name="sk_settings_show_federated_timeline">Show federated timeline</string>
     <string name="sk_notification_type_status">Posts</string>
-    <string name="sk_notify_posts">Post notifications</string>
+    <string name="sk_notification_type_posts">Post notifications</string>
     <string name="sk_settings_color_palette">Color palette</string>
     <string name="sk_color_palette_material3">System</string>
     <string name="sk_color_palette_pink">Pink</string>
@@ -68,7 +68,7 @@
     <string name="sk_welcome_text">The shark salutes you! To get started, please enter your home instance’s domain name below.</string>
     <string name="sk_example_domain">example.social</string>
     <string name="sk_app_username" translatable="false">\@megalodon</string>
-    <string name="sk_tabs_disable_swipe">Disable swiping between tabs</string>
+    <string name="sk_settings_tabs_disable_swipe">Disable swiping between tabs</string>
     <string name="sk_settings_profile">Set up profile</string>
     <string name="sk_settings_posting">Posting preferences</string>
     <string name="sk_settings_filters">Configure filters</string>
@@ -82,7 +82,7 @@
     <string name="sk_clear_all_notifications">Clear all notifications</string>
     <string name="sk_clear_all_notifications_confirm_action">Delete all</string>
     <string name="sk_clear_all_notifications_confirm">Are you sure you want to clear all notifications\?</string>
-    <string name="sk_enable_delete_notifications">Enable deleting notifications</string>
+    <string name="sk_settings_enable_delete_notifications">Enable deleting notifications</string>
     <string name="sk_settings_publish_button_text">Publish button text</string>
     <string name="sk_settings_publish_button_text_title">Customize Publish button text</string>
     <string name="sk_settings_translate_only_opened">Only translate opened posts</string>
@@ -316,10 +316,10 @@
     <string name="sk_error_loading_profile">Failed loading the profile via %s</string>
     <string name="sk_settings_allow_remote_loading">Load info from remote instances</string>
     <string name="sk_settings_allow_remote_loading_explanation">Try fetching more accurate listings for followers, likes and boosts by loading the information from the instance of origin.</string>
-    <string name="sk_settings_auto_reveal_equal_spoilers">Reveal same CWs in replies from</string>
-    <string name="sk_settings_auto_reveal_nobody">nobody</string>
-    <string name="sk_settings_auto_reveal_author">author</string>
-    <string name="sk_settings_auto_reveal_anyone">everyone</string>
+    <string name="sk_settings_auto_reveal_equal_spoilers">Auto-reveal equal CWs in replies</string>
+    <string name="sk_settings_auto_reveal_nobody">Never</string>
+    <string name="sk_settings_auto_reveal_author">Replies by the same author</string>
+    <string name="sk_settings_auto_reveal_anyone">Replies by everyone</string>
     <string name="sk_settings_prefix_replies_always">everyone</string>
     <string name="sk_settings_prefix_replies_never">nobody</string>
     <string name="sk_settings_prefix_replies_to_others">others</string>

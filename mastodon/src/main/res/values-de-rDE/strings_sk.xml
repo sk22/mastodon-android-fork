@@ -35,10 +35,10 @@
     <string name="sk_reject_follow_request">Folgeanfrage ablehnen</string>
     <string name="sk_lists_with_user">Listen mit %s</string>
     <string name="sk_settings_always_reveal_content_warnings">Inhaltswarnungen immer ausklappen</string>
-    <string name="sk_disable_marquee">Laufschrift in Titelleisten deaktivieren</string>
+    <string name="sk_settings_enable_marquee">Laufschrift in Titelleisten deaktivieren</string>
     <string name="sk_settings_contribute">Zu Megalodon beitragen</string>
     <string name="sk_settings_show_federated_timeline">Föderierte Timeline anzeigen</string>
-    <string name="sk_notify_posts">Beitrags-​Benachrichtigungen</string>
+    <string name="sk_notification_type_posts">Beitrags-​Benachrichtigungen</string>
     <string name="sk_settings_color_palette">Farbschema</string>
     <string name="sk_color_palette_pink">Pink</string>
     <string name="sk_color_palette_purple">Violett</string>
@@ -68,11 +68,11 @@
     <string name="sk_settings_rules">Regelwerk</string>
     <string name="sk_settings_about">Über die App</string>
     <string name="sk_settings_donate">Spenden</string>
-    <string name="sk_tabs_disable_swipe">Wischen zwischen Tabs deaktivieren</string>
+    <string name="sk_settings_tabs_disable_swipe">Wischen zwischen Tabs deaktivieren</string>
     <string name="sk_delete_notification_confirm_action">Benachrichtigung löschen</string>
     <string name="sk_delete_notification_confirm">Benachrichtigung wirklich löschen\?</string>
     <string name="sk_clear_all_notifications_confirm_action">Alle löschen</string>
-    <string name="sk_enable_delete_notifications">Löschen von Benachrichtigungen aktivieren</string>
+    <string name="sk_settings_enable_delete_notifications">Löschen von Benachrichtigungen aktivieren</string>
     <string name="sk_settings_publish_button_text">Veröffentlichen-Button-Text</string>
     <string name="sk_settings_translate_only_opened">Nur geöffnete Beiträge übersetzen</string>
     <string name="sk_delete_notification">Benachrichtigung löschen</string>

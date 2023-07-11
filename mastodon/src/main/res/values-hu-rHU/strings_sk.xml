@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sk_notification_type_status">Hozzászólások</string>
-    <string name="sk_notify_posts">Postai értesítések</string>
+    <string name="sk_notification_type_posts">Postai értesítések</string>
     <string name="sk_translate_post">Lefordítani</string>
     <string name="sk_post_language">Nyelv: %s</string>
     <string name="sk_clear_recent_languages">Nemrég használt nyelvek törlése</string>
@@ -27,7 +27,7 @@
     <string name="sk_mark_media_as_sensitive">A média érzékenynek jelölése</string>
     <string name="sk_federated_timeline">Föderáció</string>
     <string name="sk_update_ready">A Megalodon %s letöltődött és telepítésre kész.</string>
-    <string name="sk_disable_marquee">A görgethető szöveg kikapcsolása a címsorokban</string>
+    <string name="sk_settings_enable_marquee">A görgethető szöveg kikapcsolása a címsorokban</string>
     <string name="sk_check_for_update">Frissítés ellenőrzése</string>
     <string name="sk_no_update_available">Nincs frissítés elérhető</string>
     <string name="sk_list_timelines">Listák</string>
@@ -70,7 +70,7 @@
     <string name="sk_color_palette_pink">Rózsaszín</string>
     <string name="sk_color_palette_purple">Lila</string>
     <string name="sk_delete_notification_confirm">Biztos, hogy törölni szeretné ezt az értesítést\?</string>
-    <string name="sk_enable_delete_notifications">Értesítések törlésének engedélyezése</string>
+    <string name="sk_settings_enable_delete_notifications">Értesítések törlésének engedélyezése</string>
     <string name="sk_settings_publish_button_text">Közzététel gomb szövege</string>
     <string name="sk_settings_publish_button_text_title">Közzététel gomb szövegének testreszabása</string>
     <string name="sk_delete_notification">Értesítés törlése</string>
@@ -122,7 +122,7 @@
     <string name="sk_settings_show_interaction_counts">Interakciószámok megjelenítése</string>
     <string name="sk_reject_follow_request">Követési kérelem elutasítása</string>
     <string name="sk_poll_allow_multiple">Több választási lehetőség engedélyezése</string>
-    <string name="sk_tabs_disable_swipe">Lapok közötti lapozás letiltása</string>
+    <string name="sk_settings_tabs_disable_swipe">Lapok közötti lapozás letiltása</string>
     <string name="sk_settings_about">Az alkalmazásról</string>
     <string name="sk_quoting_user">%s említése</string>
     <string name="sk_settings_reply_visibility">Válasz láthatósága</string>

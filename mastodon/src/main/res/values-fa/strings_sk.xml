@@ -20,7 +20,7 @@
     <string name="sk_follow_requests">درخواست‌های پی‌گیری</string>
     <string name="sk_accept_follow_request">پذیرفتن درخواست پی‌گیری</string>
     <string name="sk_reject_follow_request">رد درخواست پی‌گیری</string>
-    <string name="sk_notify_posts">اعلان‌های فرسته</string>
+    <string name="sk_notification_type_posts">اعلان‌های فرسته</string>
     <string name="sk_color_palette_material3">سامانه</string>
     <string name="sk_color_palette_pink">صورتی</string>
     <string name="sk_color_palette_purple">بنفش</string>
@@ -191,7 +191,7 @@
     <string name="sk_settings_uniform_icon_for_notifications">نقشک یکنواخت برای تمام آگاهی‌ها</string>
     <string name="sk_delete_notification_confirm">آیا مطمئنید که می‌خواهید این آگاهی را حذف کنید؟</string>
     <string name="sk_clear_all_notifications_confirm">آیا مطمئنید که می‌خواهید این همه آگاهی‌ها را حذف کنید؟</string>
-    <string name="sk_enable_delete_notifications">به کار انداختن حذف آگاهی‌ها</string>
+    <string name="sk_settings_enable_delete_notifications">به کار انداختن حذف آگاهی‌ها</string>
     <string name="sk_confirm_delete_scheduled_post">آیا مطمئنید که می‌خواهید این فرسته برنامه‌ریزی شده را حذف کنید؟</string>
     <string name="sk_scheduled_too_soon_title">زمان برنامه‌ریزی شده خیلی زود است</string>
     <string name="sk_mark_as_read">خوانده شد</string>

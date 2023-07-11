@@ -171,8 +171,8 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 			GlobalUserPreferences.uniformNotificationIcon=i.checked;
 			GlobalUserPreferences.save();
 		}));
-		items.add(new SwitchItem(R.string.sk_disable_marquee, R.drawable.ic_fluent_text_more_24_regular, GlobalUserPreferences.disableMarquee, i->{
-			GlobalUserPreferences.disableMarquee=i.checked;
+		items.add(new SwitchItem(R.string.sk_settings_enable_marquee, R.drawable.ic_fluent_text_more_24_regular, GlobalUserPreferences.toolbarMarquee, i->{
+			GlobalUserPreferences.toolbarMarquee=i.checked;
 			GlobalUserPreferences.save();
 		}));
 		items.add(new SwitchItem(R.string.sk_settings_reduce_motion, R.drawable.ic_fluent_star_emphasis_24_regular, GlobalUserPreferences.reduceMotion, i->{
@@ -206,12 +206,12 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 			b.setOnClickListener(v->popupMenu.show());
 			onAutoRevealSpoilerChanged(b);
 		}));
-		items.add(new SwitchItem(R.string.sk_tabs_disable_swipe, R.drawable.ic_fluent_swipe_right_24_regular, GlobalUserPreferences.disableSwipe, i->{
+		items.add(new SwitchItem(R.string.sk_settings_tabs_disable_swipe, R.drawable.ic_fluent_swipe_right_24_regular, GlobalUserPreferences.disableSwipe, i->{
 			GlobalUserPreferences.disableSwipe=i.checked;
 			GlobalUserPreferences.save();
 			needAppRestart=true;
 		}));
-		items.add(new SwitchItem(R.string.sk_enable_delete_notifications, R.drawable.ic_fluent_mail_inbox_dismiss_24_regular, GlobalUserPreferences.enableDeleteNotifications, i->{
+		items.add(new SwitchItem(R.string.sk_settings_enable_delete_notifications, R.drawable.ic_fluent_mail_inbox_dismiss_24_regular, GlobalUserPreferences.enableDeleteNotifications, i->{
 			GlobalUserPreferences.enableDeleteNotifications=i.checked;
 			GlobalUserPreferences.save();
 			needAppRestart=true;
@@ -338,7 +338,7 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 		items.add(new SwitchItem(R.string.notify_follow, R.drawable.ic_fluent_person_add_24_regular, pushSubscription.alerts.follow, i->onNotificationsChanged(PushNotification.Type.FOLLOW, i.checked), switchEnabled));
 		items.add(new SwitchItem(R.string.notify_reblog, R.drawable.ic_fluent_arrow_repeat_all_24_regular, pushSubscription.alerts.reblog, i->onNotificationsChanged(PushNotification.Type.REBLOG, i.checked), switchEnabled));
 		items.add(new SwitchItem(R.string.notify_mention, R.drawable.ic_fluent_mention_24_regular, pushSubscription.alerts.mention, i->onNotificationsChanged(PushNotification.Type.MENTION, i.checked), switchEnabled));
-		items.add(new SwitchItem(R.string.sk_notify_posts, R.drawable.ic_fluent_chat_24_regular, pushSubscription.alerts.status, i->onNotificationsChanged(PushNotification.Type.STATUS, i.checked), switchEnabled));
+		items.add(new SwitchItem(R.string.sk_notification_type_posts, R.drawable.ic_fluent_chat_24_regular, pushSubscription.alerts.status, i->onNotificationsChanged(PushNotification.Type.STATUS, i.checked), switchEnabled));
 		items.add(new SwitchItem(R.string.sk_notify_update, R.drawable.ic_fluent_history_24_regular, pushSubscription.alerts.update, i->onNotificationsChanged(PushNotification.Type.UPDATE, i.checked), switchEnabled));
 		items.add(new SwitchItem(R.string.sk_notify_poll_results, R.drawable.ic_fluent_poll_24_regular, pushSubscription.alerts.poll, i->onNotificationsChanged(PushNotification.Type.POLL, i.checked), switchEnabled));
 

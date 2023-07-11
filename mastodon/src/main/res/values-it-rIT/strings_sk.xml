@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sk_notification_type_status">Post</string>
-    <string name="sk_notify_posts">Notifiche post</string>
+    <string name="sk_notification_type_posts">Notifiche post</string>
     <string name="sk_settings_color_palette">Colore del tema</string>
     <string name="sk_color_palette_pink">Rosa</string>
     <string name="sk_color_palette_purple">Viola</string>
@@ -45,7 +45,7 @@
     <string name="sk_lists_with_user">Liste con %s</string>
     <string name="sk_settings_contribute">Contribuisci a Megalodon</string>
     <string name="sk_settings_show_federated_timeline">Mostra timeline federata</string>
-    <string name="sk_disable_marquee">Disabilita scorrimento titoli</string>
+    <string name="sk_settings_enable_marquee">Disabilita scorrimento titoli</string>
     <string name="sk_reject_follow_request">Rifiuta richiesta di seguirti</string>
     <string name="sk_translate_post">Traduci</string>
     <string name="sk_translate_show_original">Mostra originale</string>
@@ -76,7 +76,7 @@
     <string name="sk_settings_about">Informazioni sull\'app</string>
     <string name="sk_settings_donate">Dona</string>
     <string name="sk_delete_notification_confirm_action">Elimina la notifica</string>
-    <string name="sk_enable_delete_notifications">Abilita la cancellazione delle notifiche</string>
+    <string name="sk_settings_enable_delete_notifications">Abilita la cancellazione delle notifiche</string>
     <string name="sk_settings_publish_button_text">Testo del pulsante Pubblica</string>
     <string name="sk_settings_publish_button_text_title">Personalizza il testo del pulsante Pubblica</string>
     <string name="sk_settings_translation_availability_note_available">%s supporta la traduzione!</string>
@@ -123,7 +123,7 @@
     <string name="sk_reply_as">Rispondi con un altro account</string>
     <string name="sk_settings_uniform_icon_for_notifications">Icona uniforme per tutte le notifiche</string>
     <string name="sk_color_palette_red">Rosso</string>
-    <string name="sk_tabs_disable_swipe">Disabilita lo scorrimento tra le schede</string>
+    <string name="sk_settings_tabs_disable_swipe">Disabilita lo scorrimento tra le schede</string>
     <string name="sk_settings_auth">Impostazioni di sicurezza</string>
     <string name="sk_delete_notification">Elimina la notifica</string>
     <string name="sk_delete_notification_confirm">Sei sicuro di voler eliminare questa notifica\?</string>

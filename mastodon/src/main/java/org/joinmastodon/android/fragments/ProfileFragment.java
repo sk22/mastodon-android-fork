@@ -10,7 +10,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.assist.AssistContent;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Color;

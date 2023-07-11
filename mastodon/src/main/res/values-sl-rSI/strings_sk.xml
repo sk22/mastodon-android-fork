@@ -33,7 +33,7 @@
     <string name="sk_list_timelines">Seznami</string>
     <string name="sk_follow_requests">Prošnje za sledenje</string>
     <string name="sk_accept_follow_request">Sprejmi prošnjo za sledenje</string>
-    <string name="sk_disable_marquee">Onemogoči drseče besedilo v naslovnih vrsticah</string>
+    <string name="sk_settings_enable_marquee">Onemogoči drseče besedilo v naslovnih vrsticah</string>
     <string name="sk_color_palette_material3">Sistem</string>
     <string name="sk_color_palette_pink">roza</string>
     <string name="sk_color_palette_purple">vijolična</string>
@@ -65,12 +65,12 @@
     <string name="sk_settings_about">O aplikaciji</string>
     <string name="sk_settings_donate">Doniraj</string>
     <string name="sk_delete_notification_confirm_action">Izbriši obvestilo</string>
-    <string name="sk_enable_delete_notifications">Omogoči brisanje obvestil</string>
+    <string name="sk_settings_enable_delete_notifications">Omogoči brisanje obvestil</string>
     <string name="sk_clear_all_notifications_confirm_action">Izbriši vse</string>
     <string name="sk_quote_post">Objavite o tem</string>
     <string name="sk_open_with_account">Odpri z drugim računom</string>
     <string name="sk_welcome_text">Pozdravlja vas morski pes! Za začetek spodaj vnesite ime domene vaše domače instance.</string>
-    <string name="sk_tabs_disable_swipe">Onemogoči drsenje med zavihki</string>
+    <string name="sk_settings_tabs_disable_swipe">Onemogoči drsenje med zavihki</string>
     <string name="sk_delete_notification">Izbriši obvestilo</string>
     <string name="sk_delete_notification_confirm">Ali ste prepričani, da želite izbrisati to obvestilo\?</string>
     <string name="sk_clear_all_notifications">Počisti vsa obvestila</string>
@@ -80,7 +80,7 @@
     <string name="sk_settings_translation_availability_note_unavailable">%s se zdi, da ne podpira prevoda.</string>
     <string name="sk_loading_fediverse_resource_title">Iskanje po Fediverzu</string>
     <string name="sk_loading_resource_on_instance_title">Iskanje na %s</string>
-    <string name="sk_notify_posts">Obvestila o objavi</string>
+    <string name="sk_notification_type_posts">Obvestila o objavi</string>
     <string name="sk_timeline_local">Lokalno</string>
     <string name="sk_timeline_federated">Federacija</string>
     <string name="sk_settings_show_interaction_counts">Pokaži števec interakcij</string>

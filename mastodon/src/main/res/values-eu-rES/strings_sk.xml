@@ -31,7 +31,7 @@
     <string name="sk_example_domain">adibidea.eus</string>
     <string name="sk_lists_with_user">%s-ekin zerrendatu</string>
     <string name="sk_settings_always_reveal_content_warnings">Erakutsi beti edukiaren abisua</string>
-    <string name="sk_disable_marquee">Desgaitu izenburu-barretako testuaren desplazamendua</string>
+    <string name="sk_settings_enable_marquee">Desgaitu izenburu-barretako testuaren desplazamendua</string>
     <string name="sk_settings_contribute">Lagundu Megalodon</string>
     <string name="sk_translated_using">%s-ekin itzulia</string>
     <string name="sk_post_language">Hizkuntza: %s</string>
@@ -46,7 +46,7 @@
     <string name="sk_already_reblogged">Jada bultzatu da</string>
     <string name="sk_reply_as">Erantzun beste kontu batekin</string>
     <string name="sk_translate_post">Itzuli</string>
-    <string name="sk_tabs_disable_swipe">Desgaitu fitxen arteko joan-etorria</string>
+    <string name="sk_settings_tabs_disable_swipe">Desgaitu fitxen arteko joan-etorria</string>
     <string name="sk_settings_profile">Konfiguratu profila</string>
     <string name="sk_settings_posting">Argitalpenen ezarpenak</string>
     <string name="sk_settings_filters">Filtroak konfiguratu</string>
@@ -66,7 +66,7 @@
     <string name="sk_delete_notification">Ezabatu jakinarazpena</string>
     <string name="sk_delete_notification_confirm_action">Ezabatu jakinarazpena</string>
     <string name="sk_delete_notification_confirm">Ziur al zaude jakinarazpen hau ezabatu nahi duzula\?</string>
-    <string name="sk_enable_delete_notifications">Gaitu jakinarazpenen ezabatzea</string>
+    <string name="sk_settings_enable_delete_notifications">Gaitu jakinarazpenen ezabatzea</string>
     <string name="sk_settings_publish_button_text">Argitaratze botoiaren testua</string>
     <string name="sk_settings_publish_button_text_title">Pertsonalizatu argitaratze botoiaren testua</string>
     <string name="sk_settings_translation_availability_note_available">%s-k itzulpena onartzen du!</string>
@@ -93,7 +93,7 @@
     <string name="sk_reject_follow_request">Alboratu jarraitzeko eskaerak</string>
     <string name="sk_settings_show_federated_timeline">Erakutsi federatutako denbora-lerroa</string>
     <string name="sk_notification_type_status">Argitalpenak</string>
-    <string name="sk_notify_posts">Argitalpenen jakinarazpenak</string>
+    <string name="sk_notification_type_posts">Argitalpenen jakinarazpenak</string>
     <string name="sk_translate_show_original">Erakutsi jatorrizkoa</string>
     <string name="sk_available_languages">Eskuragarri dauden hizkuntzak</string>
     <string name="sk_confirm_clear_recent_languages">Ziur al zaude berriki erabilitako hizkuntzak ezabatu nahi dituzula\?</string>

@@ -36,10 +36,10 @@
     <string name="sk_follow_requests">Permintaan pengikut</string>
     <string name="sk_lists_with_user">Daftar dengan %s</string>
     <string name="sk_settings_always_reveal_content_warnings">Selalu ungkap peringatan konten</string>
-    <string name="sk_disable_marquee">Nonaktifkan teks bergulir dalam bilah judul</string>
+    <string name="sk_settings_enable_marquee">Nonaktifkan teks bergulir dalam bilah judul</string>
     <string name="sk_settings_show_federated_timeline">Tampilkan lini masa federasi</string>
     <string name="sk_notification_type_status">Kiriman</string>
-    <string name="sk_notify_posts">Notifikasi kiriman</string>
+    <string name="sk_notification_type_posts">Notifikasi kiriman</string>
     <string name="sk_settings_color_palette">Warna tema</string>
     <string name="sk_color_palette_pink">Merah Muda</string>
     <string name="sk_color_palette_purple">Ungu</string>
@@ -61,10 +61,10 @@
     <string name="sk_color_palette_red">Merah</string>
     <string name="sk_translated_using">Diterjemahkan menggunakan %s</string>
     <string name="sk_welcome_text">Hiu menyapamu! Untuk memulai, silakan memasukkan nama domain instansi Anda di bawah.</string>
-    <string name="sk_tabs_disable_swipe">Nonaktifkan mengusap antara tab</string>
+    <string name="sk_settings_tabs_disable_swipe">Nonaktifkan mengusap antara tab</string>
     <string name="sk_settings_profile">Atur profil</string>
     <string name="sk_settings_filters">Atur profil</string>
-    <string name="sk_enable_delete_notifications">Aktifkan menghapus notifikasi</string>
+    <string name="sk_settings_enable_delete_notifications">Aktifkan menghapus notifikasi</string>
     <string name="sk_settings_publish_button_text">Teks tombol Terbitkan</string>
     <string name="sk_settings_publish_button_text_title">Ubah teks tombol Terbitkan</string>
     <string name="sk_settings_translate_only_opened">Sembunyikan tombol terjemahkan di lini masa</string>

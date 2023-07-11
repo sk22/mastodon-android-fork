@@ -31,14 +31,14 @@
     <string name="sk_reject_follow_request">팔로우 요청 거부</string>
     <string name="sk_lists_with_user">%s 님이 포함된 리스트</string>
     <string name="sk_settings_always_reveal_content_warnings">열람주의 게시물을 항상 펼치기</string>
-    <string name="sk_disable_marquee">제목 표시줄의 텍스트 스크롤 비활성화</string>
+    <string name="sk_settings_enable_marquee">제목 표시줄의 텍스트 스크롤 비활성화</string>
     <string name="sk_app_name">Megalodon</string>
     <string name="sk_settings_app_version">Megalodon v%1$s (%2$d)</string>
     <string name="sk_update_available">Megalodon %s 버전을 다운로드할 수 있습니다.</string>
     <string name="sk_update_ready">Megalodon %s 버전을 다운로드하였으며 설치할 수 있습니다.</string>
     <string name="sk_settings_show_federated_timeline">연합 타임라인 표시</string>
     <string name="sk_notification_type_status">게시물</string>
-    <string name="sk_notify_posts">게시물 알림</string>
+    <string name="sk_notification_type_posts">게시물 알림</string>
     <string name="sk_settings_color_palette">테마 색상</string>
     <string name="sk_color_palette_pink">분홍색</string>
     <string name="sk_color_palette_purple">보라색</string>
@@ -70,7 +70,7 @@
     <string name="sk_settings_donate">기부</string>
     <string name="sk_delete_notification_confirm_action">알림 삭제</string>
     <string name="sk_delete_notification_confirm">정말로 이 알림을 삭제하시겠습니까\?</string>
-    <string name="sk_enable_delete_notifications">알림 삭제 활성화</string>
+    <string name="sk_settings_enable_delete_notifications">알림 삭제 활성화</string>
     <string name="sk_settings_publish_button_text">게시 버튼 텍스트</string>
     <string name="sk_settings_publish_button_text_title">게시 버튼 사용자화</string>
     <string name="sk_settings_translate_only_opened">열린 게시물만 번역하기</string>
@@ -79,7 +79,7 @@
     <string name="sk_settings_translation_availability_note_unavailable">%s 인스턴스는 번역을 지원하지 않는 것 같습니다.</string>
     <string name="sk_clear_all_notifications_confirm">정말로 모든 알림을 삭제하시겠습니까\?</string>
     <string name="sk_clear_all_notifications_confirm_action">모두 삭제</string>
-    <string name="sk_tabs_disable_swipe">스와이프로 탭간 전환 비활성화</string>
+    <string name="sk_settings_tabs_disable_swipe">스와이프로 탭간 전환 비활성화</string>
     <string name="sk_clear_all_notifications">모든 알림 삭제</string>
     <string name="sk_loading_fediverse_resource_title">연합우주에서 찾아오는 중</string>
     <string name="sk_bookmark_as">다른 계정으로 보관</string>

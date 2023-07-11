@@ -35,13 +35,13 @@
     <string name="sk_pin_post">Pinio i\'ch proffil</string>
     <string name="sk_confirm_delete_and_redraft">Ydych chi\'n siŵr eich bod am ddileu ac ailddrafftio\'r neges hon\?</string>
     <string name="sk_confirm_unpin_post">Ydych chi\'n siŵr eich bod am ddadbinio\'r neges hon\?</string>
-    <string name="sk_notify_posts">Hysbysiadau negeseuon</string>
+    <string name="sk_notification_type_posts">Hysbysiadau negeseuon</string>
     <string name="sk_settings_color_palette">Palet lliwiau</string>
     <string name="sk_no_update_available">Dim diweddariad ar gael</string>
     <string name="sk_check_for_update">Gwirio am ddiweddariad</string>
     <string name="sk_poll_allow_multiple">Caniatáu mwy nag un dewis</string>
     <string name="sk_language_name">%1$s (%2$s)</string>
-    <string name="sk_tabs_disable_swipe">Analluogi llusgo rhwng tabiau</string>
+    <string name="sk_settings_tabs_disable_swipe">Analluogi llusgo rhwng tabiau</string>
     <string name="sk_settings_posting">Dewisiadau postio</string>
     <string name="sk_settings_rules">Rheolau</string>
     <string name="sk_settings_donate">Rhoddi</string>
@@ -60,7 +60,7 @@
     <string name="sk_clear_all_notifications">Dileu pob hysbysiad</string>
     <string name="sk_clear_all_notifications_confirm_action">Dileu\'r cwbl</string>
     <string name="sk_clear_all_notifications_confirm">Ydych chi\'n siŵr eich bod am ddileu pob hysbysiad\?</string>
-    <string name="sk_enable_delete_notifications">Galluogi dileu hysbysiadau</string>
+    <string name="sk_settings_enable_delete_notifications">Galluogi dileu hysbysiadau</string>
     <string name="sk_settings_publish_button_text_title">Addasu testun y botwm cyhoeddi</string>
     <string name="sk_settings_translation_availability_note_available">Mae %s yn cefnogi cyfieithu!</string>
     <string name="sk_unsent_posts">Negeseuon heb eu hanfon</string>
@@ -75,7 +75,7 @@
     <string name="sk_accept_follow_request">Derbyn cais dilyn</string>
     <string name="sk_reject_follow_request">Gwrthod cais dilyn</string>
     <string name="sk_lists_with_user">Rhestrau gyda %s</string>
-    <string name="sk_disable_marquee">Analluogi testun sgrolio mewn bariau teitl</string>
+    <string name="sk_settings_enable_marquee">Analluogi testun sgrolio mewn bariau teitl</string>
     <string name="sk_settings_show_federated_timeline">Dangos ffrwd ffederasiwn</string>
     <string name="sk_translated_using">Wedi\'i gyfieithu gyda %s</string>
     <string name="sk_welcome_text">Cyfarchion o\'r siarc! I ddechrau, rhowch enw eich parth gartrefol isod.</string>

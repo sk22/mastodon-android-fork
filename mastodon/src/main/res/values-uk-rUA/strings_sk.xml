@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="sk_notify_posts">Сповіщення про дописи</string>
+    <string name="sk_notification_type_posts">Сповіщення про дописи</string>
     <string name="sk_settings_color_palette">Колірна палітра</string>
     <string name="sk_color_palette_purple">Фіолетова</string>
     <string name="sk_color_palette_green">Зелена</string>
@@ -42,7 +42,7 @@
     <string name="sk_accept_follow_request">Погодити запит на стеження</string>
     <string name="sk_reject_follow_request">Відхилити запит на стеження</string>
     <string name="sk_lists_with_user">Списки з %s</string>
-    <string name="sk_disable_marquee">Вимкнути прокручування тексту у рядках заголовка</string>
+    <string name="sk_settings_enable_marquee">Вимкнути прокручування тексту у рядках заголовка</string>
     <string name="sk_settings_contribute">Допомогти у розробці Megalodon</string>
     <string name="sk_mark_media_as_sensitive">Позначити медіа делікатним</string>
     <string name="sk_settings_show_boosts">Показувати поширення</string>
@@ -70,7 +70,7 @@
     <string name="sk_delete_notification">Видалити сповіщення</string>
     <string name="sk_delete_notification_confirm_action">Видалити сповіщення</string>
     <string name="sk_delete_notification_confirm">Ви впевнені, що хочете видалити це сповіщення\?</string>
-    <string name="sk_enable_delete_notifications">Увімкнути видалення сповіщень</string>
+    <string name="sk_settings_enable_delete_notifications">Увімкнути видалення сповіщень</string>
     <string name="sk_settings_publish_button_text">Текст кнопки \"опублікувати\"</string>
     <string name="sk_settings_publish_button_text_title">Змінити текст кнопки \"опублікувати\"</string>
     <string name="sk_settings_translate_only_opened">Сховати кнопку \"перекласти\" у стрічці</string>
@@ -82,7 +82,7 @@
     <string name="sk_undo_reblog">Скасувати поширення</string>
     <string name="sk_reblog_with_visibility">Поширення з видимістю</string>
     <string name="sk_quote_post">Цитувати допис</string>
-    <string name="sk_tabs_disable_swipe">Вимкнути жест гортання між вкладками</string>
+    <string name="sk_settings_tabs_disable_swipe">Вимкнути жест гортання між вкладками</string>
     <string name="sk_settings_auth">Налаштування безпеки</string>
     <string name="sk_clear_all_notifications_confirm_action">Видалити все</string>
     <string name="sk_copy_link_to_post">Скопіювати посилання на допис</string>
