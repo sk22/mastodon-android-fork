@@ -37,7 +37,7 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 	private CheckableListItem<Void> revealCWsItem, hideSensitiveMediaItem, interactionCountsItem, emojiInNamesItem;
 
 	// MEGALODON
-	private CheckableListItem<Void> trueBlackModeItem, marqueeItem, disableSwipeItem, reduceMotionItem;
+	private CheckableListItem<Void> trueBlackModeItem, marqueeItem, disableSwipeItem, reduceMotionItem, altIndicatorItem, noAltIndicatorItem, collapsePostsItem, spectatorModeItem, hideFabItem, translateOpenedItem;
 	private ListItem<Void> colorItem, publishTextItem, autoRevealCWsItem;
 
 	private AccountLocalPreferences lp;
@@ -60,7 +60,13 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 				emojiInNamesItem=new CheckableListItem<>(R.string.settings_show_emoji_in_names, 0, CheckableListItem.Style.SWITCH, lp.customEmojiInNames, R.drawable.ic_fluent_emoji_24_regular, ()->toggleCheckableItem(emojiInNamesItem)),
 				marqueeItem=new CheckableListItem<>(R.string.sk_settings_enable_marquee, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.toolbarMarquee, R.drawable.ic_fluent_text_more_24_regular, ()->toggleCheckableItem(marqueeItem)),
 				reduceMotionItem=new CheckableListItem<>(R.string.sk_settings_reduce_motion, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.reduceMotion, R.drawable.ic_fluent_star_emphasis_24_regular, ()->toggleCheckableItem(reduceMotionItem)),
-				disableSwipeItem=new CheckableListItem<>(R.string.sk_settings_tabs_disable_swipe, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.disableSwipe, R.drawable.ic_fluent_swipe_right_24_regular, ()->toggleCheckableItem(disableSwipeItem))
+				disableSwipeItem=new CheckableListItem<>(R.string.sk_settings_tabs_disable_swipe, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.disableSwipe, R.drawable.ic_fluent_swipe_right_24_regular, ()->toggleCheckableItem(disableSwipeItem)),
+				altIndicatorItem=new CheckableListItem<>(R.string.sk_settings_show_alt_indicator, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.showAltIndicator, R.drawable.ic_fluent_scan_text_24_regular, ()->toggleCheckableItem(altIndicatorItem)),
+				noAltIndicatorItem=new CheckableListItem<>(R.string.sk_settings_show_no_alt_indicator, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.showNoAltIndicator, R.drawable.ic_fluent_important_24_regular, ()->toggleCheckableItem(noAltIndicatorItem)),
+				collapsePostsItem=new CheckableListItem<>(R.string.sk_settings_collapse_long_posts, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.collapseLongPosts, R.drawable.ic_fluent_chevron_down_24_regular, ()->toggleCheckableItem(collapsePostsItem)),
+				spectatorModeItem=new CheckableListItem<>(R.string.sk_settings_hide_interaction, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.spectatorMode, R.drawable.ic_fluent_star_off_24_regular, ()->toggleCheckableItem(spectatorModeItem)),
+				hideFabItem=new CheckableListItem<>(R.string.sk_settings_hide_fab, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.autoHideFab, R.drawable.ic_fluent_edit_24_regular, ()->toggleCheckableItem(hideFabItem)),
+				translateOpenedItem=new CheckableListItem<>(R.string.sk_settings_translate_only_opened, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.translateButtonOpenedOnly, R.drawable.ic_fluent_translate_24_regular, ()->toggleCheckableItem(translateOpenedItem))
 		));
 		trueBlackModeItem.checkedChangeListener=checked->onTrueBlackModeClick();
 	}
@@ -89,6 +95,12 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 		GlobalUserPreferences.toolbarMarquee=marqueeItem.checked;
 		GlobalUserPreferences.reduceMotion=reduceMotionItem.checked;
 		GlobalUserPreferences.disableSwipe=disableSwipeItem.checked;
+		GlobalUserPreferences.showAltIndicator=altIndicatorItem.checked;
+		GlobalUserPreferences.showNoAltIndicator=noAltIndicatorItem.checked;
+		GlobalUserPreferences.collapseLongPosts=collapsePostsItem.checked;
+		GlobalUserPreferences.spectatorMode=spectatorModeItem.checked;
+		GlobalUserPreferences.autoHideFab=hideFabItem.checked;
+		GlobalUserPreferences.translateButtonOpenedOnly=translateOpenedItem.checked;
 		GlobalUserPreferences.save();
 		E.post(new StatusDisplaySettingsChangedEvent(accountID));
 	}

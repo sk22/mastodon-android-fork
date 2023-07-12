@@ -44,6 +44,10 @@ public class ListItem<T>{
 		this(title, subtitle, iconRes, onClick, null, 0, false);
 	}
 
+	public ListItem(String title, String subtitle, @DrawableRes int iconRes, Runnable onClick, boolean dividerAfter){
+		this(title, subtitle, iconRes, onClick, null, 0, dividerAfter);
+	}
+
 	public ListItem(String title, String subtitle, @DrawableRes int iconRes, Runnable onClick, T parentObject){
 		this(title, subtitle, iconRes, onClick, parentObject, 0, false);
 	}
