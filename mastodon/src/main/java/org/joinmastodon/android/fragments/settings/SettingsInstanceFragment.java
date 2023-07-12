@@ -19,7 +19,7 @@ import java.util.List;
 import me.grishka.appkit.Nav;
 
 public class SettingsInstanceFragment extends BaseSettingsFragment<Void> implements HasAccountID{
-	private CheckableListItem<Void> contentTypesItem;
+	private CheckableListItem<Void> contentTypesItem, localOnlyItem, glitchModeItem;
 	private ListItem<Void> defaultContentTypeItem;
 	private AccountLocalPreferences lp;
 
@@ -32,10 +32,14 @@ public class SettingsInstanceFragment extends BaseSettingsFragment<Void> impleme
 		onDataLoaded(List.of(
 				new ListItem<>(AccountSessionManager.get(accountID).domain, getString(R.string.settings_server_explanation), R.drawable.ic_fluent_server_24_regular, this::onServerClick, true),
 				contentTypesItem=new CheckableListItem<>(R.string.sk_settings_content_types, R.string.sk_settings_content_types_explanation, CheckableListItem.Style.SWITCH, lp.contentTypesEnabled, R.drawable.ic_fluent_text_edit_style_24_regular, this::onContentTypeClick),
-				defaultContentTypeItem=new ListItem<>(R.string.sk_settings_default_content_type, lp.defaultContentType.getName(), R.drawable.ic_fluent_text_bold_24_regular, this::onDefaultContentTypeClick)
+				defaultContentTypeItem=new ListItem<>(R.string.sk_settings_default_content_type, lp.defaultContentType.getName(), R.drawable.ic_fluent_text_bold_24_regular, this::onDefaultContentTypeClick),
+				localOnlyItem=new CheckableListItem<>(R.string.sk_settings_support_local_only, R.string.sk_settings_local_only_explanation, CheckableListItem.Style.SWITCH, lp.localOnlySupported, R.drawable.ic_fluent_eye_24_regular, this::onLocalOnlyClick),
+				glitchModeItem=new CheckableListItem<>(R.string.sk_settings_glitch_instance, R.string.sk_settings_glitch_mode_explanation, CheckableListItem.Style.SWITCH, lp.glitchInstance, R.drawable.ic_fluent_eye_24_filled, ()->toggleCheckableItem(glitchModeItem))
 		));
 		contentTypesItem.checkedChangeListener=checked->onContentTypeClick();
 		defaultContentTypeItem.isEnabled=contentTypesItem.checked;
+		localOnlyItem.checkedChangeListener=checked->onLocalOnlyClick();
+		glitchModeItem.isEnabled=localOnlyItem.checked;
 	}
 
 	@Override
@@ -45,6 +49,8 @@ public class SettingsInstanceFragment extends BaseSettingsFragment<Void> impleme
 	protected void onHidden(){
 		super.onHidden();
 		lp.contentTypesEnabled=contentTypesItem.checked;
+		lp.localOnlySupported=localOnlyItem.checked;
+		lp.glitchInstance=glitchModeItem.checked;
 		lp.save();
 	}
 
@@ -90,6 +96,13 @@ public class SettingsInstanceFragment extends BaseSettingsFragment<Void> impleme
 				})
 				.setNegativeButton(R.string.cancel, null)
 				.show();
+	}
+
+	private void onLocalOnlyClick(){
+		toggleCheckableItem(localOnlyItem);
+		glitchModeItem.checked=localOnlyItem.checked && !isInstanceAkkoma();
+		glitchModeItem.isEnabled=localOnlyItem.checked;
+		rebindItem(glitchModeItem);
 	}
 
 	@Override
