@@ -279,7 +279,7 @@
     <string name="sk_new_reports">New reports</string>
     <string name="sk_settings_server_version">Server version: %s</string>
     <string name="sk_notify_poll_results">Poll results</string>
-    <string name="sk_settings_prefix_reply_cw_with_re">Prefix CW with “re:” on replies to</string>
+    <string name="sk_settings_prefix_reply_cw_with_re">Prefix CW with “re:” when replying</string>
     <string name="sk_filtered">Filtered: %s</string>
     <string name="sk_expand">Expand</string>
     <string name="sk_collapse">Collapse</string>
@@ -320,9 +320,9 @@
     <string name="sk_settings_auto_reveal_nobody">Never</string>
     <string name="sk_settings_auto_reveal_author">Replies by the same author</string>
     <string name="sk_settings_auto_reveal_anyone">Replies by everyone</string>
-    <string name="sk_settings_prefix_replies_always">everyone</string>
-    <string name="sk_settings_prefix_replies_never">nobody</string>
-    <string name="sk_settings_prefix_replies_to_others">others</string>
+    <string name="sk_settings_prefix_replies_always">In reply to anyone</string>
+    <string name="sk_settings_prefix_replies_never">Never</string>
+    <string name="sk_settings_prefix_replies_to_others">Only in reply to others</string>
     <string name="sk_settings_forward_report_default">“Forward report” switch default</string>
     <string name="sk_exclusive_list">Exclusive list</string>
     <string name="sk_list_exclusive_switch">Make list exclusive</string>
