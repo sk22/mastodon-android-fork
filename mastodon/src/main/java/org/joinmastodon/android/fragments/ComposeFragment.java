@@ -1579,14 +1579,14 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			case LOCAL -> R.string.sk_local_only;
 		});
 		Drawable icon=getResources().getDrawable(switch(statusVisibility){
-			case PUBLIC -> R.drawable.ic_fluent_earth_20_regular;
-			case UNLISTED -> R.drawable.ic_fluent_lock_open_20_regular;
-			case PRIVATE -> R.drawable.ic_fluent_lock_closed_20_filled;
-			case DIRECT -> R.drawable.ic_fluent_mention_20_regular;
-			case LOCAL -> R.drawable.ic_fluent_eye_20_regular;
+			case PUBLIC -> R.drawable.ic_fluent_earth_16_regular;
+			case UNLISTED -> R.drawable.ic_fluent_lock_open_16_regular;
+			case PRIVATE -> R.drawable.ic_fluent_lock_closed_16_filled;
+			case DIRECT -> R.drawable.ic_fluent_mention_16_regular;
+			case LOCAL -> R.drawable.ic_fluent_eye_16_regular;
 		}, getActivity().getTheme()).mutate();
 		icon.setBounds(0, 0, V.dp(18), V.dp(18));
-		icon.setTint(UiUtils.getThemeColor(getActivity(), R.attr.colorM3Primary));
+		visibilityBtn.setCompoundDrawableTintList(getContext().getResources().getColorStateList(R.color.m3_primary_selector, getContext().getTheme()));
 		visibilityBtn.setCompoundDrawablesRelative(icon, null, visibilityBtn.getCompoundDrawablesRelative()[2], null);
 	}
 

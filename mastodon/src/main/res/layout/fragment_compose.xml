@@ -142,6 +142,7 @@
 						android:textAppearance="@style/m3_label_large"
 						android:background="@drawable/bg_filter_chip"
 						android:textColor="@color/filter_chip_text"
+						android:drawableTint="@color/m3_primary_selector"
 						android:paddingStart="8dp"
 						android:paddingEnd="8dp"
 						android:drawablePadding="8dp"
