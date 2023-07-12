@@ -54,7 +54,7 @@ public class SettingsMainFragment extends BaseSettingsFragment<Void>{
 				new ListItem<>(R.string.settings_display, 0, R.drawable.ic_fluent_color_24_regular, this::onDisplayClick),
 				new ListItem<>(R.string.settings_filters, 0, R.drawable.ic_fluent_filter_24_regular, this::onFiltersClick),
 				new ListItem<>(R.string.settings_notifications, 0, R.drawable.ic_fluent_alert_24_regular, this::onNotificationsClick),
-				new ListItem<>(AccountSessionManager.get(accountID).domain, getString(R.string.settings_server_explanation), R.drawable.ic_fluent_server_24_regular, this::onServerClick),
+				new ListItem<>(R.string.sk_settings_instance, 0, R.drawable.ic_fluent_server_24_regular, this::onInstanceClick),
 				new ListItem<>(getString(R.string.about_app, getString(R.string.sk_app_name)), null, R.drawable.ic_fluent_info_24_regular, this::onAboutClick, null, 0, true),
 				new ListItem<>(R.string.log_out, 0, R.drawable.ic_fluent_sign_out_24_regular, this::onLogOutClick, R.attr.colorM3Error, false)
 		));
@@ -135,8 +135,8 @@ public class SettingsMainFragment extends BaseSettingsFragment<Void>{
 		Nav.go(getActivity(), SettingsNotificationsFragment.class, makeFragmentArgs());
 	}
 
-	private void onServerClick(){
-		Nav.go(getActivity(), SettingsServerFragment.class, makeFragmentArgs());
+	private void onInstanceClick(){
+		Nav.go(getActivity(), SettingsInstanceFragment.class, makeFragmentArgs());
 	}
 
 	private void onAboutClick(){

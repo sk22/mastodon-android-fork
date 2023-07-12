@@ -380,15 +380,15 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 		items.add(new SmallTextItem(getString(R.string.sk_settings_content_types_explanation)));
 		items.add(defaultContentTypeButtonItem = new ButtonItem(R.string.sk_settings_default_content_type, 0, b->{
 			PopupMenu popupMenu=new PopupMenu(getActivity(), b, Gravity.CENTER_HORIZONTAL);
-			popupMenu.inflate(R.menu.compose_content_type);
+//			popupMenu.inflate(R.menu.compose_content_type);
 			popupMenu.setOnMenuItemClickListener(item -> this.onContentTypeChanged(item, b));
 			b.setOnTouchListener(popupMenu.getDragToOpenListener());
 			b.setOnClickListener(v->popupMenu.show());
 			ContentType contentType = ContentType.PLAIN;
 			b.setText(getContentTypeString(contentType));
 			contentTypeMenu = popupMenu.getMenu();
-			contentTypeMenu.findItem(ContentType.getContentTypeRes(contentType)).setChecked(true);
-			instance.ifPresent(i -> ContentType.adaptMenuToInstance(contentTypeMenu, i));
+//			contentTypeMenu.findItem(ContentType.getContentTypeRes(contentType)).setChecked(true);
+//			instance.ifPresent(i -> ContentType.adaptMenuToInstance(contentTypeMenu, i));
 		}));
 		items.add(new SmallTextItem(getString(R.string.sk_settings_default_content_type_explanation)));
 		items.add(new SwitchItem(R.string.sk_settings_support_local_only, 0, false, i->{
@@ -607,28 +607,29 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 
 	private @StringRes int getContentTypeString(@Nullable ContentType contentType) {
 		if (contentType == null) return R.string.sk_content_type_unspecified;
-		return switch (contentType) {
-			case PLAIN -> R.string.sk_content_type_plain;
-			case HTML -> R.string.sk_content_type_html;
-			case MARKDOWN -> R.string.sk_content_type_markdown;
-			case BBCODE -> R.string.sk_content_type_bbcode;
-			case MISSKEY_MARKDOWN -> R.string.sk_content_type_mfm;
-		};
+//		return switch (contentType) {
+//			case PLAIN -> R.string.sk_content_type_plain;
+//			case HTML -> R.string.sk_content_type_html;
+//			case MARKDOWN -> R.string.sk_content_type_markdown;
+//			case BBCODE -> R.string.sk_content_type_bbcode;
+//			case MISSKEY_MARKDOWN -> R.string.sk_content_type_mfm;
+//		};
+		return 0;
 	}
 
 	private boolean onContentTypeChanged(MenuItem item, Button btn){
 		int id = item.getItemId();
-
-		ContentType contentType = null;
-		if (id == R.id.content_type_plain) contentType = ContentType.PLAIN;
-		else if (id == R.id.content_type_html) contentType = ContentType.HTML;
-		else if (id == R.id.content_type_markdown) contentType = ContentType.MARKDOWN;
-		else if (id == R.id.content_type_bbcode) contentType = ContentType.BBCODE;
-		else if (id == R.id.content_type_misskey_markdown) contentType = ContentType.MISSKEY_MARKDOWN;
+//
+//		ContentType contentType = null;
+//		if (id == R.id.content_type_plain) contentType = ContentType.PLAIN;
+//		else if (id == R.id.content_type_html) contentType = ContentType.HTML;
+//		else if (id == R.id.content_type_markdown) contentType = ContentType.MARKDOWN;
+//		else if (id == R.id.content_type_bbcode) contentType = ContentType.BBCODE;
+//		else if (id == R.id.content_type_misskey_markdown) contentType = ContentType.MISSKEY_MARKDOWN;
 
 //		GlobalUserPreferences.accountsDefaultContentTypes.put(accountID, contentType);
 		GlobalUserPreferences.save();
-		btn.setText(getContentTypeString(contentType));
+//		btn.setText(getContentTypeString(contentType));
 		item.setChecked(true);
 		return true;
 	}

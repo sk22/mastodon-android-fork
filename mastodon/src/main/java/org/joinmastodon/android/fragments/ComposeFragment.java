@@ -110,6 +110,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -452,9 +453,9 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			} catch (IllegalArgumentException ignored) {}
 		}
 
-		int contentTypeId = ContentType.getContentTypeRes(contentType);
-		contentTypePopup.getMenu().findItem(contentTypeId).setChecked(true);
-		contentTypeBtn.setSelected(contentTypeId != R.id.content_type_null && contentTypeId != R.id.content_type_plain);
+		int typeIndex=contentType.ordinal();
+		contentTypePopup.getMenu().findItem(typeIndex).setChecked(true);
+		contentTypeBtn.setSelected(typeIndex != ContentType.UNSPECIFIED.getName() && typeIndex != ContentType.PLAIN.ordinal());
 
 		autocompleteViewController=new ComposeAutocompleteViewController(getActivity(), accountID);
 		autocompleteViewController.setCompletionSelectedListener(new ComposeAutocompleteViewController.AutocompleteListener(){
@@ -1064,7 +1065,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		req.localOnly=localOnly;
 		req.visibility=localOnly && instance.isAkkoma() ? StatusPrivacy.LOCAL : statusVisibility;
 		req.sensitive=sensitive;
-		req.contentType=contentType;
+		req.contentType=contentType==ContentType.UNSPECIFIED ? null : contentType;
 		req.scheduledAt=scheduledAt;
 		if(!mediaViewController.isEmpty()){
 			req.mediaIds=mediaViewController.getAttachmentIDs();
@@ -1506,21 +1507,21 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	@SuppressLint("ClickableViewAccessibility")
 	private void buildContentTypePopup(View btn) {
 		contentTypePopup=new PopupMenu(getActivity(), btn);
-		contentTypePopup.inflate(R.menu.compose_content_type);
 		Menu m = contentTypePopup.getMenu();
-		ContentType.adaptMenuToInstance(m, instance);
-		if (contentType != null) m.findItem(R.id.content_type_null).setVisible(false);
+		for(ContentType value : ContentType.values()){
+			if(!value.supportedByInstance(instance)) continue;
+			m.add(0, value.ordinal(), Menu.NONE, value.getName());
+		}
+		m.setGroupCheckable(0, true, true);
+		if (contentType!=ContentType.UNSPECIFIED || editingStatus!=null){
+			// setting content type to null while editing will just leave it unchanged
+			m.findItem(ContentType.UNSPECIFIED.ordinal()).setVisible(false);
+		}
 
 		contentTypePopup.setOnMenuItemClickListener(i->{
-			int id=i.getItemId();
-			if (id == R.id.content_type_null) contentType = null;
-			else if (id == R.id.content_type_plain) contentType = ContentType.PLAIN;
-			else if (id == R.id.content_type_html) contentType = ContentType.HTML;
-			else if (id == R.id.content_type_markdown) contentType = ContentType.MARKDOWN;
-			else if (id == R.id.content_type_bbcode) contentType = ContentType.BBCODE;
-			else if (id == R.id.content_type_misskey_markdown) contentType = ContentType.MISSKEY_MARKDOWN;
-			else return false;
-			btn.setSelected(id != R.id.content_type_null && id != R.id.content_type_plain);
+			int index=i.getItemId();
+			contentType=ContentType.values()[index];
+			btn.setSelected(index!=ContentType.UNSPECIFIED.ordinal() && index!=ContentType.PLAIN.ordinal());
 			i.setChecked(true);
 			return true;
 		});

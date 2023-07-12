@@ -85,7 +85,7 @@ public class AccountLocalPreferences{
 				.putBoolean("showBoosts", showBoosts)
 				.putString("recentLanguages", gson.toJson(recentLanguages))
 				.putBoolean("bottomEncoding", bottomEncoding)
-				.putString("defaultContentType", defaultContentType.name())
+				.putString("defaultContentType", defaultContentType==null ? null : defaultContentType.name())
 				.putBoolean("contentTypesEnabled", contentTypesEnabled)
 				.putString("timelines", gson.toJson(timelines))
 				.putBoolean("localOnlySupported", localOnlySupported)
