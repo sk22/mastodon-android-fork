@@ -25,6 +25,8 @@ public class AccountLocalPreferences{
 	public boolean serverSideFiltersSupported;
 
 	// MEGALODON
+	public boolean showReplies;
+	public boolean showBoosts;
 	public ArrayList<String> recentLanguages;
 	public boolean bottomEncoding;
 	public ContentType defaultContentType;
@@ -48,6 +50,8 @@ public class AccountLocalPreferences{
 		serverSideFiltersSupported=prefs.getBoolean("serverSideFilters", false);
 
 		// MEGALODON
+		showReplies=prefs.getBoolean("showReplies", true);
+		showBoosts=prefs.getBoolean("showBoosts", true);
 		recentLanguages=fromJson(prefs.getString("recentLanguages", null), recentLanguagesType, new ArrayList<>());
 		bottomEncoding=prefs.getBoolean("bottomEncoding", false);
 		defaultContentType=enumValue(ContentType.class, prefs.getString("defaultContentType", ContentType.PLAIN.name()));
@@ -77,6 +81,8 @@ public class AccountLocalPreferences{
 				.putBoolean("serverSideFilters", serverSideFiltersSupported)
 
 				// MEGALODON
+				.putBoolean("showReplies", showReplies)
+				.putBoolean("showBoosts", showBoosts)
 				.putString("recentLanguages", gson.toJson(recentLanguages))
 				.putBoolean("bottomEncoding", bottomEncoding)
 				.putString("defaultContentType", defaultContentType.name())

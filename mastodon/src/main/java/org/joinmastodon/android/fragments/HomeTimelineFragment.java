@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.api.requests.markers.SaveMarkers;
 import org.joinmastodon.android.api.requests.timelines.GetHomeTimeline;
+import org.joinmastodon.android.api.session.AccountLocalPreferences;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.StatusCreatedEvent;
 import org.joinmastodon.android.model.CacheablePaginatedResponse;
@@ -50,8 +51,9 @@ public class HomeTimelineFragment extends StatusListFragment {
 	}
 
 	private boolean typeFilterPredicate(Status s) {
-		return (GlobalUserPreferences.showReplies || s.inReplyToId == null) &&
-				(GlobalUserPreferences.showBoosts || s.reblog == null);
+		AccountLocalPreferences lp=getLocalPrefs();
+		return (lp.showReplies || s.inReplyToId == null) &&
+				(lp.showBoosts || s.reblog == null);
 	}
 
 	private List<Status> filterPosts(List<Status> items) {

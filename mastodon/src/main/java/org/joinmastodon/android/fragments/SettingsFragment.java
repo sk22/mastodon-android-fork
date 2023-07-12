@@ -252,10 +252,10 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 		items.add(new SmallTextItem(R.string.sk_settings_allow_remote_loading_explanation));
 
 		items.add(new HeaderItem(R.string.sk_timelines));
-		items.add(new SwitchItem(R.string.sk_settings_show_replies, R.drawable.ic_fluent_chat_multiple_24_regular, GlobalUserPreferences.showReplies, i->{
-			GlobalUserPreferences.showReplies=i.checked;
-			GlobalUserPreferences.save();
-		}));
+//		items.add(new SwitchItem(R.string.sk_settings_show_replies, R.drawable.ic_fluent_chat_multiple_24_regular, GlobalUserPreferences.showReplies, i->{
+//			GlobalUserPreferences.showReplies=i.checked;
+//			GlobalUserPreferences.save();
+//		}));
 		if (isInstanceAkkoma()) {
 			items.add(new ButtonItem(R.string.sk_settings_reply_visibility, R.drawable.ic_fluent_chat_24_regular, b->{
 				PopupMenu popupMenu=new PopupMenu(getActivity(), b, Gravity.CENTER_HORIZONTAL);
@@ -272,10 +272,10 @@ public class SettingsFragment extends MastodonToolbarFragment implements Provide
 						});
 			}));
 		}
-		items.add(new SwitchItem(R.string.sk_settings_show_boosts, R.drawable.ic_fluent_arrow_repeat_all_24_regular, GlobalUserPreferences.showBoosts, i->{
-			GlobalUserPreferences.showBoosts=i.checked;
-			GlobalUserPreferences.save();
-		}));
+//		items.add(new SwitchItem(R.string.sk_settings_show_boosts, R.drawable.ic_fluent_arrow_repeat_all_24_regular, GlobalUserPreferences.showBoosts, i->{
+//			GlobalUserPreferences.showBoosts=i.checked;
+//			GlobalUserPreferences.save();
+//		}));
 		items.add(new SwitchItem(R.string.sk_settings_load_new_posts, R.drawable.ic_fluent_arrow_sync_24_regular, GlobalUserPreferences.loadNewPosts, i->{
 			GlobalUserPreferences.loadNewPosts=i.checked;
 			showNewPostsItem.enabled = i.checked;

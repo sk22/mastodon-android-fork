@@ -35,8 +35,6 @@ public class GlobalUserPreferences{
 
 	// MEGALODON
 	public static boolean trueBlackTheme;
-	public static boolean showReplies;
-	public static boolean showBoosts;
 	public static boolean loadNewPosts;
 	public static boolean showNewPostsButton;
 	public static boolean toolbarMarquee;
@@ -91,8 +89,6 @@ public class GlobalUserPreferences{
 
 		// MEGALODON
 		trueBlackTheme=prefs.getBoolean("trueBlackTheme", false);
-		showReplies=prefs.getBoolean("showReplies", true);
-		showBoosts=prefs.getBoolean("showBoosts", true);
 		loadNewPosts=prefs.getBoolean("loadNewPosts", true);
 		showNewPostsButton=prefs.getBoolean("showNewPostsButton", true);
 		toolbarMarquee=prefs.getBoolean("toolbarMarquee", true);
@@ -144,8 +140,6 @@ public class GlobalUserPreferences{
 				.putBoolean("confirmDeletePost", confirmDeletePost)
 
 				// MEGALODON
-				.putBoolean("showReplies", showReplies)
-				.putBoolean("showBoosts", showBoosts)
 				.putBoolean("loadNewPosts", loadNewPosts)
 				.putBoolean("showNewPostsButton", showNewPostsButton)
 				.putBoolean("trueBlackTheme", trueBlackTheme)
@@ -207,6 +201,8 @@ public class GlobalUserPreferences{
 			localPrefs.glitchInstance=accountsInGlitchMode.contains(accountID);
 			localPrefs.publishButtonText=prefs.getString("publishButtonText", null);
 			localPrefs.keepOnlyLatestNotification=prefs.getBoolean("keepOnlyLatestNotification", false);
+			localPrefs.showReplies=prefs.getBoolean("showReplies", true);
+			localPrefs.showBoosts=prefs.getBoolean("showBoosts", true);
 
 			if(session.getInstance().map(Instance::isAkkoma).orElse(false)){
 				localPrefs.timelineReplyVisibility=prefs.getString("replyVisibility", null);
