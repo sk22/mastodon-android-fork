@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.model.Status;
@@ -91,7 +92,7 @@ public class SpoilerStatusDisplayItem extends StatusDisplayItem{
 					itemView.getPaddingLeft(),
 					itemView.getPaddingTop(),
 					itemView.getPaddingRight(),
-					item.inset ? itemView.getPaddingTop() : 0
+					item.inset || GlobalUserPreferences.spectatorMode ? itemView.getPaddingTop() : 0
 			);
 		}
 

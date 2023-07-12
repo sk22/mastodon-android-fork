@@ -235,7 +235,7 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 
 			// compensate for spoiler's bottom margin
 			ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) itemView.getLayoutParams();
-			params.setMargins(params.leftMargin, item.inset && hasSpoiler ? V.dp(-16) : 0,
+			params.setMargins(params.leftMargin, (item.inset || GlobalUserPreferences.spectatorMode) && hasSpoiler ? V.dp(-16) : 0,
 					params.rightMargin, params.bottomMargin);
 		}
 
