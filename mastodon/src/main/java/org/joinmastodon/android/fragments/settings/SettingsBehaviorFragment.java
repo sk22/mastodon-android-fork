@@ -30,7 +30,7 @@ public class SettingsBehaviorFragment extends BaseSettingsFragment<Void> impleme
 	// MEGALODON
 	private MastodonLanguage.LanguageResolver languageResolver;
 	private ListItem<Void> prefixRepliesItem, replyVisibilityItem;
-	private CheckableListItem<Void> forwardReportsItem, remoteLoadingItem, showBoostsItem, showRepliesItem;
+	private CheckableListItem<Void> forwardReportsItem, remoteLoadingItem, showBoostsItem, showRepliesItem, loadNewPostsItem, seeNewPostsBtnItem;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -53,6 +53,8 @@ public class SettingsBehaviorFragment extends BaseSettingsFragment<Void> impleme
 				confirmDeleteItem=new CheckableListItem<>(R.string.settings_confirm_delete_post, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.confirmDeletePost, R.drawable.ic_fluent_delete_24_regular, ()->toggleCheckableItem(confirmDeleteItem)),
 				prefixRepliesItem=new ListItem<>(R.string.sk_settings_prefix_reply_cw_with_re, getPrefixWithRepliesString(), R.drawable.ic_fluent_arrow_reply_24_regular, this::onPrefixRepliesClick),
 				forwardReportsItem=new CheckableListItem<>(R.string.sk_settings_forward_report_default, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.forwardReportDefault, R.drawable.ic_fluent_arrow_forward_24_regular, ()->toggleCheckableItem(forwardReportsItem)),
+				loadNewPostsItem=new CheckableListItem<>(R.string.sk_settings_load_new_posts, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.loadNewPosts, R.drawable.ic_fluent_arrow_sync_24_regular, this::onLoadNewPostsClick),
+				seeNewPostsBtnItem=new CheckableListItem<>(R.string.sk_settings_see_new_posts_button, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.showNewPostsButton, R.drawable.ic_fluent_arrow_up_24_regular, ()->toggleCheckableItem(seeNewPostsBtnItem)),
 				remoteLoadingItem=new CheckableListItem<>(R.string.sk_settings_allow_remote_loading, R.string.sk_settings_allow_remote_loading_explanation, CheckableListItem.Style.SWITCH, GlobalUserPreferences.allowRemoteLoading, R.drawable.ic_fluent_communication_24_regular, ()->toggleCheckableItem(remoteLoadingItem), true),
 				showBoostsItem=new CheckableListItem<>(R.string.sk_settings_show_boosts, 0, CheckableListItem.Style.SWITCH, lp.showBoosts, R.drawable.ic_fluent_arrow_repeat_all_24_regular, ()->toggleCheckableItem(showBoostsItem)),
 				showRepliesItem=new CheckableListItem<>(R.string.sk_settings_show_replies, 0, CheckableListItem.Style.SWITCH, lp.showReplies, R.drawable.ic_fluent_arrow_reply_24_regular, ()->toggleCheckableItem(showRepliesItem))
@@ -61,6 +63,9 @@ public class SettingsBehaviorFragment extends BaseSettingsFragment<Void> impleme
 		if(isInstanceAkkoma()) items.add(
 				replyVisibilityItem=new ListItem<>(R.string.sk_settings_reply_visibility, getReplyVisibilityString(), R.drawable.ic_fluent_chat_24_regular, this::onReplyVisibilityClick)
 		);
+
+		loadNewPostsItem.checkedChangeListener=checked->onLoadNewPostsClick();
+		seeNewPostsBtnItem.isEnabled=loadNewPostsItem.checked;
 
 		onDataLoaded(items);
 	}
@@ -146,6 +151,13 @@ public class SettingsBehaviorFragment extends BaseSettingsFragment<Void> impleme
 				.show();
 	}
 
+	private void onLoadNewPostsClick(){
+		toggleCheckableItem(loadNewPostsItem);
+		seeNewPostsBtnItem.checked=loadNewPostsItem.checked;
+		seeNewPostsBtnItem.isEnabled=loadNewPostsItem.checked;
+		rebindItem(seeNewPostsBtnItem);
+	}
+
 	@Override
 	protected void onHidden(){
 		super.onHidden();
@@ -156,6 +168,8 @@ public class SettingsBehaviorFragment extends BaseSettingsFragment<Void> impleme
 		GlobalUserPreferences.confirmBoost=confirmBoostItem.checked;
 		GlobalUserPreferences.confirmDeletePost=confirmDeleteItem.checked;
 		GlobalUserPreferences.forwardReportDefault=forwardReportsItem.checked;
+		GlobalUserPreferences.loadNewPosts=loadNewPostsItem.checked;
+		GlobalUserPreferences.showNewPostsButton=seeNewPostsBtnItem.checked;
 		GlobalUserPreferences.allowRemoteLoading=remoteLoadingItem.checked;
 		GlobalUserPreferences.save();
 		AccountLocalPreferences lp=getLocalPrefs();
