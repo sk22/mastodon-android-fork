@@ -82,7 +82,7 @@ public class SettingsNotificationsFragment extends BaseSettingsFragment<Void>{
 				onlyLatestItem=new CheckableListItem<>(R.string.sk_settings_single_notification, 0, CheckableListItem.Style.SWITCH, lp.keepOnlyLatestNotification, R.drawable.ic_fluent_convert_range_24_regular, ()->toggleCheckableItem(onlyLatestItem), true)
 		));
 
-		typeItems=List.of(mentionsItem, boostsItem, favoritesItem, followersItem, pollsItem);
+		typeItems=List.of(mentionsItem, boostsItem, favoritesItem, followersItem, pollsItem, updateItem, postsItem);
 		pauseItem.checkedChangeListener=checked->onPauseNotificationsClick(true);
 		updatePolicyItem(null);
 		updatePauseItem();
