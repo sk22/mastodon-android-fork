@@ -187,8 +187,7 @@
 				<FrameLayout
 					android:id="@+id/toot_text_wrap"
 					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:layout_marginTop="10dp">
+					android:layout_height="wrap_content">
 
 					<org.joinmastodon.android.ui.views.ComposeEditText
 						android:id="@+id/toot_text"
@@ -197,6 +196,7 @@
 						android:paddingLeft="16dp"
 						android:paddingRight="16dp"
 						android:paddingBottom="16dp"
+						android:paddingTop="12dp"
 						android:textAppearance="@style/m3_body_large"
 						android:textSize="16sp"
 						android:gravity="top"
