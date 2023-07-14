@@ -113,7 +113,7 @@
 				android:layout_marginStart="22dp"
 				android:importantForAccessibility="no"
 				android:scaleType="center"
-				android:tint="?colorM3OnSurfaceVariant"
+				android:tint="@color/tab_bar_icon"
 				android:src="@drawable/ic_fluent_chevron_up_down_16_regular"/>
 		</FrameLayout>
 	</org.joinmastodon.android.ui.views.TabBar>

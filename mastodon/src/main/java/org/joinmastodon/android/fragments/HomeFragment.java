@@ -23,6 +23,7 @@ import androidx.annotation.Nullable;
 import com.squareup.otto.Subscribe;
 
 import org.joinmastodon.android.E;
+import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
@@ -123,6 +124,15 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 		tabBar=content.findViewById(R.id.tabbar);
 		tabBar.setListeners(this::onTabSelected, this::onTabLongClick);
 		tabBarWrap=content.findViewById(R.id.tabbar_wrap);
+
+		// this one's for the pill haters (https://m3.material.io/components/navigation-bar/overview)
+		if (GlobalUserPreferences.disableM3PillActiveIndicator) {
+			for(int i=0; i<tabBar.getChildCount(); i++){
+				ViewGroup f=(ViewGroup) tabBar.getChildAt(i);
+				f.setBackgroundResource(R.drawable.bg_tabbar_tab_ripple);
+			}
+			tabBar.findViewById(R.id.tab_profile).setBackgroundResource(R.drawable.bg_tab_profile);
+		}
 
 		tabBarAvatar=tabBar.findViewById(R.id.tab_profile_ava);
 		tabBarAvatar.setOutlineProvider(OutlineProviders.OVAL);

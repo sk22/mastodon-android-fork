@@ -56,6 +56,7 @@ public class GlobalUserPreferences{
 	public static boolean forwardReportDefault;
 	public static AutoRevealMode autoRevealEqualSpoilers;
 	public static ColorPreference color;
+	public static boolean disableM3PillActiveIndicator;
 
 	private static SharedPreferences getPrefs(){
 		return MastodonApp.context.getSharedPreferences("global", Context.MODE_PRIVATE);
@@ -109,6 +110,7 @@ public class GlobalUserPreferences{
 		allowRemoteLoading=prefs.getBoolean("allowRemoteLoading", true);
 		autoRevealEqualSpoilers=AutoRevealMode.valueOf(prefs.getString("autoRevealEqualSpoilers", AutoRevealMode.THREADS.name()));
 		forwardReportDefault=prefs.getBoolean("forwardReportDefault", true);
+		disableM3PillActiveIndicator=prefs.getBoolean("disableM3PillActiveIndicator", false);
 
 		if (prefs.contains("prefixRepliesWithRe")) {
 			prefixReplies = prefs.getBoolean("prefixRepliesWithRe", false)
@@ -161,6 +163,7 @@ public class GlobalUserPreferences{
 				.putBoolean("allowRemoteLoading", allowRemoteLoading)
 				.putString("autoRevealEqualSpoilers", autoRevealEqualSpoilers.name())
 				.putBoolean("forwardReportDefault", forwardReportDefault)
+				.putBoolean("disableM3PillActiveIndicator", disableM3PillActiveIndicator)
 				.apply();
 	}
 

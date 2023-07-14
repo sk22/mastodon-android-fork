@@ -37,7 +37,7 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 	private CheckableListItem<Void> revealCWsItem, hideSensitiveMediaItem, interactionCountsItem, emojiInNamesItem;
 
 	// MEGALODON
-	private CheckableListItem<Void> trueBlackModeItem, marqueeItem, disableSwipeItem, reduceMotionItem, altIndicatorItem, noAltIndicatorItem, collapsePostsItem, spectatorModeItem, hideFabItem, translateOpenedItem;
+	private CheckableListItem<Void> trueBlackModeItem, marqueeItem, disableSwipeItem, reduceMotionItem, altIndicatorItem, noAltIndicatorItem, collapsePostsItem, spectatorModeItem, hideFabItem, translateOpenedItem, disablePillItem;
 	private ListItem<Void> colorItem, publishTextItem, autoRevealCWsItem;
 
 	private AccountLocalPreferences lp;
@@ -66,7 +66,8 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 				collapsePostsItem=new CheckableListItem<>(R.string.sk_settings_collapse_long_posts, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.collapseLongPosts, R.drawable.ic_fluent_chevron_down_24_regular, ()->toggleCheckableItem(collapsePostsItem)),
 				spectatorModeItem=new CheckableListItem<>(R.string.sk_settings_hide_interaction, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.spectatorMode, R.drawable.ic_fluent_star_off_24_regular, ()->toggleCheckableItem(spectatorModeItem)),
 				hideFabItem=new CheckableListItem<>(R.string.sk_settings_hide_fab, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.autoHideFab, R.drawable.ic_fluent_edit_24_regular, ()->toggleCheckableItem(hideFabItem)),
-				translateOpenedItem=new CheckableListItem<>(R.string.sk_settings_translate_only_opened, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.translateButtonOpenedOnly, R.drawable.ic_fluent_translate_24_regular, ()->toggleCheckableItem(translateOpenedItem))
+				translateOpenedItem=new CheckableListItem<>(R.string.sk_settings_translate_only_opened, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.translateButtonOpenedOnly, R.drawable.ic_fluent_translate_24_regular, ()->toggleCheckableItem(translateOpenedItem)),
+				disablePillItem=new CheckableListItem<>(R.string.sk_disable_pill_shaped_active_indicator, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.disableM3PillActiveIndicator, R.drawable.ic_fluent_pill_24_regular, ()->toggleCheckableItem(disablePillItem))
 		));
 		trueBlackModeItem.checkedChangeListener=checked->onTrueBlackModeClick();
 	}
@@ -87,6 +88,10 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 	@Override
 	protected void onHidden(){
 		super.onHidden();
+
+		boolean restartPlease=
+				GlobalUserPreferences.disableM3PillActiveIndicator!=disablePillItem.checked;
+
 		lp.revealCWs=revealCWsItem.checked;
 		lp.hideSensitiveMedia=hideSensitiveMediaItem.checked;
 		lp.showInteractionCounts=interactionCountsItem.checked;
@@ -101,8 +106,10 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 		GlobalUserPreferences.spectatorMode=spectatorModeItem.checked;
 		GlobalUserPreferences.autoHideFab=hideFabItem.checked;
 		GlobalUserPreferences.translateButtonOpenedOnly=translateOpenedItem.checked;
+		GlobalUserPreferences.disableM3PillActiveIndicator=disablePillItem.checked;
 		GlobalUserPreferences.save();
-		E.post(new StatusDisplaySettingsChangedEvent(accountID));
+		if(restartPlease) restartActivityToApplyNewTheme();
+		else E.post(new StatusDisplaySettingsChangedEvent(accountID));
 	}
 
 	private @StringRes int getAppearanceValue(){

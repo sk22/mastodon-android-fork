@@ -333,4 +333,5 @@
 	<string name="sk_pronouns_label">Pronouns</string>
 	<string name="sk_switch_timeline">Switch timeline</string>
 	<string name="sk_settings_instance">Instance</string>
+	<string name="sk_disable_pill_shaped_active_indicator">Disable pill-shaped active tab indicator</string>
 </resources>
