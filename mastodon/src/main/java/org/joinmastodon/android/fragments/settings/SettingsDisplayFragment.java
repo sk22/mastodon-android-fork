@@ -51,7 +51,7 @@ public class SettingsDisplayFragment extends BaseSettingsFragment<Void>{
 		onDataLoaded(List.of(
 				themeItem=new ListItem<>(R.string.settings_theme, getAppearanceValue(), R.drawable.ic_fluent_weather_moon_24_regular, this::onAppearanceClick),
 				colorItem=new ListItem<>(R.string.sk_settings_color_palette, getColorPaletteValue(), R.drawable.ic_fluent_color_24_regular, this::onColorClick),
-				trueBlackModeItem=new CheckableListItem<>(R.string.theme_true_black, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.trueBlackTheme, R.drawable.ic_fluent_dark_theme_24_regular, this::onTrueBlackModeClick, true),
+				trueBlackModeItem=new CheckableListItem<>(R.string.sk_settings_true_black, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.trueBlackTheme, R.drawable.ic_fluent_dark_theme_24_regular, this::onTrueBlackModeClick, true),
 				publishTextItem=new ListItem<>(getString(R.string.sk_settings_publish_button_text), getPublishButtonText(), R.drawable.ic_fluent_send_24_regular, this::onPublishTextClick),
 				autoRevealCWsItem=new ListItem<>(R.string.sk_settings_auto_reveal_equal_spoilers, getAutoRevealSpoilersText(), R.drawable.ic_fluent_eye_24_regular, this::onAutoRevealSpoilersClick),
 				revealCWsItem=new CheckableListItem<>(R.string.sk_settings_always_reveal_content_warnings, 0, CheckableListItem.Style.SWITCH, lp.revealCWs, R.drawable.ic_fluent_chat_warning_24_regular, ()->toggleCheckableItem(revealCWsItem)),

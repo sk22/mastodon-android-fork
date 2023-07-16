@@ -201,7 +201,6 @@ public class CustomWelcomeFragment extends InstanceCatalogFragment {
 
 	private class InstanceViewHolder extends BindableViewHolder<CatalogInstance> implements UsableRecyclerView.Clickable{
 		private final TextView title, description, userCount, lang;
-		private final RadioButton radioButton;
 
 		public InstanceViewHolder(){
 			super(getActivity(), R.layout.item_instance_custom, list);
@@ -209,7 +208,6 @@ public class CustomWelcomeFragment extends InstanceCatalogFragment {
 			description=findViewById(R.id.description);
 			userCount=findViewById(R.id.user_count);
 			lang=findViewById(R.id.lang);
-			radioButton=findViewById(R.id.radiobtn);
 			if(Build.VERSION.SDK_INT<Build.VERSION_CODES.N){
 					UiUtils.fixCompoundDrawableTintOnAndroid6(userCount);
 					UiUtils.fixCompoundDrawableTintOnAndroid6(lang);
@@ -229,22 +227,10 @@ public class CustomWelcomeFragment extends InstanceCatalogFragment {
 				userCount.setText(UiUtils.abbreviateNumber(item.totalUsers));
 				lang.setText(item.language.toUpperCase());
 			}
-			radioButton.setChecked(chosenInstance==item);
-			radioButton.setVisibility(View.GONE);
 		}
 
 		@Override
 		public void onClick(){
-			if(chosenInstance!=null){
-					int idx=filteredData.indexOf(chosenInstance);
-					if(idx!=-1){
-						RecyclerView.ViewHolder holder=list.findViewHolderForAdapterPosition(mergeAdapter.getPositionForAdapter(adapter)+idx);
-						if(holder instanceof InstanceViewHolder ivh){
-							ivh.radioButton.setChecked(false);
-						}
-					}
-			}
-			radioButton.setChecked(true);
 			if(chosenInstance==null)
 					nextButton.setEnabled(true);
 			chosenInstance=item;

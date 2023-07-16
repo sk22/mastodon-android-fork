@@ -2,13 +2,11 @@ package org.joinmastodon.android.fragments.settings;
 
 import android.os.Bundle;
 
-import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.session.AccountLocalPreferences;
 import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.HasAccountID;
-import org.joinmastodon.android.fragments.SettingsFragment;
 import org.joinmastodon.android.model.ContentType;
 import org.joinmastodon.android.model.viewmodel.CheckableListItem;
 import org.joinmastodon.android.model.viewmodel.ListItem;

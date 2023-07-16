@@ -49,12 +49,21 @@
 		<item name="colorM3Outline">?colorNeutral500</item>
 		<item name="colorM3OutlineVariant">?colorNeutral200</item>
 		<item name="colorM3PressedOverlay">@color/white</item>
-		<item name="colorM3DarkOnSurface">@color/m3_sys_dark_on_surface</item>
+		<item name="colorM3DarkOnSurface">?colorGray100</item>
+		<item name="colorM3PrimaryInverse">?colorPrimary200</item>
 
 		<item name="colorFavorite">@color/favorite_selected</item>
 		<item name="colorBoost">?colorM3Primary</item>
 		<item name="colorPoll">@color/bookmark_selected</item>
 		<item name="colorTabBarAlpha">#14000000</item>
+
+		<item name="colorM3DisabledBackground">#1F1F1F1F</item>
+		<item name="colorM3Error">#B3261E</item>
+		<item name="colorM3OnError">@color/white</item>
+		<item name="colorM3ErrorContainer">#F9DEDC</item>
+		<item name="colorM3OnErrorContainer">#410E0B</item>
+		<item name="colorWhite">#FFF</item>
+		<item name="colorSensitiveOverlay">#a6ffffff</item>
 
 		<!--
 		custom themes generally don't have secondary/tertiary accent colors -
@@ -122,6 +131,14 @@
 		<item name="colorM3Outline">?colorNeutral500</item>
 		<item name="colorM3OutlineVariant">?colorNeutral700</item>
 		<item name="colorM3PressedOverlay">?colorPrimary200</item>
+
+		<item name="colorM3DisabledBackground">#1FE3E3E3</item>
+		<item name="colorM3Error">#F2B8B5</item>
+		<item name="colorM3OnError">#601410</item>
+		<item name="colorM3ErrorContainer">#8C1D18</item>
+		<item name="colorM3OnErrorContainer">#F9DEDC</item>
+		<item name="colorWhite">#000</item>
+		<item name="colorSensitiveOverlay">#80000000</item>
 	</style>
 
 	<style name="ColorPalette.Dark.TrueBlack">
@@ -159,6 +176,7 @@
 		<item name="colorM3OutlineVariant">@color/m3_sys_light_outline_variant</item>
 		<item name="colorM3PressedOverlay">@color/m3_sys_light_on_primary</item>
 		<item name="colorM3PrimaryInverse">@color/m3_sys_dark_primary</item>
+		<item name="colorM3DarkOnSurface">@color/m3_sys_dark_on_surface</item>
 
 		<item name="colorPrimary25">@color/m3_accent1_25</item>
 		<item name="colorPrimary50">@color/m3_accent1_50</item>
@@ -244,20 +262,8 @@
 		<item name="colorM3OnSurfaceVariant">@color/m3_sys_dark_on_surface_variant</item>
 		<item name="colorM3Outline">@color/m3_sys_dark_outline</item>
 		<item name="colorM3OutlineVariant">@color/m3_sys_dark_outline_variant</item>
-		<item name="colorM3DisabledBackground">#1FE3E3E3</item>
 		<item name="colorM3PressedOverlay">@color/m3_sys_dark_primary</item>
-		<item name="colorM3Error">#F2B8B5</item>
-		<item name="colorM3OnError">#601410</item>
-		<item name="colorM3ErrorContainer">#8C1D18</item>
-		<item name="colorM3OnErrorContainer">#F9DEDC</item>
 		<item name="colorM3PrimaryInverse">@color/m3_sys_light_primary</item>
-		<!-- <item name="colorM3OutlineVariant">?colorGray700</item> -->
-		<!-- <item name="colorM3Surface">?colorGray900</item> -->
-		<!-- <item name="colorM3SurfaceVariant">?colorGray800</item> -->
-		<!-- <item name="colorM3SurfaceVariant">?colorGray900</item> -->
-		<item name="android:colorBackground">?colorGray800</item>
-		<item name="android:statusBarColor">?colorGray900</item>
-		<!-- <item name="colorM3Surface">?colorGray900</item> -->
 	</style>
 
 	<style name="ColorPalette.Pink">

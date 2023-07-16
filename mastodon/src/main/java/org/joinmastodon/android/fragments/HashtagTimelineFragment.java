@@ -160,7 +160,7 @@ public class HashtagTimelineFragment extends PinnableStatusListFragment {
 
 	@Override
 	protected void onSetFabBottomInset(int inset){
-		((ViewGroup.MarginLayoutParams) fab.getLayoutParams()).bottomMargin=V.dp(24)+inset;
+		((ViewGroup.MarginLayoutParams) fab.getLayoutParams()).bottomMargin=V.dp(16)+inset;
 	}
 
 	@Override

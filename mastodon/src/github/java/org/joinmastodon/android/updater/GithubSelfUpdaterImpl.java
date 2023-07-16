@@ -100,8 +100,8 @@ public class GithubSelfUpdaterImpl extends GithubSelfUpdater{
 	public void maybeCheckForUpdates(){
 		if(state!=UpdateState.NO_UPDATE && state!=UpdateState.UPDATE_AVAILABLE)
 			return;
-		long timeSinceLastCheck=System.currentTimeMillis()-getPrefs().getLong("lastCheck", CHECK_PERIOD);
-		if(timeSinceLastCheck>=CHECK_PERIOD || forceUpdate){
+		long timeSinceLastCheck=System.currentTimeMillis()-getPrefs().getLong("lastCheck", 0);
+		if(timeSinceLastCheck>CHECK_PERIOD || forceUpdate){
 			setState(UpdateState.CHECKING);
 			MastodonAPIController.runInBackground(this::actuallyCheckForUpdates);
 		}

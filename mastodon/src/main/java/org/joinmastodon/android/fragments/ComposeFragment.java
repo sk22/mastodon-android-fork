@@ -455,7 +455,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 
 		int typeIndex=contentType.ordinal();
 		contentTypePopup.getMenu().findItem(typeIndex).setChecked(true);
-		contentTypeBtn.setSelected(typeIndex != ContentType.UNSPECIFIED.getName() && typeIndex != ContentType.PLAIN.ordinal());
+		contentTypeBtn.setSelected(typeIndex != ContentType.UNSPECIFIED.ordinal() && typeIndex != ContentType.PLAIN.ordinal());
 
 		autocompleteViewController=new ComposeAutocompleteViewController(getActivity(), accountID);
 		autocompleteViewController.setCompletionSelectedListener(new ComposeAutocompleteViewController.AutocompleteListener(){
@@ -700,7 +700,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				case DIRECT -> R.string.visibility_private;
 				case LOCAL -> R.string.sk_local_only;
 			};
-			replyText.setContentDescription(getString(R.string.in_reply_to, status.account.displayName) + ". " + getString(R.string.post_visibility) + ": " + getString(visibilityNameRes));
+			replyText.setContentDescription(getString(R.string.in_reply_to, status.account.displayName) + ", " + getString(visibilityNameRes));
 			replyText.setOnClickListener(v->{
 				scrollView.smoothScrollTo(0, 0);
 			});
@@ -858,17 +858,6 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			// finishing fragment in "onFragmentResult"
 			Nav.goForResult(getActivity(), ScheduledStatusListFragment.class, args, SCHEDULED_STATUS_OPENED_RESULT, this);
 		}
-	}
-
-	private int getContentTypeName(String id) {
-		return switch (id) {
-			case "text/plain" -> R.string.sk_content_type_plain;
-			case "text/html" -> R.string.sk_content_type_html;
-			case "text/markdown" -> R.string.sk_content_type_markdown;
-			case "text/bbcode" -> R.string.sk_content_type_bbcode;
-			case "text/x.misskeymarkdown" -> R.string.sk_content_type_mfm;
-			default -> throw new IllegalArgumentException("Invalid content type");
-		};
 	}
 
 	@Override
@@ -1197,7 +1186,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 					.setPositiveButton(R.string.retry, (dlg, btn)->publish())
 					.setNegativeButton(R.string.cancel, null)
 					.show();
-		}else{
+		}else if(error!=null){
 			error.showToast(getActivity());
 		}
 	}

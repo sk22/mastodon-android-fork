@@ -91,7 +91,6 @@
 	<color name="navigation_bar_bg">#282C37</color>
 	<color name="navigation_bar_bg_light">#282C37</color>
 	<color name="highlight_over_dark">#30FFFFFF</color>
-	<color name="highlight_over_light">#18000000</color>
 
 	<color name="favorite_selected">@color/warning_500</color>
 	<color name="bookmark_selected">@color/success_500</color>

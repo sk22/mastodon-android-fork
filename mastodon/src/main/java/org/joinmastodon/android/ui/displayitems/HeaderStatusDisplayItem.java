@@ -327,7 +327,7 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 								!item.status.spoilerRevealed);
 				visibility.setEnabled(!disabled);
 				V.setVisibilityAnimated(visibility, disabled ? View.INVISIBLE : View.VISIBLE);
-				visibility.setContentDescription(item.parentFragment.getString(item.status.sensitiveRevealed ? R.string.hide_content : R.string.reveal_content));
+				visibility.setContentDescription(item.parentFragment.getString(item.status.sensitiveRevealed ? R.string.spoiler_hide : R.string.spoiler_show));
 				if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
 					visibility.setTooltipText(visibility.getContentDescription());
 				}

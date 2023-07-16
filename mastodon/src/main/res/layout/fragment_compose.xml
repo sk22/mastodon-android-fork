@@ -382,7 +382,7 @@
 		</LinearLayout>
 	</ScrollView>
 
-	<LinearLayout
+	<org.joinmastodon.android.ui.views.AutoOrientationLinearLayout
 		android:id="@+id/schedule_draft_view"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
@@ -402,27 +402,24 @@
 			android:drawablePadding="16dp"
 			android:text="@string/sk_compose_draft" />
 
+		<Button
+			android:id="@+id/scheduled_time_btn"
+			style="@style/Widget.Mastodon.M3.Button.Outlined.Icon"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="12dp"
+			android:gravity="center"
+			android:textSize="14sp"
+			android:textColor="?android:textColorSecondary"
+			android:fontFamily="sans-serif"
+			android:drawableStart="@drawable/ic_fluent_clock_20_regular"
+			android:drawableTint="?android:textColorSecondary"
+			tools:text="Dec 12, 2021, 12:42 PM"/>
+
 		<Space
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
 			android:layout_weight="1" />
-
-		<Button
-			android:id="@+id/scheduled_time_btn"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="8dp"
-			android:gravity="center"
-			android:padding="8dp"
-			android:textSize="14sp"
-			android:minHeight="40dp"
-			android:textColor="?android:textColorSecondary"
-			android:background="@drawable/bg_text_button"
-			android:fontFamily="sans-serif"
-			android:drawableStart="@drawable/ic_fluent_clock_20_regular"
-			android:drawablePadding="8dp"
-			android:drawableTint="?android:textColorSecondary"
-			tools:text="Dec 12, 2021, 12:42 PM"/>
 
 		<ImageButton
 			android:id="@+id/schedule_draft_dismiss"
@@ -434,7 +431,7 @@
 			android:tooltipText="@string/sk_compose_no_schedule"
 			android:contentDescription="@string/sk_compose_no_schedule" />
 
-	</LinearLayout>
+	</org.joinmastodon.android.ui.views.AutoOrientationLinearLayout>
 
 	<LinearLayout
 		android:id="@+id/bottom_bar"
@@ -468,8 +465,6 @@
 				android:layout_height="48dp"
 				android:background="@drawable/bg_icon_button"
 				android:padding="0px"
-				android:tint="@color/compose_button"
-				android:tintMode="src_in"
 				android:contentDescription="@string/add_media"
 				android:tooltipText="@string/add_media"
 				android:src="@drawable/ic_fluent_image_add_24_regular"/>
@@ -480,8 +475,6 @@
 				android:layout_height="48dp"
 				android:background="@drawable/bg_icon_button"
 				android:padding="0px"
-				android:tint="@color/compose_button"
-				android:tintMode="src_in"
 				android:contentDescription="@string/add_poll"
 				android:tooltipText="@string/add_poll"
 				android:src="@drawable/ic_fluent_poll_24_selector"/>
@@ -492,8 +485,6 @@
 				android:layout_height="48dp"
 				android:background="@drawable/bg_icon_button"
 				android:padding="0px"
-				android:tint="@color/compose_button"
-				android:tintMode="src_in"
 				android:contentDescription="@string/emoji"
 				android:tooltipText="@string/emoji"
 				android:src="@drawable/ic_fluent_emoji_24_selector"/>
@@ -504,8 +495,6 @@
 				android:layout_height="48dp"
 				android:background="@drawable/bg_icon_button"
 				android:padding="0px"
-				android:tint="@color/compose_button"
-				android:tintMode="src_in"
 				android:contentDescription="@string/content_warning"
 				android:tooltipText="@string/content_warning"
 				android:src="@drawable/ic_fluent_chat_warning_24_selector"/>
@@ -516,8 +505,6 @@
 				android:layout_height="48dp"
 				android:background="@drawable/bg_icon_button"
 				android:padding="0px"
-				android:tint="@color/compose_button"
-				android:tintMode="src_in"
 				android:contentDescription="@string/sk_content_type"
 				android:tooltipText="@string/sk_content_type"
 				android:src="@drawable/ic_fluent_text_edit_style_24_selector"/>

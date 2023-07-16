@@ -132,7 +132,7 @@ public class AccountCardStatusDisplayItem extends StatusDisplayItem{
 			postsCount.setText(UiUtils.abbreviateNumber(item.account.statusesCount));
 			followersLabel.setText(item.parentFragment.getResources().getQuantityString(R.plurals.followers, (int)Math.min(999, item.account.followersCount)));
 			followingLabel.setText(item.parentFragment.getResources().getQuantityString(R.plurals.following, (int)Math.min(999, item.account.followingCount)));
-			postsLabel.setText(item.parentFragment.getResources().getQuantityString(R.plurals.posts, (int)Math.min(999, item.account.statusesCount)));
+			postsLabel.setText(item.parentFragment.getResources().getQuantityString(R.plurals.x_posts, (int)(item.account.statusesCount%1000), item.account.statusesCount));
 			followersCount.setVisibility(item.account.followersCount < 0 ? View.GONE : View.VISIBLE);
 			followersLabel.setVisibility(item.account.followersCount < 0 ? View.GONE : View.VISIBLE);
 			followingCount.setVisibility(item.account.followingCount < 0 ? View.GONE : View.VISIBLE);

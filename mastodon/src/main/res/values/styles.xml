@@ -14,16 +14,15 @@
 		<!-- needed to disable scrim on API 29+ -->
 		<item name="android:enforceNavigationBarContrast" tools:ignore="NewApi">false</item>
 		<item name="android:enforceStatusBarContrast" tools:ignore="NewApi">false</item>
-		<item name="appkitBackDrawable">@drawable/ic_fluent_arrow_left_24_regular</item>
 		<item name="android:splitMotionEvents">false</item>
 		<item name="android:windowBackground">?colorM3Surface</item>
 		<item name="android:editTextStyle">@style/Widget.Mastodon.M3.EditText</item>
 		<item name="android:editTextBackground">@drawable/bg_m3_outlined_text_field</item>
 
+		<item name="android:colorPrimary">?colorM3OnSurface</item>
+		<item name="android:colorBackground">?colorM3SurfaceVariant</item>
 		<item name="android:buttonStyle">@style/Widget.Mastodon.M3.Button.Filled</item>
 		<item name="android:actionBarTheme">@style/Theme.Mastodon.Toolbar</item>
-		<item name="android:colorPrimary">?colorGray800</item>
-		<item name="android:colorBackground">?colorGray100</item>
 		<item name="android:alertDialogTheme">@style/Theme.Mastodon.Dialog.Alert</item>
 		<item name="android:datePickerDialogTheme">@style/Theme.Mastodon.Dialog.Alert</item>
 		<item name="android:timePickerDialogTheme">@style/Theme.Mastodon.Dialog.Alert</item>
@@ -38,18 +37,11 @@
 		<item name="android:actionModeBackground">?colorM3PrimaryContainer</item>
 		<item name="android:actionModeCloseDrawable">@drawable/ic_fluent_dismiss_24_regular</item>
 
-		<item name="colorM3DisabledBackground">#1F1F1F1F</item>
-		<item name="colorM3Error">#B3261E</item>
-		<item name="colorM3OnError">@color/white</item>
-		<item name="colorM3ErrorContainer">#F9DEDC</item>
-		<item name="colorM3OnErrorContainer">#410E0B</item>
-		<item name="colorWhite">#FFF</item>
-
 		<item name="android:statusBarColor">?colorM3Background</item>
 		<item name="android:navigationBarColor">?colorM3Background</item>
 		<item name="android:colorAccent">?colorM3Primary</item>
 		<item name="android:colorControlHighlight">@color/m3_on_surface_overlay</item>
-		<item name="colorSensitiveOverlay">#a6ffffff</item>
+		<item name="android:textColor">?colorM3OnSurface</item>
 		<item name="android:textColorPrimary">?colorM3OnSurface</item>
 		<item name="android:textColorSecondary">?colorM3OnSurfaceVariant</item>
 	</style>
@@ -58,12 +50,13 @@
 		<!-- needed to disable scrim on API 29+ -->
 		<item name="android:enforceNavigationBarContrast" tools:ignore="NewApi">false</item>
 		<item name="android:enforceStatusBarContrast" tools:ignore="NewApi">false</item>
-		<item name="appkitBackDrawable">@drawable/ic_fluent_arrow_left_24_regular</item>
 		<item name="android:splitMotionEvents">false</item>
 		<item name="android:windowBackground">?colorM3Surface</item>
 		<item name="android:editTextStyle">@style/Widget.Mastodon.M3.EditText</item>
 		<item name="android:editTextBackground">@drawable/bg_m3_outlined_text_field</item>
 
+		<item name="android:colorPrimary">?colorM3OnSurface</item>
+		<item name="android:colorBackground">?colorM3SurfaceVariant</item>
 		<item name="android:buttonStyle">@style/Widget.Mastodon.M3.Button.Filled</item>
 		<item name="android:actionBarTheme">@style/Theme.Mastodon.Toolbar</item>
 		<item name="android:alertDialogTheme">@style/Theme.Mastodon.Dialog.Alert.Dark</item>
@@ -85,13 +78,11 @@
 		<item name="colorM3OnError">#601410</item>
 		<item name="colorM3ErrorContainer">#8C1D18</item>
 		<item name="colorM3OnErrorContainer">#F9DEDC</item>
-		<item name="colorWhite">#000</item>
 
 		<item name="android:statusBarColor">?colorM3Background</item>
 		<item name="android:navigationBarColor">?colorM3Background</item>
 		<item name="android:colorAccent">?colorM3Primary</item>
 		<item name="android:colorControlHighlight">@color/m3_on_surface_overlay</item>
-		<item name="colorSensitiveOverlay">#80000000</item>
 		<item name="android:textColor">?colorM3OnSurface</item>
 		<item name="android:textColorPrimary">?colorM3OnSurface</item>
 		<item name="android:textColorSecondary">?colorM3OnSurfaceVariant</item>

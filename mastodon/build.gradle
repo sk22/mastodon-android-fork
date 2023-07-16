@@ -15,8 +15,8 @@ android {
 		applicationId "org.joinmastodon.android.sk"
 		minSdk 23
 		targetSdk 33
-		versionCode 95
-		versionName "1.2.3+fork.95"
+		versionCode 96
+		versionName "2.0.1+fork.96"
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         resourceConfigurations += ['ar-rSA', 'ar-rDZ', 'be-rBY', 'bn-rBD', 'bs-rBA', 'ca-rES', 'cs-rCZ', 'da-rDK', 'de-rDE', 'el-rGR', 'es-rES', 'eu-rES', 'fa-rIR', 'fi-rFI', 'fil-rPH', 'fr-rFR', 'ga-rIE', 'gd-rGB', 'gl-rES', 'hi-rIN', 'hr-rHR', 'hu-rHU', 'hy-rAM', 'ig-rNG', 'in-rID', 'is-rIS', 'it-rIT', 'iw-rIL', 'ja-rJP', 'kab', 'ko-rKR', 'my-rMM', 'nl-rNL', 'no-rNO', 'oc-rFR', 'pl-rPL', 'pt-rBR', 'pt-rPT', 'ro-rRO', 'ru-rRU', 'si-rLK', 'sl-rSI', 'sv-rSE', 'th-rTH', 'tr-rTR', 'uk-rUA', 'ur-rIN', 'vi-rVN', 'zh-rCN', 'zh-rTW']
     }
@@ -79,8 +79,8 @@ dependencies {
 	annotationProcessor 'org.parceler:parceler:1.1.12'
 	coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
 
-	androidTestImplementation 'androidx.test:core:1.4.1-alpha05'
-	androidTestImplementation 'androidx.test.ext:junit:1.1.4-alpha05'
-	androidTestImplementation 'androidx.test:runner:1.5.0-alpha02'
-	androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0-alpha05'
+	androidTestImplementation 'androidx.test:core:1.5.0'
+	androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+	androidTestImplementation 'androidx.test:runner:1.5.2'
+	androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }

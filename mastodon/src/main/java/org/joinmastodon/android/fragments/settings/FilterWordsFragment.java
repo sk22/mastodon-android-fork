@@ -231,7 +231,7 @@ public class FilterWordsFragment extends BaseSettingsFragment<FilterKeyword> imp
 		actionMode=getActivity().startActionMode(new ActionMode.Callback(){
 			@Override
 			public boolean onCreateActionMode(ActionMode mode, Menu menu){
-				ObjectAnimator anim=ObjectAnimator.ofInt(getActivity().getWindow(), "statusBarColor", elevationOnScrollListener.getCurrentStatusBarColor(), UiUtils.getThemeColor(getActivity(), R.attr.colorM3PrimaryContainer));
+				ObjectAnimator anim=ObjectAnimator.ofInt(getActivity().getWindow(), "statusBarColor", elevationOnScrollListener.getCurrentStatusBarColor(), UiUtils.getThemeColor(getActivity(), R.attr.colorM3Primary));
 				anim.setEvaluator(new IntEvaluator(){
 					@Override
 					public Integer evaluate(float fraction, Integer startValue, Integer endValue){
@@ -248,7 +248,7 @@ public class FilterWordsFragment extends BaseSettingsFragment<FilterKeyword> imp
 				mode.getMenuInflater().inflate(R.menu.settings_filter_words_action_mode, menu);
 				for(int i=0;i<menu.size();i++){
 					Drawable icon=menu.getItem(i).getIcon().mutate();
-					icon.setTint(UiUtils.getThemeColor(getActivity(), R.attr.colorM3OnPrimaryContainer));
+					icon.setTint(UiUtils.getThemeColor(getActivity(), R.attr.colorM3OnPrimary));
 					menu.getItem(i).setIcon(icon);
 				}
 				deleteItem=menu.findItem(R.id.delete);

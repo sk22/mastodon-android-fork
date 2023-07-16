@@ -169,8 +169,6 @@ public class MainActivity extends FragmentStackActivity implements ProvidesAssis
 				.exec(accountID);
 	}
 
-
-
 	private void showFragmentForNotification(Notification notification, String accountID){
 		try{
 			notification.postprocess();
