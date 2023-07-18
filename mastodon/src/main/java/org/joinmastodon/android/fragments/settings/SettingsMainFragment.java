@@ -16,6 +16,7 @@ import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.SelfUpdateStateChangedEvent;
+import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.viewmodel.ListItem;
 import org.joinmastodon.android.ui.M3AlertDialogBuilder;
 import org.joinmastodon.android.ui.utils.HideableSingleViewRecyclerAdapter;
@@ -29,6 +30,7 @@ import me.grishka.appkit.Nav;
 import me.grishka.appkit.utils.MergeRecyclerAdapter;
 
 public class SettingsMainFragment extends BaseSettingsFragment<Void>{
+	private AccountSession account;
 	private boolean loggedOut;
 	private HideableSingleViewRecyclerAdapter bannerAdapter;
 	private Button updateButton1, updateButton2;
@@ -47,23 +49,27 @@ public class SettingsMainFragment extends BaseSettingsFragment<Void>{
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
+		account = AccountSessionManager.get(accountID);
 		setTitle(R.string.settings);
-		setSubtitle(AccountSessionManager.get(accountID).getFullUsername());
+		setSubtitle(account.getFullUsername());
 		onDataLoaded(List.of(
 				new ListItem<>(R.string.settings_behavior, 0, R.drawable.ic_fluent_settings_24_regular, this::onBehaviorClick),
 				new ListItem<>(R.string.settings_display, 0, R.drawable.ic_fluent_color_24_regular, this::onDisplayClick),
-				new ListItem<>(R.string.settings_filters, 0, R.drawable.ic_fluent_filter_24_regular, this::onFiltersClick),
 				new ListItem<>(R.string.settings_notifications, 0, R.drawable.ic_fluent_alert_24_regular, this::onNotificationsClick),
 				new ListItem<>(R.string.sk_settings_instance, 0, R.drawable.ic_fluent_server_24_regular, this::onInstanceClick),
 				new ListItem<>(getString(R.string.about_app, getString(R.string.sk_app_name)), null, R.drawable.ic_fluent_info_24_regular, this::onAboutClick, null, 0, true),
 				new ListItem<>(R.string.log_out, 0, R.drawable.ic_fluent_sign_out_24_regular, this::onLogOutClick, R.attr.colorM3Error, false)
 		));
 
+		Instance instance = AccountSessionManager.getInstance().getInstanceInfo(account.domain);
+		if (!instance.isAkkoma())
+			data.add(2, new ListItem<>(R.string.settings_filters, 0, R.drawable.ic_fluent_filter_24_regular, this::onFiltersClick));
+
 		if(BuildConfig.DEBUG || BuildConfig.BUILD_TYPE.equals("appcenterPrivateBeta")){
 			data.add(0, new ListItem<>("Debug settings", null, R.drawable.ic_fluent_wrench_screwdriver_24_regular, ()->Nav.go(getActivity(), SettingsDebugFragment.class, makeFragmentArgs()), null, 0, true));
 		}
 
-		AccountSessionManager.get(accountID).reloadPreferences(null);
+		account.reloadPreferences(null);
 		E.register(this);
 	}
 
@@ -80,7 +86,7 @@ public class SettingsMainFragment extends BaseSettingsFragment<Void>{
 	protected void onHidden(){
 		super.onHidden();
 		if(!loggedOut)
-			AccountSessionManager.get(accountID).savePreferencesIfPending();
+			account.savePreferencesIfPending();
 	}
 
 	@Override
@@ -147,7 +153,7 @@ public class SettingsMainFragment extends BaseSettingsFragment<Void>{
 		AccountSession session=AccountSessionManager.getInstance().getAccount(accountID);
 		new M3AlertDialogBuilder(getActivity())
 				.setMessage(getString(R.string.confirm_log_out, session.getFullUsername()))
-				.setPositiveButton(R.string.log_out, (dialog, which)->AccountSessionManager.get(accountID).logOut(getActivity(), ()->{
+				.setPositiveButton(R.string.log_out, (dialog, which)->account.logOut(getActivity(), ()->{
 					loggedOut=true;
 					getActivity().finish();
 					Intent intent=new Intent(getActivity(), MainActivity.class);
