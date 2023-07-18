@@ -54,7 +54,7 @@ public class SearchFragment extends BaseStatusListFragment<SearchResult>{
 		super.onCreate(savedInstanceState);
 		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N)
 			setRetainInstance(true);
-		setEmptyText(R.string.no_search_results);
+		setEmptyText(R.string.sk_recent_searches_placeholder);
 		loadData();
 	}
 
@@ -173,13 +173,16 @@ public class SearchFragment extends BaseStatusListFragment<SearchResult>{
 	}
 
 	public void setQuery(String q, SearchResult.Type filter){
-		if(q.isBlank())
+		if(q.isBlank()) {
+			setEmptyText(R.string.sk_recent_searches_placeholder);
 			return;
+		}
 		if(currentRequest!=null){
 			currentRequest.cancel();
 			currentRequest=null;
 		}
 		currentQuery=q;
+		setEmptyText(R.string.no_search_results);
 		if(filter==null)
 			currentFilter=EnumSet.allOf(SearchResult.Type.class);
 		else

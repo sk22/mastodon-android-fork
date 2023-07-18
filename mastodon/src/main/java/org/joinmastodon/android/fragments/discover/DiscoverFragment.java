@@ -54,6 +54,8 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 	private String accountID;
 	private String currentQuery;
 
+	private boolean disableDiscover;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -155,6 +157,8 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 			}
 		});
 
+		searchActive = disableDiscover = getArguments().getBoolean("disableDiscover");
+
 		searchView=view.findViewById(R.id.search_fragment);
 		if(searchFragment==null){
 			searchFragment=new SearchFragment();
@@ -171,7 +175,8 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 			if(searchActive) exitSearch(); else openSearch();
 		});
 		if(searchActive){
-			searchBack.setImageResource(R.drawable.ic_fluent_arrow_left_24_regular);
+			if (!TextUtils.isEmpty(currentQuery))
+				searchBack.setImageResource(R.drawable.ic_fluent_arrow_left_24_regular);
 			pager.setVisibility(View.GONE);
 			tabLayout.setVisibility(View.GONE);
 			searchView.setVisibility(View.VISIBLE);
@@ -229,7 +234,7 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 	}
 
 	private void exitSearch(){
-		if(!searchActive)
+		if(!searchActive || disableDiscover)
 			return;
 		searchActive=false;
 		pager.setVisibility(View.VISIBLE);
@@ -255,7 +260,7 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 
 	@Override
 	public boolean onBackPressed(){
-		if(searchActive){
+		if(searchActive && !disableDiscover){
 			exitSearch();
 			return true;
 		}
