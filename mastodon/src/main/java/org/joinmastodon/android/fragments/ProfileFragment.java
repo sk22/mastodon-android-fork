@@ -1,7 +1,5 @@
 package org.joinmastodon.android.fragments;
 
-import static org.joinmastodon.android.fragments.ProfileAboutFragment.MAX_FIELDS;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -175,6 +173,8 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 	private MenuItem editSaveMenuItem;
 	private boolean savingEdits;
 
+	private int maxFields = ProfileAboutFragment.MAX_FIELDS;
+
 	// from ProfileAboutFragment
 	public UsableRecyclerView list;
 	private AboutAdapter adapter;
@@ -200,6 +200,9 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			loaded=true;
 			if(!isOwnProfile)
 				loadRelationship();
+			else if (isInstanceAkkoma()) {
+				maxFields = getInstance().get().pleroma.metadata.fieldsLimits.maxFields;
+			}
 		}else{
 			profileAccountID=getArguments().getString("profileAccountID");
 			if(!getArguments().getBoolean("noAutoLoad", false))
@@ -1385,7 +1388,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		public int getItemCount(){
 			if(isInEditMode){
 				int size=fields.size();
-				if(size<MAX_FIELDS)
+				if(size<maxFields)
 					size++;
 				return size;
 			}
@@ -1510,7 +1513,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		@Override
 		public void onClick(){
 			fields.add(new AccountField());
-			if(fields.size()==MAX_FIELDS){ // replace this row with new row
+			if(fields.size()==maxFields){ // replace this row with new row
 				adapter.notifyItemChanged(fields.size()-1);
 			}else{
 				adapter.notifyItemInserted(fields.size()-1);
