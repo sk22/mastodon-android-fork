@@ -3,6 +3,7 @@ package org.joinmastodon.android.ui.displayitems;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -30,6 +31,7 @@ import org.joinmastodon.android.model.ScheduledStatus;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.PhotoLayoutHelper;
 import org.joinmastodon.android.ui.text.HtmlParser;
+import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.ui.viewholders.AccountViewHolder;
 import org.joinmastodon.android.utils.StatusFilterPredicate;
 import org.parceler.Parcels;
@@ -253,6 +255,12 @@ public abstract class StatusDisplayItem{
 
 		List<Attachment> imageAttachments=statusForContent.mediaAttachments.stream().filter(att->att.type.isImage()).collect(Collectors.toList());
 		if(!imageAttachments.isEmpty()){
+			int color = UiUtils.getThemeColor(fragment.getContext(), R.attr.colorM3SurfaceVariant);
+			for (Attachment att : imageAttachments) {
+				if (att.blurhashPlaceholder == null) {
+					att.blurhashPlaceholder = new ColorDrawable(color);
+				}
+			}
 			PhotoLayoutHelper.TiledLayoutResult layout=PhotoLayoutHelper.processThumbs(imageAttachments);
 			MediaGridStatusDisplayItem mediaGrid=new MediaGridStatusDisplayItem(parentID, fragment, layout, imageAttachments, statusForContent);
 			if((flags & FLAG_MEDIA_FORCE_HIDDEN)!=0)
