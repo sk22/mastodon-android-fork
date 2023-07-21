@@ -224,6 +224,13 @@ public class SearchFragment extends BaseStatusListFragment<SearchResult>{
 		}
 	}
 
+	public void clear() {
+		data.clear();
+		preloadedData.clear();
+		adapter.notifyDataSetChanged();
+		V.setVisibilityAnimated(content, View.GONE);
+	}
+
 	@Override
 	public Uri getWebUri(Uri.Builder base) {
 		Uri.Builder searchUri = base.path("/search");

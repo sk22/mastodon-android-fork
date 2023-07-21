@@ -157,8 +157,7 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 			}
 		});
 
-		searchActive = disableDiscover = getArguments().getBoolean("disableDiscover");
-
+		disableDiscover=getArguments().getBoolean("disableDiscover");
 		searchView=view.findViewById(R.id.search_fragment);
 		if(searchFragment==null){
 			searchFragment=new SearchFragment();
@@ -174,9 +173,9 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 		searchBack.setOnClickListener(v->{
 			if(searchActive) exitSearch(); else openSearch();
 		});
-		if(searchActive){
-			if (!TextUtils.isEmpty(currentQuery))
-				searchBack.setImageResource(R.drawable.ic_fluent_arrow_left_24_regular);
+		if(searchActive) searchBack.setImageResource(R.drawable.ic_fluent_arrow_left_24_regular);
+		else searchBack.setEnabled(false);
+		if(searchActive || disableDiscover){
 			pager.setVisibility(View.GONE);
 			tabLayout.setVisibility(View.GONE);
 			searchView.setVisibility(View.VISIBLE);
@@ -234,18 +233,21 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 	}
 
 	private void exitSearch(){
-		if(!searchActive || disableDiscover)
+		if(!searchActive)
 			return;
 		searchActive=false;
-		pager.setVisibility(View.VISIBLE);
-		tabLayout.setVisibility(View.VISIBLE);
-		searchView.setVisibility(View.GONE);
 		searchText.setText(R.string.sk_search_fediverse);
 		searchBack.setImageResource(R.drawable.ic_fluent_search_24_regular);
 		searchBack.setEnabled(false);
 		searchBack.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-		tabsDivider.setVisibility(View.VISIBLE);
 		currentQuery=null;
+		searchFragment.clear();
+
+		if(disableDiscover) return;
+		pager.setVisibility(View.VISIBLE);
+		tabLayout.setVisibility(View.VISIBLE);
+		searchView.setVisibility(View.GONE);
+		tabsDivider.setVisibility(View.VISIBLE);
 	}
 
 	private Fragment getFragmentForPage(int page){
@@ -260,7 +262,7 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 
 	@Override
 	public boolean onBackPressed(){
-		if(searchActive && !disableDiscover){
+		if(searchActive){
 			exitSearch();
 			return true;
 		}
