@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -32,6 +33,7 @@ import org.joinmastodon.android.model.Preferences;
 import org.joinmastodon.android.model.PushNotification;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.model.StatusPrivacy;
+import org.joinmastodon.android.ui.text.HtmlParser;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.parceler.Parcels;
 
@@ -58,7 +60,7 @@ public class PushNotificationReceiver extends BroadcastReceiver{
 
 	private static final int SUMMARY_ID = 791;
 	private static int notificationId = 0;
-	private static Map<String, Integer> notificationIdsForAccounts = new HashMap<>();
+	private static final Map<String, Integer> notificationIdsForAccounts = new HashMap<>();
 
 	@Override
 	public void onReceive(Context context, Intent intent){
@@ -146,6 +148,11 @@ public class PushNotificationReceiver extends BroadcastReceiver{
 				Log.e(TAG, "onReceive: Failed to load notification");
 			}
 		}
+	}
+
+	public void notifyUnifiedPush(Context context, String accountID, org.joinmastodon.android.model.Notification notification) {
+		// push notifications are only created from the official push notification, so we create a fake from by transforming the notification
+		PushNotificationReceiver.this.notify(context, PushNotification.fromNotification(context, notification), accountID, notification);
 	}
 
 	private void notify(Context context, PushNotification pn, String accountID, org.joinmastodon.android.model.Notification notification){

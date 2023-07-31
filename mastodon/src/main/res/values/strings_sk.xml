@@ -344,4 +344,5 @@
 	<string name="sk_tab_notifications">Notifications</string>
 	<string name="sk_tab_profile">Profile</string>
 	<string name="sk_settings_show_labels_in_navigation_bar">Show tab labels in the navigation bar</string>
+	<string name="sk_notification_mention">You were mentioned by %s</string>
 </resources>
