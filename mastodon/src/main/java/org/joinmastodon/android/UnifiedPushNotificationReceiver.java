@@ -28,9 +28,8 @@ public class UnifiedPushNotificationReceiver extends MessagingReceiver{
 		// Called when a new endpoint be used for sending push messages
 		Log.d(TAG, "onNewEndpoint: New Endpoint " + endpoint + " for "+ instance);
 		AccountSession account = AccountSessionManager.getInstance().getLastActiveAccount();
-		if (account == null)
-			return;
-		account.getPushSubscriptionManager().registerAccountForPush(null, endpoint);
+		if (account != null)
+			account.getPushSubscriptionManager().registerAccountForPush(null);
 	}
 
 	@Override
@@ -39,9 +38,8 @@ public class UnifiedPushNotificationReceiver extends MessagingReceiver{
 		Log.d(TAG, "onRegistrationFailed: " + instance);
 		//re-register for gcm
 		AccountSession account = AccountSessionManager.getInstance().getLastActiveAccount();
-		if (account == null)
-			return;
-		account.getPushSubscriptionManager().registerAccountForPush(null);
+		if (account != null)
+			account.getPushSubscriptionManager().registerAccountForPush(null);
 	}
 
 	@Override
@@ -50,9 +48,8 @@ public class UnifiedPushNotificationReceiver extends MessagingReceiver{
 		Log.d(TAG, "onUnregistered: " + instance);
 		//re-register for gcm
 		AccountSession account = AccountSessionManager.getInstance().getLastActiveAccount();
-		if (account == null)
-			return;
-		account.getPushSubscriptionManager().registerAccountForPush(null);
+		if (account != null)
+			account.getPushSubscriptionManager().registerAccountForPush(null);
 	}
 
 	@Override
