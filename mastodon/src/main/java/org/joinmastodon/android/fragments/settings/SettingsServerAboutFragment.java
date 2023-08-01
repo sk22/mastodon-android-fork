@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,7 @@ import android.widget.Toast;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.MastodonAPIController;
 import org.joinmastodon.android.api.requests.instance.GetInstanceExtendedDescription;
+import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.viewmodel.AccountViewModel;
 import org.joinmastodon.android.model.viewmodel.ListItem;
@@ -126,6 +128,8 @@ public class SettingsServerAboutFragment extends LoaderFragment{
 			hlp.leftMargin=hlp.rightMargin=V.dp(16);
 			scrollingLayout.addView(heading, hlp);
 
+			// if a remote instance is shown, the account is remote and need to be loaded accordingly when shown
+			instance.contactAccount.isRemote=!AccountSessionManager.get(accountID).domain.equals(instance.normalizedUri);
 			AccountViewModel model=new AccountViewModel(instance.contactAccount, accountID);
 			AccountViewHolder holder=new AccountViewHolder(this, scrollingLayout, null);
 			holder.setStyle(AccountViewHolder.AccessoryType.NONE, false);
