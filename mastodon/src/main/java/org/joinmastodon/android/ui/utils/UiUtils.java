@@ -73,6 +73,7 @@ import org.joinmastodon.android.api.requests.accounts.SetAccountMuted;
 import org.joinmastodon.android.api.requests.accounts.SetDomainBlocked;
 import org.joinmastodon.android.api.requests.accounts.AuthorizeFollowRequest;
 import org.joinmastodon.android.api.requests.accounts.RejectFollowRequest;
+import org.joinmastodon.android.api.requests.instance.GetInstance;
 import org.joinmastodon.android.api.requests.lists.DeleteList;
 import org.joinmastodon.android.api.requests.notifications.DismissNotification;
 import org.joinmastodon.android.api.requests.search.GetSearchResults;
@@ -93,6 +94,8 @@ import org.joinmastodon.android.fragments.ComposeFragment;
 import org.joinmastodon.android.fragments.HashtagTimelineFragment;
 import org.joinmastodon.android.fragments.ProfileFragment;
 import org.joinmastodon.android.fragments.ThreadFragment;
+import org.joinmastodon.android.fragments.settings.SettingsServerAboutFragment;
+import org.joinmastodon.android.fragments.settings.SettingsServerFragment;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.AccountField;
 import org.joinmastodon.android.model.Emoji;
@@ -1239,6 +1242,23 @@ public class UiUtils {
 							}
 						})
 						.exec(accountID));
+			} else if (uri.getPath() != null && uri.getPath().matches("^/about$")) {
+				return Optional.of(new GetInstance()
+						.setCallback(new Callback<>(){
+							@Override
+							public void onSuccess(Instance result){
+								Bundle args = new Bundle();
+								args.putParcelable("instance", Parcels.wrap(result));
+								args.putString("account", accountID);
+								go.accept(SettingsServerFragment.class, args);
+							}
+
+							@Override
+							public void onError(ErrorResponse error){
+								go.accept(null, bundleError(error));
+							}
+						})
+						.execNoAuth(uri.getHost()));
 			} else if (looksLikeFediverseUrl(url)) {
 				return Optional.of(new GetSearchResults(url, null, true)
 						.setCallback(new Callback<>() {
