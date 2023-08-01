@@ -90,6 +90,12 @@ public class SettingsNotificationsFragment extends BaseSettingsFragment<Void>{
 				unifiedPushItem=new CheckableListItem<>(R.string.sk_settings_unifiedpush, 0, CheckableListItem.Style.SWITCH, useUnifiedPush, R.drawable.ic_fluent_unifiedpush_24_regular, this::onUnifiedPush, true)
 		));
 
+		//only enable when distributors, who can receive notifications, are available
+		unifiedPushItem.isEnabled=!UnifiedPush.getDistributors(getContext(), new ArrayList<>()).isEmpty();
+		if (!unifiedPushItem.isEnabled) {
+			unifiedPushItem.subtitleRes=R.string.sk_settings_unifiedpush_no_distributor_body;
+		}
+
 		typeItems=List.of(mentionsItem, boostsItem, favoritesItem, followersItem, pollsItem, updateItem, postsItem);
 		pauseItem.checkedChangeListener=checked->onPauseNotificationsClick(true);
 		updatePolicyItem(null);
@@ -324,13 +330,6 @@ public class SettingsNotificationsFragment extends BaseSettingsFragment<Void>{
 	private void onUnifiedPush(){
 		if(getDistributor(getContext()).isEmpty()){
 			List<String> distributors = UnifiedPush.getDistributors(getContext(), new ArrayList<>());
-			if (distributors.isEmpty()) {
-				new M3AlertDialogBuilder(getContext())
-						.setTitle(R.string.sk_settings_unifiedpush_no_distributor)
-						.setMessage(R.string.sk_settings_unifiedpush_no_distributor_body)
-						.show();
-				return;
-			}
 			showUnifiedPushRegisterDialog(distributors);
 			return;
 		}
