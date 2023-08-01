@@ -324,6 +324,13 @@ public class SettingsNotificationsFragment extends BaseSettingsFragment<Void>{
 	private void onUnifiedPush(){
 		if(getDistributor(getContext()).isEmpty()){
 			List<String> distributors = UnifiedPush.getDistributors(getContext(), new ArrayList<>());
+			if (distributors.isEmpty()) {
+				new M3AlertDialogBuilder(getContext())
+						.setTitle(R.string.sk_settings_unifiedpush_no_distributor)
+						.setMessage(R.string.sk_settings_unifiedpush_no_distributor_body)
+						.show();
+				return;
+			}
 			showUnifiedPushRegisterDialog(distributors);
 			return;
 		}
@@ -334,12 +341,9 @@ public class SettingsNotificationsFragment extends BaseSettingsFragment<Void>{
 		);
 
 		//re-register to fcm
-		AccountSession account = AccountSessionManager.getInstance().getLastActiveAccount();
-		if (account != null) {
-			account.getPushSubscriptionManager().registerAccountForPush(getPushSubscription());
-			unifiedPushItem.toggle();
-			rebindItem(unifiedPushItem);
-		}
+		AccountSessionManager.getInstance().getAccount(accountID).getPushSubscriptionManager().registerAccountForPush(getPushSubscription());
+		unifiedPushItem.toggle();
+		rebindItem(unifiedPushItem);
 	}
 
 	private void showUnifiedPushRegisterDialog(List<String> distributors){

@@ -137,7 +137,9 @@
     <string name="sk_settings_single_notification">Only show one notification</string>
 	<string name="sk_settings_unifiedpush">Use UnifiedPush</string>
 	<string name="sk_settings_unifiedpush_choose">Choose a distributor</string>
-    <string name="sk_create">Create</string>
+	<string name="sk_settings_unifiedpush_no_distributor">No distributor found</string>
+	<string name="sk_settings_unifiedpush_no_distributor_body">You need to install a distributor for push notifications to work. For more information, visit https://unifiedpush.org/</string>
+	<string name="sk_create">Create</string>
     <string name="sk_create_list_title">Create list</string>
     <string name="sk_list_name_hint">List name</string>
     <string name="sk_list_replies_policy">Show replies to</string>
