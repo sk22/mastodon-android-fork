@@ -14,6 +14,7 @@ import org.joinmastodon.android.model.viewmodel.AccountViewModel;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import me.grishka.appkit.api.Callback;
@@ -136,6 +137,10 @@ public abstract class PaginatedAccountListFragment<T> extends BaseAccountListFra
 						List<AccountViewModel> items = result.stream()
 								.filter(a -> d.size() > 1000 || d.stream()
 										.noneMatch(i -> i.account.url.equals(a.url)))
+								.peek(account ->{
+									if (account.getDomainFromURL().equals(getRemoteDomain()))
+										account.acct=account.getFullyQualifiedName();
+								})
 								.map(a->new AccountViewModel(a, accountID))
 								.collect(Collectors.toList());
 
