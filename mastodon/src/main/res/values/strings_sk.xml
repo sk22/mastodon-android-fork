@@ -16,6 +16,8 @@
     <string name="sk_image_description">Image description</string>
     <string name="sk_visibility_unlisted">Unlisted</string>
     <string name="sk_settings_show_replies">Show replies</string>
+	<string name="sk_settings_continues_playback">Audio overlay</string>
+	<string name="sk_settings_continues_playback_summary">Allow already playing media to continue playing, overlaying the new playback</string>
     <string name="sk_quoting_user">Quoting %s</string>
     <string name="sk_settings_reply_visibility">Reply visibility</string>
     <string name="sk_settings_reply_visibility_all">All replies</string>

@@ -59,6 +59,7 @@ public class GlobalUserPreferences{
 	public static boolean disableM3PillActiveIndicator;
 	public static boolean showNavigationLabels;
 	public static boolean displayPronounsInTimelines, displayPronounsInThreads, displayPronounsInUserListings;
+	public static boolean overlayMedia;
 
 	private static SharedPreferences getPrefs(){
 		return MastodonApp.context.getSharedPreferences("global", Context.MODE_PRIVATE);
@@ -117,6 +118,7 @@ public class GlobalUserPreferences{
 		displayPronounsInTimelines=prefs.getBoolean("displayPronounsInTimelines", true);
 		displayPronounsInThreads=prefs.getBoolean("displayPronounsInThreads", true);
 		displayPronounsInUserListings=prefs.getBoolean("displayPronounsInUserListings", true);
+		overlayMedia=prefs.getBoolean("overlayMedia", false);
 
 		if (prefs.contains("prefixRepliesWithRe")) {
 			prefixReplies = prefs.getBoolean("prefixRepliesWithRe", false)
@@ -174,6 +176,7 @@ public class GlobalUserPreferences{
 				.putBoolean("displayPronounsInTimelines", displayPronounsInTimelines)
 				.putBoolean("displayPronounsInThreads", displayPronounsInThreads)
 				.putBoolean("displayPronounsInUserListings", displayPronounsInUserListings)
+				.putBoolean("overlayMedia", overlayMedia)
 				.apply();
 	}
 

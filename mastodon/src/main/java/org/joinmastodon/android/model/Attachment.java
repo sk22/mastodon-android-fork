@@ -3,6 +3,7 @@ package org.joinmastodon.android.model;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
+import android.media.MediaMetadataRetriever;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -75,6 +76,13 @@ public class Attachment extends BaseModel{
 		if(meta.original!=null && meta.original.duration>0)
 			return meta.original.duration;
 		return 0;
+	}
+
+	public boolean hasSound() {
+		MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+		retriever.setDataSource(url);
+		String hasAudioStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_AUDIO);
+		return "yes".equals(hasAudioStr);
 	}
 
 	@Override

@@ -169,7 +169,8 @@ public class AudioPlayerService extends Service{
 		}
 
 		updateNotification(false, false);
-		getSystemService(AudioManager.class).requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+		int audiofocus = GlobalUserPreferences.overlayMedia ? AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK : AudioManager.AUDIOFOCUS_GAIN;
+		getSystemService(AudioManager.class).requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, audiofocus);
 
 		player=new MediaPlayer();
 		player.setOnPreparedListener(this::onPlayerPrepared);
