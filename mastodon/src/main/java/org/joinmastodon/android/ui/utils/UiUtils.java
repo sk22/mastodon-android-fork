@@ -531,13 +531,17 @@ public class UiUtils {
 							.exec(accountID);
 				});
 	}
-	public static void confirmToggleMuteUser(Activity activity, String accountID, Account account, boolean currentlyMuted, Consumer<Relationship> resultCallback){
-		View menu=LayoutInflater.from(activity).inflate(R.layout.item_mute_duration, null);
-		Button button=menu.findViewById(R.id.button);
+	public static void confirmToggleMuteUser(Context context, String accountID, Account account, boolean currentlyMuted, Consumer<Relationship> resultCallback){
+		View durationView=LayoutInflater.from(context).inflate(R.layout.mute_user_dialog, null);
+		LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+		params.setMargins(0, V.dp(-12), 0, 0);
+		durationView.setLayoutParams(params);
+		Button button=durationView.findViewById(R.id.button);
+		((TextView) durationView.findViewById(R.id.message)).setText(context.getString(R.string.confirm_mute, account.displayName));
 
 		AtomicReference<Duration> muteDuration=new AtomicReference<>(Duration.ZERO);
 
-		PopupMenu popupMenu=new PopupMenu(activity, button, Gravity.CENTER_HORIZONTAL);
+		PopupMenu popupMenu=new PopupMenu(context, button, Gravity.CENTER_HORIZONTAL);
 		popupMenu.inflate(R.menu.mute_duration);
 		popupMenu.setOnMenuItemClickListener(item->{
 			int id=item.getItemId();
@@ -565,11 +569,11 @@ public class UiUtils {
 		button.setOnClickListener(v->popupMenu.show());
 		button.setText(popupMenu.getMenu().getItem(0).getTitle());
 
-		new M3AlertDialogBuilder(activity)
-				.setTitle(activity.getString(currentlyMuted ? R.string.confirm_unmute_title : R.string.confirm_mute_title))
-				.setMessage(activity.getString(currentlyMuted ? R.string.confirm_unmute : R.string.confirm_mute, account.displayName))
-				.setView(currentlyMuted ? null : menu)
-				.setPositiveButton(activity.getString(currentlyMuted ? R.string.do_unmute : R.string.do_mute), (dlg, i)->{
+		new M3AlertDialogBuilder(context)
+				.setTitle(context.getString(currentlyMuted ? R.string.confirm_unmute_title : R.string.confirm_mute_title))
+				.setMessage(currentlyMuted ? context.getString(R.string.confirm_unmute, account.displayName) : null)
+				.setView(currentlyMuted ? null : durationView)
+				.setPositiveButton(context.getString(currentlyMuted ? R.string.do_unmute : R.string.do_mute), (dlg, i)->{
 					new SetAccountMuted(account.id, !currentlyMuted, muteDuration.get().getSeconds())
 							.setCallback(new Callback<>(){
 								@Override
@@ -582,10 +586,10 @@ public class UiUtils {
 
 								@Override
 								public void onError(ErrorResponse error){
-									error.showToast(activity);
+									error.showToast(context);
 								}
 							})
-							.wrapProgress(activity, R.string.loading, false)
+							.wrapProgress(context, R.string.loading, false)
 							.exec(accountID);
 				})
 				.setNegativeButton(R.string.cancel, null)

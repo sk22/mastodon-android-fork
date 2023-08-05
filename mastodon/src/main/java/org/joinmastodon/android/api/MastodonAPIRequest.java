@@ -121,13 +121,13 @@ public abstract class MastodonAPIRequest<T> extends APIRequest<T>{
 				.orElseGet(() -> this.execNoAuth(domain));
 	}
 
-	public MastodonAPIRequest<T> wrapProgress(Activity activity, @StringRes int message, boolean cancelable){
-		return wrapProgress(activity, message, cancelable, null);
+	public MastodonAPIRequest<T> wrapProgress(Context context, @StringRes int message, boolean cancelable){
+		return wrapProgress(context, message, cancelable, null);
 	}
 
-	public MastodonAPIRequest<T> wrapProgress(Activity activity, @StringRes int message, boolean cancelable, Consumer<ProgressDialog> transform){
-		progressDialog=new ProgressDialog(activity);
-		progressDialog.setMessage(activity.getString(message));
+	public MastodonAPIRequest<T> wrapProgress(Context context, @StringRes int message, boolean cancelable, Consumer<ProgressDialog> transform){
+		progressDialog=new ProgressDialog(context);
+		progressDialog.setMessage(context.getString(message));
 		progressDialog.setCancelable(cancelable);
 		if (transform != null) transform.accept(progressDialog);
 		if(cancelable){
