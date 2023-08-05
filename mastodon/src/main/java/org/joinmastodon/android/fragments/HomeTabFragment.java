@@ -61,9 +61,7 @@ import org.joinmastodon.android.updater.GithubSelfUpdater;
 import org.joinmastodon.android.utils.ElevationOnScrollListener;
 import org.joinmastodon.android.utils.ProvidesAssistContent;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -339,20 +337,13 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 		hashtagsMenu.clear();
 		hashtagsMenu.getItem().setVisible(hashtagsItems.size() > 0);
 		UiUtils.insetPopupMenuIcon(ctx, UiUtils.makeBackItem(hashtagsMenu));
-
-		List<Map.Entry<Integer, Hashtag>> entryList = new ArrayList<>(hashtagsItems.entrySet());
-		Collections.sort(entryList, new Comparator<Map.Entry<Integer, Hashtag>>() {
-			@Override
-			public int compare(Map.Entry<Integer, Hashtag> left, Map.Entry<Integer, Hashtag> right) {
-				return left.getValue().name.compareToIgnoreCase(right.getValue().name);
-			}
-		});
-
-		entryList.forEach(entry -> {
-			MenuItem item = hashtagsMenu.add(Menu.NONE, entry.getKey(), Menu.NONE, entry.getValue().name);
-			item.setIcon(R.drawable.ic_fluent_number_symbol_24_regular);
-			UiUtils.insetPopupMenuIcon(ctx, item);
-		});
+		hashtagsItems.entrySet().stream()
+				.sorted(Comparator.comparing(x -> x.getValue().name, String.CASE_INSENSITIVE_ORDER))
+				.forEach(entry -> {
+					MenuItem item = hashtagsMenu.add(Menu.NONE, entry.getKey(), Menu.NONE, entry.getValue().name);
+					item.setIcon(R.drawable.ic_fluent_number_symbol_24_regular);
+					UiUtils.insetPopupMenuIcon(ctx, item);
+				});
 	}
 
 	public void updateToolbarLogo(){
