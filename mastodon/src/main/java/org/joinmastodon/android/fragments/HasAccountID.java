@@ -1,5 +1,6 @@
 package org.joinmastodon.android.fragments;
 
+import org.joinmastodon.android.api.session.AccountLocalPreferences;
 import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.model.Instance;
@@ -24,4 +25,8 @@ public interface HasAccountID {
     default Optional<Instance> getInstance() {
         return getSession().getInstance();
     }
+
+	default AccountLocalPreferences getLocalPrefs() {
+		return AccountSessionManager.get(getAccountID()).getLocalPreferences();
+	}
 }

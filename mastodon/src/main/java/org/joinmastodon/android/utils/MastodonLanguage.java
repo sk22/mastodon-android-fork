@@ -3,12 +3,14 @@ package org.joinmastodon.android.utils;
 
 import static org.joinmastodon.android.api.MastodonAPIController.gson;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.LocaleList;
 
-import org.joinmastodon.android.GlobalUserPreferences;
+import org.joinmastodon.android.R;
 import org.joinmastodon.android.model.Instance;
+import org.parceler.Parcel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,8 +18,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Parcel
 public class MastodonLanguage {
 	// On an up-to-date Mastodon instance:
 	// copy(JSON.stringify(JSON.stringify(JSON.parse(document.getElementById('initial-state').textContent).languages)))
@@ -50,10 +54,12 @@ public class MastodonLanguage {
 				.collect(Collectors.toList());
 	}
 
-	public final String languageTag, name, englishName;
-	public final Locale locale;
+	public String languageTag, name, englishName;
+	public Locale locale;
 
-	private MastodonLanguage(String languageTag, String englishName, String name) {
+	protected MastodonLanguage() {}
+
+	protected MastodonLanguage(String languageTag, String englishName, String name) {
 		this.locale = new Locale(languageTag);
 		this.languageTag = languageTag.toLowerCase(Locale.ROOT);
 		this.name = name;
@@ -68,6 +74,10 @@ public class MastodonLanguage {
 	public String getLanguageName() { return name; }
 
 	public String getLanguage() { return languageTag; }
+
+	public String getDisplayName(Context context) {
+		return context.getString(R.string.sk_language_name, getDefaultName(), getLanguageName());
+	}
 
 	@Override
 	public boolean equals(Object o) {
@@ -91,14 +101,18 @@ public class MastodonLanguage {
 					.orElse(ENGLISH);
 		}
 
-		public MastodonLanguage from(String language) {
+		public MastodonLanguage fromOrFallback(String language) {
+			return from(language).orElse(fallbackLanguage);
+		}
+
+		public Optional<MastodonLanguage> from(String language) {
 			return allLanguages.stream()
-					.filter(l->l.locale.equals(new Locale(language))).findAny()
-					.orElse(fallbackLanguage);
+					.filter(l->l.locale.equals(new Locale(language)))
+					.findAny();
 		}
 
 		public MastodonLanguage getDefault() {
-			return from(Locale.getDefault().getLanguage());
+			return fromOrFallback(Locale.getDefault().getLanguage());
 		}
 	}
 }

@@ -1,0 +1,6 @@
+- Opțiune de a relua cu vizibilitate specifică la un clic lung
+- Arată vizibilitatea propriilor rebloguri
+- Adăugați lista de hashtag-uri
+- Clic lung pentru a copia linkurile
+- Opțiune de a deschide postări cu alt cont
+- Corectarea erorilor și modificări minore

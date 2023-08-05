@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-	<item android:state_selected="true">
+	<item android:state_selected="true" android:height="32dp" android:gravity="center_vertical">
 		<ripple android:color="@color/m3_on_secondary_container_overlay">
 			<item>
 				<shape>
@@ -10,15 +10,25 @@
 			</item>
 		</ripple>
 	</item>
-	<item>
+	<item android:state_enabled="false">
+		<layer-list>
+			<item android:height="32dp" android:gravity="center_vertical">
+				<shape>
+					<corners android:radius="8dp"/>
+					<stroke android:color="@color/m3_on_surface_overlay" android:width="1dp" />
+				</shape>
+			</item>
+		</layer-list>
+	</item>
+	<item android:state_enabled="true">
 		<ripple android:color="@color/m3_on_surface_variant_overlay">
-			<item android:id="@android:id/mask">
+			<item android:id="@android:id/mask" android:height="32dp" android:gravity="center_vertical">
 				<shape>
 					<corners android:radius="8dp"/>
 					<solid android:color="#000"/>
 				</shape>
 			</item>
-			<item>
+			<item android:id="@+id/stroke" android:height="32dp" android:gravity="center_vertical">
 				<shape>
 					<corners android:radius="8dp"/>
 					<stroke android:color="?colorM3Outline" android:width="1dp"/>

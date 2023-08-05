@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/alt_badges"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:layout_gravity="end|bottom"
+	android:padding="12dp"
+	android:importantForAccessibility="noHideDescendants">
+
+	<ImageView
+		android:id="@+id/no_alt_button"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="bottom"
+		android:padding="4dp"
+		android:src="@drawable/ic_fluent_important_20_filled"
+		android:background="@drawable/bg_image_no_alt_overlay"
+		android:tint="?colorGray25"
+		android:visibility="gone" />
+
+	<TextView
+		android:id="@+id/alt_button"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="bottom"
+		android:textAppearance="@style/m3_label_large"
+		android:textColor="?colorM3DarkOnSurface"
+		android:gravity="center"
+		android:includeFontPadding="false"
+		android:paddingHorizontal="6dp"
+		android:paddingVertical="3dp"
+		android:background="@drawable/bg_image_alt_overlay"
+		android:maxLines="1"
+		android:text="@string/sk_alt_button"/>
+
+</FrameLayout>

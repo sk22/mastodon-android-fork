@@ -9,6 +9,7 @@ import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.statuses.PleromaGetStatusReactions;
 import org.joinmastodon.android.model.Emoji;
 import org.joinmastodon.android.model.EmojiReaction;
+import org.joinmastodon.android.model.viewmodel.AccountViewModel;
 import org.joinmastodon.android.ui.text.HtmlParser;
 import org.joinmastodon.android.ui.utils.UiUtils;
 
@@ -67,8 +68,8 @@ public class StatusEmojiReactionsListFragment extends BaseAccountListFragment {
                         if (getActivity() == null)
                             return;
 
-                        List<AccountItem> items = result.get(0).accounts.stream()
-                                .map(AccountItem::new)
+                        List<AccountViewModel> items = result.get(0).accounts.stream()
+                                .map(a -> new AccountViewModel(a, accountID))
                                 .collect(Collectors.toList());
 
                         onDataLoaded(items);

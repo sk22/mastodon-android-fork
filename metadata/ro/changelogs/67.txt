@@ -1,0 +1,10 @@
+- Noua filă Acasă cu cronologii publice
+- Afișează anunțuri server
+- Textul este scalat în funcție de setările sistemului
+- Filtrarea îmbunătățită (nu, „Ascunde cu avertisment” nu funcționează încă) de @thiagojedi
+- Caracteristici de gestionare a listelor
+- Scoateți urmăritorii prin soft-blockuri
+- Conexiuni nepermise cu fasciștii
+- Remediere imaginile care nu se încarcă atunci când sunt conectate la instanța Akkoma
+- Corectarea erorilor și modificări UI
+- Adăugați changelog la actualizator de @LucasGGamerM

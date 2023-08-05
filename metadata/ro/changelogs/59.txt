@@ -1,0 +1,6 @@
+- Adăugarea selectorului de limbă
+- Adăugarea funcției de traducere
+- Îmbunătățirea semanticii pentru votarea la sondaje (butoane radio și casete de selectare)
+- Adăugarea opțiunii pentru a permite votarea pentru mai multe opțiuni la sondaje
+- Nou ecran de conectare
+- Corectarea erorilor

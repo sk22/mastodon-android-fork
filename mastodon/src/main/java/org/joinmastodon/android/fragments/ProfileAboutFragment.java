@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.joinmastodon.android.R;
@@ -43,16 +44,15 @@ import me.grishka.appkit.utils.V;
 import me.grishka.appkit.views.UsableRecyclerView;
 
 public class ProfileAboutFragment extends Fragment implements WindowInsetsAwareFragment{
-	private static final int MAX_FIELDS=4;
+	static final int MAX_FIELDS=Integer.MAX_VALUE;
 
 	public UsableRecyclerView list;
 	private List<AccountField> fields=Collections.emptyList();
 	private AboutAdapter adapter;
-	private Paint dividerPaint=new Paint();
 	private boolean isInEditMode;
 	private ItemTouchHelper dragHelper=new ItemTouchHelper(new ReorderCallback());
-	private RecyclerView.ViewHolder draggedViewHolder;
 	private ListImageLoaderWrapper imgLoader;
+	private boolean editDirty;
 
 	public void setFields(List<AccountField> fields){
 		this.fields=fields;
@@ -74,27 +74,8 @@ public class ProfileAboutFragment extends Fragment implements WindowInsetsAwareF
 		list.setLayoutManager(new LinearLayoutManager(getActivity()));
 		imgLoader=new ListImageLoaderWrapper(getActivity(), list, new RecyclerViewDelegate(list), null);
 		list.setAdapter(adapter=new AboutAdapter());
-		int pad=V.dp(16);
-		list.setPadding(pad, pad, pad, pad);
+		list.setPadding(0, V.dp(16), 0, 0);
 		list.setClipToPadding(false);
-		dividerPaint.setStyle(Paint.Style.STROKE);
-		dividerPaint.setStrokeWidth(V.dp(1));
-		dividerPaint.setColor(UiUtils.getThemeColor(getActivity(), R.attr.colorPollVoted));
-		list.addItemDecoration(new RecyclerView.ItemDecoration(){
-			@Override
-			public void onDrawOver(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state){
-				for(int i=0;i<parent.getChildCount();i++){
-					View item=parent.getChildAt(i);
-					int pos=parent.getChildAdapterPosition(item);
-					int draggedPos=draggedViewHolder==null ? -1 : draggedViewHolder.getAbsoluteAdapterPosition();
-					if(pos<adapter.getItemCount()-1 && pos!=draggedPos && pos!=draggedPos-1){
-						float y=item.getY()+item.getHeight();
-						dividerPaint.setAlpha(Math.round(255*item.getAlpha()));
-						c.drawLine(item.getLeft(), y, item.getRight(), y, dividerPaint);
-					}
-				}
-			}
-		});
 		return list;
 	}
 
@@ -103,10 +84,15 @@ public class ProfileAboutFragment extends Fragment implements WindowInsetsAwareF
 		fields=editableFields;
 		adapter.notifyDataSetChanged();
 		dragHelper.attachToRecyclerView(list);
+		editDirty=false;
 	}
 
 	public List<AccountField> getFields(){
 		return fields;
+	}
+
+	public boolean isEditDirty(){
+		return editDirty;
 	}
 
 	@Override
@@ -183,36 +169,25 @@ public class ProfileAboutFragment extends Fragment implements WindowInsetsAwareF
 	}
 
 	private abstract class BaseViewHolder extends BindableViewHolder<AccountField>{
-		protected ShapeDrawable background=new ShapeDrawable();
-
 		public BaseViewHolder(int layout){
 			super(getActivity(), layout, list);
-			background.getPaint().setColor(UiUtils.getThemeColor(getActivity(), R.attr.colorBackgroundLight));
-			itemView.setBackground(background);
 		}
 
 		@Override
 		public void onBind(AccountField item){
-			boolean first=getAbsoluteAdapterPosition()==0, last=getAbsoluteAdapterPosition()==adapter.getItemCount()-1;
-			float radius=V.dp(10);
-			float[] rad=new float[8];
-			if(first)
-				rad[0]=rad[1]=rad[2]=rad[3]=radius;
-			if(last)
-				rad[4]=rad[5]=rad[6]=rad[7]=radius;
-			background.setShape(new RoundRectShape(rad, null, null));
-			itemView.invalidateOutline();
 		}
 	}
 
 	private class AboutViewHolder extends BaseViewHolder implements ImageLoaderViewHolder{
-		private TextView title;
-		private LinkedTextView value;
+		private final TextView title;
+		private final LinkedTextView value;
+//		private final ImageView verifiedIcon;
 
 		public AboutViewHolder(){
 			super(R.layout.item_profile_about);
 			title=findViewById(R.id.title);
 			value=findViewById(R.id.value);
+//			verifiedIcon=findViewById(R.id.verified_icon);
 		}
 
 		@Override
@@ -220,20 +195,7 @@ public class ProfileAboutFragment extends Fragment implements WindowInsetsAwareF
 			super.onBind(item);
 			title.setText(item.parsedName);
 			value.setText(item.parsedValue);
-			if(item.verifiedAt!=null){
-				background.getPaint().setColor(UiUtils.isDarkTheme() ? 0xFF49595a : 0xFFd7e3da);
-				int textColor=UiUtils.isDarkTheme() ? 0xFF89bb9c : 0xFF5b8e63;
-				value.setTextColor(textColor);
-				value.setLinkTextColor(textColor);
-				Drawable check=getResources().getDrawable(R.drawable.ic_fluent_checkmark_24_regular, getActivity().getTheme()).mutate();
-				check.setTint(textColor);
-				value.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, check, null);
-			}else{
-				background.getPaint().setColor(UiUtils.getThemeColor(getActivity(), R.attr.colorBackgroundLight));
-				value.setTextColor(UiUtils.getThemeColor(getActivity(), android.R.attr.textColorPrimary));
-				value.setLinkTextColor(UiUtils.getThemeColor(getActivity(), android.R.attr.colorAccent));
-				value.setCompoundDrawables(null, null, null, null);
-			}
+//			verifiedIcon.setVisibility(item.verifiedAt!=null ? View.VISIBLE : View.GONE);
 		}
 
 		@Override
@@ -251,27 +213,38 @@ public class ProfileAboutFragment extends Fragment implements WindowInsetsAwareF
 	}
 
 	private class EditableAboutViewHolder extends BaseViewHolder{
-		private EditText title;
-		private EditText value;
+		private final EditText title;
+		private final EditText value;
+		private boolean ignoreTextChange;
 
 		public EditableAboutViewHolder(){
-			super(R.layout.item_profile_about_editable);
+			super(R.layout.onboarding_profile_field);
 			title=findViewById(R.id.title);
-			value=findViewById(R.id.value);
+			value=findViewById(R.id.content);
 			findViewById(R.id.dragger_thingy).setOnLongClickListener(v->{
 				dragHelper.startDrag(this);
 				return true;
 			});
-			title.addTextChangedListener(new SimpleTextWatcher(e->item.name=e.toString()));
-			value.addTextChangedListener(new SimpleTextWatcher(e->item.value=e.toString()));
-			findViewById(R.id.remove_row_btn).setOnClickListener(this::onRemoveRowClick);
+			title.addTextChangedListener(new SimpleTextWatcher(e->{
+				item.name=e.toString();
+				if(!ignoreTextChange)
+					editDirty=true;
+			}));
+			value.addTextChangedListener(new SimpleTextWatcher(e->{
+				item.value=e.toString();
+				if(!ignoreTextChange)
+					editDirty=true;
+			}));
+			findViewById(R.id.delete).setOnClickListener(this::onRemoveRowClick);
 		}
 
 		@Override
 		public void onBind(AccountField item){
 			super.onBind(item);
+			ignoreTextChange=true;
 			title.setText(item.name);
 			value.setText(item.value);
+			ignoreTextChange=false;
 		}
 
 		private void onRemoveRowClick(View v){
@@ -323,8 +296,8 @@ public class ProfileAboutFragment extends Fragment implements WindowInsetsAwareF
 				}
 			}
 			adapter.notifyItemMoved(fromPosition, toPosition);
-			((BindableViewHolder)viewHolder).rebind();
-			((BindableViewHolder)target).rebind();
+			((BindableViewHolder<?>)viewHolder).rebind();
+			((BindableViewHolder<?>)target).rebind();
 			return true;
 		}
 
@@ -339,7 +312,6 @@ public class ProfileAboutFragment extends Fragment implements WindowInsetsAwareF
 			if(actionState==ItemTouchHelper.ACTION_STATE_DRAG){
 				viewHolder.itemView.setTag(me.grishka.appkit.R.id.item_touch_helper_previous_elevation, viewHolder.itemView.getElevation()); // prevents the default behavior of changing elevation in onDraw()
 				viewHolder.itemView.animate().translationZ(V.dp(1)).setDuration(200).setInterpolator(CubicBezierInterpolator.DEFAULT).start();
-				draggedViewHolder=viewHolder;
 			}
 		}
 
@@ -347,7 +319,6 @@ public class ProfileAboutFragment extends Fragment implements WindowInsetsAwareF
 		public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder){
 			super.clearView(recyclerView, viewHolder);
 			viewHolder.itemView.animate().translationZ(0).setDuration(100).setInterpolator(CubicBezierInterpolator.DEFAULT).start();
-			draggedViewHolder=null;
 		}
 
 		@Override

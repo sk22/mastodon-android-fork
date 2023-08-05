@@ -1,0 +1,6 @@
+- Teme de culoare personalizate de @LucasGGamerM
+- Noul logo text „Megalodon” trimis de @LucasGGamerM
+- O căutare emoji mai bună în timp ce compune
+- Votare modificată (afișați vot propriu, afișați întotdeauna butonul de vot, nu tăiați răspunsuri lungi)
+- Adăugarea unei setări de notificări push pentru notificări post
+- Corectarea erorilor

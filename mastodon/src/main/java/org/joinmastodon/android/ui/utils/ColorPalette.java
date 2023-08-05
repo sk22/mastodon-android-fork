@@ -2,7 +2,6 @@ package org.joinmastodon.android.ui.utils;
 
 import static org.joinmastodon.android.GlobalUserPreferences.ColorPreference;
 import static org.joinmastodon.android.GlobalUserPreferences.ThemePreference;
-import static org.joinmastodon.android.GlobalUserPreferences.theme;
 import static org.joinmastodon.android.GlobalUserPreferences.trueBlackTheme;
 
 import android.content.Context;
@@ -49,18 +48,28 @@ public class ColorPalette {
     public ColorPalette dark(@StyleRes int res, @StyleRes int auto) { dark = res; autoDark = auto; return this; }
     public ColorPalette black(@StyleRes int res, @StyleRes int auto) { dark = res; autoBlack = auto; return this; }
 
-    public void apply(Context context) {
+	public void apply(Context context) {
+		apply(context, GlobalUserPreferences.theme);
+	}
+
+    public void apply(Context context, ThemePreference theme) {
         if (!((dark != 0 && autoDark != 0) || (black != 0 && autoBlack != 0) || light != 0 || base != 0)) {
             throw new IllegalStateException("Invalid color scheme definition");
         }
 
         Resources.Theme t = context.getTheme();
+		t.applyStyle(R.style.ColorPalette_Fallback, true);
         if (base != 0) t.applyStyle(base, true);
-        if (light != 0 && theme.equals(ThemePreference.LIGHT)) t.applyStyle(light, true);
-        else if (theme.equals(ThemePreference.DARK)) {
+        if (light != 0 && theme.equals(ThemePreference.LIGHT)) {
+			t.applyStyle(light, true);
+		} else if (theme.equals(ThemePreference.DARK)) {
+			t.applyStyle(R.style.ColorPalette_Dark, true);
+			if (trueBlackTheme) t.applyStyle(R.style.ColorPalette_Dark_TrueBlack, true);
             if (dark != 0 && !trueBlackTheme) t.applyStyle(dark, true);
             else if (black != 0 && trueBlackTheme) t.applyStyle(black, true);
         } else if (theme.equals(ThemePreference.AUTO)) {
+			t.applyStyle(R.style.ColorPalette_AutoLightDark, true);
+			if (trueBlackTheme) t.applyStyle(R.style.ColorPalette_AutoLightDark_TrueBlack, true);
             if (autoDark != 0 && !trueBlackTheme) t.applyStyle(autoDark, true);
             else if (autoBlack != 0 && trueBlackTheme) t.applyStyle(autoBlack, true);
         }

@@ -3,50 +3,53 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <org.joinmastodon.android.ui.views.AutoOrientationLinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginHorizontal="24dp">
-        <TextView
-            android:id="@+id/text"
-            android:text="@string/sk_list_replies_policy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:paddingVertical="8dp"
-            android:singleLine="true"
-            android:ellipsize="none"
-            android:gravity="center_vertical"
-            android:textColor="?android:textColorPrimary"
-            android:textSize="16sp" />
-
-        <Button
-            android:id="@+id/button"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:background="@drawable/bg_inline_button"
-            android:elevation="0dp"
-            android:ellipsize="none"
-            android:fontFamily="sans-serif-medium"
-            android:singleLine="true"
-            android:stateListAnimator="@null"
-            android:textColor="?android:textColorPrimary"
-            android:textSize="16sp" />
-    </org.joinmastodon.android.ui.views.AutoOrientationLinearLayout>
 
     <org.joinmastodon.android.ui.views.TextInputFrameLayout
         android:id="@+id/input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <LinearLayout
+	<org.joinmastodon.android.ui.views.AutoOrientationLinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="16dp"
+		android:layout_marginBottom="8dp"
+		android:layout_marginHorizontal="24dp">
+		<TextView
+			android:id="@+id/text"
+			android:text="@string/sk_list_replies_policy"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginEnd="8dp"
+			android:paddingVertical="8dp"
+			android:singleLine="true"
+			android:ellipsize="none"
+			android:gravity="center_vertical"
+			android:textColor="?android:textColorPrimary"
+			android:textSize="16sp" />
+
+		<Button
+			android:id="@+id/button"
+			style="@style/Widget.Mastodon.M3.Button.Outlined"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:background="@drawable/bg_button_m3_tonal"
+			android:ellipsize="none"
+			android:singleLine="true"
+			android:stateListAnimator="@null"
+			android:textColor="?android:textColorPrimary"
+			android:textSize="16sp" />
+	</org.joinmastodon.android.ui.views.AutoOrientationLinearLayout>
+
+
+	<LinearLayout
         android:id="@+id/exclusive"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
         android:minHeight="48dp"
+		android:paddingBottom="12dp"
         android:gravity="center_vertical"
         android:layoutDirection="locale">
 
@@ -54,7 +57,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingVertical="8dp"
             android:textSize="16sp"
             android:textColor="?android:textColorPrimary"
             android:drawableStart="@drawable/ic_fluent_rss_24_regular"
@@ -62,7 +64,7 @@
             android:drawablePadding="16dp"
             android:text="@string/sk_list_exclusive_switch" />
 
-        <Switch
+        <org.joinmastodon.android.ui.views.M3Switch
             android:id="@+id/exclusive_checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -76,7 +78,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginBottom="8dp"
         android:textColor="?android:textColorSecondary"
         android:textSize="14sp"
         android:text="@string/sk_list_exclusive_switch_explanation" />

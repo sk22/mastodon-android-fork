@@ -17,10 +17,11 @@ import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.MastodonAPIController;
 import org.joinmastodon.android.api.MastodonErrorResponse;
 import org.joinmastodon.android.api.requests.instance.GetInstance;
-import org.joinmastodon.android.fragments.RecyclerFragment;
+import org.joinmastodon.android.fragments.MastodonRecyclerFragment;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.catalog.CatalogInstance;
 import org.joinmastodon.android.ui.M3AlertDialogBuilder;
+import org.joinmastodon.android.ui.utils.UiUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -52,7 +53,7 @@ import okhttp3.Call;
 import okhttp3.Request;
 import okhttp3.Response;
 
-abstract class InstanceCatalogFragment extends RecyclerFragment<CatalogInstance> {
+abstract class InstanceCatalogFragment extends MastodonRecyclerFragment<CatalogInstance> {
 	protected RecyclerView.Adapter adapter;
 	protected MergeRecyclerAdapter mergeAdapter;
 	protected CatalogInstance chosenInstance;
@@ -227,7 +228,7 @@ abstract class InstanceCatalogFragment extends RecyclerFragment<CatalogInstance>
 				}
 				loadingInstanceDomain=null;
 				showInstanceInfoLoadError(domain, error);
-				if(fakeInstance!=null){
+				if(fakeInstance!=null && getActivity()!=null){
 					fakeInstance.description=getString(R.string.error);
 					if(filteredData.size()>0 && filteredData.get(0)==fakeInstance){
 						if(list.findViewHolderForAdapterPosition(1) instanceof BindableViewHolder<?> ivh){
@@ -330,13 +331,7 @@ abstract class InstanceCatalogFragment extends RecyclerFragment<CatalogInstance>
 
 	@Override
 	public void onApplyWindowInsets(WindowInsets insets){
-		if(Build.VERSION.SDK_INT>=27){
-			int inset=insets.getSystemWindowInsetBottom();
-			buttonBar.setPadding(0, 0, 0, inset>0 ? Math.max(inset, V.dp(36)) : 0);
-			super.onApplyWindowInsets(insets.replaceSystemWindowInsets(insets.getSystemWindowInsetLeft(), insets.getSystemWindowInsetTop(), insets.getSystemWindowInsetRight(), 0));
-		}else{
-			super.onApplyWindowInsets(insets.replaceSystemWindowInsets(insets.getSystemWindowInsetLeft(), insets.getSystemWindowInsetTop(), insets.getSystemWindowInsetRight(), insets.getSystemWindowInsetBottom()));
-		}
+		super.onApplyWindowInsets(UiUtils.applyBottomInsetToFixedView(buttonBar, insets));
 	}
 
 	@Override

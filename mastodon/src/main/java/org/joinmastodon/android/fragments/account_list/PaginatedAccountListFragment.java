@@ -9,6 +9,7 @@ import org.joinmastodon.android.api.requests.HeaderPaginationRequest;
 import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.HeaderPaginationList;
+import org.joinmastodon.android.model.viewmodel.AccountViewModel;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -125,17 +126,17 @@ public abstract class PaginatedAccountListFragment<T> extends BaseAccountListFra
 					@Override
 					public void onSuccess(HeaderPaginationList<Account> result){
 						boolean justRefreshed = !doneWithHomeInstance && offset == 0;
-						Collection<AccountItem> d = justRefreshed ? List.of() : data;
+						Collection<AccountViewModel> d = justRefreshed ? List.of() : data;
 
 						if(result.nextPageUri!=null)
 							nextMaxID=result.nextPageUri.getQueryParameter("max_id");
 						else
 							nextMaxID=null;
 						if (getActivity() == null) return;
-						List<AccountItem> items = result.stream()
+						List<AccountViewModel> items = result.stream()
 								.filter(a -> d.size() > 1000 || d.stream()
 										.noneMatch(i -> i.account.url.equals(a.url)))
-								.map(AccountItem::new)
+								.map(a->new AccountViewModel(a, accountID))
 								.collect(Collectors.toList());
 
 						boolean hasMore = nextMaxID != null;

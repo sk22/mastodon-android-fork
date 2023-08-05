@@ -12,7 +12,7 @@ import org.joinmastodon.android.events.RemoveAccountPostsEvent;
 import org.joinmastodon.android.events.StatusCreatedEvent;
 import org.joinmastodon.android.events.StatusUnpinnedEvent;
 import org.joinmastodon.android.model.Account;
-import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.displayitems.HeaderStatusDisplayItem;
 import org.joinmastodon.android.utils.StatusFilterPredicate;
@@ -48,27 +48,22 @@ public class AccountTimelineFragment extends StatusListFragment{
 
 	@Override
 	public void onAttach(Activity activity){
-		super.onAttach(activity);
 		user=Parcels.unwrap(getArguments().getParcelable("profileAccount"));
 		filter=GetAccountStatuses.Filter.valueOf(getArguments().getString("filter"));
+		super.onAttach(activity);
 	}
 
 	@Override
 	protected void doLoadData(int offset, int count){
-		if(user==null) // TODO figure out why this happens
-			return;
 		currentRequest=new GetAccountStatuses(user.id, offset>0 ? getMaxID() : null, null, count, filter)
 				.setCallback(new SimpleCallback<>(this){
 					@Override
 					public void onSuccess(List<Status> result){
 						if(getActivity()==null) return;
 						AccountSessionManager asm = AccountSessionManager.getInstance();
-						result=result.stream().filter(status -> {
-							// don't hide own posts in own profile
-							if (asm.isSelf(accountID, user) && asm.isSelf(accountID, status.account)) return true;
-							else return new StatusFilterPredicate(accountID, getFilterContext()).test(status);
-						}).collect(Collectors.toList());
-						onDataLoaded(result, !result.isEmpty());
+						boolean empty=result.isEmpty();
+						AccountSessionManager.get(accountID).filterStatuses(result, getFilterContext(), user);
+						onDataLoaded(result, !empty);
 					}
 				})
 				.exec(accountID);
@@ -77,6 +72,7 @@ public class AccountTimelineFragment extends StatusListFragment{
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState){
 		super.onViewCreated(view, savedInstanceState);
+		view.setBackground(null); // prevents unnecessary overdraw
 	}
 
 	@Override
@@ -86,20 +82,20 @@ public class AccountTimelineFragment extends StatusListFragment{
 			loadData();
 	}
 
-	protected void onStatusCreated(StatusCreatedEvent ev){
+	protected void onStatusCreated(Status status){
 		AccountSessionManager asm = AccountSessionManager.getInstance();
-		if(!asm.isSelf(accountID, ev.status.account) || !asm.isSelf(accountID, user))
+		if(!asm.isSelf(accountID, status.account) || !asm.isSelf(accountID, user))
 			return;
 		if(filter==GetAccountStatuses.Filter.PINNED) return;
 		if(filter==GetAccountStatuses.Filter.DEFAULT){
 			// Keep replies to self, discard all other replies
-			if(ev.status.inReplyToAccountId!=null && !ev.status.inReplyToAccountId.equals(AccountSessionManager.getInstance().getAccount(accountID).self.id))
+			if(status.inReplyToAccountId!=null && !status.inReplyToAccountId.equals(AccountSessionManager.getInstance().getAccount(accountID).self.id))
 				return;
 		}else if(filter==GetAccountStatuses.Filter.MEDIA){
-			if(Optional.ofNullable(ev.status.mediaAttachments).map(List::isEmpty).orElse(true))
+			if(Optional.ofNullable(status.mediaAttachments).map(List::isEmpty).orElse(true))
 				return;
 		}
-		prependItems(Collections.singletonList(ev.status), true);
+		prependItems(Collections.singletonList(status), true);
 		if (isOnTop()) scrollToTop();
 	}
 
@@ -130,8 +126,8 @@ public class AccountTimelineFragment extends StatusListFragment{
 
 
 	@Override
-	protected Filter.FilterContext getFilterContext() {
-		return Filter.FilterContext.ACCOUNT;
+	protected FilterContext getFilterContext() {
+		return FilterContext.ACCOUNT;
 	}
 
 	@Override

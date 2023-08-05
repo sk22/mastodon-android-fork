@@ -38,7 +38,6 @@
         android:layout_weight="0"
         android:layout_marginEnd="16dp"
         android:maxWidth="140dp"
-        android:background="@drawable/bg_inline_button"
         android:elevation="0dp"
         android:ellipsize="middle"
         android:fontFamily="sans-serif-medium"

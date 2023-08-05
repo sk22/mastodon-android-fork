@@ -11,11 +11,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.api.requests.markers.SaveMarkers;
 import org.joinmastodon.android.api.requests.timelines.GetHomeTimeline;
+import org.joinmastodon.android.api.session.AccountLocalPreferences;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.StatusCreatedEvent;
 import org.joinmastodon.android.model.CacheablePaginatedResponse;
-import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Status;
+import org.joinmastodon.android.model.TimelineMarkers;
 import org.joinmastodon.android.ui.displayitems.GapStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.StatusDisplayItem;
 import org.joinmastodon.android.utils.StatusFilterPredicate;
@@ -49,8 +51,9 @@ public class HomeTimelineFragment extends StatusListFragment {
 	}
 
 	private boolean typeFilterPredicate(Status s) {
-		return (GlobalUserPreferences.showReplies || s.inReplyToId == null) &&
-				(GlobalUserPreferences.showBoosts || s.reblog == null);
+		AccountLocalPreferences lp=getLocalPrefs();
+		return (lp.showReplies || s.inReplyToId == null) &&
+				(lp.showBoosts || s.reblog == null);
 	}
 
 	private List<Status> filterPosts(List<Status> items) {
@@ -110,7 +113,7 @@ public class HomeTimelineFragment extends StatusListFragment {
 				new SaveMarkers(topPostID, null)
 						.setCallback(new Callback<>(){
 							@Override
-							public void onSuccess(SaveMarkers.Response result){
+							public void onSuccess(TimelineMarkers result){
 							}
 
 							@Override
@@ -123,8 +126,8 @@ public class HomeTimelineFragment extends StatusListFragment {
 		}
 	}
 
-	public void onStatusCreated(StatusCreatedEvent ev){
-		prependItems(Collections.singletonList(ev.status), true);
+	public void onStatusCreated(Status status){
+		prependItems(Collections.singletonList(status), true);
 	}
 
 	private void loadNewPosts(){
@@ -134,7 +137,7 @@ public class HomeTimelineFragment extends StatusListFragment {
 		// we'll get the currently topmost post as last in the response. This way we know there's no gap
 		// between the existing and newly loaded parts of the timeline.
 		String sinceID=data.size()>1 ? data.get(1).id : "1";
-		currentRequest=new GetHomeTimeline(null, null, 20, sinceID)
+		currentRequest=new GetHomeTimeline(null, null, 20, sinceID, getLocalPrefs().timelineReplyVisibility)
 				.setCallback(new Callback<>(){
 					@Override
 					public void onSuccess(List<Status> result){
@@ -151,8 +154,7 @@ public class HomeTimelineFragment extends StatusListFragment {
 							result.get(result.size()-1).hasGapAfter=true;
 							toAdd=result;
 						}
-						StatusFilterPredicate filterPredicate=new StatusFilterPredicate(accountID, getFilterContext());
-						toAdd=toAdd.stream().filter(filterPredicate).collect(Collectors.toList());
+						AccountSessionManager.get(accountID).filterStatuses(toAdd, getFilterContext());
 						if(!toAdd.isEmpty()){
 							prependItems(toAdd, true);
 							if (parent != null && GlobalUserPreferences.showNewPostsButton) parent.showNewPostsButton();
@@ -169,7 +171,7 @@ public class HomeTimelineFragment extends StatusListFragment {
 				.exec(accountID);
 
 		if (parent.getParentFragment() instanceof HomeFragment homeFragment) {
-			homeFragment.updateNotificationBadge();
+			homeFragment.reloadNotificationsForUnreadCount();
 		}
 	}
 
@@ -182,7 +184,7 @@ public class HomeTimelineFragment extends StatusListFragment {
 		V.setVisibilityAnimated(item.text, View.GONE);
 		GapStatusDisplayItem gap=item.getItem();
 		dataLoading=true;
-		currentRequest=new GetHomeTimeline(item.getItemID(), null, 20, null)
+		currentRequest=new GetHomeTimeline(item.getItemID(), null, 20, null, getLocalPrefs().timelineReplyVisibility)
 				.setCallback(new Callback<>(){
 					@Override
 					public void onSuccess(List<Status> result){
@@ -239,6 +241,7 @@ public class HomeTimelineFragment extends StatusListFragment {
 									insertedPosts.add(s);
 								}
 							}
+							AccountSessionManager.get(accountID).filterStatuses(insertedPosts, getFilterContext());
 							if(targetList.isEmpty()){
 								// oops. We didn't add new posts, but at least we know there are none.
 								adapter.notifyItemRemoved(getMainAdapterOffset()+gapPos);
@@ -285,8 +288,8 @@ public class HomeTimelineFragment extends StatusListFragment {
 	}
 
 	@Override
-	protected Filter.FilterContext getFilterContext() {
-		return Filter.FilterContext.HOME;
+	protected FilterContext getFilterContext() {
+		return FilterContext.HOME;
 	}
 
 	@Override

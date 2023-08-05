@@ -132,7 +132,7 @@ public class AccountCardStatusDisplayItem extends StatusDisplayItem{
 			postsCount.setText(UiUtils.abbreviateNumber(item.account.statusesCount));
 			followersLabel.setText(item.parentFragment.getResources().getQuantityString(R.plurals.followers, (int)Math.min(999, item.account.followersCount)));
 			followingLabel.setText(item.parentFragment.getResources().getQuantityString(R.plurals.following, (int)Math.min(999, item.account.followingCount)));
-			postsLabel.setText(item.parentFragment.getResources().getQuantityString(R.plurals.posts, (int)Math.min(999, item.account.statusesCount)));
+			postsLabel.setText(item.parentFragment.getResources().getQuantityString(R.plurals.x_posts, (int)(item.account.statusesCount%1000), item.account.statusesCount));
 			followersCount.setVisibility(item.account.followersCount < 0 ? View.GONE : View.VISIBLE);
 			followersLabel.setVisibility(item.account.followersCount < 0 ? View.GONE : View.VISIBLE);
 			followingCount.setVisibility(item.account.followingCount < 0 ? View.GONE : View.VISIBLE);
@@ -156,13 +156,14 @@ public class AccountCardStatusDisplayItem extends StatusDisplayItem{
 				actionWrap.setVisibility(View.VISIBLE);
 				acceptWrap.setVisibility(View.GONE);
 				rejectWrap.setVisibility(View.GONE);
-				UiUtils.setRelationshipToActionButton(relationship, actionButton);
+				UiUtils.setRelationshipToActionButtonM3(relationship, actionButton);
 			}
 		}
 
 		private void onFollowRequestButtonClick(View v) {
 			itemView.setHasTransientState(true);
 			UiUtils.handleFollowRequest((Activity) v.getContext(), item.account, item.parentFragment.getAccountID(), null, v == acceptButton, relationship, rel -> {
+				if(v.getContext()==null) return;
 				itemView.setHasTransientState(false);
 				item.parentFragment.putRelationship(item.account.id, rel);
 				RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter = getBindingAdapter();
@@ -180,6 +181,7 @@ public class AccountCardStatusDisplayItem extends StatusDisplayItem{
 		private void onActionButtonClick(View v){
 			itemView.setHasTransientState(true);
 			UiUtils.performAccountAction((Activity) v.getContext(), item.account, item.parentFragment.getAccountID(), relationship, actionButton, this::setActionProgressVisible, rel->{
+				if(v.getContext()==null) return;
 				itemView.setHasTransientState(false);
 				item.parentFragment.putRelationship(item.account.id, rel);
 				rebind();

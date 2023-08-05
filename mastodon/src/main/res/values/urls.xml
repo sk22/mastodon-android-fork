@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="repo_url" translatable="false">https://github.com/sk22/megalodon</string>
+	<string name="privacy_policy_url" translatable="false">https://joinmastodon.org/privacy-policy</string>
+	<string name="donate_url" translatable="false">https://ko-fi.com/xsk22</string>
+</resources>

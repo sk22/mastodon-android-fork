@@ -53,8 +53,10 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
     public EmojiReactionsStatusDisplayItem(String parentID, BaseStatusListFragment parentFragment, Status status) {
         super(parentID, parentFragment);
         this.status = status;
-        for (EmojiReaction emojiReaction : status.emojiReactions) {
-            reactions.put(emojiReaction.name, createDisplay(emojiReaction, true));
+        if (status.emojiReactions != null){
+			for(EmojiReaction emojiReaction : status.emojiReactions){
+                reactions.put(emojiReaction.name, createDisplay(emojiReaction, true));
+			}
         }
     }
 
@@ -110,12 +112,12 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
                 Button btn = new Button(item.parentFragment.getContext());
                 btn.setHeight(V.dp(48));
                 btn.setPaddingRelative(V.dp(12), 0, V.dp(12), 0);
-                btn.setBackgroundResource(R.drawable.bg_button_primary_light_on_dark);
+                btn.setBackgroundResource(R.drawable.bg_button_m3_tonal);
                 btn.setTextColor(item.parentFragment.getContext().getColor(R.color.gray_800));
                 btn.setText(reaction.text);
                 if (reaction.reaction.me)
                     btn.getBackground()
-                            .setColorFilter(UiUtils.getThemeColor(item.parentFragment.getContext(), R.attr.colorAccentLightest), PorterDuff.Mode.SRC);
+                            .setColorFilter(UiUtils.getThemeColor(item.parentFragment.getContext(), R.attr.colorM3SecondaryContainer), PorterDuff.Mode.SRC);
 
                 buttons.add(btn);
 
@@ -136,7 +138,7 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
 
                                 if (newReactionDisplay.reaction.me)
                                     btn.getBackground()
-                                            .setColorFilter(UiUtils.getThemeColor(item.parentFragment.getContext(), R.attr.colorAccentLightest), PorterDuff.Mode.SRC);
+                                            .setColorFilter(UiUtils.getThemeColor(item.parentFragment.getContext(), R.attr.colorM3SecondaryContainer), PorterDuff.Mode.SRC);
                                 else
                                     btn.getBackground().clearColorFilter();
 

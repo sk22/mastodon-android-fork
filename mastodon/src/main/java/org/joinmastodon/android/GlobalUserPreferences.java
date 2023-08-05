@@ -4,142 +4,119 @@ import static org.joinmastodon.android.api.MastodonAPIController.gson;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
+
+import androidx.annotation.StringRes;
 
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
+import org.joinmastodon.android.api.session.AccountLocalPreferences;
+import org.joinmastodon.android.api.session.AccountSession;
+import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.model.ContentType;
+import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.TimelineDefinition;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class GlobalUserPreferences{
+	private static final String TAG="GlobalUserPreferences";
+
 	public static boolean playGifs;
 	public static boolean useCustomTabs;
+	public static boolean altTextReminders, confirmUnfollow, confirmBoost, confirmDeletePost;
+	public static ThemePreference theme;
+
+	// MEGALODON
 	public static boolean trueBlackTheme;
-	public static boolean showReplies;
-	public static boolean showBoosts;
 	public static boolean loadNewPosts;
 	public static boolean showNewPostsButton;
-	public static boolean showInteractionCounts;
-	public static boolean alwaysExpandContentWarnings;
-	public static boolean disableMarquee;
+	public static boolean toolbarMarquee;
 	public static boolean disableSwipe;
 	public static boolean voteButtonForSingleChoice;
 	public static boolean enableDeleteNotifications;
 	public static boolean translateButtonOpenedOnly;
 	public static boolean uniformNotificationIcon;
 	public static boolean reduceMotion;
-	public static boolean keepOnlyLatestNotification;
-	public static boolean disableAltTextReminder;
 	public static boolean showAltIndicator;
 	public static boolean showNoAltIndicator;
 	public static boolean enablePreReleases;
 	public static PrefixRepliesMode prefixReplies;
-	public static boolean bottomEncoding;
 	public static boolean collapseLongPosts;
 	public static boolean spectatorMode;
 	public static boolean autoHideFab;
-	public static boolean replyLineAboveHeader;
 	public static boolean compactReblogReplyLine;
-	public static boolean confirmBeforeReblog;
 	public static boolean allowRemoteLoading;
 	public static boolean forwardReportDefault;
 	public static AutoRevealMode autoRevealEqualSpoilers;
-	public static String publishButtonText;
-	public static ThemePreference theme;
 	public static ColorPreference color;
-
-	public static Map<String, List<String>> recentLanguages;
-	public static Map<String, List<TimelineDefinition>> pinnedTimelines;
-	public static Set<String> accountsWithLocalOnlySupport;
-	public static Set<String> accountsInGlitchMode;
-	public static Set<String> accountsWithContentTypesEnabled;
-	public static Map<String, ContentType> accountsDefaultContentTypes;
-	public static Set<String> accountsWithEmojiReactions;
-	public static Set<String> accountsWithEmojiReactionsInLists;
-
-	private final static Type recentLanguagesType = new TypeToken<Map<String, List<String>>>() {}.getType();
-	private final static Type pinnedTimelinesType = new TypeToken<Map<String, List<TimelineDefinition>>>() {}.getType();
-	private final static Type accountsDefaultContentTypesType = new TypeToken<Map<String, ContentType>>() {}.getType();
-
-	/**
-	 * Pleroma
-	 */
-	public static String replyVisibility;
+	public static boolean disableM3PillActiveIndicator;
+	public static boolean showNavigationLabels;
+	public static boolean displayPronounsInTimelines, displayPronounsInThreads, displayPronounsInUserListings;
 
 	private static SharedPreferences getPrefs(){
 		return MastodonApp.context.getSharedPreferences("global", Context.MODE_PRIVATE);
 	}
 
-	private static <T> T fromJson(String json, Type type, T orElse) {
-		if (json == null) return orElse;
-		try { return gson.fromJson(json, type); }
-		catch (JsonSyntaxException ignored) { return orElse; }
+	public static <T> T fromJson(String json, Type type, T orElse){
+		if(json==null) return orElse;
+		try{
+			T value=gson.fromJson(json, type);
+			return value==null ? orElse : value;
+		}catch(JsonSyntaxException ignored){
+			return orElse;
+		}
 	}
 
-	public static void removeAccount(String accountId) {
-		recentLanguages.remove(accountId);
-		pinnedTimelines.remove(accountId);
-		accountsInGlitchMode.remove(accountId);
-		accountsWithLocalOnlySupport.remove(accountId);
-		accountsWithContentTypesEnabled.remove(accountId);
-		accountsDefaultContentTypes.remove(accountId);
-		accountsWithEmojiReactions.remove(accountId);
-		accountsWithEmojiReactionsInLists.remove(accountId);
-		save();
+	public static <T extends Enum<T>> T enumValue(Class<T> enumType, String name) {
+		try { return Enum.valueOf(enumType, name); }
+		catch (NullPointerException npe) { return null; }
 	}
 
 	public static void load(){
 		SharedPreferences prefs=getPrefs();
+
 		playGifs=prefs.getBoolean("playGifs", true);
 		useCustomTabs=prefs.getBoolean("useCustomTabs", true);
+		theme=ThemePreference.values()[prefs.getInt("theme", 0)];
+		altTextReminders=prefs.getBoolean("altTextReminders", true);
+		confirmUnfollow=prefs.getBoolean("confirmUnfollow", true);
+		confirmBoost=prefs.getBoolean("confirmBoost", false);
+		confirmDeletePost=prefs.getBoolean("confirmDeletePost", true);
+
+		// MEGALODON
 		trueBlackTheme=prefs.getBoolean("trueBlackTheme", false);
-		showReplies=prefs.getBoolean("showReplies", true);
-		showBoosts=prefs.getBoolean("showBoosts", true);
 		loadNewPosts=prefs.getBoolean("loadNewPosts", true);
 		showNewPostsButton=prefs.getBoolean("showNewPostsButton", true);
-		showInteractionCounts=prefs.getBoolean("showInteractionCounts", false);
-		alwaysExpandContentWarnings=prefs.getBoolean("alwaysExpandContentWarnings", false);
-		disableMarquee=prefs.getBoolean("disableMarquee", false);
+		toolbarMarquee=prefs.getBoolean("toolbarMarquee", true);
 		disableSwipe=prefs.getBoolean("disableSwipe", false);
 		voteButtonForSingleChoice=prefs.getBoolean("voteButtonForSingleChoice", true);
 		enableDeleteNotifications=prefs.getBoolean("enableDeleteNotifications", false);
 		translateButtonOpenedOnly=prefs.getBoolean("translateButtonOpenedOnly", false);
 		uniformNotificationIcon=prefs.getBoolean("uniformNotificationIcon", false);
 		reduceMotion=prefs.getBoolean("reduceMotion", false);
-		keepOnlyLatestNotification=prefs.getBoolean("keepOnlyLatestNotification", false);
-		disableAltTextReminder=prefs.getBoolean("disableAltTextReminder", false);
 		showAltIndicator=prefs.getBoolean("showAltIndicator", true);
 		showNoAltIndicator=prefs.getBoolean("showNoAltIndicator", true);
 		enablePreReleases=prefs.getBoolean("enablePreReleases", false);
 		prefixReplies=PrefixRepliesMode.valueOf(prefs.getString("prefixReplies", PrefixRepliesMode.NEVER.name()));
-		bottomEncoding=prefs.getBoolean("bottomEncoding", false);
 		collapseLongPosts=prefs.getBoolean("collapseLongPosts", true);
 		spectatorMode=prefs.getBoolean("spectatorMode", false);
 		autoHideFab=prefs.getBoolean("autoHideFab", true);
-		replyLineAboveHeader=prefs.getBoolean("replyLineAboveHeader", true);
 		compactReblogReplyLine=prefs.getBoolean("compactReblogReplyLine", true);
-		confirmBeforeReblog=prefs.getBoolean("confirmBeforeReblog", false);
-		publishButtonText=prefs.getString("publishButtonText", "");
-		theme=ThemePreference.values()[prefs.getInt("theme", 0)];
-		recentLanguages=fromJson(prefs.getString("recentLanguages", null), recentLanguagesType, new HashMap<>());
-		pinnedTimelines=fromJson(prefs.getString("pinnedTimelines", null), pinnedTimelinesType, new HashMap<>());
-		accountsWithLocalOnlySupport=prefs.getStringSet("accountsWithLocalOnlySupport", new HashSet<>());
-		accountsInGlitchMode=prefs.getStringSet("accountsInGlitchMode", new HashSet<>());
-		replyVisibility=prefs.getString("replyVisibility", null);
-		accountsWithContentTypesEnabled=prefs.getStringSet("accountsWithContentTypesEnabled", new HashSet<>());
-		accountsDefaultContentTypes=fromJson(prefs.getString("accountsDefaultContentTypes", null), accountsDefaultContentTypesType, new HashMap<>());
 		allowRemoteLoading=prefs.getBoolean("allowRemoteLoading", true);
 		autoRevealEqualSpoilers=AutoRevealMode.valueOf(prefs.getString("autoRevealEqualSpoilers", AutoRevealMode.THREADS.name()));
 		forwardReportDefault=prefs.getBoolean("forwardReportDefault", true);
-		accountsWithEmojiReactions=prefs.getStringSet("accountsWithEmojiReactions", new HashSet<>());
-		accountsWithEmojiReactionsInLists=prefs.getStringSet("accountsWithEmojiReactionsInLists", new HashSet<>());
+		disableM3PillActiveIndicator=prefs.getBoolean("disableM3PillActiveIndicator", false);
+		showNavigationLabels=prefs.getBoolean("showNavigationLabels", true);
+		displayPronounsInTimelines=prefs.getBoolean("displayPronounsInTimelines", true);
+		displayPronounsInThreads=prefs.getBoolean("displayPronounsInThreads", true);
+		displayPronounsInUserListings=prefs.getBoolean("displayPronounsInUserListings", true);
 
 		if (prefs.contains("prefixRepliesWithRe")) {
 			prefixReplies = prefs.getBoolean("prefixRepliesWithRe", false)
@@ -156,28 +133,30 @@ public class GlobalUserPreferences{
 			// invalid color name or color was previously saved as integer
 			color=ColorPreference.PINK;
 		}
+
+		if(prefs.getInt("migrationLevel", 0) < 61) migrateToUpstreamVersion61();
 	}
 
 	public static void save(){
 		getPrefs().edit()
-				.clear()
 				.putBoolean("playGifs", playGifs)
 				.putBoolean("useCustomTabs", useCustomTabs)
-				.putBoolean("showReplies", showReplies)
-				.putBoolean("showBoosts", showBoosts)
+				.putInt("theme", theme.ordinal())
+				.putBoolean("altTextReminders", altTextReminders)
+				.putBoolean("confirmUnfollow", confirmUnfollow)
+				.putBoolean("confirmBoost", confirmBoost)
+				.putBoolean("confirmDeletePost", confirmDeletePost)
+
+				// MEGALODON
 				.putBoolean("loadNewPosts", loadNewPosts)
 				.putBoolean("showNewPostsButton", showNewPostsButton)
 				.putBoolean("trueBlackTheme", trueBlackTheme)
-				.putBoolean("showInteractionCounts", showInteractionCounts)
-				.putBoolean("alwaysExpandContentWarnings", alwaysExpandContentWarnings)
-				.putBoolean("disableMarquee", disableMarquee)
+				.putBoolean("toolbarMarquee", toolbarMarquee)
 				.putBoolean("disableSwipe", disableSwipe)
 				.putBoolean("enableDeleteNotifications", enableDeleteNotifications)
 				.putBoolean("translateButtonOpenedOnly", translateButtonOpenedOnly)
 				.putBoolean("uniformNotificationIcon", uniformNotificationIcon)
 				.putBoolean("reduceMotion", reduceMotion)
-				.putBoolean("keepOnlyLatestNotification", keepOnlyLatestNotification)
-				.putBoolean("disableAltTextReminder", disableAltTextReminder)
 				.putBoolean("showAltIndicator", showAltIndicator)
 				.putBoolean("showNoAltIndicator", showNoAltIndicator)
 				.putBoolean("enablePreReleases", enablePreReleases)
@@ -186,25 +165,66 @@ public class GlobalUserPreferences{
 				.putBoolean("spectatorMode", spectatorMode)
 				.putBoolean("autoHideFab", autoHideFab)
 				.putBoolean("compactReblogReplyLine", compactReblogReplyLine)
-				.putString("publishButtonText", publishButtonText)
-				.putBoolean("bottomEncoding", bottomEncoding)
-				.putBoolean("replyLineAboveHeader", replyLineAboveHeader)
-				.putBoolean("confirmBeforeReblog", confirmBeforeReblog)
-				.putInt("theme", theme.ordinal())
 				.putString("color", color.name())
-				.putString("recentLanguages", gson.toJson(recentLanguages))
-				.putString("pinnedTimelines", gson.toJson(pinnedTimelines))
-				.putStringSet("accountsWithLocalOnlySupport", accountsWithLocalOnlySupport)
-				.putStringSet("accountsInGlitchMode", accountsInGlitchMode)
-				.putString("replyVisibility", replyVisibility)
-				.putStringSet("accountsWithContentTypesEnabled", accountsWithContentTypesEnabled)
-				.putString("accountsDefaultContentTypes", gson.toJson(accountsDefaultContentTypes))
 				.putBoolean("allowRemoteLoading", allowRemoteLoading)
 				.putString("autoRevealEqualSpoilers", autoRevealEqualSpoilers.name())
 				.putBoolean("forwardReportDefault", forwardReportDefault)
-				.putStringSet("accountsWithEmojiReactions", accountsWithEmojiReactions)
-				.putStringSet("accountsWithEmojiReactionsInLists", accountsWithEmojiReactionsInLists)
+				.putBoolean("disableM3PillActiveIndicator", disableM3PillActiveIndicator)
+				.putBoolean("showNavigationLabels", showNavigationLabels)
+				.putBoolean("displayPronounsInTimelines", displayPronounsInTimelines)
+				.putBoolean("displayPronounsInThreads", displayPronounsInThreads)
+				.putBoolean("displayPronounsInUserListings", displayPronounsInUserListings)
 				.apply();
+	}
+
+	private static void migrateToUpstreamVersion61(){
+		Log.d(TAG, "Migrating preferences to upstream version 61!!");
+
+		Type accountsDefaultContentTypesType = new TypeToken<Map<String, ContentType>>() {}.getType();
+		Type pinnedTimelinesType = new TypeToken<Map<String, ArrayList<TimelineDefinition>>>() {}.getType();
+		Type recentLanguagesType = new TypeToken<Map<String, ArrayList<String>>>() {}.getType();
+
+		// migrate global preferences
+		SharedPreferences prefs=getPrefs();
+		altTextReminders=!prefs.getBoolean("disableAltTextReminder", false);
+		confirmBoost=prefs.getBoolean("confirmBeforeReblog", false);
+		toolbarMarquee=!prefs.getBoolean("disableMarquee", false);
+
+		save();
+
+		// migrate local preferences
+		AccountSessionManager asm=AccountSessionManager.getInstance();
+		// reset: Set<String> accountsWithContentTypesEnabled=prefs.getStringSet("accountsWithContentTypesEnabled", new HashSet<>());
+		Map<String, ContentType> accountsDefaultContentTypes=fromJson(prefs.getString("accountsDefaultContentTypes", null), accountsDefaultContentTypesType, new HashMap<>());
+		Map<String, ArrayList<TimelineDefinition>> pinnedTimelines=fromJson(prefs.getString("pinnedTimelines", null), pinnedTimelinesType, new HashMap<>());
+		Set<String> accountsWithLocalOnlySupport=prefs.getStringSet("accountsWithLocalOnlySupport", new HashSet<>());
+		Set<String> accountsInGlitchMode=prefs.getStringSet("accountsInGlitchMode", new HashSet<>());
+		Map<String, ArrayList<String>> recentLanguages=fromJson(prefs.getString("recentLanguages", null), recentLanguagesType, new HashMap<>());
+
+		for(AccountSession session : asm.getLoggedInAccounts()){
+			String accountID=session.getID();
+			AccountLocalPreferences localPrefs=session.getLocalPreferences();
+			localPrefs.revealCWs=prefs.getBoolean("alwaysExpandContentWarnings", false);
+			localPrefs.recentLanguages=recentLanguages.get(accountID);
+			// reset: localPrefs.contentTypesEnabled=accountsWithContentTypesEnabled.contains(accountID);
+			localPrefs.defaultContentType=accountsDefaultContentTypes.getOrDefault(accountID, ContentType.PLAIN);
+			localPrefs.showInteractionCounts=prefs.getBoolean("showInteractionCounts", false);
+			localPrefs.timelines=pinnedTimelines.getOrDefault(accountID, TimelineDefinition.getDefaultTimelines(accountID));
+			localPrefs.localOnlySupported=accountsWithLocalOnlySupport.contains(accountID);
+			localPrefs.glitchInstance=accountsInGlitchMode.contains(accountID);
+			localPrefs.publishButtonText=prefs.getString("publishButtonText", null);
+			localPrefs.keepOnlyLatestNotification=prefs.getBoolean("keepOnlyLatestNotification", false);
+			localPrefs.showReplies=prefs.getBoolean("showReplies", true);
+			localPrefs.showBoosts=prefs.getBoolean("showBoosts", true);
+
+			if(session.getInstance().map(Instance::isAkkoma).orElse(false)){
+				localPrefs.timelineReplyVisibility=prefs.getString("replyVisibility", null);
+			}
+
+			localPrefs.save();
+		}
+
+		prefs.edit().putInt("migrationLevel", 61).apply();
 	}
 
 	public enum ColorPreference{
@@ -215,7 +235,20 @@ public class GlobalUserPreferences{
 		BLUE,
 		BROWN,
 		RED,
-		YELLOW
+		YELLOW;
+
+		public @StringRes int getName() {
+			return switch(this){
+				case MATERIAL3 -> R.string.sk_color_palette_material3;
+				case PINK -> R.string.sk_color_palette_pink;
+				case PURPLE -> R.string.sk_color_palette_purple;
+				case GREEN -> R.string.sk_color_palette_green;
+				case BLUE -> R.string.sk_color_palette_blue;
+				case BROWN -> R.string.sk_color_palette_brown;
+				case RED -> R.string.sk_color_palette_red;
+				case YELLOW -> R.string.sk_color_palette_yellow;
+			};
+		}
 	}
 
 	public enum ThemePreference{

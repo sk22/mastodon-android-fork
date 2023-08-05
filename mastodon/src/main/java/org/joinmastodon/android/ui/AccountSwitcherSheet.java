@@ -331,8 +331,8 @@ public class AccountSwitcherSheet extends BottomSheet{
 				onClick.accept(item.getID(), false);
 				return;
 			}
-
-			AccountSessionManager.getInstance().setLastActiveAccountID(item.getID());
+			if(AccountSessionManager.getInstance().tryGetAccount(item.getID())!=null)
+				AccountSessionManager.getInstance().setLastActiveAccountID(item.getID());
 			activity.finish();
 			activity.startActivity(new Intent(activity, MainActivity.class));
 		}

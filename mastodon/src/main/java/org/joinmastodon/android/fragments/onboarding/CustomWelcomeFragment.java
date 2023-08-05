@@ -122,7 +122,7 @@ public class CustomWelcomeFragment extends InstanceCatalogFragment {
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		view.setBackgroundColor(UiUtils.getThemeColor(getActivity(), R.attr.colorWindowBackground));
+		view.setBackgroundColor(UiUtils.getThemeColor(getActivity(), R.attr.colorM3Surface));
 		list.setItemAnimator(new BetterItemAnimator());
 		((UsableRecyclerView) list).setSelector(null);
 	}
@@ -131,17 +131,15 @@ public class CustomWelcomeFragment extends InstanceCatalogFragment {
 	protected void doLoadData(int offset, int count) {}
 
 	@Override
-	protected RecyclerView.Adapter getAdapter(){
+	protected RecyclerView.Adapter<?> getAdapter(){
 		headerView=getActivity().getLayoutInflater().inflate(R.layout.header_welcome_custom, list, false);
 		searchEdit=headerView.findViewById(R.id.search_edit);
 		searchEdit.setOnEditorActionListener(this::onSearchEnterPressed);
 
 		headerView.findViewById(R.id.more).setVisibility(View.GONE);
 		headerView.findViewById(R.id.visibility).setVisibility(View.GONE);
-		headerView.findViewById(R.id.separator).setVisibility(View.GONE);
-		headerView.findViewById(R.id.timestamp).setVisibility(View.GONE);
 		headerView.findViewById(R.id.unread_indicator).setVisibility(View.GONE);
-		((TextView) headerView.findViewById(R.id.username)).setText(R.string.sk_app_username);
+		((TextView) headerView.findViewById(R.id.time_and_username)).setText(R.string.sk_app_username);
 		((TextView) headerView.findViewById(R.id.name)).setText(R.string.sk_app_name);
 		((ImageView) headerView.findViewById(R.id.avatar)).setImageDrawable(getActivity().getDrawable(R.mipmap.ic_launcher));
 		((FragmentStackActivity) getActivity()).invalidateSystemBarColors(this);
@@ -203,7 +201,6 @@ public class CustomWelcomeFragment extends InstanceCatalogFragment {
 
 	private class InstanceViewHolder extends BindableViewHolder<CatalogInstance> implements UsableRecyclerView.Clickable{
 		private final TextView title, description, userCount, lang;
-		private final RadioButton radioButton;
 
 		public InstanceViewHolder(){
 			super(getActivity(), R.layout.item_instance_custom, list);
@@ -211,7 +208,6 @@ public class CustomWelcomeFragment extends InstanceCatalogFragment {
 			description=findViewById(R.id.description);
 			userCount=findViewById(R.id.user_count);
 			lang=findViewById(R.id.lang);
-			radioButton=findViewById(R.id.radiobtn);
 			if(Build.VERSION.SDK_INT<Build.VERSION_CODES.N){
 					UiUtils.fixCompoundDrawableTintOnAndroid6(userCount);
 					UiUtils.fixCompoundDrawableTintOnAndroid6(lang);
@@ -231,22 +227,10 @@ public class CustomWelcomeFragment extends InstanceCatalogFragment {
 				userCount.setText(UiUtils.abbreviateNumber(item.totalUsers));
 				lang.setText(item.language.toUpperCase());
 			}
-			radioButton.setChecked(chosenInstance==item);
-			radioButton.setVisibility(View.GONE);
 		}
 
 		@Override
 		public void onClick(){
-			if(chosenInstance!=null){
-					int idx=filteredData.indexOf(chosenInstance);
-					if(idx!=-1){
-						RecyclerView.ViewHolder holder=list.findViewHolderForAdapterPosition(mergeAdapter.getPositionForAdapter(adapter)+idx);
-						if(holder instanceof InstanceViewHolder ivh){
-							ivh.radioButton.setChecked(false);
-						}
-					}
-			}
-			radioButton.setChecked(true);
 			if(chosenInstance==null)
 					nextButton.setEnabled(true);
 			chosenInstance=item;

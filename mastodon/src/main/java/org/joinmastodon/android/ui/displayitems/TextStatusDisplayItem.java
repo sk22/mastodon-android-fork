@@ -6,8 +6,8 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,9 +44,9 @@ import me.grishka.appkit.utils.V;
 
 public class TextStatusDisplayItem extends StatusDisplayItem{
 	private CharSequence text;
-	private CustomEmojiHelper emojiHelper=new CustomEmojiHelper(), spoilerEmojiHelper;
-	private CharSequence parsedSpoilerText;
+	private CustomEmojiHelper emojiHelper=new CustomEmojiHelper();
 	public boolean textSelectable;
+	public boolean reduceTopPadding;
 	public final Status status;
 	public boolean disableTranslate, translationShown;
 	private AccountSession session;
@@ -59,11 +59,6 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 		this.disableTranslate=disableTranslate;
 		this.translationShown=status.translationShown;
 		emojiHelper.setText(text);
-		if(!TextUtils.isEmpty(status.spoilerText)){
-			parsedSpoilerText=HtmlParser.parseCustomEmoji(status.spoilerText, status.emojis);
-			spoilerEmojiHelper=new CustomEmojiHelper();
-			spoilerEmojiHelper.setText(parsedSpoilerText);
-		}
 		session = AccountSessionManager.getInstance().getAccount(parentFragment.getAccountID());
 	}
 
@@ -79,24 +74,18 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 
 	@Override
 	public int getImageCount(){
-		if(spoilerEmojiHelper!=null && !status.spoilerRevealed)
-			return spoilerEmojiHelper.getImageCount();
 		return emojiHelper.getImageCount();
 	}
 
 	@Override
 	public ImageLoaderRequest getImageRequest(int index){
-		if(spoilerEmojiHelper!=null && !status.spoilerRevealed)
-			return spoilerEmojiHelper.getImageRequest(index);
 		return emojiHelper.getImageRequest(index);
 	}
 
 	public static class Holder extends StatusDisplayItem.Holder<TextStatusDisplayItem> implements ImageLoaderViewHolder{
 		private final LinkedTextView text;
-		private final LinearLayout spoilerHeader;
-		private final TextView spoilerTitle, spoilerTitleInline, translateInfo, readMore;
-		private final View spoilerOverlay, borderTop, borderBottom, textWrap, translateWrap, translateProgress, spaceBelowText;
-		private final int backgroundColor, borderColor;
+		private final TextView translateInfo, readMore;
+		private final View textWrap, translateWrap, translateProgress;
 		private final Button translateButton;
 		private final ScrollView textScrollView;
 
@@ -108,23 +97,13 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 			super(activity, R.layout.display_item_text, parent);
 			this.parent=parent;
 			text=findViewById(R.id.text);
-			spoilerTitle=findViewById(R.id.spoiler_title);
-			spoilerTitleInline=findViewById(R.id.spoiler_title_inline);
-			spoilerHeader=findViewById(R.id.spoiler_header);
-			spoilerOverlay=findViewById(R.id.spoiler_overlay);
-			borderTop=findViewById(R.id.border_top);
-			borderBottom=findViewById(R.id.border_bottom);
-			textWrap=findViewById(R.id.text_wrap);
+			textWrap = (LinearLayout) itemView;
 			translateWrap=findViewById(R.id.translate_wrap);
 			translateButton=findViewById(R.id.translate_btn);
 			translateInfo=findViewById(R.id.translate_info);
 			translateProgress=findViewById(R.id.translate_progress);
-			itemView.setOnClickListener(v->item.parentFragment.onRevealSpoilerClick(this));
-			backgroundColor=UiUtils.getThemeColor(activity, R.attr.colorBackgroundLight);
-			borderColor=UiUtils.getThemeColor(activity, R.attr.colorPollVoted);
 			textScrollView=findViewById(R.id.text_scroll_view);
 			readMore=findViewById(R.id.read_more);
-			spaceBelowText=findViewById(R.id.space_below_text);
 			textMaxHeight=activity.getResources().getDimension(R.dimen.text_max_height);
 			textCollapsedHeight=activity.getResources().getDimension(R.dimen.text_collapsed_height);
 			collapseParams=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) textCollapsedHeight);
@@ -134,6 +113,7 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 
 		@Override
 		public void onBind(TextStatusDisplayItem item){
+			boolean hasSpoiler = !TextUtils.isEmpty(item.status.spoilerText);
 			text.setText(item.translationShown
 							? HtmlParser.parse(item.status.translation.content, item.status.emojis, item.status.mentions, item.status.tags, item.parentFragment.getAccountID())
 							: item.text);
@@ -141,32 +121,10 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 			if (item.textSelectable) {
 				textScrollView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 			}
-			spoilerTitleInline.setTextIsSelectable(item.textSelectable);
 			text.setInvalidateOnEveryFrame(false);
-			spoilerTitleInline.setBackgroundColor(item.inset ? 0 : backgroundColor);
-			spoilerTitleInline.setPadding(spoilerTitleInline.getPaddingLeft(), item.inset ? 0 : V.dp(14), spoilerTitleInline.getPaddingRight(), item.inset ? 0 : V.dp(14));
-			borderTop.setBackgroundColor(item.inset ? 0 : borderColor);
-			borderBottom.setBackgroundColor(item.inset ? 0 : borderColor);
-			if(!TextUtils.isEmpty(item.status.spoilerText)){
-				spoilerTitle.setText(item.parsedSpoilerText);
-				spoilerTitleInline.setText(item.parsedSpoilerText);
-				if(item.status.spoilerRevealed){
-					spoilerOverlay.setVisibility(View.GONE);
-					spoilerHeader.setVisibility(View.VISIBLE);
-					textWrap.setVisibility(View.VISIBLE);
-					itemView.setClickable(false);
-				}else{
-					spoilerOverlay.setVisibility(View.VISIBLE);
-					spoilerHeader.setVisibility(View.GONE);
-					textWrap.setVisibility(View.GONE);
-					itemView.setClickable(true);
-				}
-			}else{
-				spoilerOverlay.setVisibility(View.GONE);
-				spoilerHeader.setVisibility(View.GONE);
-				textWrap.setVisibility(View.VISIBLE);
-				itemView.setClickable(false);
-			}
+			itemView.setClickable(false);
+			itemView.setPadding(itemView.getPaddingLeft(), item.reduceTopPadding ? V.dp(6) : V.dp(12), itemView.getPaddingRight(), itemView.getPaddingBottom());
+			text.setTextColor(UiUtils.getThemeColor(text.getContext(), item.inset ? R.attr.colorM3OnSurfaceVariant : R.attr.colorM3OnSurface));
 
 			Instance instanceInfo = AccountSessionManager.getInstance().getInstanceInfo(item.session.domain);
 			boolean translateEnabled = !item.disableTranslate && instanceInfo != null &&
@@ -234,7 +192,6 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 			});
 
 			readMore.setText(item.status.textExpanded ? R.string.sk_collapse : R.string.sk_expand);
-			spaceBelowText.setVisibility(translateVisible ? View.VISIBLE : View.GONE);
 
 			// remove additional padding when (transparently padded) translate button is visible
 			int nextPos = getAbsoluteAdapterPosition() + 1;
@@ -267,21 +224,25 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 
 			if (GlobalUserPreferences.collapseLongPosts && !item.status.textExpandable) {
 				boolean tooBig = text.getMeasuredHeight() > textMaxHeight;
-				boolean hasSpoiler = !TextUtils.isEmpty(item.status.spoilerText);
 				boolean expandable = tooBig && !hasSpoiler;
 				item.parentFragment.onEnableExpandable(Holder.this, expandable);
 			}
 
-			readMore.setVisibility(item.status.textExpandable && !item.status.textExpanded ? View.VISIBLE : View.GONE);
+			boolean expandButtonShown=item.status.textExpandable && !item.status.textExpanded;
+			translateWrap.setPadding(0, V.dp(expandButtonShown ? 0 : 4), 0, 0);
+			readMore.setVisibility(expandButtonShown ? View.VISIBLE : View.GONE);
 			textScrollView.setLayoutParams(item.status.textExpandable && !item.status.textExpanded ? collapseParams : wrapParams);
-			if (item.status.textExpandable && !translateVisible) spaceBelowText.setVisibility(View.VISIBLE);
+
+			// compensate for spoiler's bottom margin
+			ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) itemView.getLayoutParams();
+			params.setMargins(params.leftMargin, (item.inset || GlobalUserPreferences.spectatorMode) && hasSpoiler ? V.dp(-16) : 0,
+					params.rightMargin, params.bottomMargin);
 		}
 
 		@Override
 		public void setImage(int index, Drawable image){
 			getEmojiHelper().setImageDrawable(index, image);
 			text.invalidate();
-			spoilerTitle.invalidate();
 			if(image instanceof Animatable){
 				((Animatable) image).start();
 				if(image instanceof MovieDrawable)
@@ -296,7 +257,7 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 		}
 
 		private CustomEmojiHelper getEmojiHelper(){
-			return item.spoilerEmojiHelper!=null && !item.status.spoilerRevealed ? item.spoilerEmojiHelper : item.emojiHelper;
+			return item.emojiHelper;
 		}
 	}
 }

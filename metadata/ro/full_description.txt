@@ -1,0 +1,16 @@
+Megalodon este o versiune modificată a <a href="https://github.com/mastodon/mastodon-android">aplicației oficiale Mastodon Android</a> adăugând funcții importante ce lipsesc în aplicația oficială, precum cronologia federată, postările nelistate și un vizualizator al descrierii imaginii.
+
+<b>Caracteristici cheie</b>
+
+- <b>Postare nelistată</b>: Postați public fără ca postarea dvs. să apară în tendințe, hashtag -uri sau cronologii publice.
+- <b>Cronologie federată</b>: Vedeți toate postările publice de la oameni de pe toate celelalte cartiere Fediverse la care este conectată instanța de acasă.
+- <b>Cronologii personalizate</b>: Atașați orice listă sau hashtag pe fila de acasă a Megalodon dvs. pentru a glisa pur și simplu între subiectele preferate și oameni!
+- <b>Schițe și postări programate</b>: Permite pregătirea unei postări și programarea acesteia pentru a o trimite automat la un moment dat.
+- <b>Fixare postări</b>: Fixați cele mai importante postări pe profilul dvs. și vedeți ce au fixat alții folosind fila „Fixate”.
+- <b>Urmăriți hashtag-uri</b>: Consultați postări noi de la hashtag-uri specifice direct în cronologia de acasă urmându-le.
+- <b>Răspunsuri la solicitări de urmărire</b>: Acceptați sau declinați cererilor de urmărire de la notificările dvs. sau din lista de solicitări dedicate.
+- <b>Ștergeți și re-schițați</b>: Caracteristica mult-iubită care a făcut posibilă editarea fără o funcție de editare reală.
+- <b>Selector de limbă</b>: Selectați fără durere limbajul pentru fiecare postare pe care o faceți, astfel încât filtrele și traducerea să funcționeze corect.
+- <b>Traducere</b>: Traduceți cu ușurință postările chiar în Megalodon! Funcționează numai dacă funcția este disponibilă și pe versiunea web al dvs. de Mastodon.
+- <b>Indicator de vizibilitate a postului</b>: Când deschideți sau răspundeți la o postare, va fi afișată o pictogramă la îndemână care indică vizibilitatea postării.
+- <b>Teme de culoare</b>: În cazul în care nu vă place culoarea implicită roz (rechinul vă judecă în tăcere), temele de culoare ale lui Moshidon vă acoperă.

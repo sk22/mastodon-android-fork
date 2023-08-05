@@ -1,5 +1,6 @@
 package org.joinmastodon.android.ui.displayitems;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -36,7 +37,7 @@ import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.fragments.ComposeFragment;
-import org.joinmastodon.android.fragments.RecyclerFragment;
+import org.joinmastodon.android.model.Emoji;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.model.StatusPrivacy;
@@ -76,7 +77,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 	public static class Holder extends StatusDisplayItem.Holder<FooterStatusDisplayItem>{
 		private final FrameLayout reactLayout;
 		private final TextView replies, boosts, favorites;
-		private final View reply, boost, favorite, share, bookmark, react, divider;
+		private final View reply, boost, favorite, share, bookmark, react;
 		private final EditText reactInput;
 		private final InputMethodManager imm;
 		private CustomEmojiPopupKeyboard emojiKeyboard;
@@ -175,11 +176,6 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 				@Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 				@Override public void afterTextChanged(Editable s) {}
 			});
-
-			divider = new View(activity);
-			divider.setMinimumHeight(V.dp(2));
-			divider.setBackgroundColor(UiUtils.getThemeColor(activity, R.attr.colorGray500));
-			divider.setVisibility(View.GONE);
 		}
 
 		@Override
@@ -196,7 +192,8 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 			bookmark.setSelected(item.status.bookmarked);
 			boost.setEnabled(item.status.isReblogPermitted(item.accountID));
 
-			if (!GlobalUserPreferences.accountsWithEmojiReactions.contains(item.accountID))
+			AccountSession accountSession = AccountSessionManager.getInstance().getAccount(item.accountID);
+			if (!accountSession.getLocalPreferences().emojiReactionsEnabled)
 				reactLayout.setVisibility(View.GONE);
 			else
 				reactLayout.setVisibility(View.VISIBLE);
@@ -216,37 +213,25 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 			reactVisibilityState = ReactVisibilityState.HIDDEN;
 			imm.hideSoftInputFromWindow(reactInput.getWindowToken(), 0);
 
-			AccountSession accountSession = AccountSessionManager.getInstance().getAccount(item.accountID);
 			emojiKeyboard = new CustomEmojiPopupKeyboard(activity, AccountSessionManager.getInstance().getCustomEmojis(accountSession.domain), accountSession.domain);
-			emojiKeyboard.setListener(emoji -> {
-				addEmojiReaction(emoji.shortcode);
-				emojiKeyboard.toggleKeyboardPopup(null);
-				divider.setVisibility(View.GONE);
-			});
-
-			((RecyclerView) emojiKeyboard.getView()).addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+			emojiKeyboard.setListener(new CustomEmojiPopupKeyboard.Listener(){
 				@Override
-				public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-					if (e.getAction() == MotionEvent.ACTION_MOVE) {
-						rv.getParent().requestDisallowInterceptTouchEvent(true);
-					}
-					return false;
+				public void onEmojiSelected(Emoji emoji) {
+					addEmojiReaction(emoji.shortcode);
+					emojiKeyboard.toggleKeyboardPopup(null);
 				}
 
-				@Override public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {}
-
-				@Override public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
+				@Override
+				public void onBackspace() {}
 			});
 
 			emojiKeyboardContainer.removeAllViews();
 			emojiKeyboardContainer.addView(emojiKeyboard.getView());
-
-			divider.setVisibility(View.GONE);
-			emojiKeyboardContainer.addView(divider);
 		}
 
 		private void bindText(TextView btn, long count){
-			if(GlobalUserPreferences.showInteractionCounts && count>0 && !item.hideCounts){
+			if(AccountSessionManager.get(item.accountID).getLocalPreferences().showInteractionCounts
+					&& count>0 && !item.hideCounts){
 				btn.setText(UiUtils.abbreviateNumber(count));
 				btn.setCompoundDrawablePadding(V.dp(8));
 			}else{
@@ -302,7 +287,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 		}
 
 		private void onBoostClick(View v){
-			if (GlobalUserPreferences.confirmBeforeReblog) {
+			if (GlobalUserPreferences.confirmBoost) {
 				v.startAnimation(opacityIn);
 				onBoostLongClick(v);
 				return;
@@ -424,7 +409,6 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 			if (reactVisibilityState == ReactVisibilityState.HIDDEN) {
 				emojiKeyboard.toggleKeyboardPopup(null);
 				reactVisibilityState = ReactVisibilityState.CUSTOM_EMOJI_KEYBOARD;
-				divider.setVisibility(View.VISIBLE);
 				Toast.makeText(activity, R.string.sk_again_for_system_keyboard, Toast.LENGTH_SHORT).show();
 				DisplayMetrics displayMetrics = new DisplayMetrics();
 				int[] locationOnScreen = new int[2];
@@ -438,7 +422,6 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 				reactInput.requestFocus();
 				imm.showSoftInput(reactInput, InputMethodManager.SHOW_FORCED);
 				emojiKeyboard.toggleKeyboardPopup(null);
-				divider.setVisibility(View.GONE);
 				reactVisibilityState = ReactVisibilityState.SYSTEM_KEYBOARD;
 				Toast.makeText(activity, R.string.sk_select_emoji, Toast.LENGTH_SHORT).show();
 			} else if (reactVisibilityState == ReactVisibilityState.SYSTEM_KEYBOARD) {

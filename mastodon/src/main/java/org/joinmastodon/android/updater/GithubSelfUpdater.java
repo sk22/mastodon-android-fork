@@ -7,6 +7,7 @@ import org.joinmastodon.android.BuildConfig;
 
 public abstract class GithubSelfUpdater{
 	private static GithubSelfUpdater instance;
+	public static boolean forceUpdate;
 
 	public static GithubSelfUpdater getInstance(){
 		if(instance==null){
@@ -40,6 +41,8 @@ public abstract class GithubSelfUpdater{
 	public abstract void cancelDownload();
 
 	public abstract void handleIntentFromInstaller(Intent intent, Activity activity);
+
+	public abstract void reset();
 
 	public enum UpdateState{
 		NO_UPDATE,

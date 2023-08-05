@@ -5,7 +5,7 @@
 	android:padding="8dp"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:background="?colorBackgroundLightest">
+	android:background="?colorM3SurfaceVariant">
 
 	<org.joinmastodon.android.ui.views.AutoOrientationLinearLayout
 		android:id="@+id/button_bar"
@@ -18,52 +18,52 @@
 
 			<Button
 				android:id="@+id/reblogs"
+				style="@style/Widget.Mastodon.M3.Button.Text.Icon"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:gravity="center"
-				android:padding="8dp"
-				android:textSize="14sp"
+				android:paddingStart="8dp"
+				android:paddingEnd="12dp"
 				android:minHeight="48dp"
-				android:textColor="?android:textColorSecondary"
-				android:background="@drawable/bg_text_button"
+				android:textColor="?colorM3OnSurfaceVariant"
 				android:fontFamily="sans-serif"
 				android:drawableStart="@drawable/ic_fluent_arrow_repeat_all_20_regular"
 				android:drawablePadding="8dp"
-				android:drawableTint="?android:textColorSecondary"
+				android:drawableTint="?colorM3OnSurfaceVariant"
 				tools:text="4 reblogs"/>
 
 			<Button
 				android:id="@+id/favorites"
+				style="@style/Widget.Mastodon.M3.Button.Text.Icon"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:gravity="center"
-				android:padding="8dp"
-				android:textSize="14sp"
+				android:paddingStart="8dp"
+				android:paddingEnd="12dp"
 				android:minHeight="48dp"
-				android:textColor="?android:textColorSecondary"
-				android:background="@drawable/bg_text_button"
+				android:textColor="?colorM3OnSurfaceVariant"
 				android:fontFamily="sans-serif"
 				android:drawableStart="@drawable/ic_fluent_star_20_regular"
 				android:drawablePadding="8dp"
-				android:drawableTint="?android:textColorSecondary"
+				android:drawableTint="?colorM3OnSurfaceVariant"
 				tools:text="12 favorites"/>
 
 		</LinearLayout>
 
 		<Button
 			android:id="@+id/edit_history"
+			style="@style/Widget.Mastodon.M3.Button.Text.Icon"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:gravity="center"
-			android:padding="8dp"
-			android:textSize="14sp"
+			android:paddingStart="8dp"
+			android:paddingEnd="12dp"
 			android:minHeight="48dp"
-			android:textColor="?android:textColorSecondary"
-			android:background="@drawable/bg_text_button"
+			android:textColor="?colorM3OnSurfaceVariant"
 			android:fontFamily="sans-serif"
 			android:drawableStart="@drawable/ic_fluent_history_20_regular"
 			android:drawablePadding="8dp"
-			android:drawableTint="?android:textColorSecondary"
+			android:drawableTint="?colorM3OnSurfaceVariant"
 			tools:text="Dec 12, 2021, 12:42 PM"/>
 
 	</org.joinmastodon.android.ui.views.AutoOrientationLinearLayout>
@@ -81,7 +81,7 @@
 			android:layout_height="20dp"
 			android:layout_width="20dp"
 			android:src="@drawable/ic_fluent_earth_20_regular"
-			android:tint="?android:textColorSecondary" />
+			android:tint="?colorM3OnSurfaceVariant" />
 
 		<TextView
 			android:id="@+id/timestamp"
@@ -96,18 +96,21 @@
 
 		<Button
 			android:id="@+id/application_name"
+			style="@style/Widget.Mastodon.M3.Button.Text"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:gravity="center"
+			android:layout_marginStart="-12dp"
+			android:paddingStart="12dp"
+			android:paddingEnd="12dp"
 			android:padding="0dp"
-			android:textSize="14sp"
+			android:minWidth="0dp"
 			android:minHeight="48dp"
-			android:textColor="?android:textColorSecondary"
-			android:background="@drawable/bg_text_button"
+			android:textColor="?colorM3OnSurfaceVariant"
 			android:fontFamily="sans-serif"
 			android:singleLine="true"
 			android:ellipsize="end"
-			tools:text="Mastodon for Android"/>
+			tools:text="Megalodon"/>
 
 	</LinearLayout>
 

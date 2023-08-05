@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sk_notification_type_status">Post</string>
-    <string name="sk_notify_posts">Notifiche post</string>
+    <string name="sk_notification_type_posts">Notifiche post</string>
     <string name="sk_settings_color_palette">Colore del tema</string>
     <string name="sk_color_palette_pink">Rosa</string>
     <string name="sk_color_palette_purple">Viola</string>
@@ -45,7 +45,7 @@
     <string name="sk_lists_with_user">Liste con %s</string>
     <string name="sk_settings_contribute">Contribuisci a Megalodon</string>
     <string name="sk_settings_show_federated_timeline">Mostra timeline federata</string>
-    <string name="sk_disable_marquee">Disabilita scorrimento titoli</string>
+    <string name="sk_settings_enable_marquee">Disabilita scorrimento titoli</string>
     <string name="sk_reject_follow_request">Rifiuta richiesta di seguirti</string>
     <string name="sk_translate_post">Traduci</string>
     <string name="sk_translate_show_original">Mostra originale</string>
@@ -76,7 +76,7 @@
     <string name="sk_settings_about">Informazioni sull\'app</string>
     <string name="sk_settings_donate">Dona</string>
     <string name="sk_delete_notification_confirm_action">Elimina la notifica</string>
-    <string name="sk_enable_delete_notifications">Abilita la cancellazione delle notifiche</string>
+    <string name="sk_settings_enable_delete_notifications">Abilita la cancellazione delle notifiche</string>
     <string name="sk_settings_publish_button_text">Testo del pulsante Pubblica</string>
     <string name="sk_settings_publish_button_text_title">Personalizza il testo del pulsante Pubblica</string>
     <string name="sk_settings_translation_availability_note_available">%s supporta la traduzione!</string>
@@ -123,7 +123,7 @@
     <string name="sk_reply_as">Rispondi con un altro account</string>
     <string name="sk_settings_uniform_icon_for_notifications">Icona uniforme per tutte le notifiche</string>
     <string name="sk_color_palette_red">Rosso</string>
-    <string name="sk_tabs_disable_swipe">Disabilita lo scorrimento tra le schede</string>
+    <string name="sk_settings_tabs_disable_swipe">Disabilita lo scorrimento tra le schede</string>
     <string name="sk_settings_auth">Impostazioni di sicurezza</string>
     <string name="sk_delete_notification">Elimina la notifica</string>
     <string name="sk_delete_notification_confirm">Sei sicuro di voler eliminare questa notifica\?</string>
@@ -250,7 +250,7 @@
     <string name="sk_settings_see_new_posts_button">Pulsante \"Mostra nuovi post\"</string>
     <string name="sk_settings_server_version">Versione server:%s</string>
     <string name="sk_notify_poll_results">Risultati del sondaggio</string>
-    <string name="sk_settings_prefix_reply_cw_with_re">Aggiungi \"re:\" prima dei CW</string>
+    <string name="sk_settings_prefix_reply_cw_with_re">Aggiungi \"re:\" nelle risposte prima dei CW</string>
     <string name="sk_filtered">Filtrato: %s</string>
     <string name="sk_expand">Espandi</string>
     <string name="sk_collapse">Chiudi</string>
@@ -269,10 +269,10 @@
     <string name="sk_settings_reply_visibility_self">Mi risponde</string>
     <string name="sk_notification_action_replied">Risposta inviata a %s</string>
     <string name="sk_settings_confirm_before_reblog">Conferma prima del boost</string>
-    <string name="sk_reacted">ha reagito</string>
+    <string name="sk_reacted">%s ha reagito</string>
     <string name="sk_show_thread">Mostra discussione</string>
     <string name="sk_compact_reblog_reply_line">Linea boost/risposta compatta</string>
-    <string name="sk_reacted_with">ha reagito con %s</string>
+    <string name="sk_reacted_with">%1$s ha reagito con %2$s</string>
     <string name="sk_reply_line_above_avatar">Linea \"In risposta a\" sopra l\'avatar</string>
     <string name="sk_bubble_timeline_info_banner">Questi sono i post più recenti della rete, curati dagli amministratori della tua istanza.</string>
     <string name="sk_settings_content_types_explanation">Permette di impostare un tipo di contenuto, come Markdown, quando si crea un post. Tieni presente che non tutte le istanze lo supportano.</string>
@@ -296,4 +296,42 @@
     <string name="sk_settings_default_content_type_explanation">Ti permette di preselezionare un tipo di contenuto quando si creano nuovi post, sovrascrivendo il valore impostato in \"Preferenze di pubblicazione\".</string>
     <string name="sk_instance_info_unavailable">Informazioni sull\'istanza temporaneamente non disponibili</string>
     <string name="sk_open_in_app">Apri nell\'app</string>
+    <string name="sk_settings_auto_reveal_equal_spoilers">Mostra automaticamente CW uguali nelle risposte</string>
+    <string name="sk_settings_auto_reveal_nobody">Mai</string>
+    <string name="sk_settings_auto_reveal_author">Risposte dallo stesso autore</string>
+    <string name="sk_settings_auto_reveal_anyone">Risposte da tutti</string>
+    <string name="sk_settings_prefix_replies_always">In risposta a chiunque</string>
+    <string name="sk_settings_prefix_replies_never">Mai</string>
+    <string name="sk_icon_beaker">Becher</string>
+    <string name="sk_icon_bed">Letto</string>
+    <string name="sk_icon_recycle_bin">Cestino</string>
+    <string name="sk_icon_verified">Verificato</string>
+    <string name="sk_icon_doctor">Dottore</string>
+    <string name="sk_icon_diamond">Diamante</string>
+    <string name="sk_icon_umbrella">Ombrello</string>
+    <string name="sk_add_timeline">Aggiungi timeline</string>
+    <string name="sk_edit_timeline_tag_main">Post contenenti hashtag…</string>
+    <string name="sk_edit_timeline_tag_any">…o qualsiasi di questi</string>
+    <string name="sk_edit_timeline_tag_all">…e ognuno di questi</string>
+    <string name="sk_edit_timeline_tag_none">…ma nessuno di questi</string>
+    <string name="sk_edit_timeline_tag_hint">Inserisci hashtag…</string>
+    <string name="sk_edit_timeline_tags_hint">Inserisci hashtag…</string>
+    <string name="sk_edit_timeline_tags_explanation">Nota che il server gestisce queste operazioni. Combinarle poterebbe non essere supportato.</string>
+    <string name="sk_hashtag_timeline_local_only_switch">Mostra post solo locali\?</string>
+    <string name="sk_add_timeline_tag_error_empty">L\'hashtag non deve essere vuoto</string>
+    <string name="sk_settings_prefix_replies_to_others">Solo in risposta ad altri</string>
+    <string name="sk_settings_forward_report_default">Default per switch \"Invia rapporto\"</string>
+    <string name="sk_gif_badge">GIF</string>
+    <string name="sk_exclusive_list">Lista esclusiva</string>
+    <string name="sk_advanced_options_show">Mostra opzioni avanzate</string>
+    <string name="sk_advanced_options_hide">Nascondi opzioni avanzate</string>
+    <string name="sk_spoiler_show">Mostra contenuto</string>
+    <string name="sk_pronouns_label">Pronomi</string>
+    <string name="sk_switch_timeline">Cambia timeline</string>
+    <string name="sk_settings_instance">Istanza</string>
+    <string name="sk_disable_pill_shaped_active_indicator">Disabilita l\'indicatore di scheda attiva a forma di pillola</string>
+    <string name="sk_settings_true_black">Modalità buio pesto</string>
+    <string name="sk_icon_feed">Feed</string>
+    <string name="sk_list_exclusive_switch">Crea lista esclusiva</string>
+    <string name="sk_list_exclusive_switch_explanation">I membri di una lista esclusiva non appariranno nella tua timeline home - se la tua istanza lo supporta.</string>
 </resources>

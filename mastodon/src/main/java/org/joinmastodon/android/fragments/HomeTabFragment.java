@@ -12,6 +12,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.assist.AssistContent;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -43,10 +44,12 @@ import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.announcements.GetAnnouncements;
 import org.joinmastodon.android.api.requests.lists.GetLists;
 import org.joinmastodon.android.api.requests.tags.GetFollowedHashtags;
+import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.HashtagUpdatedEvent;
 import org.joinmastodon.android.events.ListDeletedEvent;
 import org.joinmastodon.android.events.ListUpdatedCreatedEvent;
 import org.joinmastodon.android.events.SelfUpdateStateChangedEvent;
+import org.joinmastodon.android.fragments.settings.SettingsMainFragment;
 import org.joinmastodon.android.model.Announcement;
 import org.joinmastodon.android.model.Hashtag;
 import org.joinmastodon.android.model.HeaderPaginationList;
@@ -55,6 +58,7 @@ import org.joinmastodon.android.model.TimelineDefinition;
 import org.joinmastodon.android.ui.SimpleViewHolder;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.updater.GithubSelfUpdater;
+import org.joinmastodon.android.utils.ElevationOnScrollListener;
 import org.joinmastodon.android.utils.ProvidesAssistContent;
 
 import java.util.Collection;
@@ -72,8 +76,9 @@ import me.grishka.appkit.fragments.BaseRecyclerFragment;
 import me.grishka.appkit.fragments.OnBackPressedListener;
 import me.grishka.appkit.utils.CubicBezierInterpolator;
 import me.grishka.appkit.utils.V;
+import me.grishka.appkit.views.FragmentRootLinearLayout;
 
-public class HomeTabFragment extends MastodonToolbarFragment implements ScrollableToTop, OnBackPressedListener, HasFab, ProvidesAssistContent {
+public class HomeTabFragment extends MastodonToolbarFragment implements ScrollableToTop, OnBackPressedListener, HasFab, ProvidesAssistContent, HasElevationOnScrollListener {
 	private static final int ANNOUNCEMENTS_RESULT = 654;
 
 	private String accountID;
@@ -91,7 +96,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 	private PopupMenu switcherPopup;
 	private final Map<Integer, ListTimeline> listItems = new HashMap<>();
 	private final Map<Integer, Hashtag> hashtagsItems = new HashMap<>();
-	private List<TimelineDefinition> timelineDefinitions;
+	private List<TimelineDefinition> timelinesList;
 	private int count;
 	private Fragment[] fragments;
 	private FrameLayout[] tabViews;
@@ -102,19 +107,20 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 	private View overflowActionView = null;
 	private boolean announcementsBadged, settingsBadged;
 	private ImageButton fab;
+	private ElevationOnScrollListener elevationOnScrollListener;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		E.register(this);
 		accountID = getArguments().getString("account");
-		timelineDefinitions = GlobalUserPreferences.pinnedTimelines.getOrDefault(accountID, TimelineDefinition.getDefaultTimelines(accountID));
-		assert timelineDefinitions != null;
-		if (timelineDefinitions.size() == 0) timelineDefinitions = List.of(TimelineDefinition.HOME_TIMELINE);
-		count = timelineDefinitions.size();
-		fragments = new Fragment[count];
-		tabViews = new FrameLayout[count];
-		timelines = new TimelineDefinition[count];
+		timelinesList=AccountSessionManager.get(accountID).getLocalPreferences().timelines;
+		assert timelinesList!=null;
+		if(timelinesList.isEmpty()) timelinesList=List.of(TimelineDefinition.HOME_TIMELINE);
+		count=timelinesList.size();
+		fragments=new Fragment[count];
+		tabViews=new FrameLayout[count];
+		timelines=new TimelineDefinition[count];
 	}
 
 	@Override
@@ -125,7 +131,11 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 
 	@Override
 	public View onCreateContentView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+		FragmentRootLinearLayout rootView = new FragmentRootLinearLayout(getContext());
+		rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 		FrameLayout view = new FrameLayout(getContext());
+		view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+		rootView.addView(view);
 		inflater.inflate(R.layout.compose_fab, view);
 		fab = view.findViewById(R.id.fab);
 		fab.setOnClickListener(this::onFabClick);
@@ -140,8 +150,8 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			args.putBoolean("__disable_fab", true);
 			args.putBoolean("onlyPosts", true);
 
-			for (int i = 0; i < timelineDefinitions.size(); i++) {
-				TimelineDefinition tl = timelineDefinitions.get(i);
+			for (int i=0; i < timelinesList.size(); i++) {
+				TimelineDefinition tl = timelinesList.get(i);
 				fragments[i] = tl.getFragment();
 				timelines[i] = tl;
 			}
@@ -168,7 +178,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 		overflowActionView.setOnClickListener(l -> overflowPopup.show());
 		overflowActionView.setOnTouchListener(overflowPopup.getDragToOpenListener());
 
-		return view;
+		return rootView;
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -243,6 +253,8 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			});
 		}
 
+		elevationOnScrollListener = new ElevationOnScrollListener((FragmentRootLinearLayout) view, getToolbar());
+
 		if(GithubSelfUpdater.needSelfUpdating()){
 			updateUpdateState(GithubSelfUpdater.getInstance().getState());
 		}
@@ -287,6 +299,10 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 				error.showToast(getActivity());
 			}
 		}).exec(accountID);
+	}
+
+	public ElevationOnScrollListener getElevationOnScrollListener() {
+		return elevationOnScrollListener;
 	}
 
 	private void onFabClick(View v){
@@ -466,10 +482,19 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 				&& fabulous.isScrolling();
 	}
 
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		if (elevationOnScrollListener != null) elevationOnScrollListener.setViews(getToolbar());
+	}
+
 	private void updateSwitcherIcon(int i) {
 		timelineIcon.setImageResource(timelines[i].getIcon().iconRes);
 		timelineTitle.setText(timelines[i].getTitle(getContext()));
 		showFab();
+		if (elevationOnScrollListener != null && getCurrentFragment() instanceof IsOnTop f) {
+			elevationOnScrollListener.handleScroll(getContext(), f.isOnTop());
+		}
 	}
 
 	@Override
@@ -484,7 +509,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			getToolbar().post(() -> overflowPopup.show());
 			return true;
 		} else if (id == R.id.settings || id == R.id.settings_action) {
-			Nav.go(getActivity(), SettingsFragment.class, args);
+			Nav.go(getActivity(), SettingsMainFragment.class, args);
 		} else if (id == R.id.announcements || id == R.id.announcements_action) {
 			Nav.goForResult(getActivity(), AnnouncementsFragment.class, args, ANNOUNCEMENTS_RESULT, this);
 		} else if (id == R.id.edit_timelines) {
@@ -633,8 +658,8 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 	@Override
 	protected void onShown() {
 		super.onShown();
-		Object pinnedTimelines = GlobalUserPreferences.pinnedTimelines.get(accountID);
-		if (pinnedTimelines != null && timelineDefinitions != pinnedTimelines) UiUtils.restartApp();
+		Object timelines = AccountSessionManager.get(accountID).getLocalPreferences().timelines;
+		if (timelines != null && timelinesList!= timelines) UiUtils.restartApp();
 	}
 
 	@Override
@@ -696,6 +721,10 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 
 	public Collection<Hashtag> getHashtags() {
 		return hashtagsItems.values();
+	}
+
+	public Fragment getCurrentFragment() {
+		return fragments[pager.getCurrentItem()];
 	}
 
 	public ImageButton getFab() {

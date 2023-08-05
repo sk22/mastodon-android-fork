@@ -4,12 +4,16 @@
     android:layout_height="match_parent">
     <LinearLayout
         android:id="@+id/switcher_btn"
-        android:background="?android:selectableItemBackgroundBorderless"
+        style="@style/Widget.Mastodon.M3.Button.Text"
         android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_vertical|start"
-        android:paddingHorizontal="16dp">
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		android:layout_gravity="center_vertical|start"
+		android:layout_marginStart="4dp"
+		android:minWidth="48dp"
+		android:tooltipText="@string/sk_switch_timeline"
+		android:paddingStart="12dp"
+		android:paddingEnd="12dp">
         <ImageView
             android:id="@+id/timeline_icon"
             android:layout_width="wrap_content"
@@ -46,11 +50,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingVertical="2dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="20dp"
             android:minHeight="32sp"
             android:maxLines="2"
             android:ellipsize="end"
             android:lineSpacingMultiplier="0.8"
             android:textAppearance="@style/m3_title_medium"
+            android:textSize="16sp"
             android:text="@string/see_new_posts"
             android:textColor="@color/gray_25"
             android:background="@drawable/bg_button_new_posts"

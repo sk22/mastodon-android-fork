@@ -1,0 +1,5 @@
+- Teme noi de culoare: Material You și Roșu
+- Noi tonuri de gri închis pentru toate temele
+- Pictograma promovării mai distinctă
+- Animații pentru butoanele de interacțiune
+- Corectarea erorilor (Crash pe unele postări, „Liste cu”, limbaj de postare implicit)

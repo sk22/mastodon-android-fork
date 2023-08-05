@@ -30,7 +30,7 @@
     <string name="sk_user_post_notifications_on">%s အတွက် ပို့စ်နိုတီများကို ဖွင့်လိုက်သည်</string>
     <string name="sk_federated_timeline_info_banner">သင့်ဖက်ဒရေးရှင်းကလူတွေရဲ့ လတ်တလောပို့စ်တွေ ဖြစ်ပါတယ်။</string>
     <string name="sk_check_for_update">အပ်ဒိတ်ရှိလားစစ်ဆေးမည်</string>
-    <string name="sk_disable_marquee">ခေါင်းစီးဘားများတွင် စာများရွေ့လျားမှု ပိတ်မည်</string>
+    <string name="sk_settings_enable_marquee">ခေါင်းစီးဘားများတွင် စာများရွေ့လျားမှု ပိတ်မည်</string>
     <string name="sk_poll_allow_multiple">တစ်ခုထက်ပိုသောရွေးချယ်မှုများကို ခွင့်ပြုမည်</string>
     <string name="sk_clear_recent_languages">လတ်တလောသုံးထားသည့် ဘာသာစကားများကို ရှင်းလင်းမည်</string>
     <string name="sk_welcome_title">မင်္ဂလာပါ</string>

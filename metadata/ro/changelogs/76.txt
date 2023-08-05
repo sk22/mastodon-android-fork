@@ -1,0 +1,6 @@
+- Filtre îmbunătățite, inclusiv „Ascundere cu avertizare” -compatibilitate
+- Pagina de profil reproiectată cu metadate direct sub bio
+- Funcția de ascundere/extindere pentru postări foarte lungi
+- Opțiune de a prefixa automat răspunsuri AC cu „re:”
+- Opțiune pentru a ascunde butoanele de interacțiune din cronologie
+- Diverse erori corectate, modificări și îmbunătățiri

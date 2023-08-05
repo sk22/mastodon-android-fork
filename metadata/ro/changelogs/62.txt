@@ -1,0 +1,11 @@
+- Buton Publicare personalizabil
+- Deschide link-uri Fediverse în app
+- Clic lung pe butonul de promovare pentru a „cita” o postare
+- Copiere URL postare când butonul de partajare este ținut
+- Implementare ștergerea notificărilor (dezactivat implicit)
+- Iconițe dedicate pentru diferite tipuri de notificări
+- Culori gri noi
+- Adăugare setare pentru a dezactiva glisarea între file
+- Adăugare link-uri diverse la setările contului
+- Comutare pentru a arăta/ascunde butonul de traducere în cronologie
+- Corectare erori și modificări

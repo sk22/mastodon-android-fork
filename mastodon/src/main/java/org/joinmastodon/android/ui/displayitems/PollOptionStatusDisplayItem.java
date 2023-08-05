@@ -11,8 +11,10 @@ import android.widget.TextView;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.model.Poll;
+import org.joinmastodon.android.ui.OutlineProviders;
 import org.joinmastodon.android.ui.text.HtmlParser;
 import org.joinmastodon.android.ui.utils.CustomEmojiHelper;
+import org.joinmastodon.android.ui.utils.UiUtils;
 
 import java.util.Locale;
 
@@ -26,11 +28,13 @@ public class PollOptionStatusDisplayItem extends StatusDisplayItem{
 	private boolean showResults;
 	private float votesFraction; // 0..1
 	private boolean isMostVoted;
+	private final int optionIndex;
 	public final Poll poll;
 
-	public PollOptionStatusDisplayItem(String parentID, Poll poll, Poll.Option option, BaseStatusListFragment parentFragment){
+	public PollOptionStatusDisplayItem(String parentID, Poll poll, int optionIndex, BaseStatusListFragment parentFragment){
 		super(parentID, parentFragment);
-		this.option=option;
+		this.optionIndex=optionIndex;
+		option=poll.options.get(optionIndex);
 		this.poll=poll;
 		text=HtmlParser.parseCustomEmoji(option.title, poll.emojis);
 		emojiHelper.setText(text);
@@ -64,7 +68,7 @@ public class PollOptionStatusDisplayItem extends StatusDisplayItem{
 		private final TextView text, percent;
 		private final View button;
 		private final ImageView icon;
-		private final Drawable progressBg;
+		private final Drawable progressBg, progressBgInset;
 
 		public Holder(Activity activity, ViewGroup parent){
 			super(activity, R.layout.display_item_poll_option, parent);
@@ -73,7 +77,10 @@ public class PollOptionStatusDisplayItem extends StatusDisplayItem{
 			icon=findViewById(R.id.icon);
 			button=findViewById(R.id.button);
 			progressBg=activity.getResources().getDrawable(R.drawable.bg_poll_option_voted, activity.getTheme()).mutate();
+			progressBgInset=activity.getResources().getDrawable(R.drawable.bg_poll_option_voted_inset, activity.getTheme()).mutate();
 			itemView.setOnClickListener(this::onButtonClick);
+			button.setOutlineProvider(OutlineProviders.roundedRect(24));
+			button.setClipToOutline(true);
 		}
 
 		@Override
@@ -86,17 +93,21 @@ public class PollOptionStatusDisplayItem extends StatusDisplayItem{
 					item.showResults ? R.drawable.ic_poll_option_button : R.drawable.ic_fluent_radio_button_24_selector
 			));
 			if(item.showResults){
-				progressBg.setLevel(Math.round(10000f*item.votesFraction));
-				button.setBackground(progressBg);
-				itemView.setSelected(item.isMostVoted);
-				icon.setSelected(item.poll.ownVotes.contains(item.poll.options.indexOf(item.option)));
-				icon.setVisibility(item.poll.voted && item.poll.ownVotes.isEmpty() ? View.GONE : View.VISIBLE);
+				Drawable bg=item.inset ? progressBgInset : progressBg;
+				bg.setLevel(Math.round(10000f*item.votesFraction));
+				button.setBackground(bg);
+				itemView.setSelected(item.poll.ownVotes!=null && item.poll.ownVotes.contains(item.optionIndex));
 				percent.setText(String.format(Locale.getDefault(), "%d%%", Math.round(item.votesFraction*100f)));
 			}else{
 				itemView.setSelected(item.poll.selectedOptions!=null && item.poll.selectedOptions.contains(item.option));
-				button.setBackgroundResource(R.drawable.bg_poll_option_clickable);
-				icon.setSelected(itemView.isSelected());
-				icon.setVisibility(View.VISIBLE);
+				button.setBackgroundResource(item.inset ? R.drawable.bg_poll_option_clickable_inset : R.drawable.bg_poll_option_clickable);
+			}
+			if(item.inset){
+				text.setTextColor(itemView.getContext().getColorStateList(R.color.poll_option_text_inset));
+				percent.setTextColor(itemView.getContext().getColorStateList(R.color.poll_option_text_inset));
+			}else{
+				text.setTextColor(UiUtils.getThemeColor(itemView.getContext(), android.R.attr.textColorPrimary));
+				percent.setTextColor(UiUtils.getThemeColor(itemView.getContext(), R.attr.colorM3OnSecondaryContainer));
 			}
 		}
 

@@ -1,0 +1,8 @@
+- Vizualizare îmbunătățită, mai clară a discuției
+- Deschideți conturi/postări prin partajarea unui site web către Megalodon
+- Încărcați adepți/favoriți/… Listele de la originea instanței
+- Îmbunătățiri de compatibilitate pentru serverele non-Mastodon
+- Opțiune pentru a seta tipul de conținut al postării
+- Asistență pentru copierea URL-ului din Aplicațiile recente pe dispozitivele Pixel
+- Auto-dezvăluire AC-uri egale în discuții
+- Corectare erori și îmbunătățiri UI
