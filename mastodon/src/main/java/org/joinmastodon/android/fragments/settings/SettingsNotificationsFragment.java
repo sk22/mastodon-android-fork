@@ -1,5 +1,7 @@
 package org.joinmastodon.android.fragments.settings;
 
+import static org.unifiedpush.android.connector.UnifiedPush.getDistributor;
+
 import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Intent;
@@ -25,8 +27,11 @@ import org.joinmastodon.android.model.viewmodel.ListItem;
 import org.joinmastodon.android.ui.M3AlertDialogBuilder;
 import org.joinmastodon.android.ui.utils.HideableSingleViewRecyclerAdapter;
 import org.joinmastodon.android.ui.utils.UiUtils;
+import org.unifiedpush.android.connector.RegistrationDialogContent;
+import org.unifiedpush.android.connector.UnifiedPush;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
@@ -52,7 +57,8 @@ public class SettingsNotificationsFragment extends BaseSettingsFragment<Void>{
 	private boolean notificationsAllowed=true;
 
 	// MEGALODON
-	private CheckableListItem<Void> uniformIconItem, deleteItem, onlyLatestItem;
+	private boolean useUnifiedPush = false;
+	private CheckableListItem<Void> uniformIconItem, deleteItem, onlyLatestItem, unifiedPushItem;
 	private CheckableListItem<Void> postsItem, updateItem;
 
 	private AccountLocalPreferences lp;
@@ -64,6 +70,7 @@ public class SettingsNotificationsFragment extends BaseSettingsFragment<Void>{
 		lp=AccountSessionManager.get(accountID).getLocalPreferences();
 
 		getPushSubscription();
+		useUnifiedPush=!getDistributor(getContext()).isEmpty();
 
 		onDataLoaded(List.of(
 				pauseItem=new CheckableListItem<>(getString(R.string.pause_all_notifications), getPauseItemSubtitle(), CheckableListItem.Style.SWITCH, false, R.drawable.ic_fluent_alert_snooze_24_regular, ()->onPauseNotificationsClick(false)),
@@ -79,8 +86,15 @@ public class SettingsNotificationsFragment extends BaseSettingsFragment<Void>{
 
 				uniformIconItem=new CheckableListItem<>(R.string.sk_settings_uniform_icon_for_notifications, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.uniformNotificationIcon, R.drawable.ic_ntf_logo, ()->toggleCheckableItem(uniformIconItem)),
 				deleteItem=new CheckableListItem<>(R.string.sk_settings_enable_delete_notifications, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.enableDeleteNotifications, R.drawable.ic_fluent_mail_inbox_dismiss_24_regular, ()->toggleCheckableItem(deleteItem)),
-				onlyLatestItem=new CheckableListItem<>(R.string.sk_settings_single_notification, 0, CheckableListItem.Style.SWITCH, lp.keepOnlyLatestNotification, R.drawable.ic_fluent_convert_range_24_regular, ()->toggleCheckableItem(onlyLatestItem), true)
+				onlyLatestItem=new CheckableListItem<>(R.string.sk_settings_single_notification, 0, CheckableListItem.Style.SWITCH, lp.keepOnlyLatestNotification, R.drawable.ic_fluent_convert_range_24_regular, ()->toggleCheckableItem(onlyLatestItem), true),
+				unifiedPushItem=new CheckableListItem<>(R.string.sk_settings_unifiedpush, 0, CheckableListItem.Style.SWITCH, useUnifiedPush, R.drawable.ic_fluent_alert_arrow_up_24_regular, this::onUnifiedPush, true)
 		));
+
+		//only enable when distributors, who can receive notifications, are available
+		unifiedPushItem.isEnabled=!UnifiedPush.getDistributors(getContext(), new ArrayList<>()).isEmpty();
+		if (!unifiedPushItem.isEnabled) {
+			unifiedPushItem.subtitleRes=R.string.sk_settings_unifiedpush_no_distributor_body;
+		}
 
 		typeItems=List.of(mentionsItem, boostsItem, favoritesItem, followersItem, pollsItem, updateItem, postsItem);
 		pauseItem.checkedChangeListener=checked->onPauseNotificationsClick(true);
@@ -311,5 +325,39 @@ public class SettingsNotificationsFragment extends BaseSettingsFragment<Void>{
 		}else{
 			bannerAdapter.setVisible(false);
 		}
+	}
+
+	private void onUnifiedPush(){
+		if(getDistributor(getContext()).isEmpty()){
+			List<String> distributors = UnifiedPush.getDistributors(getContext(), new ArrayList<>());
+			showUnifiedPushRegisterDialog(distributors);
+			return;
+		}
+
+		UnifiedPush.unregisterApp(
+				getContext(),
+				accountID
+		);
+
+		//re-register to fcm
+		AccountSessionManager.getInstance().getAccount(accountID).getPushSubscriptionManager().registerAccountForPush(getPushSubscription());
+		unifiedPushItem.toggle();
+		rebindItem(unifiedPushItem);
+	}
+
+	private void showUnifiedPushRegisterDialog(List<String> distributors){
+		new M3AlertDialogBuilder(getContext()).setTitle(R.string.sk_settings_unifiedpush_choose).setItems(distributors.toArray(String[]::new),
+				(dialog, which) ->{
+					String userDistrib = distributors.get(which);
+					UnifiedPush.saveDistributor(getContext(), userDistrib);
+					UnifiedPush.registerApp(
+							getContext(),
+							accountID,
+							new ArrayList<>(),
+							getContext().getPackageName()
+					);
+					unifiedPushItem.toggle();
+					rebindItem(unifiedPushItem);
+				}).show();
 	}
 }

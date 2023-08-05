@@ -135,7 +135,11 @@
     <string name="sk_mark_as_read">Mark as read</string>
     <string name="sk_settings_about_instance">About instance</string>
     <string name="sk_settings_single_notification">Only show one notification</string>
-    <string name="sk_create">Create</string>
+	<string name="sk_settings_unifiedpush">Use UnifiedPush</string>
+	<string name="sk_settings_unifiedpush_choose">Choose a distributor</string>
+	<string name="sk_settings_unifiedpush_no_distributor">No distributor found</string>
+	<string name="sk_settings_unifiedpush_no_distributor_body">You need to install a distributor for UnifiedPush notifications to work. For more information, visit https://unifiedpush.org/</string>
+	<string name="sk_create">Create</string>
     <string name="sk_create_list_title">Create list</string>
     <string name="sk_list_name_hint">List name</string>
     <string name="sk_list_replies_policy">Show replies to</string>
@@ -344,7 +348,7 @@
 	<string name="sk_tab_notifications">Notifications</string>
 	<string name="sk_tab_profile">Profile</string>
 	<string name="sk_settings_show_labels_in_navigation_bar">Show tab labels in the navigation bar</string>
-	<string name="sk_mute_label">Duration:</string>
+	<string name="sk_mute_label">Duration</string>
 	<string name="sk_duration_indefinite">Indefinite</string>
 	<string name="sk_duration_minutes_5">5 minutes</string>
 	<string name="sk_duration_minutes_30">30 minutes</string>
@@ -353,4 +357,5 @@
 	<string name="sk_duration_days_1">1 day</string>
 	<string name="sk_duration_days_3">3 days</string>
 	<string name="sk_duration_days_7">7 days</string>
+	<string name="sk_notification_mention">You were mentioned by %s</string>
 </resources>
