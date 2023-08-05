@@ -120,9 +120,16 @@ public class PushSubscriptionManager{
 		return !TextUtils.isEmpty(deviceToken);
 	}
 
+
 	public void registerAccountForPush(PushSubscription subscription){
 		if(TextUtils.isEmpty(deviceToken))
 			throw new IllegalStateException("No device push token available");
+		String endpoint = "https://app.joinmastodon.org/relay-to/fcm/"+deviceToken+"/"+accountID;
+		registerAccountForPush(subscription, endpoint);
+	}
+
+	public void registerAccountForPush(PushSubscription subscription, String endpoint){
+
 		MastodonAPIController.runInBackground(()->{
 			Log.d(TAG, "registerAccountForPush: started for "+accountID);
 			String encodedPublicKey, encodedAuthKey, pushAccountID;
@@ -151,12 +158,11 @@ public class PushSubscriptionManager{
 				Log.e(TAG, "registerAccountForPush: error generating encryption key", e);
 				return;
 			}
-			new RegisterForPushNotifications(deviceToken,
+			new RegisterForPushNotifications(endpoint,
 					encodedPublicKey,
 					encodedAuthKey,
 					subscription==null ? PushSubscription.Alerts.ofAll() : subscription.alerts,
-					subscription==null ? PushSubscription.Policy.ALL : subscription.policy,
-					pushAccountID)
+					subscription==null ? PushSubscription.Policy.ALL : subscription.policy)
 					.setCallback(new Callback<>(){
 						@Override
 						public void onSuccess(PushSubscription result){

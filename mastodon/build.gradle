@@ -16,7 +16,7 @@ android {
 		minSdk 23
 		targetSdk 33
 		versionCode 97
-		versionName "2.0.1+fork.97"
+		versionName "2.0.2+fork.97"
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         resourceConfigurations += ['ar-rSA', 'ar-rDZ', 'be-rBY', 'bn-rBD', 'bs-rBA', 'ca-rES', 'cs-rCZ', 'da-rDK', 'de-rDE', 'el-rGR', 'es-rES', 'eu-rES', 'fa-rIR', 'fi-rFI', 'fil-rPH', 'fr-rFR', 'ga-rIE', 'gd-rGB', 'gl-rES', 'hi-rIN', 'hr-rHR', 'hu-rHU', 'hy-rAM', 'ig-rNG', 'in-rID', 'is-rIS', 'it-rIT', 'iw-rIL', 'ja-rJP', 'kab', 'ko-rKR', 'my-rMM', 'nl-rNL', 'no-rNO', 'oc-rFR', 'pl-rPL', 'pt-rBR', 'pt-rPT', 'ro-rRO', 'ru-rRU', 'si-rLK', 'sl-rSI', 'sv-rSE', 'th-rTH', 'tr-rTR', 'uk-rUA', 'ur-rIN', 'vi-rVN', 'zh-rCN', 'zh-rTW']
     }
@@ -78,6 +78,7 @@ dependencies {
 	implementation 'com.github.bottom-software-foundation:bottom-java:2.1.0'
 	annotationProcessor 'org.parceler:parceler:1.1.12'
 	coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
+	implementation 'com.github.UnifiedPush:android-connector:2.1.1'
 
 	androidTestImplementation 'androidx.test:core:1.5.0'
 	androidTestImplementation 'androidx.test.ext:junit:1.1.5'

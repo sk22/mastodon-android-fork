@@ -30,7 +30,7 @@ public class SettingsBehaviorFragment extends BaseSettingsFragment<Void> impleme
 	// MEGALODON
 	private MastodonLanguage.LanguageResolver languageResolver;
 	private ListItem<Void> prefixRepliesItem, replyVisibilityItem;
-	private CheckableListItem<Void> forwardReportsItem, remoteLoadingItem, showBoostsItem, showRepliesItem, loadNewPostsItem, seeNewPostsBtnItem;
+	private CheckableListItem<Void> forwardReportsItem, remoteLoadingItem, showBoostsItem, showRepliesItem, loadNewPostsItem, seeNewPostsBtnItem, overlayMediaItem;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -47,6 +47,7 @@ public class SettingsBehaviorFragment extends BaseSettingsFragment<Void> impleme
 				languageItem=new ListItem<>(getString(R.string.default_post_language), postLanguage!=null ? postLanguage.getDisplayName(getContext()) : null, R.drawable.ic_fluent_local_language_24_regular, this::onDefaultLanguageClick),
 				altTextItem=new CheckableListItem<>(R.string.settings_alt_text_reminders, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.altTextReminders, R.drawable.ic_fluent_image_alt_text_24_regular, ()->toggleCheckableItem(altTextItem)),
 				playGifsItem=new CheckableListItem<>(R.string.settings_gif, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.playGifs, R.drawable.ic_fluent_gif_24_regular, ()->toggleCheckableItem(playGifsItem)),
+				overlayMediaItem=new CheckableListItem<>(R.string.sk_settings_continues_playback, R.string.sk_settings_continues_playback_summary, CheckableListItem.Style.SWITCH, GlobalUserPreferences.overlayMedia, R.drawable.ic_fluent_play_circle_hint_24_regular, ()->toggleCheckableItem(overlayMediaItem)),
 				customTabsItem=new CheckableListItem<>(R.string.settings_custom_tabs, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.useCustomTabs, R.drawable.ic_fluent_link_24_regular, ()->toggleCheckableItem(customTabsItem)),
 				confirmUnfollowItem=new CheckableListItem<>(R.string.settings_confirm_unfollow, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.confirmUnfollow, R.drawable.ic_fluent_person_delete_24_regular, ()->toggleCheckableItem(confirmUnfollowItem)),
 				confirmBoostItem=new CheckableListItem<>(R.string.settings_confirm_boost, 0, CheckableListItem.Style.SWITCH, GlobalUserPreferences.confirmBoost, R.drawable.ic_fluent_arrow_repeat_all_24_regular, ()->toggleCheckableItem(confirmBoostItem)),
@@ -162,6 +163,7 @@ public class SettingsBehaviorFragment extends BaseSettingsFragment<Void> impleme
 	protected void onHidden(){
 		super.onHidden();
 		GlobalUserPreferences.playGifs=playGifsItem.checked;
+		GlobalUserPreferences.overlayMedia=overlayMediaItem.checked;
 		GlobalUserPreferences.useCustomTabs=customTabsItem.checked;
 		GlobalUserPreferences.altTextReminders=altTextItem.checked;
 		GlobalUserPreferences.confirmUnfollow=customTabsItem.checked;
