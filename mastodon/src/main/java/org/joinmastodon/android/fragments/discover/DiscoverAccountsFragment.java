@@ -17,8 +17,8 @@ import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.accounts.GetAccountRelationships;
 import org.joinmastodon.android.api.requests.accounts.GetFollowSuggestions;
 import org.joinmastodon.android.fragments.IsOnTop;
+import org.joinmastodon.android.fragments.MastodonRecyclerFragment;
 import org.joinmastodon.android.fragments.ProfileFragment;
-import org.joinmastodon.android.fragments.RecyclerFragment;
 import org.joinmastodon.android.fragments.ScrollableToTop;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.FollowSuggestion;
@@ -51,7 +51,7 @@ import me.grishka.appkit.utils.BindableViewHolder;
 import me.grishka.appkit.utils.V;
 import me.grishka.appkit.views.UsableRecyclerView;
 
-public class DiscoverAccountsFragment extends RecyclerFragment<DiscoverAccountsFragment.AccountWrapper> implements ScrollableToTop, IsOnTop, ProvidesAssistContent.ProvidesWebUri {
+public class DiscoverAccountsFragment extends MastodonRecyclerFragment<DiscoverAccountsFragment.AccountWrapper> implements ScrollableToTop, IsOnTop, ProvidesAssistContent.ProvidesWebUri {
 	private String accountID;
 	private Map<String, Relationship> relationships=Collections.emptyMap();
 	private GetAccountRelationships relationshipsRequest;
@@ -242,7 +242,7 @@ public class DiscoverAccountsFragment extends RecyclerFragment<DiscoverAccountsF
 			postsCount.setText(UiUtils.abbreviateNumber(item.account.statusesCount));
 			followersLabel.setText(getResources().getQuantityString(R.plurals.followers, (int)Math.min(999, item.account.followersCount)));
 			followingLabel.setText(getResources().getQuantityString(R.plurals.following, (int)Math.min(999, item.account.followingCount)));
-			postsLabel.setText(getResources().getQuantityString(R.plurals.posts, (int)Math.min(999, item.account.statusesCount)));
+			postsLabel.setText(getResources().getQuantityString(R.plurals.x_posts, (int)(item.account.statusesCount%1000), item.account.statusesCount));
 			followersCount.setVisibility(item.account.followersCount < 0 ? View.GONE : View.VISIBLE);
 			followersLabel.setVisibility(item.account.followersCount < 0 ? View.GONE : View.VISIBLE);
 			followingCount.setVisibility(item.account.followingCount < 0 ? View.GONE : View.VISIBLE);
@@ -252,7 +252,7 @@ public class DiscoverAccountsFragment extends RecyclerFragment<DiscoverAccountsF
 				actionWrap.setVisibility(View.GONE);
 			}else{
 				actionWrap.setVisibility(View.VISIBLE);
-				UiUtils.setRelationshipToActionButton(relationship, actionButton);
+				UiUtils.setRelationshipToActionButtonM3(relationship, actionButton);
 			}
 		}
 

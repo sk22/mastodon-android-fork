@@ -31,7 +31,7 @@
     <string name="sk_example_domain">adibidea.eus</string>
     <string name="sk_lists_with_user">%s-ekin zerrendatu</string>
     <string name="sk_settings_always_reveal_content_warnings">Erakutsi beti edukiaren abisua</string>
-    <string name="sk_disable_marquee">Desgaitu izenburu-barretako testuaren desplazamendua</string>
+    <string name="sk_settings_enable_marquee">Desgaitu izenburu-barretako testuaren desplazamendua</string>
     <string name="sk_settings_contribute">Lagundu Megalodon</string>
     <string name="sk_translated_using">%s-ekin itzulia</string>
     <string name="sk_post_language">Hizkuntza: %s</string>
@@ -41,12 +41,12 @@
     <string name="sk_already_bookmarked">Dagoeneko laster-marka da</string>
     <string name="sk_favorite_as">Beste kontu baten gogokoa</string>
     <string name="sk_favorited_as">%s bezela dago gogokoetan</string>
-    <string name="sk_reblog_as">Beste kontu batekin bultzatua</string>
+    <string name="sk_reblog_as">Bultzatu beste kontu batekin</string>
     <string name="sk_reblogged_as">%s bezela bultzatua</string>
-    <string name="sk_already_reblogged">Dagoeneko bultzatua izan da</string>
+    <string name="sk_already_reblogged">Jada bultzatu da</string>
     <string name="sk_reply_as">Erantzun beste kontu batekin</string>
     <string name="sk_translate_post">Itzuli</string>
-    <string name="sk_tabs_disable_swipe">Desgaitu fitxen arteko joan-etorria</string>
+    <string name="sk_settings_tabs_disable_swipe">Desgaitu fitxen arteko joan-etorria</string>
     <string name="sk_settings_profile">Konfiguratu profila</string>
     <string name="sk_settings_posting">Argitalpenen ezarpenak</string>
     <string name="sk_settings_filters">Filtroak konfiguratu</string>
@@ -66,7 +66,7 @@
     <string name="sk_delete_notification">Ezabatu jakinarazpena</string>
     <string name="sk_delete_notification_confirm_action">Ezabatu jakinarazpena</string>
     <string name="sk_delete_notification_confirm">Ziur al zaude jakinarazpen hau ezabatu nahi duzula\?</string>
-    <string name="sk_enable_delete_notifications">Gaitu jakinarazpenen ezabatzea</string>
+    <string name="sk_settings_enable_delete_notifications">Gaitu jakinarazpenen ezabatzea</string>
     <string name="sk_settings_publish_button_text">Argitaratze botoiaren testua</string>
     <string name="sk_settings_publish_button_text_title">Pertsonalizatu argitaratze botoiaren testua</string>
     <string name="sk_settings_translation_availability_note_available">%s-k itzulpena onartzen du!</string>
@@ -75,9 +75,9 @@
     <string name="sk_clear_all_notifications_confirm_action">Ezabatu denak</string>
     <string name="sk_clear_all_notifications_confirm">Ziur al zaude jakinarazpen guztiak ezabatu nahi dituzula\?</string>
     <string name="sk_loading_fediverse_resource_title">Fedibertsoan bilatzen</string>
-    <string name="sk_undo_reblog">Bultzada desegin</string>
+    <string name="sk_undo_reblog">Desegin bultzada</string>
     <string name="sk_quote_post">Honen inguruan argitaratu</string>
-    <string name="sk_reblog_with_visibility">Bultzada ikusgarria</string>
+    <string name="sk_reblog_with_visibility">Bultzatu ikusgarritasunarekin</string>
     <string name="sk_hashtags_you_follow">Jarraitzen dituzun Hashtag-ak</string>
     <string name="sk_copy_link_to_post">Kopiatu link-a argitaratzeko</string>
     <string name="sk_loading_resource_on_instance_title">%s-n bilatzen</string>
@@ -93,7 +93,7 @@
     <string name="sk_reject_follow_request">Alboratu jarraitzeko eskaerak</string>
     <string name="sk_settings_show_federated_timeline">Erakutsi federatutako denbora-lerroa</string>
     <string name="sk_notification_type_status">Argitalpenak</string>
-    <string name="sk_notify_posts">Argitalpenen jakinarazpenak</string>
+    <string name="sk_notification_type_posts">Argitalpenen jakinarazpenak</string>
     <string name="sk_translate_show_original">Erakutsi jatorrizkoa</string>
     <string name="sk_available_languages">Eskuragarri dauden hizkuntzak</string>
     <string name="sk_confirm_clear_recent_languages">Ziur al zaude berriki erabilitako hizkuntzak ezabatu nahi dituzula\?</string>
@@ -219,7 +219,7 @@
     <string name="sk_alt_button">ALT</string>
     <string name="sk_post_edited">Editatua</string>
     <string name="sk_notification_type_update">Editatutako argitalpenak</string>
-    <string name="sk_notify_update">Bultzatutako bidalketa editatu</string>
+    <string name="sk_notify_update">Bultzatutako bidalketa editatu da</string>
     <string name="sk_no_results">Emaitzarik ez</string>
     <string name="sk_save_draft">Zirriborroa gorde\?</string>
     <string name="sk_no_alt_text">Ez dago testu alternatiborik eskuragarri</string>
@@ -232,7 +232,7 @@
     <string name="sk_alt_text_missing_title">Testu alternatiboa falta da</string>
     <string name="sk_searching">Bilatzen…</string>
     <string name="sk_save_draft_message">Zirriborro honetako aldaketak gorde edo argitaratu nahi dituzu\?</string>
-    <string name="sk_settings_prefix_reply_cw_with_re">Gehitu \"re:\" hasieran edukiaren abisuen erantzunetan</string>
+    <string name="sk_settings_prefix_reply_cw_with_re">Gehitu \"re:\" edukiaren abisuen erantzunen hasieran</string>
     <string name="sk_filtered">Iragazita: %s</string>
     <string name="sk_expand">Zabaldu</string>
     <string name="sk_collapse">Itxi</string>
@@ -267,8 +267,23 @@
     <string name="sk_settings_reply_visibility_following">Jarraitzen ditudanei eginiko erantzunak</string>
     <string name="sk_reply_line_above_avatar">\"Honi erantzunez\" abatarraren gaineko lerroa</string>
     <string name="sk_show_thread">Erakutsi haria</string>
-    <string name="sk_compact_reblog_reply_line">Bultzada/erantzun lerro trinkoa</string>
+    <string name="sk_compact_reblog_reply_line">Bultzada-/erantzun-lerro trinkoa</string>
     <string name="sk_quoting_user">%s aipatzen</string>
     <string name="sk_settings_reply_visibility_self">Niri eginiko erantzunak</string>
     <string name="sk_notification_action_replied">%s-(r)i erantzun</string>
+    <string name="sk_bubble_timeline_info_banner">Hauexek dira zure instantziako administratzaileek saretik aukeratutako azken bidalketak.</string>
+    <string name="sk_content_type">Edukiaren mota</string>
+    <string name="sk_content_type_unspecified">Zehaztu gabea</string>
+    <string name="sk_content_type_plain">Testu arrunta</string>
+    <string name="sk_content_type_html">HTML</string>
+    <string name="sk_content_type_markdown">Markdown</string>
+    <string name="sk_content_type_bbcode">BBCode</string>
+    <string name="sk_content_type_mfm">MFM</string>
+    <string name="sk_settings_content_types">Gaitu bidalketaren formateatzea</string>
+    <string name="sk_settings_content_types_explanation">Markdown bezalako eduki-mota ezartzea ahalbidetzen du bidalketa bat sortzerakoan. Gogoan izan instantzia guztiek ez dutela hau baimentzen.</string>
+    <string name="sk_settings_default_content_type">Eduki-mota lehenetsia</string>
+    <string name="sk_settings_confirm_before_reblog">Berretsi bultzatu aurretik</string>
+    <string name="sk_reacted_with">%s bezala erreakzionatuta</string>
+    <string name="sk_reacted">erreakzionatuta</string>
+    <string name="sk_timeline_bubble">Burbuila</string>
 </resources>

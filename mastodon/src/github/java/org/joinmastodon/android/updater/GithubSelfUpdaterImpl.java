@@ -100,8 +100,8 @@ public class GithubSelfUpdaterImpl extends GithubSelfUpdater{
 	public void maybeCheckForUpdates(){
 		if(state!=UpdateState.NO_UPDATE && state!=UpdateState.UPDATE_AVAILABLE)
 			return;
-		long timeSinceLastCheck=System.currentTimeMillis()-getPrefs().getLong("lastCheck", CHECK_PERIOD);
-		if(timeSinceLastCheck>=CHECK_PERIOD){
+		long timeSinceLastCheck=System.currentTimeMillis()-getPrefs().getLong("lastCheck", 0);
+		if(timeSinceLastCheck>CHECK_PERIOD || forceUpdate){
 			setState(UpdateState.CHECKING);
 			MastodonAPIController.runInBackground(this::actuallyCheckForUpdates);
 		}
@@ -148,7 +148,8 @@ public class GithubSelfUpdaterImpl extends GithubSelfUpdater{
 						curForkNumber=Integer.parseInt(matcher.group(4));
 				long newVersion=((long)newMajor << 32) | ((long)newMinor << 16) | newRevision;
 				long curVersion=((long)curMajor << 32) | ((long)curMinor << 16) | curRevision;
-				if(newVersion>curVersion || newForkNumber>curForkNumber){
+				if(newVersion>curVersion || newForkNumber>curForkNumber || forceUpdate){
+					forceUpdate=false;
 					String version=newMajor+"."+newMinor+"."+newRevision+"+fork."+newForkNumber;
 					Log.d(TAG, "actuallyCheckForUpdates: new version: "+version);
 					for(JsonElement el:obj.getAsJsonArray("assets")){
@@ -321,6 +322,15 @@ public class GithubSelfUpdaterImpl extends GithubSelfUpdater{
 			String msg=intent.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE);
 			Toast.makeText(activity, activity.getString(R.string.error)+":\n"+msg, Toast.LENGTH_LONG).show();
 		}
+	}
+
+	@Override
+	public void reset(){
+		getPrefs().edit().clear().apply();
+		File apk=getUpdateApkFile();
+		if(apk.exists())
+			apk.delete();
+		state=UpdateState.NO_UPDATE;
 	}
 
 	/*public static class InstallerStatusReceiver extends BroadcastReceiver{

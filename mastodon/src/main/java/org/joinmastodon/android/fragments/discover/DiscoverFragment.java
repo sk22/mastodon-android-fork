@@ -1,64 +1,60 @@
 package org.joinmastodon.android.fragments.discover;
 
 import android.app.Fragment;
-import android.app.assist.AssistContent;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
-import org.joinmastodon.android.fragments.HomeFragment;
 import org.joinmastodon.android.fragments.IsOnTop;
 import org.joinmastodon.android.fragments.ScrollableToTop;
+import org.joinmastodon.android.model.SearchResult;
+import org.joinmastodon.android.ui.OutlineProviders;
 import org.joinmastodon.android.ui.SimpleViewHolder;
 import org.joinmastodon.android.ui.tabs.TabLayout;
 import org.joinmastodon.android.ui.tabs.TabLayoutMediator;
 import org.joinmastodon.android.ui.utils.UiUtils;
-import org.joinmastodon.android.utils.ProvidesAssistContent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
-
+import me.grishka.appkit.Nav;
 import me.grishka.appkit.fragments.AppKitFragment;
 import me.grishka.appkit.fragments.BaseRecyclerFragment;
 import me.grishka.appkit.fragments.OnBackPressedListener;
 import me.grishka.appkit.utils.V;
 
-public class DiscoverFragment extends AppKitFragment implements ScrollableToTop, OnBackPressedListener, IsOnTop, ProvidesAssistContent {
+public class DiscoverFragment extends AppKitFragment implements ScrollableToTop, OnBackPressedListener, IsOnTop {
+	private static final int QUERY_RESULT=937;
 
 	private TabLayout tabLayout;
 	private ViewPager2 pager;
 	private FrameLayout[] tabViews;
 	private TabLayoutMediator tabLayoutMediator;
-	private EditText searchEdit;
 	private boolean searchActive;
 	private FrameLayout searchView;
-	private ImageButton searchBack, searchClear;
-	private ProgressBar searchProgress;
+	private ImageButton searchBack;
+	private TextView searchText;
+	private View tabsDivider;
 
 	private DiscoverPostsFragment postsFragment;
-	private DiscoverHashtagsFragment hashtagsFragment;
+	private TrendingHashtagsFragment hashtagsFragment;
 	private DiscoverNewsFragment newsFragment;
 	private DiscoverAccountsFragment accountsFragment;
 	private SearchFragment searchFragment;
 
 	private String accountID;
-	private Runnable searchDebouncer=this::onSearchChangedDebounced;
+	private String currentQuery;
+
+	private boolean disableDiscover;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -92,12 +88,10 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 			tabViews[i]=tabView;
 		}
 
-		tabLayout.setTabTextSize(V.dp(16));
-		tabLayout.setTabTextColors(UiUtils.getThemeColor(getActivity(), R.attr.colorTabInactive), UiUtils.getThemeColor(getActivity(), android.R.attr.textColorPrimary));
+		tabLayout.setTabTextColors(UiUtils.getThemeColor(getActivity(), R.attr.colorM3OnSurfaceVariant), UiUtils.getThemeColor(getActivity(), R.attr.colorM3Primary));
+		tabLayout.setTabTextSize(V.dp(14));
 
-		UiUtils.reduceSwipeSensitivity(pager);
 		pager.setOffscreenPageLimit(4);
-		pager.setUserInputEnabled(!GlobalUserPreferences.disableSwipe);
 		pager.setAdapter(new DiscoverPagerAdapter());
 		pager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback(){
 			@Override
@@ -120,7 +114,7 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 			postsFragment=new DiscoverPostsFragment();
 			postsFragment.setArguments(args);
 
-			hashtagsFragment=new DiscoverHashtagsFragment();
+			hashtagsFragment=new TrendingHashtagsFragment();
 			hashtagsFragment.setArguments(args);
 
 			newsFragment=new DiscoverNewsFragment();
@@ -129,10 +123,9 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 			accountsFragment=new DiscoverAccountsFragment();
 			accountsFragment.setArguments(args);
 
-
 			getChildFragmentManager().beginTransaction()
-					.add(R.id.discover_posts, postsFragment)
 					.add(R.id.discover_hashtags, hashtagsFragment)
+					.add(R.id.discover_posts, postsFragment)
 					.add(R.id.discover_news, newsFragment)
 					.add(R.id.discover_users, accountsFragment)
 					.commit();
@@ -148,7 +141,6 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 					case 3 -> R.string.for_you;
 					default -> throw new IllegalStateException("Unexpected value: "+position);
 				});
-				tab.view.textView.setAllCaps(true);
 			}
 		});
 		tabLayoutMediator.attach();
@@ -165,60 +157,52 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 			}
 		});
 
-		searchEdit=view.findViewById(R.id.search_edit);
-		searchEdit.setOnFocusChangeListener(this::onSearchEditFocusChanged);
-		searchEdit.setOnEditorActionListener(this::onSearchEnterPressed);
-		searchEdit.addTextChangedListener(new TextWatcher(){
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after){
-				if(s.length()==0){
-					V.setVisibilityAnimated(searchClear, View.VISIBLE);
-				}
-			}
-
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count){
-				searchEdit.removeCallbacks(searchDebouncer);
-				searchEdit.postDelayed(searchDebouncer, 300);
-			}
-
-			@Override
-			public void afterTextChanged(Editable s){
-				if(s.length()==0){
-					V.setVisibilityAnimated(searchClear, View.INVISIBLE);
-				}
-			}
-		});
-
+		disableDiscover=getArguments().getBoolean("disableDiscover");
 		searchView=view.findViewById(R.id.search_fragment);
 		if(searchFragment==null){
 			searchFragment=new SearchFragment();
 			Bundle args=new Bundle();
 			args.putString("account", accountID);
 			searchFragment.setArguments(args);
-			searchFragment.setProgressVisibilityListener(this::onSearchProgressVisibilityChanged);
 			getChildFragmentManager().beginTransaction().add(R.id.search_fragment, searchFragment).commit();
 		}
 
 		searchBack=view.findViewById(R.id.search_back);
-		searchClear=view.findViewById(R.id.search_clear);
-		searchProgress=view.findViewById(R.id.search_progress);
-		searchBack.setEnabled(searchActive);
+		searchText=view.findViewById(R.id.search_text);
 		searchBack.setImportantForAccessibility(searchActive ? View.IMPORTANT_FOR_ACCESSIBILITY_YES : View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-		searchBack.setOnClickListener(v->exitSearch());
-		if(searchActive){
-			searchBack.setImageResource(R.drawable.ic_fluent_arrow_left_24_regular);
+		searchBack.setOnClickListener(v->{
+			if(searchActive) exitSearch(); else openSearch();
+		});
+		if(searchActive) searchBack.setImageResource(R.drawable.ic_fluent_arrow_left_24_regular);
+		else searchBack.setEnabled(false);
+		if(searchActive || disableDiscover){
 			pager.setVisibility(View.GONE);
 			tabLayout.setVisibility(View.GONE);
 			searchView.setVisibility(View.VISIBLE);
 		}
-		searchClear.setOnClickListener(v->{
-			searchEdit.setText("");
-			searchEdit.removeCallbacks(searchDebouncer);
-			onSearchChangedDebounced();
-		});
+
+		View searchWrap=view.findViewById(R.id.search_wrap);
+		searchWrap.setOutlineProvider(OutlineProviders.roundedRect(28));
+		searchWrap.setClipToOutline(true);
+		searchText.setOnClickListener(v->openSearch());
+		tabsDivider=view.findViewById(R.id.tabs_divider);
 
 		return view;
+	}
+
+	@Override
+	public boolean isOnTop() {
+		return searchActive ? searchFragment.isOnTop()
+				: ((IsOnTop)getFragmentForPage(pager.getCurrentItem())).isOnTop();
+	}
+
+	public void openSearch() {
+		Bundle args=new Bundle();
+		args.putString("account", accountID);
+		if(!TextUtils.isEmpty(currentQuery)){
+			args.putString("query", currentQuery);
+		}
+		Nav.goForResult(getActivity(), SearchQueryFragment.class, args, QUERY_RESULT, DiscoverFragment.this);
 	}
 
 	@Override
@@ -230,30 +214,13 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 		}
 	}
 
-	@Override
-	public boolean isOnTop() {
-		return searchActive ? searchFragment.isOnTop()
-				: ((IsOnTop)getFragmentForPage(pager.getCurrentItem())).isOnTop();
-	}
-
-	public void onSelect() {
-		if (isOnTop()) selectSearch();
-		else scrollToTop();
-	}
-
-	public void selectSearch() {
-		searchEdit.requestFocus();
-		onSearchEditFocusChanged(searchEdit, true);
-		getActivity().getSystemService(InputMethodManager.class).showSoftInput(searchEdit, 0);
-	}
-
 	public void loadData(){
 		if(hashtagsFragment!=null && !hashtagsFragment.loaded && !hashtagsFragment.dataLoading)
 			hashtagsFragment.loadData();
 	}
 
-	private void onSearchEditFocusChanged(View v, boolean hasFocus){
-		if(!searchActive && hasFocus){
+	private void enterSearch(){
+		if(!searchActive){
 			searchActive=true;
 			pager.setVisibility(View.GONE);
 			tabLayout.setVisibility(View.GONE);
@@ -261,28 +228,26 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 			searchBack.setImageResource(R.drawable.ic_fluent_arrow_left_24_regular);
 			searchBack.setEnabled(true);
 			searchBack.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+			tabsDivider.setVisibility(View.GONE);
 		}
 	}
 
 	private void exitSearch(){
+		if(!searchActive)
+			return;
 		searchActive=false;
-		pager.setVisibility(View.VISIBLE);
-		tabLayout.setVisibility(View.VISIBLE);
-		searchView.setVisibility(View.GONE);
-		searchEdit.clearFocus();
-		searchEdit.setText("");
+		searchText.setText(R.string.sk_search_fediverse);
 		searchBack.setImageResource(R.drawable.ic_fluent_search_24_regular);
 		searchBack.setEnabled(false);
 		searchBack.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-		getActivity().getSystemService(InputMethodManager.class).hideSoftInputFromWindow(searchEdit.getWindowToken(), 0);
-		if (getArguments().getBoolean("disableDiscover"))
-			((HomeFragment) getParentFragment()).onBackPressed();
-	}
+		currentQuery=null;
+		searchFragment.clear();
 
-	@Override
-	protected void onHidden(){
-		super.onHidden();
-		getActivity().getSystemService(InputMethodManager.class).hideSoftInputFromWindow(searchEdit.getWindowToken(), 0);
+		if(disableDiscover) return;
+		pager.setVisibility(View.VISIBLE);
+		tabLayout.setVisibility(View.VISIBLE);
+		searchView.setVisibility(View.GONE);
+		tabsDivider.setVisibility(View.VISIBLE);
 	}
 
 	private Fragment getFragmentForPage(int page){
@@ -304,30 +269,20 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 		return false;
 	}
 
-	private void onSearchChangedDebounced(){
-		searchFragment.setQuery(searchEdit.getText().toString());
-	}
-
-	private boolean onSearchEnterPressed(TextView v, int actionId, KeyEvent event){
-		if(event!=null && event.getAction()!=KeyEvent.ACTION_DOWN)
-			return true;
-		searchEdit.removeCallbacks(searchDebouncer);
-		onSearchChangedDebounced();
-		getActivity().getSystemService(InputMethodManager.class).hideSoftInputFromWindow(searchEdit.getWindowToken(), 0);
-		return true;
-	}
-
-	private void onSearchProgressVisibilityChanged(boolean visible){
-		V.setVisibilityAnimated(searchProgress, visible ? View.VISIBLE : View.INVISIBLE);
-		if(searchEdit.length()>0)
-			V.setVisibilityAnimated(searchClear, visible ? View.INVISIBLE : View.VISIBLE);
-	}
-
 	@Override
-	public void onProvideAssistContent(AssistContent assistContent) {
-		callFragmentToProvideAssistContent(searchActive
-				? searchFragment
-				: getFragmentForPage(pager.getCurrentItem()), assistContent);
+	public void onFragmentResult(int reqCode, boolean success, Bundle result){
+		if(reqCode==QUERY_RESULT && success){
+			enterSearch();
+			currentQuery=result.getString("query");
+			SearchResult.Type type;
+			if(result.containsKey("filter")){
+				type=SearchResult.Type.values()[result.getInt("filter")];
+			}else{
+				type=null;
+			}
+			searchFragment.setQuery(currentQuery, type);
+			searchText.setText(currentQuery);
+		}
 	}
 
 	private class DiscoverPagerAdapter extends RecyclerView.Adapter<SimpleViewHolder>{

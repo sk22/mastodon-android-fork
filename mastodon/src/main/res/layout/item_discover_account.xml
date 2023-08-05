@@ -3,7 +3,7 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:background="?colorBackgroundLight"
+	android:background="?colorM3SurfaceVariant"
 	android:elevation="2dp"
 	android:paddingBottom="0dp">
 
@@ -183,15 +183,19 @@
 			android:paddingStart="8dp"
 			android:paddingEnd="4dp"
 			android:clipToPadding="false"
-			android:paddingTop="8dp"
-			android:paddingBottom="16dp"
+			android:paddingBottom="8dp"
 			android:visibility="gone">
 
 			<org.joinmastodon.android.ui.views.ProgressBarButton
 				android:id="@+id/reject_btn"
-				style="?secondaryButtonStyle"
+				style="@style/Widget.Mastodon.M3.Button.Text"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+				android:minHeight="48dp"
+				android:minWidth="56dp"
+				android:paddingStart="16dp"
+				android:paddingEnd="16dp"
+				android:drawablePadding="0dp"
 				android:contentDescription="@string/sk_reject_follow_request"
 				android:drawableStart="@drawable/ic_fluent_dismiss_24_filled"
 				android:singleLine="true" />
@@ -216,14 +220,19 @@
 			android:paddingStart="4dp"
 			android:paddingEnd="16dp"
 			android:clipToPadding="false"
-			android:paddingTop="8dp"
-			android:paddingBottom="16dp"
+			android:paddingBottom="8dp"
 			android:visibility="gone">
 
 			<org.joinmastodon.android.ui.views.ProgressBarButton
 				android:id="@+id/accept_btn"
+				style="@style/Widget.Mastodon.M3.Button.Filled"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+				android:minHeight="48dp"
+				android:minWidth="56dp"
+				android:paddingStart="16dp"
+				android:paddingEnd="16dp"
+				android:drawablePadding="0dp"
 				android:contentDescription="@string/sk_accept_follow_request"
 				android:drawableStart="@drawable/ic_fluent_checkmark_24_filled"
 				android:singleLine="true" />
@@ -247,14 +256,15 @@
 			android:layout_gravity="bottom"
 			android:paddingStart="8dp"
 			android:paddingEnd="16dp"
-			android:paddingTop="8dp"
-			android:paddingBottom="16dp"
+			android:paddingBottom="8dp"
 			android:clipToPadding="false">
 
 			<org.joinmastodon.android.ui.views.ProgressBarButton
 				android:id="@+id/action_btn"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+				android:minHeight="48dp"
+				android:minWidth="56dp"
 				android:singleLine="true"
 				tools:text="@string/follow_back"/>
 
@@ -267,7 +277,6 @@
 				style="?android:progressBarStyleSmall"
 				android:elevation="10dp"
 				android:outlineProvider="none"
-				android:indeterminateTint="?colorButtonText"
 				android:visibility="gone"/>
 		</FrameLayout>
 	</LinearLayout>

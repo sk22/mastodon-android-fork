@@ -7,6 +7,11 @@
 		android:visible="false"
 		android:title="@string/sk_follow_requests" />
 	<item
+		android:id="@+id/mark_all_read"
+		android:icon="@drawable/ic_done_all_24px"
+		android:title="@string/mark_all_notifications_read"
+		android:showAsAction="always" />
+	<item
 		android:id="@+id/clear_notifications"
 		android:icon="@drawable/ic_fluent_mail_inbox_dismiss_24_regular"
 		android:showAsAction="collapseActionView"

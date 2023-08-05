@@ -1,6 +1,9 @@
 package org.joinmastodon.android.fragments;
 
 import android.app.Activity;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -10,50 +13,44 @@ import com.squareup.otto.Subscribe;
 
 import org.joinmastodon.android.E;
 import org.joinmastodon.android.R;
-import org.joinmastodon.android.api.requests.markers.SaveMarkers;
-import org.joinmastodon.android.api.requests.notifications.PleromaMarkNotificationsRead;
+import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
-import org.joinmastodon.android.events.AllNotificationsSeenEvent;
 import org.joinmastodon.android.events.PollUpdatedEvent;
 import org.joinmastodon.android.events.RemoveAccountPostsEvent;
 import org.joinmastodon.android.events.StatusCountersUpdatedEvent;
-import org.joinmastodon.android.model.Account;
-import org.joinmastodon.android.model.CacheablePaginatedResponse;
-import org.joinmastodon.android.model.Emoji;
-import org.joinmastodon.android.model.Filter;
-import org.joinmastodon.android.model.Instance;
-import org.joinmastodon.android.model.Markers;
 import org.joinmastodon.android.model.Notification;
+import org.joinmastodon.android.model.PaginatedResponse;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.displayitems.AccountCardStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.ExtendedFooterStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.FooterStatusDisplayItem;
-import org.joinmastodon.android.ui.displayitems.HeaderStatusDisplayItem;
+import org.joinmastodon.android.ui.displayitems.NotificationHeaderStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.StatusDisplayItem;
-import org.joinmastodon.android.ui.displayitems.TextStatusDisplayItem;
-import org.joinmastodon.android.ui.text.HtmlParser;
 import org.joinmastodon.android.ui.utils.DiscoverInfoBannerHelper;
 import org.joinmastodon.android.ui.utils.InsetStatusItemDecoration;
 import org.joinmastodon.android.ui.utils.UiUtils;
+import org.joinmastodon.android.utils.ElevationOnScrollListener;
+import org.joinmastodon.android.utils.ObjectIdComparator;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import me.grishka.appkit.Nav;
 import me.grishka.appkit.api.SimpleCallback;
+import me.grishka.appkit.utils.MergeRecyclerAdapter;
+import me.grishka.appkit.views.FragmentRootLinearLayout;
 
-public class NotificationsListFragment extends BaseStatusListFragment<Notification>{
+public class NotificationsListFragment extends BaseStatusListFragment<Notification> {
 	private boolean onlyMentions;
 	private boolean onlyPosts;
 	private String maxID;
-	private final DiscoverInfoBannerHelper bannerHelper = new DiscoverInfoBannerHelper(DiscoverInfoBannerHelper.BannerType.POST_NOTIFICATIONS);
+	private boolean reloadingFromCache;
+	private DiscoverInfoBannerHelper bannerHelper;
 
 	@Override
 	protected boolean wantsComposeButton() {
@@ -64,6 +61,13 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		E.register(this);
+		if(savedInstanceState!=null){
+			onlyMentions=savedInstanceState.getBoolean("onlyMentions", false);
+			onlyPosts=savedInstanceState.getBoolean("onlyPosts", false);
+		}
+		if (onlyPosts) {
+			bannerHelper=new DiscoverInfoBannerHelper(DiscoverInfoBannerHelper.BannerType.POST_NOTIFICATIONS, accountID);
+		}
 	}
 
 	@Override
@@ -77,59 +81,35 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 		super.onAttach(activity);
 		onlyMentions=getArguments().getBoolean("onlyMentions", false);
 		onlyPosts=getArguments().getBoolean("onlyPosts", false);
-	}
-
-	@Override
-	public void onRefresh() {
-		super.onRefresh();
-		if (getParentFragment() instanceof NotificationsFragment notificationsFragment) {
-			notificationsFragment.refreshFollowRequestsBadge();
-		}
+		setTitle(R.string.notifications);
 	}
 
 	@Override
 	protected List<StatusDisplayItem> buildDisplayItems(Notification n){
-		Account reportTarget = n.report == null ? null : n.report.targetAccount == null ? null :
-				n.report.targetAccount;
-		Emoji emoji = new Emoji();
-		if(n.emojiUrl!=null){
-			emoji.shortcode=n.emoji.substring(1,n.emoji.length()-1);
-			emoji.url=n.emojiUrl;
-			emoji.staticUrl=n.emojiUrl;
-			emoji.visibleInPicker=false;
+		NotificationHeaderStatusDisplayItem titleItem;
+		if(n.type==Notification.Type.MENTION || n.type==Notification.Type.STATUS){
+			titleItem=null;
+		}else{
+			titleItem=new NotificationHeaderStatusDisplayItem(n.id, this, n, accountID);
 		}
-		String extraText=switch(n.type){
-			case FOLLOW -> getString(R.string.user_followed_you);
-			case FOLLOW_REQUEST -> getString(R.string.user_sent_follow_request);
-			case MENTION, STATUS -> null;
-			case REBLOG -> getString(R.string.notification_boosted);
-			case FAVORITE -> getString(R.string.user_favorited);
-			case POLL -> getString(R.string.poll_ended);
-			case UPDATE -> getString(R.string.sk_post_edited);
-			case SIGN_UP -> getString(R.string.sk_signed_up);
-			case REPORT -> getString(R.string.sk_reported);
-			case REACTION, PLEROMA_EMOJI_REACTION ->
-					n.emoji != null ? getString(R.string.sk_reacted_with, n.emoji) : getString(R.string.sk_reacted);
-		};
-		HeaderStatusDisplayItem titleItem=extraText!=null ? new HeaderStatusDisplayItem(n.id, n.account, n.createdAt, this, accountID, n.status, n.emojiUrl!=null ? HtmlParser.parseCustomEmoji(extraText, Collections.singletonList(emoji)) : extraText, n, null) : null;
+		if (n.type == Notification.Type.FOLLOW_REQUEST) {
+			ArrayList<StatusDisplayItem> items = new ArrayList<>();
+			items.add(titleItem);
+			items.add(new AccountCardStatusDisplayItem(n.id, this, n.account, n));
+			return items;
+		}
 		if(n.status!=null){
-			ArrayList<StatusDisplayItem> items=StatusDisplayItem.buildItems(this, n.status, accountID, n, knownAccounts, titleItem!=null, titleItem==null, n, false, Filter.FilterContext.NOTIFICATIONS);
+			int flags=titleItem==null ? 0 : (StatusDisplayItem.FLAG_NO_FOOTER | StatusDisplayItem.FLAG_INSET); // | StatusDisplayItem.FLAG_NO_HEADER);
+			ArrayList<StatusDisplayItem> items=StatusDisplayItem.buildItems(this, n.status, accountID, n, knownAccounts, null, flags);
 			if(titleItem!=null)
 				items.add(0, titleItem);
 			return items;
 		}else if(titleItem!=null){
-			AccountCardStatusDisplayItem card=new AccountCardStatusDisplayItem(n.id, this,
-					reportTarget != null ? reportTarget : n.account, n);
-			TextStatusDisplayItem text = n.report != null && !TextUtils.isEmpty(n.report.comment) ?
-					new TextStatusDisplayItem(n.id, n.report.comment, this,
-							Status.ofFake(n.id, n.report.comment, n.createdAt), true) :
-					null;
-			return text == null ? Arrays.asList(titleItem, card) : Arrays.asList(titleItem, text, card);
+			return Collections.singletonList(titleItem);
 		}else{
 			return Collections.emptyList();
 		}
 	}
-
 	@Override
 	protected void addAccountToKnown(Notification s){
 		if(!knownAccounts.containsKey(s.account.id))
@@ -144,52 +124,38 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 	protected void doLoadData(int offset, int count){
 		AccountSessionManager.getInstance()
 				.getAccount(accountID).getCacheController()
-				.getNotifications(offset>0 ? maxID : null, count, onlyMentions, onlyPosts, refreshing, new SimpleCallback<>(this){
+				.getNotifications(offset>0 ? maxID : null, count, onlyMentions, onlyPosts, refreshing && !reloadingFromCache, new SimpleCallback<>(this){
 					@Override
-					public void onSuccess(CacheablePaginatedResponse<List<Notification>> result){
-						if (getActivity() == null) return;
-						if(refreshing)
-							relationships.clear();
+					public void onSuccess(PaginatedResponse<List<Notification>> result){
+						if(getActivity()==null)
+							return;
 						maxID=result.maxID;
 						onDataLoaded(result.items.stream().filter(n->n.type!=null).collect(Collectors.toList()), !result.items.isEmpty());
-						Set<String> needRelationships=result.items.stream()
-								.filter(ntf->ntf.status==null && !relationships.containsKey(ntf.account.id))
-								.map(ntf->ntf.account.id)
-								.collect(Collectors.toSet());
-						loadRelationships(needRelationships);
-
-						Markers markers = AccountSessionManager.getInstance().getAccount(accountID).markers;
-						if(offset==0 && !result.items.isEmpty() && !result.isFromCache() && markers != null && markers.notifications != null){
-							E.post(new AllNotificationsSeenEvent());
-							new SaveMarkers(null, result.items.get(0).id).exec(accountID);
-							AccountSessionManager.getInstance().getAccount(accountID).markers
-									.notifications.lastReadId = result.items.get(0).id;
-							AccountSessionManager.getInstance().writeAccountsFile();
-
-							if (isInstanceAkkoma()) {
-								new PleromaMarkNotificationsRead(result.items.get(0).id).exec(accountID);
-							}
+						reloadingFromCache=false;
+						if (getParentFragment() instanceof NotificationsFragment nf) {
+							nf.updateMarkAllReadButton();
 						}
 					}
 				});
 	}
 
 	@Override
-	protected void onRelationshipsLoaded(){
-		if(getActivity()==null)
-			return;
-		for(int i=0;i<list.getChildCount();i++){
-			RecyclerView.ViewHolder holder=list.getChildViewHolder(list.getChildAt(i));
-			if(holder instanceof AccountCardStatusDisplayItem.Holder accountHolder)
-				accountHolder.rebind();
+	protected void onShown(){
+		super.onShown();
+		if(!dataLoading){
+			if(onlyMentions){
+				refresh();
+			}else{
+				reloadingFromCache=true;
+				refresh();
+			}
 		}
 	}
 
 	@Override
-	protected void onShown(){
-		super.onShown();
-//		if(!getArguments().getBoolean("noAutoLoad") && !loaded && !dataLoading)
-//			loadData();
+	protected void onHidden(){
+		super.onHidden();
+		resetUnreadBackground();
 	}
 
 	@Override
@@ -205,7 +171,50 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 	public void onViewCreated(View view, Bundle savedInstanceState){
 		super.onViewCreated(view, savedInstanceState);
 		list.addItemDecoration(new InsetStatusItemDecoration(this));
-		if (onlyPosts) bannerHelper.maybeAddBanner(contentWrap);
+		list.addItemDecoration(new RecyclerView.ItemDecoration(){
+			private Paint paint=new Paint();
+			private Rect tmpRect=new Rect();
+
+			{
+				paint.setColor(UiUtils.getThemeColor(getActivity(), R.attr.colorM3SurfaceVariant));
+			}
+
+			@Override
+			public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state){
+				if (getParentFragment() instanceof NotificationsFragment nf) {
+					if(TextUtils.isEmpty(nf.unreadMarker))
+						return;
+					for(int i=0;i<parent.getChildCount();i++){
+						View child=parent.getChildAt(i);
+						if(parent.getChildViewHolder(child) instanceof StatusDisplayItem.Holder<?> holder){
+							String itemID=holder.getItemID();
+							if(ObjectIdComparator.INSTANCE.compare(itemID, nf.unreadMarker)>0){
+								parent.getDecoratedBoundsWithMargins(child, tmpRect);
+								c.drawRect(tmpRect, paint);
+							}
+						}
+					}
+				}
+			}
+		}, 0);
+	}
+
+	@Override
+	protected List<View> getViewsForElevationEffect(){
+		if (getParentFragment() instanceof NotificationsFragment nf) {
+			ArrayList<View> views=new ArrayList<>(super.getViewsForElevationEffect());
+			views.add(nf.tabLayout);
+			return views;
+		} else {
+			return super.getViewsForElevationEffect();
+		}
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState){
+		super.onSaveInstanceState(outState);
+		outState.putBoolean("onlyMentions", onlyMentions);
+		outState.putBoolean("onlyPosts", onlyPosts);
 	}
 
 	private Notification getNotificationByID(String id){
@@ -238,6 +247,7 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 			if (n.status == null) continue;
 			if(n.status.getContentStatus().id.equals(ev.id)){
 				n.status.getContentStatus().update(ev);
+				AccountSessionManager.get(accountID).getCacheController().updateNotification(n);
 				for(int i=0;i<list.getChildCount();i++){
 					RecyclerView.ViewHolder holder=list.getChildViewHolder(list.getChildAt(i));
 					if(holder instanceof FooterStatusDisplayItem.Holder footer && footer.getItem().status==n.status.getContentStatus()){
@@ -252,6 +262,7 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 			if (n.status == null) continue;
 			if(n.status.getContentStatus().id.equals(ev.id)){
 				n.status.getContentStatus().update(ev);
+				AccountSessionManager.get(accountID).getCacheController().updateNotification(n);
 			}
 		}
 	}
@@ -287,6 +298,40 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 		}
 		displayItems.subList(index, lastIndex).clear();
 		adapter.notifyItemRangeRemoved(index, lastIndex-index);
+	}
+
+	@Override
+	protected boolean needDividerForExtraItem(View child, View bottomSibling, RecyclerView.ViewHolder holder, RecyclerView.ViewHolder siblingHolder){
+		return super.needDividerForExtraItem(child, bottomSibling, holder, siblingHolder) || (siblingHolder!=null && siblingHolder.getAbsoluteAdapterPosition()>=adapter.getItemCount());
+	}
+
+	void resetUnreadBackground(){
+		if (getParentFragment() instanceof NotificationsFragment nf) {
+			nf.unreadMarker=nf.realUnreadMarker;
+			list.invalidate();
+		}
+	}
+
+	@Override
+	public void onRefresh(){
+		super.onRefresh();
+		if (getParentFragment() instanceof NotificationsFragment nf) {
+			if (!onlyMentions && !onlyPosts) nf.markAsRead();
+			else AccountSessionManager.get(accountID).reloadNotificationsMarker(m->{
+				nf.unreadMarker=nf.realUnreadMarker=m;
+				nf.updateMarkAllReadButton();
+			});
+		}
+		resetUnreadBackground();
+	}
+
+	@Override
+	protected RecyclerView.Adapter<?> getAdapter(){
+		if (bannerHelper == null) return super.getAdapter();
+		MergeRecyclerAdapter adapter=new MergeRecyclerAdapter();
+		bannerHelper.maybeAddBanner(list, adapter);
+		adapter.addAdapter(super.getAdapter());
+		return adapter;
 	}
 
 	@Override

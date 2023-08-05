@@ -17,7 +17,7 @@ import org.joinmastodon.android.api.requests.tags.GetHashtag;
 import org.joinmastodon.android.api.requests.tags.SetHashtagFollowed;
 import org.joinmastodon.android.api.requests.timelines.GetHashtagTimeline;
 import org.joinmastodon.android.events.HashtagUpdatedEvent;
-import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Hashtag;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.model.TimelineDefinition;
@@ -126,7 +126,7 @@ public class HashtagTimelineFragment extends PinnableStatusListFragment {
 
 	@Override
 	protected void doLoadData(int offset, int count){
-		currentRequest=new GetHashtagTimeline(hashtag, offset==0 ? null : getMaxID(), null, count, any, all, none, localOnly)
+		currentRequest=new GetHashtagTimeline(hashtag, offset==0 ? null : getMaxID(), null, count, any, all, none, localOnly, getLocalPrefs().timelineReplyVisibility)
 				.setCallback(new SimpleCallback<>(this){
 					@Override
 					public void onSuccess(List<Status> result){
@@ -160,12 +160,12 @@ public class HashtagTimelineFragment extends PinnableStatusListFragment {
 
 	@Override
 	protected void onSetFabBottomInset(int inset){
-		((ViewGroup.MarginLayoutParams) fab.getLayoutParams()).bottomMargin=V.dp(24)+inset;
+		((ViewGroup.MarginLayoutParams) fab.getLayoutParams()).bottomMargin=V.dp(16)+inset;
 	}
 
 	@Override
-	protected Filter.FilterContext getFilterContext() {
-		return Filter.FilterContext.PUBLIC;
+	protected FilterContext getFilterContext() {
+		return FilterContext.PUBLIC;
 	}
 
 	@Override

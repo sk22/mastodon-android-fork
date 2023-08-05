@@ -27,7 +27,7 @@
     <string name="sk_reject_follow_request">Avslå följarbegäran</string>
     <string name="sk_lists_with_user">Listor med %s</string>
     <string name="sk_settings_always_reveal_content_warnings">Visa alltid innehållsvarningar</string>
-    <string name="sk_disable_marquee">Slå av skrollande text i titelrader</string>
+    <string name="sk_settings_enable_marquee">Slå av skrollande text i titelrader</string>
     <string name="sk_settings_contribute">Bidra till Megalodon</string>
     <string name="sk_settings_show_federated_timeline">Visa federerad tidslinje</string>
     <string name="sk_app_name">Megalodon</string>

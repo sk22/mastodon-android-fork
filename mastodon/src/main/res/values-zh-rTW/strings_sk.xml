@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sk_notification_type_status">嘟文</string>
-    <string name="sk_notify_posts">嘟文通知</string>
+    <string name="sk_notification_type_posts">嘟文通知</string>
     <string name="sk_poll_allow_multiple">允許複選</string>
     <string name="sk_translate_post">翻譯</string>
     <string name="sk_translated_using">通過 %s 翻譯</string>
@@ -36,7 +36,7 @@
     <string name="sk_follow_requests">跟隨請求</string>
     <string name="sk_accept_follow_request">接受跟隨請求</string>
     <string name="sk_reject_follow_request">拒絕跟隨請求</string>
-    <string name="sk_disable_marquee">停用標題列的滾動文本</string>
+    <string name="sk_settings_enable_marquee">停用標題列的滾動文本</string>
     <string name="sk_settings_show_federated_timeline">顯示聯邦時間軸</string>
     <string name="sk_settings_contribute">為 Megalodon 貢獻</string>
     <string name="sk_delete_and_redraft">刪除以重新撰寫</string>

@@ -20,6 +20,7 @@ import org.joinmastodon.android.fragments.account_list.StatusFavoritesListFragme
 import org.joinmastodon.android.fragments.account_list.StatusReblogsListFragment;
 import org.joinmastodon.android.fragments.account_list.StatusRelatedAccountListFragment;
 import org.joinmastodon.android.model.Status;
+import org.joinmastodon.android.model.StatusPrivacy;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.parceler.Parcels;
 
@@ -75,11 +76,11 @@ public class ExtendedFooterStatusDisplayItem extends StatusDisplayItem{
 			Status s=item.status;
 			favorites.setText(context.getResources().getQuantityString(R.plurals.x_favorites, (int)(s.favouritesCount%1000), s.favouritesCount));
 			reblogs.setText(context.getResources().getQuantityString(R.plurals.x_reblogs, (int) (s.reblogsCount % 1000), s.reblogsCount));
-			reblogs.setVisibility(s.isReblogPermitted(item.accountID) ? View.VISIBLE : View.GONE);
+			reblogs.setVisibility(s.visibility != StatusPrivacy.DIRECT ? View.VISIBLE : View.GONE);
 
 			if(s.editedAt!=null){
 				editHistory.setVisibility(View.VISIBLE);
-				editHistory.setText(UiUtils.formatRelativeTimestampAsMinutesAgo(itemView.getContext(), s.editedAt));
+				editHistory.setText(UiUtils.formatRelativeTimestampAsMinutesAgo(itemView.getContext(), s.editedAt, false));
 			}else{
 				editHistory.setVisibility(View.GONE);
 			}

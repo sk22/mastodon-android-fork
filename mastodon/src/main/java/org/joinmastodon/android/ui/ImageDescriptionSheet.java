@@ -67,7 +67,7 @@ public class ImageDescriptionSheet extends BottomSheet{
 		list.setClipToPadding(false);
 
 		setContentView(list);
-		setNavigationBarBackground(new ColorDrawable(UiUtils.getThemeColor(activity, R.attr.colorWindowBackground)), !UiUtils.isDarkTheme());
+		setNavigationBarBackground(new ColorDrawable(UiUtils.getThemeColor(activity, R.attr.colorM3Surface)), !UiUtils.isDarkTheme());
 	}
 
 	@Override

@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -25,7 +26,6 @@ import org.joinmastodon.android.api.requests.statuses.SetStatusFavorited;
 import org.joinmastodon.android.api.requests.statuses.SetStatusReblogged;
 import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
-import org.joinmastodon.android.events.NotificationReceivedEvent;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Mention;
 import org.joinmastodon.android.model.NotificationAction;
@@ -33,12 +33,15 @@ import org.joinmastodon.android.model.Preferences;
 import org.joinmastodon.android.model.PushNotification;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.model.StatusPrivacy;
+import org.joinmastodon.android.ui.text.HtmlParser;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -57,6 +60,7 @@ public class PushNotificationReceiver extends BroadcastReceiver{
 
 	private static final int SUMMARY_ID = 791;
 	private static int notificationId = 0;
+	private static final Map<String, Integer> notificationIdsForAccounts = new HashMap<>();
 
 	@Override
 	public void onReceive(Context context, Intent intent){
@@ -88,9 +92,12 @@ public class PushNotificationReceiver extends BroadcastReceiver{
 							Log.w(TAG, "onReceive: account for id '"+pushAccountID+"' not found");
 							return;
 						}
+						if(account.getLocalPreferences().getNotificationsPauseEndTime()>System.currentTimeMillis()){
+							Log.i(TAG, "onReceive: dropping notification because user has paused notifications for this account");
+							return;
+						}
 						String accountID=account.getID();
 						PushNotification pn=AccountSessionManager.getInstance().getAccount(accountID).getPushSubscriptionManager().decryptNotification(k, p, s);
-						E.post(new NotificationReceivedEvent(accountID, pn.notificationId+""));
 						new GetNotificationByID(pn.notificationId+"")
 								.setCallback(new Callback<>(){
 									@Override
@@ -143,9 +150,15 @@ public class PushNotificationReceiver extends BroadcastReceiver{
 		}
 	}
 
+	public void notifyUnifiedPush(Context context, String accountID, org.joinmastodon.android.model.Notification notification) {
+		// push notifications are only created from the official push notification, so we create a fake from by transforming the notification
+		PushNotificationReceiver.this.notify(context, PushNotification.fromNotification(context, notification), accountID, notification);
+	}
+
 	private void notify(Context context, PushNotification pn, String accountID, org.joinmastodon.android.model.Notification notification){
 		NotificationManager nm=context.getSystemService(NotificationManager.class);
-		Account self=AccountSessionManager.getInstance().getAccount(accountID).self;
+		AccountSession session=AccountSessionManager.get(accountID);
+		Account self=session.self;
 		String accountName="@"+self.username+"@"+AccountSessionManager.getInstance().getAccount(accountID).domain;
 		Notification.Builder builder;
 		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
@@ -215,7 +228,21 @@ public class PushNotificationReceiver extends BroadcastReceiver{
 			builder.setSubText(accountName);
 		}
 
-		int id = GlobalUserPreferences.keepOnlyLatestNotification ? NOTIFICATION_ID : notificationId++;
+		int id;
+		if(session.getLocalPreferences().keepOnlyLatestNotification){
+			if(notificationIdsForAccounts.containsKey(accountID)){
+				// we overwrite the existing notification
+				id=notificationIdsForAccounts.get(accountID);
+			}else{
+				// there's no existing notification, so we increment
+				id=notificationId++;
+				// and store the notification id for this account
+				notificationIdsForAccounts.put(accountID, id);
+			}
+		}else{
+			// we don't want to overwrite anything, therefore incrementing
+			id=notificationId++;
+		}
 
 		if (notification != null){
 			switch (pn.notificationType){

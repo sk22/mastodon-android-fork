@@ -5,7 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.view.View;
@@ -26,15 +26,21 @@ import me.grishka.appkit.views.FragmentRootLinearLayout;
 public class ElevationOnScrollListener extends RecyclerView.OnScrollListener implements View.OnScrollChangeListener{
 	private boolean isAtTop;
 	private Animator currentPanelsAnim;
-	private View[] views;
+	private List<View> views;
+	private View divider;
 	private FragmentRootLinearLayout fragmentRootLayout;
+	private Rect tmpRect=new Rect();
 
 	public ElevationOnScrollListener(FragmentRootLinearLayout fragmentRootLayout, View... views){
+		this(fragmentRootLayout, Arrays.asList(views));
+	}
+
+	public ElevationOnScrollListener(FragmentRootLinearLayout fragmentRootLayout, List<View> views){
 		isAtTop=true;
 		this.fragmentRootLayout=fragmentRootLayout;
 		this.views=views;
 		for(View v:views){
-			Drawable bg=v.getBackground().mutate();
+			Drawable bg=v.getContext().getDrawable(R.drawable.bg_onboarding_panel).mutate();
 			v.setBackground(bg);
 			if(bg instanceof LayerDrawable ld){
 				Drawable overlay=ld.findDrawableByLayerId(R.id.color_overlay);
@@ -45,13 +51,21 @@ public class ElevationOnScrollListener extends RecyclerView.OnScrollListener imp
 		}
 	}
 
+	public void setDivider(View divider) {
+		this.divider = divider;
+	}
+
 	public void setViews(View... views){
-		List<View> oldViews=Arrays.asList(this.views);
+		setViews(Arrays.asList(views));
+	}
+
+	public void setViews(List<View> views){
+		List<View> oldViews=this.views;
 		this.views=views;
 		for(View v:views){
 			if(oldViews.contains(v))
 				continue;
-			Drawable bg=v.getBackground().mutate();
+			Drawable bg=v.getContext().getDrawable(R.drawable.bg_onboarding_panel).mutate();
 			v.setBackground(bg);
 			if(bg instanceof LayerDrawable ld){
 				Drawable overlay=ld.findDrawableByLayerId(R.id.color_overlay);
@@ -63,9 +77,14 @@ public class ElevationOnScrollListener extends RecyclerView.OnScrollListener imp
 		}
 	}
 
+	private int getRecyclerChildDecoratedTop(RecyclerView rv, View child){
+		rv.getDecoratedBoundsWithMargins(child, tmpRect);
+		return tmpRect.top;
+	}
+
 	@Override
 	public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy){
-		boolean newAtTop=recyclerView.getChildCount()==0 || (recyclerView.getChildAdapterPosition(recyclerView.getChildAt(0))==0 && recyclerView.getChildAt(0).getTop()==recyclerView.getPaddingTop());
+		boolean newAtTop=recyclerView.getChildCount()==0 || (recyclerView.getChildAdapterPosition(recyclerView.getChildAt(0))==0 && getRecyclerChildDecoratedTop(recyclerView, recyclerView.getChildAt(0))==recyclerView.getPaddingTop());
 		handleScroll(recyclerView.getContext(), newAtTop);
 	}
 
@@ -74,7 +93,8 @@ public class ElevationOnScrollListener extends RecyclerView.OnScrollListener imp
 		handleScroll(v.getContext(), scrollY<=0);
 	}
 
-	private void handleScroll(Context context, boolean newAtTop){
+	public void handleScroll(Context context, boolean newAtTop){
+		if(UiUtils.isTrueBlackTheme()) newAtTop=true;
 		if(newAtTop!=isAtTop){
 			isAtTop=newAtTop;
 			if(currentPanelsAnim!=null)
@@ -86,19 +106,22 @@ public class ElevationOnScrollListener extends RecyclerView.OnScrollListener imp
 				if(v.getBackground() instanceof LayerDrawable ld){
 					Drawable overlay=ld.findDrawableByLayerId(R.id.color_overlay);
 					if(overlay!=null){
-						anims.add(ObjectAnimator.ofInt(overlay, "alpha", isAtTop ? 0 : 20));
+						anims.add(ObjectAnimator.ofInt(overlay, "alpha", newAtTop ? 0 : 20));
 					}
 				}
-				anims.add(ObjectAnimator.ofFloat(v, View.TRANSLATION_Z, isAtTop ? 0 : V.dp(3)));
+				anims.add(ObjectAnimator.ofFloat(v, View.TRANSLATION_Z, newAtTop ? 0 : V.dp(3)));
 			}
 			if(fragmentRootLayout!=null){
 				int color;
-				if(isAtTop){
-					color=UiUtils.getThemeColor(context, R.attr.toolbarBackground);
+				if(newAtTop){
+					color=UiUtils.getThemeColor(context, R.attr.colorM3Background);
 				}else{
-					color=UiUtils.alphaBlendColors(UiUtils.getThemeColor(context, R.attr.toolbarBackground), UiUtils.getThemeColor(context, R.attr.colorWindowBackground), 0.07843137f);
+					color=UiUtils.alphaBlendColors(UiUtils.getThemeColor(context, R.attr.colorM3Background), UiUtils.getThemeColor(context, R.attr.colorM3Primary), 0.07843137f);
 				}
 				anims.add(ObjectAnimator.ofArgb(fragmentRootLayout, "statusBarColor", color));
+			}
+			if(divider!=null){
+				anims.add(ObjectAnimator.ofFloat(divider, View.ALPHA, newAtTop ? 1 : 0));
 			}
 			set.playTogether(anims);
 			set.setDuration(150);
@@ -112,5 +135,9 @@ public class ElevationOnScrollListener extends RecyclerView.OnScrollListener imp
 			set.start();
 			currentPanelsAnim=set;
 		}
+	}
+
+	public int getCurrentStatusBarColor(){
+		return fragmentRootLayout.getStatusBarColor();
 	}
 }

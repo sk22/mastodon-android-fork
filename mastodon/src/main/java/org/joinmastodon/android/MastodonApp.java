@@ -3,6 +3,7 @@ package org.joinmastodon.android;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
+import android.webkit.WebView;
 
 import org.joinmastodon.android.api.PushSubscriptionManager;
 
@@ -28,5 +29,8 @@ public class MastodonApp extends Application{
 
 		PushSubscriptionManager.tryRegisterFCM();
 		GlobalUserPreferences.load();
+		if(BuildConfig.DEBUG){
+			WebView.setWebContentsDebuggingEnabled(true);
+		}
 	}
 }

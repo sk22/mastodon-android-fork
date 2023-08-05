@@ -33,13 +33,13 @@
     <string name="sk_reject_follow_request">Odrzuć prośby o obserwację</string>
     <string name="sk_lists_with_user">Listy z %s</string>
     <string name="sk_settings_always_reveal_content_warnings">Zawsze odkrywaj ostrzeżenia o zawartości</string>
-    <string name="sk_disable_marquee">Wyłącz tekst przewijany w paskach tytułowych</string>
+    <string name="sk_settings_enable_marquee">Wyłącz tekst przewijany w paskach tytułowych</string>
     <string name="sk_settings_contribute">Wspomóż Megalodon</string>
     <string name="sk_settings_show_federated_timeline">Pokaż globalną oś czasu</string>
     <string name="sk_settings_app_version">Megalodon v%1$s (%2$d)</string>
     <string name="sk_visibility_unlisted">Niewidoczny</string>
     <string name="sk_notification_type_status">Wpisy</string>
-    <string name="sk_notify_posts">Powiadomienia wpisów</string>
+    <string name="sk_notification_type_posts">Powiadomienia wpisów</string>
     <string name="sk_settings_color_palette">Motyw</string>
     <string name="sk_color_palette_pink">Różowy</string>
     <string name="sk_color_palette_purple">Fioletowy</string>
@@ -74,7 +74,7 @@
     <string name="sk_reply_as">Odpowiedz innym kontem</string>
     <string name="sk_settings_uniform_icon_for_notifications">Identyczna ikona dla wszystkich notyfikacji</string>
     <string name="sk_settings_translate_only_opened">Tłumacz tylko otwarte wpisy</string>
-    <string name="sk_tabs_disable_swipe">Wyłącz przeskakiwanie między zakładkami poprzez przesuwanie</string>
+    <string name="sk_settings_tabs_disable_swipe">Wyłącz przeskakiwanie między zakładkami poprzez przesuwanie</string>
     <string name="sk_settings_profile">Skonfiguruj profil</string>
     <string name="sk_settings_posting">Preferencje publikowania</string>
     <string name="sk_settings_filters">Skonfiguruj filtry</string>
@@ -87,7 +87,7 @@
     <string name="sk_delete_notification">Usuń powiadomienie</string>
     <string name="sk_delete_notification_confirm_action">Usuń powiadomienie</string>
     <string name="sk_delete_notification_confirm">Czy jesteś pewien że chcesz usunąć to powiadomienie\?</string>
-    <string name="sk_enable_delete_notifications">Włącz usuwanie notyfikacji</string>
+    <string name="sk_settings_enable_delete_notifications">Włącz usuwanie notyfikacji</string>
     <string name="sk_settings_publish_button_text">Opis przycisku publikacji</string>
     <string name="sk_settings_publish_button_text_title">Skonfiguruj opis przycisku publikacji</string>
     <string name="sk_settings_translation_availability_note_available">%s wspiera funkcję tłumaczenia!</string>

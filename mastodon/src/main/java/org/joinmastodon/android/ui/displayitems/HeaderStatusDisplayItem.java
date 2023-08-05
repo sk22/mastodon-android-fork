@@ -1,8 +1,8 @@
 package org.joinmastodon.android.ui.displayitems;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.graphics.Outline;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.Animatable;
@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewOutlineProvider;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -39,11 +38,12 @@ import org.joinmastodon.android.fragments.ThreadFragment;
 import org.joinmastodon.android.fragments.report.ReportReasonChoiceFragment;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Announcement;
-import org.joinmastodon.android.model.Attachment;
 import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.Relationship;
 import org.joinmastodon.android.model.ScheduledStatus;
 import org.joinmastodon.android.model.Status;
+import org.joinmastodon.android.model.StatusPrivacy;
+import org.joinmastodon.android.ui.OutlineProviders;
 import org.joinmastodon.android.ui.text.HtmlParser;
 import org.joinmastodon.android.ui.utils.CustomEmojiHelper;
 import org.joinmastodon.android.ui.utils.UiUtils;
@@ -58,6 +58,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 
+import androidx.annotation.LayoutRes;
 import me.grishka.appkit.Nav;
 import me.grishka.appkit.api.APIRequest;
 import me.grishka.appkit.api.Callback;
@@ -94,18 +95,12 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 		this.status=status;
 		this.notification=notification;
 		this.scheduledStatus=scheduledStatus;
-		HtmlParser.parseCustomEmoji(parsedName, user.emojis);
+		if(AccountSessionManager.get(accountID).getLocalPreferences().customEmojiInNames)
+			HtmlParser.parseCustomEmoji(parsedName, user.emojis);
 		emojiHelper.setText(parsedName);
 		if(status!=null){
-			hasVisibilityToggle=status.sensitive || !TextUtils.isEmpty(status.spoilerText);
-			if(!hasVisibilityToggle && !status.mediaAttachments.isEmpty()){
-				for(Attachment att:status.mediaAttachments){
-					if(att.type!=Attachment.Type.AUDIO){
-						hasVisibilityToggle=true;
-						break;
-					}
-				}
-			}
+			// visibility toggle can't do much for non-"image" attachments
+			hasVisibilityToggle=status.mediaAttachments.stream().anyMatch(m -> m.type.isImage());
 		}
 		this.extraText=extraText;
 		emojiHelper.addText(extraText);
@@ -137,36 +132,33 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 	}
 
 	public static class Holder extends StatusDisplayItem.Holder<HeaderStatusDisplayItem> implements ImageLoaderViewHolder{
-		private final TextView name, username, timestamp, extraText, separator;
+		private final TextView name, timeAndUsername, extraText, pronouns;
 		private final View collapseBtn;
-		private final ImageView avatar, more, visibility, deleteNotification, unreadIndicator, collapseBtnIcon;
+		private final ImageView avatar, more, visibility, deleteNotification, unreadIndicator, markAsRead, collapseBtnIcon;
 		private final PopupMenu optionsMenu;
 		private Relationship relationship;
 		private APIRequest<?> currentRelationshipRequest;
 
-		private static final ViewOutlineProvider roundCornersOutline=new ViewOutlineProvider(){
-			@Override
-			public void getOutline(View view, Outline outline){
-				outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), V.dp(12));
-			}
-		};
-
 		public Holder(Activity activity, ViewGroup parent){
-			super(activity, R.layout.display_item_header, parent);
+			this(activity, R.layout.display_item_header, parent);
+		}
+
+		protected Holder(Activity activity, @LayoutRes int layout, ViewGroup parent){
+			super(activity, layout, parent);
 			name=findViewById(R.id.name);
-			username=findViewById(R.id.username);
-			separator=findViewById(R.id.separator);
-			timestamp=findViewById(R.id.timestamp);
+			timeAndUsername=findViewById(R.id.time_and_username);
 			avatar=findViewById(R.id.avatar);
 			more=findViewById(R.id.more);
 			visibility=findViewById(R.id.visibility);
 			deleteNotification=findViewById(R.id.delete_notification);
 			unreadIndicator=findViewById(R.id.unread_indicator);
+			markAsRead=findViewById(R.id.mark_as_read);
 			collapseBtn=findViewById(R.id.collapse_btn);
 			collapseBtnIcon=findViewById(R.id.collapse_btn_icon);
 			extraText=findViewById(R.id.extra_text);
+			pronouns=findViewById(R.id.pronouns);
 			avatar.setOnClickListener(this::onAvaClick);
-			avatar.setOutlineProvider(roundCornersOutline);
+			avatar.setOutlineProvider(OutlineProviders.roundedRect(12));
 			avatar.setClipToOutline(true);
 			more.setOnClickListener(this::onMoreClick);
 			visibility.setOnClickListener(v->item.parentFragment.onVisibilityIconClick(this));
@@ -179,15 +171,16 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 
 			optionsMenu=new PopupMenu(activity, more);
 			optionsMenu.inflate(R.menu.post);
+			if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.P && !UiUtils.isEMUI())
+				optionsMenu.getMenu().setGroupDividerEnabled(true);
 			optionsMenu.setOnMenuItemClickListener(menuItem->{
 				Account account=item.user;
 				int id=menuItem.getItemId();
-
-				if(id==R.id.edit || id==R.id.delete_and_redraft) {
+				if(id==R.id.edit || id==R.id.delete_and_redraft){
 					final Bundle args=new Bundle();
 					args.putString("account", item.parentFragment.getAccountID());
 					args.putParcelable("editStatus", Parcels.wrap(item.status));
-					boolean redraft = id==R.id.delete_and_redraft;
+					boolean redraft = id == R.id.delete_and_redraft;
 					if (redraft) {
 						args.putBoolean("redraftStatus", true);
 						if (item.parentFragment instanceof ThreadFragment thread && !thread.isItemEnabled(item.status.id)) {
@@ -255,8 +248,9 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 					args.putString("account", item.parentFragment.getAccountID());
 					args.putParcelable("status", Parcels.wrap(item.status));
 					args.putParcelable("reportAccount", Parcels.wrap(item.status.account));
+					args.putParcelable("relationship", Parcels.wrap(relationship));
 					Nav.go(item.parentFragment.getActivity(), ReportReasonChoiceFragment.class, args);
-				}else if(id==R.id.open_in_browser) {
+				}else if(id==R.id.open_in_browser){
 					UiUtils.launchWebBrowser(activity, item.status.url);
 				}else if(id==R.id.copy_link){
 					UiUtils.copyText(parent, item.status.url);
@@ -285,6 +279,8 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 					args.putString("profileAccount", account.id);
 					args.putString("profileDisplayUsername", account.getDisplayUsername());
 					Nav.go(item.parentFragment.getActivity(), ListsFragment.class, args);
+				}else if(id==R.id.share){
+					UiUtils.openSystemShareSheet(activity, item.status.url);
 				}
 				return true;
 			});
@@ -302,47 +298,56 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 			});
 		}
 
+		@SuppressLint("SetTextI18n")
 		@Override
 		public void onBind(HeaderStatusDisplayItem item){
 			name.setText(item.parsedName);
-			username.setText('@'+item.user.acct);
-			separator.setVisibility(View.VISIBLE);
-
-			if (item.scheduledStatus!=null)
+			String time = null;
+			if (item.scheduledStatus!=null) {
 				if (item.scheduledStatus.scheduledAt.isAfter(CreateStatus.DRAFTS_AFTER_INSTANT)) {
-					timestamp.setText(R.string.sk_draft);
+					time = item.parentFragment.getString(R.string.sk_draft);
 				} else {
 					DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(Locale.getDefault());
-					timestamp.setText(item.scheduledStatus.scheduledAt.atZone(ZoneId.systemDefault()).format(formatter));
+					time = item.scheduledStatus.scheduledAt.atZone(ZoneId.systemDefault()).format(formatter);
 				}
-			else if ((!item.inset || item.status==null || item.status.editedAt==null) && item.createdAt != null)
-				timestamp.setText(UiUtils.formatRelativeTimestamp(itemView.getContext(), item.createdAt));
+			} else if(item.status==null || item.status.editedAt==null)
+				time=UiUtils.formatRelativeTimestamp(itemView.getContext(), item.createdAt);
 			else if (item.status != null && item.status.editedAt != null)
-				timestamp.setText(item.parentFragment.getString(R.string.edited_timestamp, UiUtils.formatRelativeTimestamp(itemView.getContext(), item.status.editedAt)));
-			else {
-				separator.setVisibility(View.GONE);
-				timestamp.setText("");
-			}
-			visibility.setVisibility(item.hasVisibilityToggle && !item.inset ? View.VISIBLE : View.GONE);
+				time=item.parentFragment.getString(R.string.edited_timestamp, UiUtils.formatRelativeTimestamp(itemView.getContext(), item.status.editedAt));
+
+			String sepp = item.parentFragment.getString(R.string.sk_separator);
+			String username = "@" + item.user.acct;
+			timeAndUsername.setText(time == null ? username :
+				username + " " + sepp + " " + time);
+
 			deleteNotification.setVisibility(GlobalUserPreferences.enableDeleteNotifications && item.notification!=null && !item.inset ? View.VISIBLE : View.GONE);
-			if(item.hasVisibilityToggle){
-				visibility.setImageResource(item.status.spoilerRevealed ? R.drawable.ic_visibility_off : R.drawable.ic_visibility);
-				visibility.setContentDescription(item.parentFragment.getString(item.status.spoilerRevealed ? R.string.hide_content : R.string.reveal_content));
+			if (item.hasVisibilityToggle){
+				boolean disabled = !item.status.sensitiveRevealed ||
+						(!TextUtils.isEmpty(item.status.spoilerText) &&
+								!item.status.spoilerRevealed);
+				visibility.setEnabled(!disabled);
+				V.setVisibilityAnimated(visibility, disabled ? View.INVISIBLE : View.VISIBLE);
+				visibility.setContentDescription(item.parentFragment.getString(item.status.sensitiveRevealed ? R.string.spoiler_hide : R.string.spoiler_show));
 				if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
 					visibility.setTooltipText(visibility.getContentDescription());
 				}
+			} else {
+				visibility.setVisibility(View.GONE);
 			}
 			itemView.setPadding(itemView.getPaddingLeft(), itemView.getPaddingTop(), itemView.getPaddingRight(), item.needBottomPadding ? V.dp(16) : 0);
 			if(TextUtils.isEmpty(item.extraText)){
 				if (item.status != null) {
-					UiUtils.setExtraTextInfo(item.parentFragment.getContext(), extraText, item.status.visibility, item.status.localOnly);
+					boolean displayPronouns=item.parentFragment instanceof ThreadFragment ? GlobalUserPreferences.displayPronounsInThreads : GlobalUserPreferences.displayPronounsInTimelines;
+					UiUtils.setExtraTextInfo(item.parentFragment.getContext(), extraText, pronouns, displayPronouns, item.status.visibility==StatusPrivacy.DIRECT, item.status.localOnly || item.status.visibility==StatusPrivacy.LOCAL, item.status.account);
 				}
 			}else{
 				extraText.setVisibility(View.VISIBLE);
 				extraText.setText(item.extraText);
 			}
-			more.setVisibility(item.inset || (item.notification != null && item.notification.report != null)
+			more.setVisibility(item.announcement != null || item.inset ||
+					(item.notification != null && item.notification.report != null)
 					? View.GONE : View.VISIBLE);
+			more.setOnClickListener(this::onMoreClick);
 			avatar.setClickable(!item.inset);
 			avatar.setContentDescription(item.parentFragment.getString(R.string.avatar_description, item.user.acct));
 			if(currentRelationshipRequest!=null){
@@ -350,20 +355,13 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 			}
 			relationship=null;
 
-			String desc;
 			if (item.announcement != null) {
-				if (unreadIndicator.getVisibility() == View.GONE) {
-					more.setAlpha(0f);
-					unreadIndicator.setAlpha(0f);
-					unreadIndicator.setVisibility(View.VISIBLE);
-				}
-				float alpha = item.announcement.read ? 0 : 1;
-				more.setImageResource(R.drawable.ic_fluent_checkmark_20_filled);
-				desc = item.parentFragment.getString(R.string.sk_mark_as_read);
-				more.animate().alpha(alpha);
-				unreadIndicator.animate().alpha(alpha);
-				more.setEnabled(!item.announcement.read);
-				more.setOnClickListener(v -> {
+				int vis = item.announcement.read ? View.GONE : View.VISIBLE;
+				V.setVisibilityAnimated(unreadIndicator, vis);
+				V.setVisibilityAnimated(markAsRead, vis);
+
+				markAsRead.setEnabled(!item.announcement.read);
+				markAsRead.setOnClickListener(v -> {
 					if (item.announcement.read) return;
 					new DismissAnnouncement(item.announcement.id).setCallback(new Callback<>() {
 						@Override
@@ -381,13 +379,8 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 					}).exec(item.accountID);
 				});
 			} else {
-				more.setImageResource(R.drawable.ic_fluent_more_vertical_20_filled);
-				desc = item.parentFragment.getString(R.string.more_options);
-				more.setOnClickListener(this::onMoreClick);
+				markAsRead.setVisibility(View.GONE);
 			}
-
-			more.setContentDescription(desc);
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) more.setTooltipText(desc);
 
 			if (item.status == null || !item.status.textExpandable) {
 				collapseBtn.setVisibility(View.GONE);
@@ -418,6 +411,10 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 
 		@Override
 		public void clearImage(int index){
+			if(index==0){
+				avatar.setImageResource(R.drawable.image_placeholder);
+				return;
+			}
 			setImage(index, null);
 		}
 
@@ -457,9 +454,11 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 		}
 
 		private void updateOptionsMenu(){
-			if (item.parentFragment.getActivity() == null) return;
+			if(item.parentFragment.getActivity()==null)
+				return;
 			if (item.announcement != null) return;
 			boolean hasMultipleAccounts = AccountSessionManager.getInstance().getLoggedInAccounts().size() > 1;
+			Account account=item.user;
 			Menu menu=optionsMenu.getMenu();
 
 			MenuItem openWithAccounts = menu.findItem(R.id.open_with_account);
@@ -474,7 +473,6 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 				openWithAccounts.setVisible(false);
 			}
 
-			Account account=item.user;
 			String username = account.getShortUsername();
 			boolean isOwnPost=AccountSessionManager.getInstance().isSelf(item.parentFragment.getAccountID(), account);
 			boolean isPostScheduled=item.scheduledStatus!=null;
@@ -492,9 +490,9 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 			MenuItem report=menu.findItem(R.id.report);
 			MenuItem follow=menu.findItem(R.id.follow);
 			MenuItem manageUserLists = menu.findItem(R.id.manage_user_lists);
+			/* disabled in megalodon: add/remove bookmark is already available through status footer
 			MenuItem bookmark=menu.findItem(R.id.bookmark);
 			bookmark.setVisible(false);
-			/* disabled in megalodon: add/remove bookmark is already available through status footer
 			if(item.status!=null){
 				bookmark.setVisible(true);
 				bookmark.setTitle(item.status.bookmarked ? R.string.remove_bookmark : R.string.add_bookmark);

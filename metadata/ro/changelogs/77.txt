@@ -1,0 +1,4 @@
+- Tine apăsat butonul de urmărire pentru a urmări profile din alt cont
+- Opțiune de a deschide profile în alt cont
+- Butonul de compunere automat la derularea cronologiei în jos
+- Remediere crash la deschiderea profilelor administratorilor serverului

@@ -1,0 +1,10 @@
+- Schițe și postări programate
+- Afișați postarea originală când răspundeți
+- Filtre compatibile Mastodon 4.0 (încă fără funcții „ascunde cu avertizare”)
+- Clic lung pentru a interacționa cu postările (Răspuns, Boost, Like, Salvare) din alte conturi conectate
+- Iconițe în toate meniurile
+- Comutare pentru redirecționarea rapoartelor
+- Adăugare mențiune atunci când utilizați funcția „Postați despre asta"
+- Opțiune de a utiliza pictograma notificărilor uniforme în loc de pictograme distincte
+- Opțiune pentru a accesa lista de reguli în aplicație din setări
+- Corectare erorilor

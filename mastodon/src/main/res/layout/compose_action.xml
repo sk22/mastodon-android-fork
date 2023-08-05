@@ -1,59 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:clipToPadding="false"
     android:paddingHorizontal="16dp"
-    android:paddingTop="4dp"
-    android:paddingBottom="8dp">
-
-    <ProgressBar
-        android:id="@+id/send_progress"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginEnd="16dp"
-        android:layout_gravity="center_vertical"
-        android:visibility="gone" />
-
-    <ImageView
-        android:id="@+id/send_error"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_gravity="center_vertical"
-        android:src="@drawable/ic_fluent_error_circle_24_regular"
-        android:tint="@color/error_600"
-        android:scaleType="center"
-        android:visibility="gone" />
+    android:paddingBottom="4dp">
 
     <Button
         android:id="@+id/language_btn"
+        style="@style/Widget.Mastodon.M3.Button.Text"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="8dp"
+        android:layout_height="match_parent"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
         android:drawableStart="@drawable/ic_fluent_local_language_16_regular"
         android:drawablePadding="8dp"
-        android:drawableTint="?android:textColorSecondary"
-        android:textColor="?android:textColorSecondary"
-        android:background="@drawable/bg_text_button" />
+        android:drawableTint="?colorM3OnSurfaceVariant"
+        android:textColor="?colorM3OnSurfaceVariant" />
 
-    <Button
+    <ImageButton
         android:id="@+id/drafts_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="8dp"
-        android:drawableStart="@drawable/ic_fluent_clock_20_regular"
-        android:drawableTint="?android:textColorSecondary"
-        android:textColor="?android:textColorSecondary"
-        android:background="@drawable/bg_text_button"
+        style="@style/Widget.Mastodon.M3.Button.Text"
+        android:background="@drawable/bg_button_m3_text_circle"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_fluent_clock_20_regular"
+        android:tint="?colorM3OnSurfaceVariant"
         android:contentDescription="@string/sk_schedule_or_draft"
-        android:tooltipText="@string/sk_schedule_or_draft" />
+        android:tooltipText="@string/sk_schedule_or_draft"
+        tools:targetApi="o" />
 
     <Button
+        style="@style/Widget.Mastodon.M3.Button.Filled.Elevated"
         android:id="@+id/publish_btn"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginStart="8dp"
         android:singleLine="true"
         android:ellipsize="end" />

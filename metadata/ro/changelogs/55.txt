@@ -1,0 +1,4 @@
+- Remediere redare ruptă a etichetelor HTML și activarea formării marcajului de redare
+- Inițializarea <a href="https://translate.codeberg.org/projects/megalodon">proiectului de traducere web</a>
+- Adăugarea unei comutări pentru cronologia federată
+- Versiunile 52-54 au fost mici ajustări pentru o versiune pe Google Play

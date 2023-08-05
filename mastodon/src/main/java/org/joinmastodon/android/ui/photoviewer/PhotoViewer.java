@@ -19,7 +19,6 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.opengl.Visibility;
 import android.os.Build;
 import android.os.Environment;
 import android.os.SystemClock;
@@ -200,7 +199,7 @@ public class PhotoViewer implements ZoomPanView.Listener{
 		videoSeekBar=uiOverlay.findViewById(R.id.seekbar);
 		videoTimeView=uiOverlay.findViewById(R.id.time);
 		videoPlayPauseButton=uiOverlay.findViewById(R.id.play_pause_btn);
-		if(attachments.get(index).type!=Attachment.Type.VIDEO){
+		if(attachments.get(index).type==Attachment.Type.IMAGE){
 			videoControls.setVisibility(View.GONE);
 		}else{
 			videoDuration=(int)Math.round(attachments.get(index).getDuration()*1000);
@@ -275,6 +274,10 @@ public class PhotoViewer implements ZoomPanView.Listener{
 		});
 	}
 
+	public void removeMenu(){
+		toolbar.getMenu().clear();
+	}
+
 	@Override
 	public void onTransitionAnimationUpdate(float translateX, float translateY, float scale){
 		listener.setTransitioningViewTransform(translateX, translateY, scale);
@@ -333,7 +336,7 @@ public class PhotoViewer implements ZoomPanView.Listener{
 		listener.setPhotoViewVisibility(pager.getCurrentItem(), true);
 		if(!uiVisible){
 			windowView.setSystemUiVisibility(windowView.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN);
-		}else if(attachments.get(currentIndex).type==Attachment.Type.VIDEO){
+		}else if(attachments.get(currentIndex).type!=Attachment.Type.IMAGE){
 			hideUiDelayed();
 		}
 	}
@@ -372,7 +375,7 @@ public class PhotoViewer implements ZoomPanView.Listener{
 					.setInterpolator(CubicBezierInterpolator.DEFAULT)
 					.start();
 			windowView.setSystemUiVisibility(windowView.getSystemUiVisibility() & ~(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN));
-			if(attachments.get(currentIndex).type==Attachment.Type.VIDEO)
+			if(attachments.get(currentIndex).type!=Attachment.Type.IMAGE)
 				hideUiDelayed(5000);
 		}
 		uiVisible=!uiVisible;
@@ -391,8 +394,7 @@ public class PhotoViewer implements ZoomPanView.Listener{
 		currentIndex=index;
 		Attachment att=attachments.get(index);
 		imageDescriptionButton.setVisible(att.description != null && !att.description.isEmpty());
-		toolbar.invalidate();
-		V.setVisibilityAnimated(videoControls, att.type==Attachment.Type.VIDEO ? View.VISIBLE : View.GONE);
+		V.setVisibilityAnimated(videoControls, att.type!=Attachment.Type.IMAGE ? View.VISIBLE : View.GONE);
 		if(att.type==Attachment.Type.VIDEO){
 			videoSeekBar.setSecondaryProgress(0);
 			videoDuration=(int)Math.round(att.getDuration()*1000);
@@ -821,12 +823,13 @@ public class PhotoViewer implements ZoomPanView.Listener{
 			if(item.type==Attachment.Type.VIDEO){
 				incKeepScreenOn();
 				keepingScreenOn=true;
+			}
 				if(getAbsoluteAdapterPosition()==currentIndex){
 					player.start();
 					startUpdatingVideoPosition(player);
 					hideUiDelayed();
 				}
-			}else{
+			if (item.type == Attachment.Type.GIFV) {
 				keepingScreenOn=false;
 				player.setLooping(true);
 				player.start();
@@ -846,7 +849,7 @@ public class PhotoViewer implements ZoomPanView.Listener{
 			player.setOnPreparedListener(this);
 			player.setOnErrorListener(this);
 			player.setOnVideoSizeChangedListener(this);
-			if(item.type==Attachment.Type.VIDEO){
+			if(item.type!=Attachment.Type.IMAGE){
 				player.setOnBufferingUpdateListener(this);
 				player.setOnInfoListener(this);
 				player.setOnSeekCompleteListener(this);

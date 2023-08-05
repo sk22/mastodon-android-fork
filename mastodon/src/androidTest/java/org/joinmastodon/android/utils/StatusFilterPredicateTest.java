@@ -1,10 +1,10 @@
 package org.joinmastodon.android.utils;
 
-import static org.joinmastodon.android.model.Filter.FilterAction.*;
-import static org.joinmastodon.android.model.Filter.FilterContext.*;
+import static org.joinmastodon.android.model.FilterAction.*;
+import static org.joinmastodon.android.model.FilterContext.*;
 import static org.junit.Assert.*;
 
-import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.LegacyFilter;
 import org.joinmastodon.android.model.Status;
 import org.junit.Test;
 
@@ -14,8 +14,8 @@ import java.util.List;
 
 public class StatusFilterPredicateTest {
 
-    private static final Filter hideMeFilter = new Filter(), warnMeFilter = new Filter();
-    private static final List<Filter> allFilters = List.of(hideMeFilter, warnMeFilter);
+    private static final LegacyFilter hideMeFilter = new LegacyFilter(), warnMeFilter = new LegacyFilter();
+    private static final List<LegacyFilter> allFilters = List.of(hideMeFilter, warnMeFilter);
 
     private static final Status
             hideInHomePublic = Status.ofFake(null, "hide me, please", Instant.now()),

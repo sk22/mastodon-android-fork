@@ -9,17 +9,31 @@
 		android:id="@+id/tabbar"
 		android:layout_width="match_parent"
 		android:layout_height="48dp"
+		android:background="@drawable/bg_onboarding_panel"
 		app:tabGravity="fill"
-		app:tabIndicator="@drawable/mtrl_tabs_default_indicator"
+		app:tabIndicator="@drawable/tab_indicator_m3"
 		app:tabIndicatorAnimationMode="elastic"
-		app:tabIndicatorColor="?android:textColorPrimary"
-		app:tabMode="fixed"
-		android:background="@drawable/bg_discover_tabs"/>
+		app:tabIndicatorColor="?colorM3Primary"
+		app:tabIndicatorFullWidth="false"
+		app:tabMinWidth="0dp"
+		app:tabMode="fixed" />
 
-	<androidx.viewpager2.widget.ViewPager2
-		android:id="@+id/pager"
+	<FrameLayout
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
-		android:layout_weight="1"/>
+		android:layout_weight="1">
+
+		<androidx.viewpager2.widget.ViewPager2
+			android:id="@+id/pager"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent" />
+
+		<View
+			android:id="@+id/tabs_divider"
+			android:layout_width="match_parent"
+			android:layout_height="1dp"
+			android:background="?colorM3SurfaceVariant"/>
+
+	</FrameLayout>
 
 </LinearLayout>

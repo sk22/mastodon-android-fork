@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="get_started">สร้างบัญชี</string>
-	<string name="already_have_account">ฉันมีบัญชีอยู่แล้ว</string>
 	<string name="log_in">เข้าสู่ระบบ</string>
 	<string name="next">ถัดไป</string>
 	<string name="loading_instance">กำลังเรียกข้อมูลเซิร์ฟเวอร์…</string>
@@ -13,15 +11,11 @@
 	<string name="user_boosted">%s ได้ดัน</string>
 	<string name="in_reply_to">ในการตอบกลับถึง %s</string>
 	<string name="notifications">การแจ้งเตือน</string>
-	<string name="user_followed_you">ได้ติดตามคุณ</string>
-	<string name="user_sent_follow_request">ได้ส่งคำขอติดตามถึงคุณ</string>
-	<string name="user_favorited">ได้ชื่นชอบโพสต์ของคุณ</string>
-	<string name="notification_boosted">ได้ดันโพสต์ของคุณ</string>
-	<string name="poll_ended">การสำรวจความคิดเห็นได้สิ้นสุดแล้ว</string>
-	<string name="time_seconds">%d วินาที</string>
-	<string name="time_minutes">%d นาที</string>
-	<string name="time_hours">%d ชั่วโมง</string>
-	<string name="time_days">%d วัน</string>
+	<string name="user_followed_you">%s ได้ติดตามคุณ</string>
+	<string name="user_sent_follow_request">%s ได้ส่งคำขอติดตามถึงคุณ</string>
+	<string name="user_favorited">%s ได้ชื่นชอบโพสต์ของคุณ</string>
+	<string name="notification_boosted">%s ได้ดันโพสต์ของคุณ</string>
+	<string name="poll_ended">ดูผลลัพธ์ของการสำรวจความคิดเห็นที่คุณได้ลงคะแนน</string>
 	<string name="share_toot_title">แบ่งปัน</string>
 	<string name="settings">การตั้งค่า</string>
 	<string name="publish">เผยแพร่</string>
@@ -34,9 +28,6 @@
 	<plurals name="following">
 		<item quantity="other">กำลังติดตาม</item>
 	</plurals>
-	<plurals name="posts">
-		<item quantity="other">โพสต์</item>
-	</plurals>
 	<string name="posts">โพสต์</string>
 	<string name="posts_and_replies">โพสต์และการตอบกลับ</string>
 	<string name="media">สื่อ</string>
@@ -44,8 +35,7 @@
 	<string name="button_follow">ติดตาม</string>
 	<string name="button_following">กำลังติดตาม</string>
 	<string name="edit_profile">แก้ไขโปรไฟล์</string>
-	<string name="mention_user">กล่าวถึง %s</string>
-	<string name="share_user">แบ่งปัน %s</string>
+	<string name="share_user">แบ่งปันโปรไฟล์</string>
 	<string name="mute_user">ซ่อน %s</string>
 	<string name="unmute_user">เลิกซ่อน %s</string>
 	<string name="block_user">ปิดกั้น %s</string>
@@ -73,7 +63,6 @@
 	<plurals name="x_days">
 		<item quantity="other">%d วัน</item>
 	</plurals>
-	<string name="compose_poll_duration">ระยะเวลา: %s</string>
 	<plurals name="x_seconds_left">
 		<item quantity="other">เหลืออีก %d วินาที</item>
 	</plurals>
@@ -86,8 +75,8 @@
 	<plurals name="x_days_left">
 		<item quantity="other">เหลืออีก %d วัน</item>
 	</plurals>
-	<plurals name="x_voters">
-		<item quantity="other">%,d ผู้ลงคะแนน</item>
+	<plurals name="x_votes">
+		<item quantity="other">%,d การลงคะแนน</item>
 	</plurals>
 	<string name="poll_closed">ปิดแล้ว</string>
 	<string name="confirm_mute_title">ซ่อนบัญชี</string>
@@ -104,10 +93,8 @@
 	<string name="confirm_unblock_domain_title">เลิกปิดกั้นโดเมน</string>
 	<string name="confirm_unblock">ยืนยันเพื่อเลิกปิดกั้น %s</string>
 	<string name="do_unblock">เลิกปิดกั้น</string>
-	<string name="button_muted">ซ่อนอยู่</string>
 	<string name="button_blocked">ปิดกั้นอยู่</string>
 	<string name="action_vote">ลงคะแนน</string>
-	<string name="tap_to_reveal">แตะเพื่อเปิดเผย</string>
 	<string name="delete">ลบ</string>
 	<string name="confirm_delete_title">ลบโพสต์</string>
 	<string name="confirm_delete">คุณแน่ใจหรือไม่ว่าต้องการลบโพสต์นี้?</string>
@@ -115,19 +102,16 @@
 	<string name="notification_channel_audio_player">การเล่นเสียง</string>
 	<string name="play">เล่น</string>
 	<string name="pause">หยุดชั่วคราว</string>
-	<string name="log_out">ลงชื่อออก</string>
+	<string name="log_out">ออกจากระบบ</string>
 	<string name="add_account">เพิ่มบัญชี</string>
 	<string name="search_hint">ค้นหา</string>
 	<string name="hashtags">แฮชแท็ก</string>
 	<string name="news">ข่าว</string>
 	<string name="for_you">สำหรับคุณ</string>
-	<string name="all_notifications">ทั้งหมด</string>
+	<string name="all_notifications">ทุกอย่าง</string>
 	<string name="mentions">การกล่าวถึง</string>
 	<plurals name="x_people_talking">
 		<item quantity="other">%d คนกำลังพูดคุย</item>
-	</plurals>
-	<plurals name="discussed_x_times">
-		<item quantity="other">พูดคุย %d ครั้ง</item>
 	</plurals>
 	<string name="report_title">รายงาน %s</string>
 	<string name="report_choose_reason">โพสต์นี้มีอะไรผิดปกติ?</string>
@@ -149,21 +133,18 @@
 	<string name="report_comment_hint">ความคิดเห็นเพิ่มเติม</string>
 	<string name="sending_report">กำลังส่งรายงาน…</string>
 	<string name="report_sent_title">ขอบคุณสำหรับการรายงาน เราจะตรวจสอบสิ่งนี้</string>
-	<string name="report_sent_subtitle">ขณะที่เราตรวจทานสิ่งนี้ คุณสามารถดำเนินการกับ %s</string>
+	<string name="report_sent_subtitle">ขณะที่เราตรวจทานสิ่งนี้ คุณสามารถดำเนินการกับ %s:</string>
 	<string name="unfollow_user">เลิกติดตาม %s</string>
 	<string name="unfollow">เลิกติดตาม</string>
-	<string name="mute_user_explain">คุณจะไม่เห็นโพสต์หรือการดันของเขาในฟีดหน้าแรกของคุณ เขาจะไม่ทราบว่ามีการซ่อนเขา</string>
-	<string name="block_user_explain">เขาจะไม่สามารถติดตามหรือเห็นโพสต์ของคุณได้อีกต่อไป แต่เขาสามารถเห็นว่ามีการปิดกั้นเขาหรือไม่</string>
+	<string name="mute_user_explain">คุณจะไม่เห็นโพสต์ของเขา เขายังคงสามารถติดตามคุณและเห็นโพสต์ของคุณและจะไม่ทราบว่ามีการซ่อนเขา</string>
+	<string name="block_user_explain">คุณจะไม่เห็นโพสต์ของเขา เขาจะไม่สามารถเห็นโพสต์ของคุณหรือติดตามคุณ เขาจะสามารถบอกได้ว่ามีการปิดกั้นเขา</string>
 	<string name="report_personal_title">ไม่ต้องการเห็นสิ่งนี้?</string>
-	<string name="report_personal_subtitle">เมื่อคุณเห็นบางอย่างที่คุณไม่ชอบใน Mastodon คุณสามารถเอาบุคคลออกจากประสบการณ์ของคุณ</string>
+	<string name="report_personal_subtitle">นี่คือตัวเลือกของคุณสำหรับการควบคุมสิ่งที่คุณเห็นใน Mastodon:</string>
 	<string name="back">ย้อนกลับ</string>
-	<string name="instance_catalog_title">Mastodon ประกอบด้วยผู้ใช้ในเซิร์ฟเวอร์ต่าง ๆ</string>
-	<string name="instance_catalog_subtitle">เลือกเซิร์ฟเวอร์ตามความสนใจ, ภูมิภาค หรือวัตถุประสงค์ทั่วไปของคุณ คุณยังคงสามารถเชื่อมต่อกับทุกคน โดยไม่คำนึงถึงเซิร์ฟเวอร์</string>
 	<string name="search_communities">ชื่อหรือ URL ของเซิร์ฟเวอร์</string>
 	<string name="instance_rules_title">กฎของเซิร์ฟเวอร์</string>
 	<string name="instance_rules_subtitle">การดำเนินการต่อแสดงว่าคุณเห็นด้วยที่จะปฏิบัติตามกฎดังต่อไปนี้ที่ได้รับการตั้งและบังคับใช้โดยผู้ควบคุมของ %s</string>
 	<string name="signup_title">สร้างบัญชี</string>
-	<string name="edit_photo">แก้ไข</string>
 	<string name="display_name">ชื่อ</string>
 	<string name="username">ชื่อผู้ใช้</string>
 	<string name="email">อีเมล</string>
@@ -192,20 +173,12 @@
 	<string name="resent_email">ส่งอีเมลการยืนยันแล้ว</string>
 	<string name="compose_hint">พิมพ์หรือวางสิ่งที่คุณกำลังคิด</string>
 	<string name="content_warning">คำเตือนเนื้อหา</string>
-	<string name="add_image_description">เพิ่มคำอธิบายภาพ…</string>
-	<string name="retry_upload">ลองอัปโหลดใหม่</string>
-	<string name="edit_image">แก้ไขภาพ</string>
 	<string name="save">บันทึก</string>
 	<string name="add_alt_text">เพิ่มข้อความแสดงแทน</string>
-	<string name="alt_text_subtitle">ข้อความแสดงแทนอธิบายรูปถ่ายของคุณสำหรับผู้ที่มีการมองเห็นเลือนรางหรือมองไม่เห็น พยายามรวมรายละเอียดให้เพียงพอเพื่อให้เข้าใจบริบท</string>
-	<string name="alt_text_hint">เช่น สุนัขมองไปรอบ ๆ อย่างสงสัยโดยหรี่ตาลงที่กล้อง</string>
 	<string name="visibility_public">สาธารณะ</string>
 	<string name="visibility_followers_only">ผู้ติดตามเท่านั้น</string>
-	<string name="visibility_private">เฉพาะผู้คนที่ฉันกล่าวถึงเท่านั้น</string>
-	<string name="search_all">ทั้งหมด</string>
-	<string name="search_people">ผู้คน</string>
-	<string name="recent_searches">การค้นหาล่าสุด</string>
-	<string name="step_x_of_n">ขั้นตอนที่ %1$d จาก %2$d</string>
+	<string name="visibility_private">เฉพาะผู้คนที่ได้รับการกล่าวถึงเท่านั้น</string>
+	<string name="recent_searches">รายการล่าสุด</string>
 	<string name="skip">ข้าม</string>
 	<string name="notification_type_follow">ผู้ติดตามใหม่</string>
 	<string name="notification_type_favorite">รายการโปรด</string>
@@ -219,41 +192,24 @@
 	</plurals>
 	<string name="media_attachment_unsupported_type">ไฟล์ %s เป็นชนิดที่ไม่รองรับ</string>
 	<string name="media_attachment_too_big">ไฟล์ %1$s เกินขีดจำกัดขนาด %2$s MB</string>
-	<string name="settings_theme">ลักษณะที่มองเห็น</string>
-	<string name="theme_auto">อัตโนมัติ</string>
+	<string name="settings_theme">ลักษณะที่ปรากฏ</string>
+	<string name="theme_auto">ใช้ลักษณะที่ปรากฏของอุปกรณ์</string>
 	<string name="theme_light">สว่าง</string>
 	<string name="theme_dark">มืด</string>
-	<string name="theme_true_black">โหมดดำสนิท</string>
 	<string name="settings_behavior">พฤติกรรม</string>
 	<string name="settings_gif">เล่นภาพประจำตัวและอีโมจิแบบเคลื่อนไหว</string>
 	<string name="settings_custom_tabs">ใช้เบราว์เซอร์ในแอป</string>
 	<string name="settings_notifications">การแจ้งเตือน</string>
-	<string name="notify_me_when">แจ้งเตือนฉันเมื่อ</string>
-	<string name="notify_anyone">ใครก็ตาม</string>
-	<string name="notify_follower">ผู้ติดตาม</string>
-	<string name="notify_followed">ใครสักคนที่ฉันติดตาม</string>
-	<string name="notify_none">ไม่มีใคร</string>
-	<string name="notify_favorites">ชื่นชอบโพสต์ของฉัน</string>
-	<string name="notify_follow">ติดตามฉัน</string>
-	<string name="notify_reblog">ดันโพสต์ของฉัน</string>
-	<string name="notify_mention">กล่าวถึงฉัน</string>
-	<string name="settings_boring">โซนน่าเบื่อ</string>
-	<string name="settings_account">การตั้งค่าบัญชี</string>
 	<string name="settings_contribute">มีส่วนร่วมกับ Mastodon</string>
 	<string name="settings_tos">เงื่อนไขการให้บริการ</string>
 	<string name="settings_privacy_policy">นโยบายความเป็นส่วนตัว</string>
-	<string name="settings_spicy">โซนเผ็ดร้อน</string>
 	<string name="settings_clear_cache">ล้างแคชสื่อ</string>
 	<string name="settings_app_version">Mastodon สำหรับ Android v%1$s (%2$d)</string>
 	<string name="media_cache_cleared">ล้างแคชสื่อแล้ว</string>
-	<string name="confirm_log_out">คุณแน่ใจหรือไม่ว่าต้องการลงชื่อออก?</string>
-	<string name="sensitive_content">เนื้อหาที่ละเอียดอ่อน</string>
-	<string name="sensitive_content_explain">ผู้สร้างได้ทำเครื่องหมายสื่อนี้ว่าละเอียดอ่อน แตะเพื่อเปิดเผย</string>
-	<string name="media_hidden">แตะเพื่อเปิดเผย</string>
+	<string name="confirm_log_out">ออกจากระบบ %s?</string>
+	<string name="sensitive_content_explain">ผู้สร้างได้ทำเครื่องหมายสื่อนี้ว่าละเอียดอ่อน</string>
 	<string name="avatar_description">ไปยังโปรไฟล์ของ %s</string>
 	<string name="more_options">ตัวเลือกเพิ่มเติม</string>
-	<string name="reveal_content">เปิดเผยเนื้อหา</string>
-	<string name="hide_content">ซ่อนเนื้อหา</string>
 	<string name="new_post">โพสต์ใหม่</string>
 	<string name="button_reply">ตอบกลับ</string>
 	<string name="button_reblog">ดัน</string>
@@ -263,7 +219,6 @@
 	<string name="add_media">เพิ่มสื่อ</string>
 	<string name="add_poll">เพิ่มการสำรวจความคิดเห็น</string>
 	<string name="emoji">อีโมจิ</string>
-	<string name="post_visibility">การมองเห็นโพสต์</string>
 	<string name="home_timeline">เส้นเวลาหน้าแรก</string>
 	<string name="my_profile">โปรไฟล์ของฉัน</string>
 	<string name="media_viewer">ตัวดูสื่อ</string>
@@ -287,21 +242,19 @@
 	<string name="error_saving_file">เกิดข้อผิดพลาดในการบันทึกไฟล์</string>
 	<string name="file_saved">บันทึกไฟล์แล้ว</string>
 	<string name="downloading">กำลังดาวน์โหลด…</string>
-	<string name="no_app_to_handle_action">ไม่มีแอปที่จะจัดการกับการกระทำนี้</string>
-	<string name="local_timeline">ชุมชน</string>
-	<string name="trending_posts_info_banner">นี่คือโพสต์ที่กำลังได้รับความสนใจในมุมของ Mastodon ของคุณ</string>
-	<string name="trending_hashtags_info_banner">นี่คือแฮชแท็กที่กำลังได้รับความสนใจในมุมของ Mastodon ของคุณ</string>
-	<string name="trending_links_info_banner">นี่คือเรื่องข่าวที่กำลังได้รับการแบ่งปันมากที่สุดในมุมของ Mastodon ของคุณ</string>
-	<string name="local_timeline_info_banner">นี่คือโพสต์ล่าสุดโดยผู้คนที่ใช้เซิร์ฟเวอร์ Mastodon เดียวกันกับคุณ</string>
-	<string name="dismiss">ปิด</string>
+	<string name="no_app_to_handle_action">ไม่มีแอปที่จะจัดการการกระทำนี้</string>
+	<string name="local_timeline">ในเซิร์ฟเวอร์</string>
+	<string name="trending_posts_info_banner">นี่คือโพสต์ที่ได้รับความสนใจทั่วทั้ง Mastodon</string>
+	<string name="trending_links_info_banner">นี่คือเรื่องข่าวที่ได้รับการพูดถึงใน Mastodon</string>
+	<!-- %s is the server domain -->
+	<string name="local_timeline_info_banner">นี่คือโพสต์ทั้งหมดจากผู้ใช้ทั้งหมดในเซิร์ฟเวอร์ของคุณ (%s)</string>
+	<string name="recommended_accounts_info_banner">คุณอาจชอบบัญชีเหล่านี้โดยอิงตามผู้อื่นที่คุณติดตาม</string>
 	<string name="see_new_posts">ดูโพสต์ใหม่</string>
 	<string name="load_missing_posts">โหลดโพสต์ที่ขาดหายไป</string>
 	<string name="follow_back">ติดตามกลับ</string>
 	<string name="button_follow_pending">รอดำเนินการ</string>
 	<string name="follows_you">ติดตามคุณ</string>
 	<string name="manually_approves_followers">อนุมัติผู้ติดตามด้วยตนเอง</string>
-	<string name="current_account">บัญชีปัจจุบัน</string>
-	<string name="log_out_account">ออกจากระบบ %s</string>
 	<!-- translators: %,d is a valid placeholder, it formats the number with locale-dependent grouping separators -->
 	<plurals name="x_followers">
 		<item quantity="other">%,d ผู้ติดตาม</item>
@@ -317,8 +270,6 @@
 	</plurals>
 	<string name="timestamp_via_app">%1$s ผ่าน %2$s</string>
 	<string name="time_now">ตอนนี้</string>
-	<string name="post_info_reblogs">การดัน</string>
-	<string name="post_info_favorites">รายการโปรด</string>
 	<string name="edit_history">ประวัติการแก้ไข</string>
 	<string name="last_edit_at_x">การแก้ไขล่าสุดเมื่อ %s</string>
 	<string name="time_just_now">เมื่อกี้นี้</string>
@@ -350,14 +301,9 @@
 	<string name="file_size_kb">%.2f กิโลไบต์</string>
 	<string name="file_size_mb">%.2f เมกะไบต์</string>
 	<string name="file_size_gb">%.2f กิกะไบต์</string>
-	<string name="file_upload_progress">%1$s จาก %2$s</string>
-	<string name="file_upload_time_remaining">เหลืออีก %s</string>
-	<string name="upload_error_connection_lost">อุปกรณ์ของคุณขาดการเชื่อมต่อกับอินเทอร์เน็ต</string>
 	<string name="upload_processing">กำลังประมวลผล…</string>
 	<!-- %s is version like 1.2.3 -->
-	<string name="update_available">Mastodon สำหรับ Android %s พร้อมที่จะดาวน์โหลด</string>
 	<!-- %s is version like 1.2.3 -->
-	<string name="update_ready">ดาวน์โหลด Mastodon สำหรับ Android %s แล้วและพร้อมที่จะติดตั้ง</string>
 	<!-- %s is file size -->
 	<string name="download_update">ดาวน์โหลด (%s)</string>
 	<string name="install_update">ติดตั้ง</string>
@@ -374,7 +320,7 @@
 	<string name="login_title">ยินดีต้อนรับกลับมา</string>
 	<string name="login_subtitle">เข้าสู่ระบบด้วยเซิร์ฟเวอร์ที่ซึ่งคุณได้สร้างบัญชีของคุณ</string>
 	<string name="server_url">URL ของเซิร์ฟเวอร์</string>
-	<string name="signup_random_server_explain">เราจะเลือกเซิร์ฟเวอร์ตามภาษาของคุณหากคุณดำเนินการต่อโดยไม่ได้ทำการเลือก</string>
+	<string name="signup_random_server_explain">เราจะเลือกเซิร์ฟเวอร์โดยอิงตามภาษาของคุณหากคุณดำเนินการต่อโดยไม่ได้ทำการเลือก</string>
 	<string name="server_filter_any_language">ภาษาใด ๆ</string>
 	<string name="server_filter_instant_signup">การลงทะเบียนทันที</string>
 	<string name="server_filter_manual_review">การตรวจทานด้วยตนเอง</string>
@@ -404,7 +350,6 @@
 	<string name="sending_follows">กำลังติดตามผู้ใช้…</string>
 	<!-- %1$s is server domain, %2$s is email domain. You can reorder these placeholders to fit your language better. -->
 	<string name="signup_email_domain_blocked">%1$s ไม่อนุญาตการลงทะเบียนจาก %2$s ลองโดเมนอีเมลอื่นหรือ &lt;a&gt;เลือกเซิร์ฟเวอร์อื่น&lt;/a&gt;</string>
-	<string name="signup_username_taken">มีการใช้ชื่อผู้ใช้นี้แล้ว</string>
 	<string name="spoiler_show">แสดงต่อไป</string>
 	<string name="spoiler_hide">ซ่อนใหม่</string>
 	<string name="poll_multiple_choice">เลือกจำนวนหนึ่งหรือมากกว่า</string>
@@ -424,4 +369,188 @@
 	<string name="welcome_paragraph1">Mastodon เป็นเครือข่ายสังคมแบบกระจายศูนย์ หมายความว่าไม่มีบริษัทใดควบคุมเครือข่ายสังคม เครือข่ายสังคมประกอบด้วยเซิร์ฟเวอร์ที่ทำงานอย่างอิสระจำนวนมาก ทั้งหมดเชื่อมต่อเข้าด้วยกัน</string>
 	<string name="what_are_servers">เซิร์ฟเวอร์คืออะไร?</string>
 	<string name="welcome_paragraph2"><![CDATA[ทุกบัญชี Mastodon ได้รับการโฮสต์ในเซิร์ฟเวอร์ — แต่ละแห่งมีค่า, กฎ และผู้ดูแลของเซิร์ฟเวอร์เอง ไม่ว่าคุณจะเลือกเซิร์ฟเวอร์ใด คุณสามารถติดตามและโต้ตอบกับผู้คนในเซิร์ฟเวอร์ใด ๆ]]></string>
+	<string name="opening_link">กำลังเปิดลิงก์…</string>
+	<string name="link_not_supported">ไม่รองรับลิงก์นี้ในแอป</string>
+	<string name="log_out_all_accounts">ออกจากระบบบัญชีทั้งหมด</string>
+	<string name="confirm_log_out_all_accounts">ออกจากระบบบัญชีทั้งหมด?</string>
+	<string name="retry">ลองใหม่</string>
+	<string name="post_failed">ไม่สามารถส่งโพสต์</string>
+	<!-- %s is formatted file size ("467 KB image") -->
+	<string name="attachment_description_image">ภาพ %s</string>
+	<string name="attachment_description_video">วิดีโอ %s</string>
+	<string name="attachment_description_audio">เสียง %s</string>
+	<string name="attachment_description_unknown">ไฟล์ %s</string>
+	<string name="attachment_type_image">ภาพ</string>
+	<string name="attachment_type_video">วิดีโอ</string>
+	<string name="attachment_type_audio">เสียง</string>
+	<string name="attachment_type_gif">GIF</string>
+	<string name="attachment_type_unknown">ไฟล์</string>
+	<string name="attachment_x_percent_uploaded">อัปโหลดแล้ว %d%%</string>
+	<string name="add_poll_option">เพิ่มตัวเลือกการสำรวจความคิดเห็น</string>
+	<string name="poll_length">ความยาวการสำรวจความคิดเห็น</string>
+	<string name="poll_style">ลักษณะ</string>
+	<string name="compose_poll_single_choice">เลือกอย่างใดอย่างหนึ่ง</string>
+	<string name="compose_poll_multiple_choice">หลายตัวเลือก</string>
+	<string name="delete_poll_option">ลบตัวเลือกการสำรวจความคิดเห็น</string>
+	<string name="poll_style_title">ลักษณะการสำรวจความคิดเห็น</string>
+	<string name="alt_text">ข้อความแสดงแทน</string>
+	<string name="help">ช่วยเหลือ</string>
+	<string name="what_is_alt_text">ข้อความแสดงแทนคืออะไร?</string>
+	<string name="alt_text_help">ข้อความแสดงแทนให้คำอธิบายภาพสำหรับผู้คนที่มีความบกพร่องทางการมองเห็น, การเชื่อมต่อแบนด์วิดท์ต่ำ หรือผู้ที่มองหาบริบทพิเศษ\n\nคุณสามารถปรับปรุงการช่วยการเข้าถึงและความเข้าใจสำหรับทุกคนโดยการเขียนข้อความแสดงแทนที่ชัดเจน กระชับ และเป็นจริง\n\n<ul><li>จับองค์ประกอบที่สำคัญ</li>\n<li>สรุปข้อความในภาพ</li>\n<li>ใช้โครงสร้างประโยคปกติ</li>\n<li>หลีกเลี่ยงข้อมูลที่ซ้ำซ้อน</li>\n<li>มุ่งเน้นไปที่แนวโน้มและการค้นพบที่สำคัญในภาพที่ซับซ้อน (เช่น แผนภาพหรือแผนที่)</li></ul></string>
+	<string name="edit_post">แก้ไขโพสต์</string>
+	<string name="no_verified_link">ไม่มีลิงก์ที่ยืนยันแล้ว</string>
+	<string name="compose_autocomplete_emoji_empty">เรียกดูอีโมจิ</string>
+	<string name="compose_autocomplete_users_empty">ค้นหาผู้ที่คุณกำลังมองหา</string>
+	<string name="no_search_results">ไม่พบสิ่งใดสำหรับคำค้นหาเหล่านี้</string>
+	<string name="language">ภาษา</string>
+	<string name="language_default">ค่าเริ่มต้น</string>
+	<string name="language_system">ระบบ</string>
+	<string name="language_detecting">กำลังตรวจหาภาษา</string>
+	<string name="language_cant_detect">ไม่สามารถตรวจหาภาษา</string>
+	<string name="language_detected">ตรวจพบ</string>
+	<string name="media_hidden">ซ่อนสื่ออยู่</string>
+	<string name="post_hidden">ซ่อนโพสต์อยู่</string>
+	<string name="report_title_post">รายงานโพสต์</string>
+	<string name="forward_report_explanation">บัญชีมาจากเซิร์ฟเวอร์อื่น ส่งสำเนาที่ไม่ระบุตัวตนของรายงานนี้ไปที่นั่นด้วย?</string>
+	<!-- %s is the server domain -->
+	<string name="forward_report_to_server">ส่งต่อไปยัง %s</string>
+	<!-- Shown on the "stamp" on the screen that appears after you report a post/user. Please keep the translation short, preferably a single word -->
+	<string name="reported">รายงานแล้ว</string>
+	<string name="report_unfollow_explanation">เพื่อไม่ให้เห็นโพสต์ของเขาในฟีดหน้าแรกของคุณอีกต่อไป ให้เลิกติดตามเขา</string>
+	<string name="muted_user">ซ่อน %s อยู่</string>
+	<string name="report_sent_already_blocked">คุณได้ปิดกั้นผู้ใช้นี้ไปแล้ว ดังนั้นจึงไม่มีอะไรอย่างอื่นที่คุณจำเป็นต้องทำขณะที่เราตรวจทานรายงานของคุณ</string>
+	<string name="report_personal_already_blocked">คุณได้ปิดกั้นผู้ใช้นี้ไปแล้ว ดังนั้นจึงไม่มีอะไรอย่างอื่นที่คุณจำเป็นต้องทำ\n\nขอบคุณสำหรับการช่วยรักษา Mastodon ให้เป็นสถานที่ที่ปลอดภัยสำหรับทุกคน!</string>
+	<string name="blocked_user">ปิดกั้น %s อยู่</string>
+	<string name="mark_all_notifications_read">ทำเครื่องหมายทั้งหมดว่าอ่านแล้ว</string>
+	<string name="settings_display">การแสดงผล</string>
+	<string name="settings_filters">ตัวกรอง</string>
+	<string name="settings_server_explanation">ภาพรวม, กฎ, ผู้ควบคุม</string>
+	<!-- %s is the app name (Mastodon, key app_name). I made it a placeholder so everything Just Works™ with forks -->
+	<string name="about_app">เกี่ยวกับ %s</string>
+	<string name="default_post_language">ภาษาของโพสต์เริ่มต้น</string>
+	<string name="settings_alt_text_reminders">เพิ่มการเตือนความจำข้อความแสดงแทน</string>
+	<string name="settings_confirm_unfollow">ถามก่อนที่จะเลิกติดตามใครสักคน</string>
+	<string name="settings_confirm_boost">ถามก่อนที่จะดัน</string>
+	<string name="settings_confirm_delete_post">ถามก่อนที่จะลบโพสต์</string>
+	<string name="pause_all_notifications">หยุดทั้งหมดชั่วคราว</string>
+	<string name="pause_notifications_off">ปิด</string>
+	<string name="notifications_policy_anyone">ใครก็ตาม</string>
+	<string name="notifications_policy_followed">ผู้คนที่ติดตามคุณ</string>
+	<string name="notifications_policy_follower">ผู้คนที่คุณติดตาม</string>
+	<string name="notifications_policy_no_one">ไม่มีใคร</string>
+	<string name="settings_notifications_policy">รับการแจ้งเตือนจาก</string>
+	<string name="notification_type_mentions_and_replies">การกล่าวถึงและการตอบกลับ</string>
+	<string name="pause_all_notifications_title">หยุดการแจ้งเตือนทั้งหมดชั่วคราว</string>
+	<plurals name="x_weeks">
+		<item quantity="other">%d สัปดาห์</item>
+	</plurals>
+	<!-- %1$s is the date (may be relative, e.g. "today" or "yesterday"), %2$s is the time. You can reorder these placeholders if that works better for your language -->
+	<string name="date_at_time">%1$s เวลา %2$s</string>
+	<string name="today">วันนี้</string>
+	<string name="yesterday">เมื่อวานนี้</string>
+	<string name="tomorrow">พรุ่งนี้</string>
+	<!-- %s is the timestamp ("tomorrow at 12:34") -->
+	<string name="pause_notifications_ends">สิ้นสุดเมื่อ %s</string>
+	<!-- %s is the timestamp ("tomorrow at 12:34") -->
+	<string name="pause_notifications_banner">การแจ้งเตือนจะทำต่อเมื่อ %s</string>
+	<string name="resume_notifications_now">ทำต่อตอนนี้</string>
+	<string name="open_system_notification_settings">ไปยังการตั้งค่าการแจ้งเตือน</string>
+	<string name="about_server">เกี่ยวกับ</string>
+	<string name="server_rules">กฎ</string>
+	<string name="server_administrator">ผู้ดูแล</string>
+	<string name="send_email_to_server_admin">ส่งข้อความถึงผู้ดูแล</string>
+	<string name="notifications_disabled_in_system">เปิดการแจ้งเตือนจากการตั้งค่าอุปกรณ์ของคุณเพื่อดูการอัปเดตจากที่ใดก็ตาม</string>
+	<string name="settings_even_more">การตั้งค่าเพิ่มเติม</string>
+	<string name="settings_show_cws">แสดงคำเตือนเนื้อหา</string>
+	<string name="settings_hide_sensitive_media">ปกปิดสื่อที่มีการทำเครื่องหมายว่าละเอียดอ่อน</string>
+	<string name="settings_show_interaction_counts">จำนวนการโต้ตอบของโพสต์</string>
+	<string name="settings_show_emoji_in_names">อีโมจิที่กำหนดเองในชื่อที่แสดง</string>
+	<plurals name="in_x_seconds">
+		<item quantity="other">ในอีก %d วินาที</item>
+	</plurals>
+	<plurals name="in_x_minutes">
+		<item quantity="other">ในอีก %d นาที</item>
+	</plurals>
+	<plurals name="in_x_hours">
+		<item quantity="other">ในอีก %d ชั่วโมง</item>
+	</plurals>
+	<plurals name="x_hours_ago">
+		<item quantity="other">%d ชั่วโมงที่แล้ว</item>
+	</plurals>
+	<string name="alt_text_reminder_title">สื่อไม่มีข้อความแสดงแทน</string>
+	<plurals name="alt_text_reminder_x_images">
+		<item quantity="other">%s ภาพของคุณไม่มีข้อความแสดงแทน โพสต์ต่อไป?</item>
+	</plurals>
+	<plurals name="alt_text_reminder_x_attachments">
+		<item quantity="other">%s ไฟล์แนบสื่อของคุณไม่มีข้อความแสดงแทน โพสต์ต่อไป?</item>
+	</plurals>
+	<string name="count_one">หนึ่ง</string>
+	<string name="count_two">สอง</string>
+	<string name="count_three">สาม</string>
+	<string name="count_four">สี่</string>
+	<string name="alt_text_reminder_post_anyway">โพสต์</string>
+	<!-- %s is the username -->
+	<string name="unfollow_confirmation">เลิกติดตาม %s?</string>
+	<string name="filter_active">ใช้งานอยู่</string>
+	<string name="filter_inactive">ไม่ได้ใช้งาน</string>
+	<string name="settings_add_filter">เพิ่มตัวกรอง</string>
+	<string name="settings_edit_filter">แก้ไขตัวกรอง</string>
+	<string name="settings_filter_duration">ระยะเวลา</string>
+	<string name="settings_filter_muted_words">คำที่ซ่อนอยู่</string>
+	<string name="settings_filter_context">ซ่อนจาก</string>
+	<string name="settings_filter_show_cw">แสดงพร้อมคำเตือนเนื้อหา</string>
+	<string name="settings_filter_show_cw_explanation">ยังคงแสดงโพสต์ที่ตรงกับตัวกรองนี้ แต่อยู่หลังคำเตือนเนื้อหา</string>
+	<string name="settings_delete_filter">ลบตัวกรอง</string>
+	<string name="filter_duration_forever">ตลอดไป</string>
+	<!-- %s is the timestamp ("tomorrow at 12:34") -->
+	<string name="settings_filter_ends">สิ้นสุดเมื่อ %s</string>
+	<plurals name="settings_x_muted_words">
+		<item quantity="other">%d คำหรือวลีที่ซ่อนอยู่</item>
+	</plurals>
+	<string name="selection_2_options">%1$s และ %2$s</string>
+	<string name="selection_3_options">%1$s, %2$s และ %3$s</string>
+	<string name="selection_4_or_more">%1$s, %2$s และเพิ่มเติมอีก %3$d</string>
+	<string name="filter_context_home_lists">หน้าแรกและรายการ</string>
+	<string name="filter_context_notifications">การแจ้งเตือน</string>
+	<string name="filter_context_public_timelines">เส้นเวลาสาธารณะ</string>
+	<string name="filter_context_threads_replies">กระทู้และการตอบกลับ</string>
+	<string name="filter_context_profiles">โปรไฟล์</string>
+	<string name="settings_filter_title">ชื่อเรื่อง</string>
+	<string name="settings_delete_filter_title">ลบตัวกรอง “%s”?</string>
+	<string name="settings_delete_filter_confirmation">จะลบตัวกรองนี้ออกจากบัญชีของคุณในอุปกรณ์ทั้งหมดของคุณ</string>
+	<string name="add_muted_word">เพิ่มคำที่ซ่อนอยู่</string>
+	<string name="edit_muted_word">แก้ไขคำที่ซ่อนอยู่</string>
+	<string name="add">เพิ่ม</string>
+	<string name="filter_word_or_phrase">คำหรือวลี</string>
+	<string name="filter_add_word_help">คำไม่คำนึงถึงตัวพิมพ์ใหญ่เล็กและตรงกับคำเต็มเท่านั้น\n\nหากคุณกรองคำสำคัญ “Apple,” ตัวกรองจะซ่อนโพสต์ที่มี “apple” หรือ “aPpLe” แต่ไม่ใช่ “pineapple.”</string>
+	<string name="settings_delete_filter_word">ลบคำ “%s”?</string>
+	<string name="enter_selection_mode">เลือก</string>
+	<string name="select_all">เลือกทั้งหมด</string>
+	<string name="settings_filter_duration_title">ระยะเวลาตัวกรอง</string>
+	<string name="filter_duration_custom">กำหนดเอง</string>
+	<plurals name="settings_delete_x_filter_words">
+		<item quantity="other">ลบ %d คำ?</item>
+	</plurals>
+	<plurals name="x_items_selected">
+		<item quantity="other">เลือกอยู่ %d</item>
+	</plurals>
+	<string name="required_form_field_blank">ไม่สามารถเว้นว่าง</string>
+	<string name="filter_word_already_in_list">อยู่ในรายการอยู่แล้ว</string>
+	<string name="app_update_ready">การอัปเดตแอปพร้อมใช้งาน</string>
+	<string name="app_update_version">รุ่น %s</string>
+	<string name="downloading_update">กำลังดาวน์โหลด (%d%%)</string>
+	<!-- Shown like a content warning, %s is the name of the filter -->
+	<string name="post_matches_filter_x">ตรงกับตัวกรอง “%s”</string>
+	<string name="search_mastodon">ค้นหา Mastodon</string>
+	<string name="clear_all">ล้างทั้งหมด</string>
+	<string name="search_open_url">เปิด URL ใน Mastodon</string>
+	<string name="posts_matching_hashtag">โพสต์ที่มี “%s”</string>
+	<string name="search_go_to_account">ไปยัง %s</string>
+	<string name="posts_matching_string">โพสต์ที่มี “%s”</string>
+	<string name="accounts_matching_string">ผู้คนที่มี “%s”</string>
+	<!-- Shown in the post header. Please keep it short -->
+	<string name="time_seconds_ago_short">%d วินาทีที่แล้ว</string>
+	<string name="time_minutes_ago_short">%d นาทีที่แล้ว</string>
+	<string name="time_hours_ago_short">%d ชั่วโมงที่แล้ว</string>
+	<string name="time_days_ago_short">%d วันที่แล้ว</string>
 </resources>

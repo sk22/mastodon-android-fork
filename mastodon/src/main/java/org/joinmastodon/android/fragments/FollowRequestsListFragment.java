@@ -48,7 +48,7 @@ import me.grishka.appkit.utils.BindableViewHolder;
 import me.grishka.appkit.utils.V;
 import me.grishka.appkit.views.UsableRecyclerView;
 
-public class FollowRequestsListFragment extends RecyclerFragment<FollowRequestsListFragment.AccountWrapper> implements ScrollableToTop, ProvidesAssistContent.ProvidesWebUri {
+public class FollowRequestsListFragment extends MastodonRecyclerFragment<FollowRequestsListFragment.AccountWrapper> implements ScrollableToTop, ProvidesAssistContent.ProvidesWebUri {
 	private String accountID;
 	private Map<String, Relationship> relationships=Collections.emptyMap();
 	private GetAccountRelationships relationshipsRequest;
@@ -254,7 +254,7 @@ public class FollowRequestsListFragment extends RecyclerFragment<FollowRequestsL
 			postsCount.setText(UiUtils.abbreviateNumber(item.account.statusesCount));
 			followersLabel.setText(getResources().getQuantityString(R.plurals.followers, (int)Math.min(999, item.account.followersCount)));
 			followingLabel.setText(getResources().getQuantityString(R.plurals.following, (int)Math.min(999, item.account.followingCount)));
-			postsLabel.setText(getResources().getQuantityString(R.plurals.posts, (int)Math.min(999, item.account.statusesCount)));
+			postsLabel.setText(getResources().getQuantityString(R.plurals.x_posts, (int)(item.account.statusesCount%1000), item.account.statusesCount));
 			followersCount.setVisibility(item.account.followersCount < 0 ? View.GONE : View.VISIBLE);
 			followersLabel.setVisibility(item.account.followersCount < 0 ? View.GONE : View.VISIBLE);
 			followingCount.setVisibility(item.account.followingCount < 0 ? View.GONE : View.VISIBLE);
@@ -278,7 +278,7 @@ public class FollowRequestsListFragment extends RecyclerFragment<FollowRequestsL
 				actionWrap.setVisibility(View.VISIBLE);
 				acceptWrap.setVisibility(View.GONE);
 				rejectWrap.setVisibility(View.GONE);
-				UiUtils.setRelationshipToActionButton(relationship, actionButton);
+				UiUtils.setRelationshipToActionButtonM3(relationship, actionButton);
 			}
 		}
 
@@ -313,6 +313,7 @@ public class FollowRequestsListFragment extends RecyclerFragment<FollowRequestsL
 		private void onFollowRequestButtonClick(View v) {
 			itemView.setHasTransientState(true);
 			UiUtils.handleFollowRequest((Activity) v.getContext(), item.account, accountID, null, v == acceptButton, relationship, rel -> {
+				if(getContext()==null) return;
 				itemView.setHasTransientState(false);
 				relationships.put(item.account.id, rel);
 				RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter = getBindingAdapter();
@@ -328,6 +329,7 @@ public class FollowRequestsListFragment extends RecyclerFragment<FollowRequestsL
 		private void onActionButtonClick(View v){
 			itemView.setHasTransientState(true);
 			UiUtils.performAccountAction(getActivity(), item.account, accountID, relationship, actionButton, this::setActionProgressVisible, rel->{
+				if(getContext()==null) return;
 				itemView.setHasTransientState(false);
 				relationships.put(item.account.id, rel);
 				rebind();

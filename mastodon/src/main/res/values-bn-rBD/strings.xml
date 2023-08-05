@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="get_started">অ্যাকাউন্ট তৈরি করুন</string>
-	<string name="already_have_account">আমার আগে থেকেই একটি অ্যাকাউন্ট আছে</string>
 	<string name="log_in">লগ ইন করুন</string>
 	<string name="next">এরপর</string>
 	<string name="error">কোনো ত্রুটি ঘটেছে</string>
@@ -9,32 +7,21 @@
 	<string name="preparing_auth">প্রমাণীকরণের জন্য প্রস্তুত হচ্ছে...</string>
 	<string name="in_reply_to">%s কে উত্তর দিন</string>
 	<string name="notifications">নোটিফিকেশন</string>
-	<string name="user_followed_you">আপনাকে ফলো করেছেন</string>
-	<string name="user_sent_follow_request">ফলো করার জন্য অনুরোধ পাঠানো হয়েছে</string>
-	<string name="user_favorited">আপনার পোস্টটি পছন্দ করেছেন</string>
-	<string name="poll_ended">ভোট শেষ</string>
-	<string name="time_seconds">%d সে.</string>
-	<string name="time_minutes">%d মি.</string>
-	<string name="time_hours">%d ঘ.</string>
-	<string name="time_days">%d দি.</string>
+	<string name="user_followed_you">%s আপনাকে ফলো করেছেন</string>
+	<string name="user_sent_follow_request">%s আপনাকে ফলো করার অনুরোধ পাঠিয়েছেন</string>
 	<string name="share_toot_title">শেয়ার করুন</string>
 	<string name="settings">সেটিংস</string>
+	<string name="discard">বাতিল করুন</string>
 	<string name="cancel">বাতিল করুন</string>
 	<plurals name="followers">
 		<item quantity="one">জন ফলোয়ার</item>
 		<item quantity="other">জন ফলোয়ারস</item>
-	</plurals>
-	<plurals name="posts">
-		<item quantity="one">পোস্ট</item>
-		<item quantity="other">পোস্টগুলো</item>
 	</plurals>
 	<string name="posts">পোস্টগুলো</string>
 	<string name="media">মিডিয়া</string>
 	<string name="button_follow">ফলো করুন</string>
 	<string name="button_following">ফলো করছেন</string>
 	<string name="edit_profile">প্রোফাইল সংশোধন করুন</string>
-	<string name="mention_user">%s -কে পিং করুন</string>
-	<string name="share_user">%s -কে শেয়ার করুন</string>
 	<string name="mute_user">%s -কে মিউট করুন</string>
 	<string name="unmute_user">%s -কে আনমিউট করুন</string>
 	<string name="block_user">%s -কে ব্লক করুন</string>
@@ -90,32 +77,37 @@
 	<string name="confirm_unblock_title">অ্যাকাউন্ট আনব্লক করুন</string>
 	<string name="confirm_unblock">%s আনব্লক নিশ্চিত করুন</string>
 	<string name="do_unblock">আনব্লক করুন</string>
-	<string name="button_muted">মিউট করা হয়েছে</string>
 	<string name="button_blocked">ব্লক করা আছে</string>
 	<string name="action_vote">ভোট</string>
-	<string name="tap_to_reveal">দেখার জন্য টিপুন</string>
 	<string name="delete">মুছে ফেলুন</string>
-	<string name="confirm_delete_title">পোস্ট মুছে ফেলুন</string>
 	<string name="confirm_delete">আপনি কি এই পোস্টটি মুছে ফেলতে চান?</string>
 	<string name="deleting">মুছে ফেলা হচ্ছে…</string>
 	<string name="notification_channel_audio_player">অডিও প্লেব্যাক</string>
 	<string name="play">চালান</string>
 	<string name="pause">থামান</string>
-	<string name="log_out">সাইন-আউট করুন</string>
 	<string name="add_account">অ্যাকাউন্ট যোগ করুন</string>
 	<string name="search_hint">খুঁজুন</string>
 	<string name="hashtags">হ্যাশট্যাগগুলো</string>
 	<string name="news">খবর</string>
 	<string name="for_you">আপনার জন্য</string>
-	<string name="all_notifications">সকল</string>
 	<string name="mentions">উল্লেখ</string>
 	<plurals name="x_people_talking">
 		<item quantity="one">%d জন ব্যক্তি বলছেন</item>
 		<item quantity="other">%d jon ব্যক্তিরা বলছেন</item>
 	</plurals>
+	<string name="report_title">%s -এর নামে অভিযোগ করুন</string>
+	<string name="report_choose_reason">এই পোস্টে ভুল কি?</string>
+	<string name="report_reason_personal">আমার এটি ভালো লাগছে না</string>
+	<string name="report_reason_spam">এটি স্প্যাম</string>
+	<string name="report_reason_violation">এটি সার্ভারের নিয়ম ভাঙছে</string>
+	<string name="report_reason_other">এটি অন্য কিছু</string>
+	<string name="report_choose_rule">কোন নিয়মটা ভেঙেছে?</string>
 	<string name="sending_report">রিপোর্ট পাঠানো হচ্ছে…</string>
 	<string name="report_sent_title">রিপোর্ট করার জন্য আপনাকে ধন্যবাদ, আমরা এটি শীঘ্রই দেখব.</string>
-	<string name="report_sent_subtitle">আমরা যতক্ষণে আপনার রিপোর্ট পুনর্বিবেচনা করছি, আপনি %s এর বিরুদ্ধে ব্যবস্থা নিতে পারেন.</string>
+	<string name="report_sent_subtitle">আমরা যতক্ষণে আপনার রিপোর্ট পুনর্বিবেচনা করছি, আপনি %s এর বিরুদ্ধে ব্যবস্থা নিতে পারেন:</string>
+	<string name="unfollow_user">%s -কে আনফলো করুন</string>
+	<string name="unfollow">আনফলো করুন</string>
+	<string name="report_personal_title">আপনি এটি আর দেখতে চান না?</string>
 	<string name="back">ফিরে যান</string>
 	<string name="search_communities">সার্ভারের নাম বা লিঙ্ক</string>
 	<string name="instance_rules_title">সার্ভারের নিয়মাবলী</string>
@@ -125,8 +117,61 @@
 	<string name="email">ই-মেইল</string>
 	<string name="password">পাসওয়ার্ড</string>
 	<string name="confirm_password">পাসওয়ার্ড নিশ্চিত করুন</string>
+	<string name="category_lgbt">LGBT</string>
+	<string name="category_music">সঙ্গীত</string>
+	<string name="category_regional">আঞ্চলিক</string>
+	<string name="category_tech">তথ্য-প্রযুক্তি</string>
+	<string name="confirm_email_title">আপনার ইনবক্স দেখুন</string>
 	<!-- %s is the email address -->
+	<string name="visibility_followers_only">ফলোয়ারদের জন্য</string>
+	<string name="notification_type_follow">নতুন ফলোয়াররা</string>
+	<string name="err_not_logged_in">Mastodon-এ প্রথমে লগ ইন করুন</string>
+	<plurals name="cant_add_more_than_x_attachments">
+		<item quantity="one">আপনি %d -এর বেশি মিডিয়া/ফাইল যোগ করতে পারবেন না</item>
+		<item quantity="other">আপনি %d -এর বেশি মিডিয়া/ফাইল যোগ করতে পারবেন না</item>
+	</plurals>
+	<string name="media_attachment_too_big">%1$s ফাইল %2$s MB-র ফাইলের সাইজ সীমা ছড়িয়ে যাচ্ছে</string>
+	<string name="theme_light">লাইট</string>
+	<string name="theme_dark">ডার্ক</string>
+	<string name="settings_notifications">নোটিফিকেশনগুলো</string>
+	<string name="settings_contribute">Mastodon-কে সাহায্য করুন</string>
+	<string name="new_post">নতুন পোস্ট</string>
+	<string name="button_reply">উত্তর দিন</string>
+	<string name="button_favorite">প্রিয়</string>
+	<string name="button_share">শেয়ার করুন</string>
+	<string name="media_no_description">কোনো বিবরণ ছাড়া ফাইল/মিডিয়া</string>
+	<string name="follow_user">%s-কে ফলো করুন</string>
+	<string name="unfollowed_user">%s-কে আনফলো করেছেন</string>
+	<string name="followed_user">আপনি এখন %s-কে ফলো করছেন</string>
+	<string name="following_user_requested">%s-কে ফলো করার জন্য অনুরোধ করা হয়েছে</string>
+	<string name="open_in_browser">ব্রাউজারে খুলুন</string>
+	<string name="signup_reason">আপনি কেন যুক্ত হতে চান?</string>
+	<string name="signup_reason_note">এটি আমাদেরকে আপনার আবেদন পুনর্বিবেচনা ও পর্যালোচনা করতে সাহায্য করবে.</string>
+	<string name="profile_picture">প্রোফাইলের ছবি</string>
+	<string name="download">ডাউনলোড করুন</string>
+	<string name="permission_required">অনুমতি প্রয়োজন</string>
+	<string name="storage_permission_to_download">এই ফাইলটি সেভ করতে অ্যাপটির আপনার স্টোরেজ অ্যাক্সেসের অনুমতি প্রয়োজন.</string>
+	<string name="open_settings">সেটিংস খুলুন</string>
+	<string name="error_saving_file">ফাইল সেভ করতে ত্রুটি দেখা দিচ্ছে</string>
+	<string name="file_saved">ফাইল সেভ হয়েছে</string>
+	<string name="downloading">ডাউনলোড হচ্ছে…</string>
+	<!-- %s is the server domain -->
+	<string name="button_follow_pending">বাকি আছে</string>
+	<string name="follows_you">আপনাকে ফলো করছেন</string>
 	<!-- translators: %,d is a valid placeholder, it formats the number with locale-dependent grouping separators -->
+	<plurals name="x_followers">
+		<item quantity="one">%,d জন ফলোয়ার</item>
+		<item quantity="other">%,d জন ফলোয়ার</item>
+	</plurals>
+	<string name="time_just_now">এইমাত্র</string>
+	<plurals name="x_seconds_ago">
+		<item quantity="one">%d সেকেন্ড আগে</item>
+		<item quantity="other">%d সেকেন্ড আগে</item>
+	</plurals>
+	<plurals name="x_minutes_ago">
+		<item quantity="one">%d মিনিট আগে</item>
+		<item quantity="other">%d মিনিট আগে</item>
+	</plurals>
 	<!-- %s is version like 1.2.3 -->
 	<!-- %s is version like 1.2.3 -->
 	<!-- %s is file size -->
@@ -137,4 +182,15 @@
 	<string name="welcome_paragraph1">Mastodon হল একটি বিকেন্দ্রীভূত সামাজিক নেটওয়ার্ক, যার মানে কোনো একক কোম্পানি এটিকে নিয়ন্ত্রণ করে না। এটি অনেকগুলি স্বাধীনভাবে চালিত সার্ভারের সমন্বয়ে গঠিত, যেখানে সব সার্ভারগুলি একসাথে সংযুক্ত৷</string>
 	<string name="what_are_servers">সার্ভার কি?</string>
 	<string name="welcome_paragraph2"><![CDATA[প্রতিটি Mastodon অ্যাকাউন্টকে একটি সার্ভারে হোস্ট করা হয় — প্রত্যেকটির নিজস্ব মান, নিয়ম এবং প্রশাসক (অ্যাডমিন) রয়েছে। আপনি যে কোনো সার্ভারই বেছে নিন না কেন তা বিবেচ্য নয়, আপনি যেকোনো সার্ভারের লোকেদের সাথে যোগাযোগ করতে এবং তাদের ফলো করতে পারেন।]]></string>
+	<!-- %s is formatted file size ("467 KB image") -->
+	<!-- %s is the server domain -->
+	<!-- Shown on the "stamp" on the screen that appears after you report a post/user. Please keep the translation short, preferably a single word -->
+	<!-- %s is the app name (Mastodon, key app_name). I made it a placeholder so everything Just Works™ with forks -->
+	<!-- %1$s is the date (may be relative, e.g. "today" or "yesterday"), %2$s is the time. You can reorder these placeholders if that works better for your language -->
+	<!-- %s is the timestamp ("tomorrow at 12:34") -->
+	<!-- %s is the timestamp ("tomorrow at 12:34") -->
+	<!-- %s is the username -->
+	<!-- %s is the timestamp ("tomorrow at 12:34") -->
+	<!-- Shown like a content warning, %s is the name of the filter -->
+	<!-- Shown in the post header. Please keep it short -->
 </resources>

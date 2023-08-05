@@ -16,7 +16,6 @@ import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -35,10 +34,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.hootsuite.nachos.NachoTextView;
 
-import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.lists.GetLists;
 import org.joinmastodon.android.api.requests.tags.GetFollowedHashtags;
+import org.joinmastodon.android.api.session.AccountLocalPreferences;
+import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.model.Hashtag;
 import org.joinmastodon.android.model.HeaderPaginationList;
 import org.joinmastodon.android.model.ListTimeline;
@@ -52,6 +52,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import me.grishka.appkit.api.Callback;
@@ -59,7 +60,7 @@ import me.grishka.appkit.api.ErrorResponse;
 import me.grishka.appkit.utils.BindableViewHolder;
 import me.grishka.appkit.views.UsableRecyclerView;
 
-public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> implements ScrollableToTop {
+public class EditTimelinesFragment extends MastodonRecyclerFragment<TimelineDefinition> implements ScrollableToTop {
     private String accountID;
     private TimelinesAdapter adapter;
     private final ItemTouchHelper itemTouchHelper;
@@ -121,7 +122,7 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
         super.onViewCreated(view, savedInstanceState);
         itemTouchHelper.attachToRecyclerView(list);
         refreshLayout.setEnabled(false);
-        list.addItemDecoration(new DividerItemDecoration(getActivity(), R.attr.colorPollVoted, 0.5f, 56, 16));
+        list.addItemDecoration(new DividerItemDecoration(getActivity(), R.attr.colorM3OutlineVariant, 0.5f, 56, 16));
     }
 
     @Override
@@ -187,7 +188,7 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
         makeBackItem(listsMenu);
         makeBackItem(hashtagsMenu);
 
-        TimelineDefinition.getAllTimelines(accountID).forEach(tl -> addTimelineToOptions(tl, timelinesMenu));
+        TimelineDefinition.getAllTimelines(accountID).stream().forEach(tl -> addTimelineToOptions(tl, timelinesMenu));
         listTimelines.stream().map(TimelineDefinition::ofList).forEach(tl -> addTimelineToOptions(tl, listsMenu));
         addHashtagItem = addOptionsItem(hashtagsMenu, getContext().getString(R.string.sk_timelines_add), R.drawable.ic_fluent_add_24_regular);
         hashtags.stream().map(TimelineDefinition::ofHashtag).forEach(tl -> addTimelineToOptions(tl, hashtagsMenu));
@@ -200,10 +201,12 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
     }
 
     private void saveTimelines() {
-        updated = true;
-        GlobalUserPreferences.pinnedTimelines.put(accountID, data.size() > 0 ? data : List.of(TimelineDefinition.HOME_TIMELINE));
-        GlobalUserPreferences.save();
-    }
+        updated=true;
+		AccountLocalPreferences prefs=AccountSessionManager.get(accountID).getLocalPreferences();
+		if(data.isEmpty()) data.add(TimelineDefinition.HOME_TIMELINE);
+		prefs.timelines=data;
+		prefs.save();
+	}
 
     private void removeTimeline(int position) {
         data.remove(position);
@@ -214,7 +217,7 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
 
     @Override
     protected void doLoadData(int offset, int count){
-        onDataLoaded(GlobalUserPreferences.pinnedTimelines.getOrDefault(accountID, TimelineDefinition.getDefaultTimelines(accountID)), false);
+        onDataLoaded(AccountSessionManager.get(accountID).getLocalPreferences().timelines);
         updateOptionsMenu();
     }
 
@@ -256,7 +259,8 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
         Context ctx = getContext();
         View view = getActivity().getLayoutInflater().inflate(R.layout.edit_timeline, list, false);
 
-        Button advancedBtn = view.findViewById(R.id.advanced);
+		View divider = view.findViewById(R.id.divider);
+		Button advancedBtn = view.findViewById(R.id.advanced);
         EditText editText = view.findViewById(R.id.input);
         if (item != null) editText.setText(item.getCustomTitle());
         editText.setHint(item != null ? item.getDefaultTitle(ctx) : ctx.getString(R.string.sk_hashtag));
@@ -264,11 +268,12 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
         LinearLayout tagWrap = view.findViewById(R.id.tag_wrap);
         boolean advancedOptionsAvailable = item == null || item.getType() == TimelineDefinition.TimelineType.HASHTAG;
         advancedBtn.setVisibility(advancedOptionsAvailable ? View.VISIBLE : View.GONE);
-        view.findViewById(R.id.divider).setVisibility(advancedOptionsAvailable ? View.VISIBLE : View.GONE);
         advancedBtn.setOnClickListener(l -> {
             advancedBtn.setSelected(!advancedBtn.isSelected());
-            advancedBtn.setText(advancedBtn.isSelected() ? R.string.sk_advanced_options_hide : R.string.sk_advanced_options_show);
+			advancedBtn.setText(advancedBtn.isSelected() ? R.string.sk_advanced_options_hide : R.string.sk_advanced_options_show);
+			divider.setVisibility(advancedBtn.isSelected() ? View.VISIBLE : View.GONE);
             tagWrap.setVisibility(advancedBtn.isSelected() ? View.VISIBLE : View.GONE);
+			UiUtils.beginLayoutTransition((ViewGroup) view);
         });
 
         Switch localOnlySwitch = view.findViewById(R.id.local_only_switch);
@@ -281,8 +286,9 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
         NachoTextView tagsNone = prepareChipTextView(view.findViewById(R.id.tags_none));
         if (item != null) {
             tagMain.setText(item.getHashtagName());
-            boolean hasAdvanced = setTagListContent(tagsAny, item.getHashtagAny());
-            hasAdvanced = setTagListContent(tagsAll, item.getHashtagAll()) || hasAdvanced;
+			boolean hasAdvanced = !TextUtils.isEmpty(item.getCustomTitle()) && !Objects.equals(item.getHashtagName(), item.getCustomTitle());
+			hasAdvanced = setTagListContent(tagsAny, item.getHashtagAny()) || hasAdvanced;
+			hasAdvanced = setTagListContent(tagsAll, item.getHashtagAll()) || hasAdvanced;
             hasAdvanced = setTagListContent(tagsNone, item.getHashtagNone()) || hasAdvanced;
             if (item.isHashtagLocalOnly()) {
                 localOnlySwitch.setChecked(true);
@@ -291,7 +297,8 @@ public class EditTimelinesFragment extends RecyclerFragment<TimelineDefinition> 
             if (hasAdvanced) {
                 advancedBtn.setSelected(true);
                 advancedBtn.setText(R.string.sk_advanced_options_hide);
-                tagWrap.setVisibility(View.VISIBLE);
+				tagWrap.setVisibility(View.VISIBLE);
+				divider.setVisibility(View.VISIBLE);
             }
         }
 

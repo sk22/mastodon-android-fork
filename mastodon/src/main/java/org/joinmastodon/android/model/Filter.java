@@ -1,62 +1,43 @@
 package org.joinmastodon.android.model;
 
-import android.text.TextUtils;
-
-import androidx.annotation.Nullable;
-
-import com.google.gson.annotations.SerializedName;
-
 import org.joinmastodon.android.api.ObjectValidationException;
+import org.joinmastodon.android.api.RequiredField;
 import org.parceler.Parcel;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 @Parcel
 public class Filter extends BaseModel{
+	@RequiredField
 	public String id;
-	public String phrase;
+
+	@RequiredField
 	public String title;
-	public transient EnumSet<FilterContext> context=EnumSet.noneOf(FilterContext.class);
+
+	@RequiredField
+	public EnumSet<FilterContext> context;
+
 	public Instant expiresAt;
-	public boolean irreversible;
-	public boolean wholeWord;
 	public FilterAction filterAction;
 
-	@SerializedName("context")
-	protected List<FilterContext> _context;
+	public List<FilterKeyword> keywords=new ArrayList<>();
 
-	private transient Pattern pattern;
+	public List<FilterStatus> statuses=new ArrayList<>();
 
 	@Override
 	public void postprocess() throws ObjectValidationException{
 		super.postprocess();
-		if(_context==null)
-			throw new ObjectValidationException();
-		for(FilterContext c:_context){
-			if(c!=null)
-				context.add(c);
-		}
+		for(FilterKeyword keyword:keywords)
+			keyword.postprocess();
+		for(FilterStatus status:statuses)
+			status.postprocess();
 	}
 
-	public boolean matches(CharSequence text){
-		if(TextUtils.isEmpty(text))
-			return false;
-		if(pattern==null){
-			if(wholeWord)
-				pattern=Pattern.compile("\\b"+Pattern.quote(phrase)+"\\b", Pattern.CASE_INSENSITIVE);
-			else
-				pattern=Pattern.compile(Pattern.quote(phrase), Pattern.CASE_INSENSITIVE);
-		}
-		if (title == null) title = phrase;
-		return pattern.matcher(text).find();
-	}
-
-	public boolean matches(Status status){
-		return matches(status.getContentStatus().getStrippedText());
+	public boolean isActive(){
+		return expiresAt==null || expiresAt.isAfter(Instant.now());
 	}
 
 	@Override
@@ -64,31 +45,11 @@ public class Filter extends BaseModel{
 		return "Filter{"+
 				"id='"+id+'\''+
 				", title='"+title+'\''+
-				", phrase='"+phrase+'\''+
 				", context="+context+
 				", expiresAt="+expiresAt+
-				", irreversible="+irreversible+
-				", wholeWord="+wholeWord+
+				", filterAction="+filterAction+
+				", keywords="+keywords+
+				", statuses="+statuses+
 				'}';
-	}
-
-	public enum FilterContext{
-		@SerializedName("home")
-		HOME,
-		@SerializedName("notifications")
-		NOTIFICATIONS,
-		@SerializedName("public")
-		PUBLIC,
-		@SerializedName("thread")
-		THREAD,
-		@SerializedName("account")
-		ACCOUNT
-	}
-
-	public enum FilterAction{
-		@SerializedName("hide")
-		HIDE,
-		@SerializedName("warn")
-		WARN
 	}
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-	<item android:color="?android:colorAccent" android:state_selected="true"/>
-	<item android:color="?android:textColorSecondary" android:state_enabled="true"/>
-	<item android:color="?colorIconDisabled" />
+	<item android:color="?colorM3Primary" android:state_selected="true"/>
+	<item android:color="?colorM3OnBackground" android:state_enabled="true"/>
+	<item android:color="@color/m3_on_background_alpha38" />
 </selector>

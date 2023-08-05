@@ -4,7 +4,7 @@
     <string name="sk_confirm_unpin_post">Jste si jisti, že chcete tento příspěvek odepnout\?</string>
     <string name="sk_confirm_pin_post">Chcete si tento příspěvek připnout na svůj profil\?</string>
     <string name="sk_federated_timeline_info_banner">Toto jsou nejnovější příspěvky lidí z vaší federace.</string>
-    <string name="sk_disable_marquee">Zakázat posouvání textu v titulkových lištách</string>
+    <string name="sk_settings_enable_marquee">Zakázat posouvání textu v titulkových lištách</string>
     <string name="sk_welcome_text">Žralok tě zdraví! Chcete-li začít, zadejte níže název domény své domovské instance.</string>
     <string name="sk_clear_recent_languages">Vymazat nedávno použité jazyky</string>
     <string name="sk_confirm_clear_recent_languages">Jste si jisti, že chcete vymazat nedávno použité jazyky\?</string>

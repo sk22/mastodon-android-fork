@@ -1,5 +1,5 @@
 - Me gusta/marcar/responder directamente desde la notificación de Android
 - Encabezados más bonitos y coherentes para reblogs y respuestas en la línea de tiempo.
 - Punto de notificación (que aún no carga las notificaciones)
-- Para usuarios de Akkoma: Visibilidad de las respuestas, las respuestas ordenadas, citas, ...
+- Para las personas de Akkoma: Visibilidad de las respuestas, las respuestas ordenadas, citas, ...
 - Corrección de fallos y pequeños ajustes

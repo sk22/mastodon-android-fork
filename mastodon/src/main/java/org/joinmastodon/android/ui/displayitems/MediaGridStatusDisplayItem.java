@@ -8,11 +8,14 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -24,6 +27,7 @@ import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.model.Attachment;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.PhotoLayoutHelper;
+import org.joinmastodon.android.ui.drawables.SpoilerStripesDrawable;
 import org.joinmastodon.android.ui.photoviewer.PhotoViewerHost;
 import org.joinmastodon.android.ui.utils.MediaAttachmentViewController;
 import org.joinmastodon.android.ui.utils.UiUtils;
@@ -39,6 +43,7 @@ import me.grishka.appkit.imageloader.ImageLoaderViewHolder;
 import me.grishka.appkit.imageloader.requests.ImageLoaderRequest;
 import me.grishka.appkit.imageloader.requests.UrlImageLoaderRequest;
 import me.grishka.appkit.utils.CubicBezierInterpolator;
+import me.grishka.appkit.utils.V;
 
 public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 	private static final String TAG="MediaGridDisplayItem";
@@ -48,6 +53,7 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 	private final List<Attachment> attachments;
 	private final ArrayList<ImageLoaderRequest> requests=new ArrayList<>();
 	public final Status status;
+	public String sensitiveTitle;
 
 	public MediaGridStatusDisplayItem(String parentID, BaseStatusListFragment<?> parentFragment, PhotoLayoutHelper.TiledLayoutResult tiledLayout, List<Attachment> attachments, Status status){
 		super(parentID, parentFragment);
@@ -99,10 +105,14 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 		private final ImageButton altTextClose;
 		private final TextView altText, noAltText;
 
+		private final View sensitiveOverlay;
+		private final LayerDrawable sensitiveOverlayBG;
+		private static final ColorDrawable drawableForWhenThereIsNoBlurhash=new ColorDrawable(0xffffffff);
+//		private final FrameLayout hideSensitiveButton;
+		private final TextView sensitiveText;
+
 		private int altTextIndex=-1;
 		private Animator altTextAnimator;
-
-		private boolean sizeUpdating = false;
 
 		public Holder(Activity activity, ViewGroup parent){
 			super(new FrameLayoutThatOnlyMeasuresFirstChild(activity));
@@ -124,10 +134,28 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 			altText=findViewById(R.id.alt_text);
 			noAltText=findViewById(R.id.no_alt_text);
 			altTextClose.setOnClickListener(this::onAltTextCloseClick);
+
+			// megalodon: no sensitive hide button because the visibility toggle looks prettier imo
+//			hideSensitiveButton=(FrameLayout) activity.getLayoutInflater().inflate(R.layout.alt_text_badge, overlays, false);
+//			((TextView) hideSensitiveButton.findViewById(R.id.alt_button)).setText(R.string.hide);
+//			overlays.addView(hideSensitiveButton, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.END | Gravity.TOP));
+
+			activity.getLayoutInflater().inflate(R.layout.overlay_image_sensitive, overlays);
+			sensitiveOverlay=findViewById(R.id.sensitive_overlay);
+			sensitiveOverlayBG=(LayerDrawable) sensitiveOverlay.getBackground().mutate();
+			sensitiveOverlayBG.setDrawableByLayerId(R.id.left_drawable, new SpoilerStripesDrawable(false));
+			sensitiveOverlayBG.setDrawableByLayerId(R.id.right_drawable, new SpoilerStripesDrawable(true));
+			sensitiveOverlay.setBackground(sensitiveOverlayBG);
+			sensitiveOverlay.setOnClickListener(v->revealSensitive());
+//			hideSensitiveButton.setOnClickListener(v->hideSensitive());
+
+			sensitiveText=findViewById(R.id.sensitive_text);
 		}
 
 		@Override
 		public void onBind(MediaGridStatusDisplayItem item){
+			wrapper.setPadding(0, 0, 0, 0); // item.inset ? 0 : V.dp(8));
+
 			if(altTextAnimator!=null)
 				altTextAnimator.cancel();
 
@@ -139,6 +167,7 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 			controllers.clear();
 
 			int i=0;
+			if (!item.attachments.isEmpty()) updateBlurhashInSensitiveOverlay();
 			for(Attachment att:item.attachments){
 				MediaAttachmentViewController c=item.viewPool.obtain(switch(att.type){
 					case IMAGE -> GridItemType.PHOTO;
@@ -166,23 +195,36 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 			noAltTextButton.setVisibility(View.VISIBLE);
 			altTextWrapper.setVisibility(View.GONE);
 			altTextIndex=-1;
+
+			if(!item.status.sensitiveRevealed){
+				sensitiveOverlay.setVisibility(View.VISIBLE);
+				layout.setVisibility(View.INVISIBLE);
+			}else{
+				sensitiveOverlay.setVisibility(View.GONE);
+				layout.setVisibility(View.VISIBLE);
+			}
+//			hideSensitiveButton.setVisibility(item.status.sensitive ? View.VISIBLE : View.GONE);
+			if(!TextUtils.isEmpty(item.sensitiveTitle))
+				sensitiveText.setText(item.sensitiveTitle);
+			else if (!item.status.sensitive)
+				sensitiveText.setText(R.string.media_hidden);
+			else
+				sensitiveText.setText(R.string.sensitive_content_explain);
 		}
 
 		@Override
 		public void setImage(int index, Drawable drawable){
-			Rect bounds=drawable.getBounds();
-			drawable.setBounds(bounds.left, bounds.top, bounds.left+drawable.getIntrinsicWidth(), bounds.top+drawable.getIntrinsicHeight());
 			if(item.attachments.get(index).meta==null){
+				Rect bounds=drawable.getBounds();
+				drawable.setBounds(bounds.left, bounds.top, bounds.left+drawable.getIntrinsicWidth(), bounds.top+drawable.getIntrinsicHeight());
 				Attachment.Metadata metadata = new Attachment.Metadata();
 				metadata.width=drawable.getIntrinsicWidth();
 				metadata.height=drawable.getIntrinsicHeight();
 				item.attachments.get(index).meta=metadata;
-
 				item.tiledLayout=PhotoLayoutHelper.processThumbs(item.attachments);
-				sizeUpdating = true;
-				item.parentFragment.onImageUpdated(this, index);
+				UiUtils.beginLayoutTransition((ViewGroup) itemView);
+				rebind();
 			}
-
 			controllers.get(index).setImage(drawable);
 		}
 
@@ -193,16 +235,14 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 
 		private void onViewClick(View v){
 			int index=(Integer)v.getTag();
-			if(!item.status.spoilerRevealed){
-				item.parentFragment.onRevealSpoilerClick(this);
-			}else if(item.parentFragment instanceof PhotoViewerHost){
-				((PhotoViewerHost) item.parentFragment).openPhotoViewer(item.parentID, item.status, index, this);
-			}
+			((PhotoViewerHost) item.parentFragment).openPhotoViewer(item.parentID, item.status, index, this);
 		}
 
 		private void onAltTextClick(View v){
 			if(altTextAnimator!=null)
 				altTextAnimator.cancel();
+//			V.setVisibilityAnimated(hideSensitiveButton, View.GONE);
+			V.cancelVisibilityAnimation(altTextWrapper);
 			v.setVisibility(View.INVISIBLE);
 			int index=(Integer)v.getTag();
 			altTextIndex=index;
@@ -215,7 +255,7 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 			noAltText.setVisibility(!hasAltText && showNoAltIndicator ? View.VISIBLE : View.GONE);
 			altText.setText(att.description);
 			altTextWrapper.setVisibility(View.VISIBLE);
-			altTextWrapper.setBackgroundResource(hasAltText ? R.drawable.bg_image_alt_overlay : R.drawable.bg_image_no_alt_overlay);
+			altTextWrapper.setBackgroundResource(hasAltText ? R.drawable.bg_image_alt_text_overlay : R.drawable.bg_image_no_alt_overlay);
 			altTextWrapper.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener(){
 				@Override
 				public boolean onPreDraw(){
@@ -245,6 +285,9 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 						if(c.btnsWrap!=null && c.btnsWrap!=v){
 							anims.add(ObjectAnimator.ofFloat(c.btnsWrap, View.ALPHA, 1, 0).setDuration(150));
 						}
+						if (c.extraBadge != null) {
+							anims.add(ObjectAnimator.ofFloat(c.extraBadge, View.ALPHA, 1, 0).setDuration(150));
+						}
 					}
 
 					AnimatorSet set=new AnimatorSet();
@@ -258,6 +301,7 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 								if(c.btnsWrap!=null){
 									c.btnsWrap.setVisibility(View.INVISIBLE);
 								}
+								if (c.extraBadge != null) c.extraBadge.setVisibility(View.INVISIBLE);
 							}
 						}
 					});
@@ -273,6 +317,8 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 			if(altTextAnimator!=null)
 				altTextAnimator.cancel();
 
+//			V.setVisibilityAnimated(hideSensitiveButton, item.status.sensitive ? View.VISIBLE : View.GONE);
+			V.cancelVisibilityAnimation(altTextWrapper);
 			View btn=controllers.get(altTextIndex).btnsWrap;
 			int i=0;
 			for(MediaAttachmentViewController c:controllers){
@@ -281,6 +327,7 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 						&& c.btnsWrap!=btn
 						&& ((hasAltText && showAltIndicator) || (!hasAltText && showNoAltIndicator))
 				) c.btnsWrap.setVisibility(View.VISIBLE);
+				if (c.extraBadge != null) c.extraBadge.setVisibility(View.VISIBLE);
 				i++;
 			}
 
@@ -305,9 +352,12 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 				a.setDuration(300);
 
 			for(MediaAttachmentViewController c:controllers){
-//				if(c.btnsWrap!=null && c.btnsWrap!=btn){
+				if(c.btnsWrap!=null && c.btnsWrap!=btn){
 					anims.add(ObjectAnimator.ofFloat(c.btnsWrap, View.ALPHA, 1).setDuration(150));
-//				}
+				}
+				if (c.extraBadge != null) {
+					anims.add(ObjectAnimator.ofFloat(c.extraBadge, View.ALPHA, 1).setDuration(150));
+				}
 			}
 
 			AnimatorSet set=new AnimatorSet();
@@ -317,18 +367,13 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 				@Override
 				public void onAnimationEnd(Animator animation){
 					altTextAnimator=null;
-					altTextWrapper.setVisibility(View.GONE);
-					btn.setVisibility(View.VISIBLE);
+					V.setVisibilityAnimated(altTextWrapper, View.GONE);
+					V.setVisibilityAnimated(btn, View.VISIBLE);
+					btn.setAlpha(1);
 				}
 			});
 			altTextAnimator=set;
 			set.start();
-		}
-
-		public void setRevealed(boolean revealed){
-			for(MediaAttachmentViewController c:controllers){
-				c.setRevealed(revealed);
-			}
 		}
 
 		public MediaAttachmentViewController getViewController(int index){
@@ -340,12 +385,35 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 			wrapper.setClipChildren(clip);
 		}
 
-		public boolean isSizeUpdating() {
-			return sizeUpdating;
+		private void updateBlurhashInSensitiveOverlay(){
+			Drawable d = item.attachments.get(0).blurhashPlaceholder;
+			sensitiveOverlayBG.setDrawableByLayerId(R.id.blurhash, d==null ? drawableForWhenThereIsNoBlurhash : d.mutate());
+			sensitiveOverlay.setBackground(sensitiveOverlayBG);
 		}
 
-		public void sizeUpdated() {
-			sizeUpdating = false;
+		public void revealSensitive(){
+			if(item.status.sensitiveRevealed)
+				return;
+			item.status.sensitiveRevealed=true;
+			V.setVisibilityAnimated(sensitiveOverlay, View.GONE);
+			layout.setVisibility(View.VISIBLE);
+			item.parentFragment.onSensitiveRevealed(this);
+		}
+
+		public void hideSensitive(){
+			if(!item.status.sensitiveRevealed)
+				return;
+			updateBlurhashInSensitiveOverlay();
+			item.status.sensitiveRevealed=false;
+			V.setVisibilityAnimated(sensitiveOverlay, View.VISIBLE, ()->layout.setVisibility(View.INVISIBLE));
+		}
+
+		public MediaGridLayout getLayout(){
+			return layout;
+		}
+
+		public View getSensitiveOverlay(){
+			return sensitiveOverlay;
 		}
 	}
 }

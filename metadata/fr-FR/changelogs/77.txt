@@ -1,0 +1,4 @@
+- Appuyer longtemps sur le bouton "Suivre" pour suivre d'un autre compte
+- Option pour ouvrir des profils dans un autre compte.
+- Cacher automatiquement le bouton "Composer" en faisant défiler la chronologie vers le bas
+- Corriger un plantage à l'ouverture du profil d'administrateur du serveur

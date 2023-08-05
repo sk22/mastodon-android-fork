@@ -1,20 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-	<item android:id="@+id/open_with_account" android:title="@string/sk_open_with_account" android:icon="@drawable/ic_fluent_person_swap_24_regular">
-		<menu android:id="@+id/accounts" />
-	</item>
-	<item android:id="@+id/edit" android:title="@string/edit" android:icon="@drawable/ic_fluent_edit_24_regular"/>
-	<item android:id="@+id/delete" android:title="@string/delete" android:icon="@drawable/ic_fluent_delete_24_regular"/>
-	<item android:id="@+id/delete_and_redraft" android:title="@string/sk_delete_and_redraft" android:icon="@drawable/ic_fluent_arrow_clockwise_24_regular" />
-	<item android:id="@+id/pin" android:title="@string/sk_pin_post" android:icon="@drawable/ic_fluent_pin_24_regular"/>
-	<item android:id="@+id/unpin" android:title="@string/sk_unpin_post" android:icon="@drawable/ic_fluent_pin_off_24_regular"/>
-	<item android:id="@+id/manage_user_lists" android:title="@string/sk_lists_with_user" android:icon="@drawable/ic_fluent_people_24_regular"/>
-	<item android:id="@+id/mute" android:title="@string/mute_user" android:icon="@drawable/ic_fluent_speaker_off_24_regular"/>
-	<item android:id="@+id/follow" android:title="@string/follow_user" android:icon="@drawable/ic_fluent_person_add_24_regular"/>
-	<item android:id="@+id/block" android:title="@string/block_user" android:icon="@drawable/ic_fluent_person_prohibited_24_regular"/>
-	<item android:id="@+id/block_domain" android:title="@string/block_domain" android:icon="@drawable/ic_fluent_shield_prohibited_24_regular"/>
-	<item android:id="@+id/report" android:title="@string/report_user" android:icon="@drawable/ic_fluent_warning_24_regular"/>
-	<item android:id="@+id/bookmark" android:title="@string/add_bookmark" android:icon="@drawable/ic_fluent_bookmark_24_regular"/>
-	<item android:id="@+id/copy_link" android:title="@string/sk_copy_link_to_post" android:icon="@drawable/ic_fluent_link_24_regular"/>
-	<item android:id="@+id/open_in_browser" android:title="@string/open_in_browser" android:icon="@drawable/ic_fluent_globe_24_regular"/>
+	<group android:id="@+id/menu_group1">
+		<item android:id="@+id/edit" android:title="@string/edit" android:icon="@drawable/ic_fluent_edit_24_regular"/>
+		<item android:id="@+id/delete" android:title="@string/delete" android:icon="@drawable/ic_fluent_delete_24_regular"/>
+		<item android:id="@+id/delete_and_redraft" android:title="@string/sk_delete_and_redraft" android:icon="@drawable/ic_fluent_arrow_clockwise_24_regular" />
+		<item android:id="@+id/pin" android:title="@string/sk_pin_post" android:icon="@drawable/ic_fluent_pin_24_regular"/>
+		<item android:id="@+id/unpin" android:title="@string/sk_unpin_post" android:icon="@drawable/ic_fluent_pin_off_24_regular"/>
+	</group>
+	<group android:id="@+id/menu_group2">
+		<item android:id="@+id/manage_user_lists" android:title="@string/sk_lists_with_user" android:icon="@drawable/ic_fluent_people_24_regular"/>
+		<item android:id="@+id/follow" android:title="@string/follow_user" android:icon="@drawable/ic_fluent_person_add_24_regular"/>
+		<item android:id="@+id/mute" android:title="@string/mute_user" android:icon="@drawable/ic_fluent_speaker_off_24_regular"/>
+		<item android:id="@+id/block" android:title="@string/block_user" android:icon="@drawable/ic_fluent_person_prohibited_24_regular"/>
+		<item android:id="@+id/block_domain" android:title="@string/block_domain" android:icon="@drawable/ic_fluent_shield_prohibited_24_regular"/>
+		<item android:id="@+id/report" android:title="@string/report_user" android:icon="@drawable/ic_fluent_warning_24_regular"/>
+	</group>
+	<group android:id="@+id/menu_group3">
+<!--		<item android:id="@+id/share" android:title="@string/button_share" android:icon="@drawable/ic_fluent_share_24_regular"/>-->
+		<item android:id="@+id/copy_link" android:title="@string/sk_copy_link_to_post" android:icon="@drawable/ic_fluent_link_24_regular"/>
+		<item android:id="@+id/open_in_browser" android:title="@string/open_in_browser" android:icon="@drawable/ic_fluent_globe_24_regular"/>
+		<item android:id="@+id/open_with_account" android:title="@string/sk_open_with_account" android:icon="@drawable/ic_fluent_person_swap_24_regular">
+			<menu android:id="@+id/accounts" />
+		</item>
+	</group>
 </menu>
