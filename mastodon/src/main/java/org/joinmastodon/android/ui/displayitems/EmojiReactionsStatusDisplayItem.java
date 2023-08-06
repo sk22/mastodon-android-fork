@@ -1,20 +1,17 @@
 package org.joinmastodon.android.ui.displayitems;
 
 import android.app.Activity;
-import android.graphics.PorterDuff;
+import android.graphics.Paint;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.style.RelativeSizeSpan;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.MastodonAPIRequest;
@@ -22,184 +19,222 @@ import org.joinmastodon.android.api.requests.statuses.PleromaAddStatusReaction;
 import org.joinmastodon.android.api.requests.statuses.PleromaDeleteStatusReaction;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.fragments.account_list.StatusEmojiReactionsListFragment;
-import org.joinmastodon.android.model.Emoji;
 import org.joinmastodon.android.model.EmojiReaction;
 import org.joinmastodon.android.model.Status;
-import org.joinmastodon.android.ui.EmojiReactionsView;
-import org.joinmastodon.android.ui.text.HtmlParser;
-import org.joinmastodon.android.ui.utils.CustomEmojiHelper;
+import org.joinmastodon.android.ui.utils.TextDrawable;
 import org.joinmastodon.android.ui.utils.UiUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import me.grishka.appkit.Nav;
 import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
+import me.grishka.appkit.imageloader.ImageLoaderRecyclerAdapter;
 import me.grishka.appkit.imageloader.ImageLoaderViewHolder;
+import me.grishka.appkit.imageloader.ListImageLoaderWrapper;
+import me.grishka.appkit.imageloader.RecyclerViewDelegate;
 import me.grishka.appkit.imageloader.requests.ImageLoaderRequest;
+import me.grishka.appkit.imageloader.requests.UrlImageLoaderRequest;
+import me.grishka.appkit.utils.BindableViewHolder;
 import me.grishka.appkit.utils.V;
+import me.grishka.appkit.views.UsableRecyclerView;
 
 public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
-    public final Status status;
-    public final Map<String, EmojiReactionDisplay> reactions = new LinkedHashMap<>();
+	public final Status status;
+	private final Drawable placeholder;
+	private List<ImageLoaderRequest> requests;
 
-    private final CustomEmojiHelper emojiHelper=new CustomEmojiHelper();
-
-    public EmojiReactionsStatusDisplayItem(String parentID, BaseStatusListFragment parentFragment, Status status) {
+    public EmojiReactionsStatusDisplayItem(String parentID, BaseStatusListFragment<?> parentFragment, Status status) {
         super(parentID, parentFragment);
-        this.status = status;
-        if (status.emojiReactions != null){
-			for(EmojiReaction emojiReaction : status.emojiReactions){
-                reactions.put(emojiReaction.name, createDisplay(emojiReaction, true));
-			}
-        }
+        this.status=status;
+		placeholder=parentFragment.getContext().getDrawable(R.drawable.image_placeholder).mutate();
+		placeholder.setBounds(0, 0, V.sp(24), V.sp(24));
     }
 
-    public EmojiReactionDisplay createDisplay(EmojiReaction emojiReaction, boolean addToHelper) {
-        int atSymbolIndex = emojiReaction.name.indexOf("@");
-        String name = emojiReaction.name.substring(0, atSymbolIndex != -1 ? atSymbolIndex : emojiReaction.name.length());
-        SpannableStringBuilder ssb = new SpannableStringBuilder(emojiReaction.url != null ? ":" + name + ":" : name);
-        ssb.append("\n").append(String.valueOf(emojiReaction.count));
-        int countStartIndex = ssb.length() - String.valueOf(emojiReaction.count).length();
-        ssb.setSpan(new RelativeSizeSpan(1.4f), 0, countStartIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ssb.setSpan(new RelativeSizeSpan(0.8f), countStartIndex, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        if (emojiReaction.url != null) {
-            Emoji emoji = new Emoji();
-            emoji.shortcode = name;
-            emoji.url = emojiReaction.url;
-            HtmlParser.parseCustomEmoji(ssb, Collections.singletonList(emoji));
-            if(addToHelper)
-                emojiHelper.addText(ssb);
-        }
-        return new EmojiReactionDisplay(ssb, emojiReaction);
-    }
+	private void refreshRequests() {
+		requests=status.reactions.stream()
+				.map(e->e.url!=null ? new UrlImageLoaderRequest(e.url, V.sp(24), V.sp(24)) : null)
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public int getImageCount(){
+		return (int) status.reactions.stream().filter(r->r.url != null).count();
+	}
+
+	@Override
+	public ImageLoaderRequest getImageRequest(int index){
+		return requests.get(index);
+	}
 
     @Override
     public Type getType(){
         return Type.EMOJI_REACTIONS;
     }
 
-    @Override
-    public int getImageCount(){
-        return emojiHelper.getImageCount();
-    }
-
-    @Override
-    public ImageLoaderRequest getImageRequest(int index){
-        return emojiHelper.getImageRequest(index);
-    }
-
     public static class Holder extends StatusDisplayItem.Holder<EmojiReactionsStatusDisplayItem> implements ImageLoaderViewHolder {
-        private final EmojiReactionsView grid;
-        private final List<Button> buttons = new ArrayList<>();
-        private ArrayAdapter<Button> adapter;
+        private final UsableRecyclerView list;
 
-        public Holder(Activity activity, ViewGroup parent) {
+		public Holder(Activity activity, ViewGroup parent) {
             super(activity, R.layout.display_item_emoji_reactions, parent);
-            this.grid = findViewById(R.id.reaction_layout);
+            this.list=findViewById(R.id.reaction_layout);
         }
 
         @Override
         public void onBind(EmojiReactionsStatusDisplayItem item) {
-            buttons.clear();
-
-            for (EmojiReactionDisplay reaction : item.reactions.values()) {
-                Button btn = new Button(item.parentFragment.getContext());
-                btn.setHeight(V.dp(48));
-                btn.setPaddingRelative(V.dp(12), 0, V.dp(12), 0);
-                btn.setBackgroundResource(R.drawable.bg_button_m3_tonal);
-                btn.setTextColor(item.parentFragment.getContext().getColor(R.color.gray_800));
-                btn.setText(reaction.text);
-                if (reaction.reaction.me)
-                    btn.getBackground()
-                            .setColorFilter(UiUtils.getThemeColor(item.parentFragment.getContext(), R.attr.colorM3SecondaryContainer), PorterDuff.Mode.SRC);
-
-                buttons.add(btn);
-
-                btn.setOnClickListener(e -> {
-                    EmojiReaction emojiReaction = item.reactions.get(reaction.reaction.name).reaction;
-                    MastodonAPIRequest<Status> req =
-                            emojiReaction.me ? new PleromaDeleteStatusReaction(item.status.id, emojiReaction.name)
-                                    : new PleromaAddStatusReaction(item.status.id, emojiReaction.name);
-                    req.setCallback(new Callback<>() {
-                        @Override
-                        public void onSuccess(Status result) {
-                            Optional<EmojiReaction> newReaction =
-                                    result.emojiReactions.stream().filter(v -> v.name.equals(emojiReaction.name)).findFirst();
-                            if (newReaction.isPresent()) {
-                                EmojiReactionDisplay newReactionDisplay = item.createDisplay(newReaction.get(), false);
-                                item.reactions.put(emojiReaction.name, newReactionDisplay);
-                                btn.setText(newReactionDisplay.text);
-
-                                if (newReactionDisplay.reaction.me)
-                                    btn.getBackground()
-                                            .setColorFilter(UiUtils.getThemeColor(item.parentFragment.getContext(), R.attr.colorM3SecondaryContainer), PorterDuff.Mode.SRC);
-                                else
-                                    btn.getBackground().clearColorFilter();
-
-                                UiUtils.loadCustomEmojiInTextView(btn);
-                            } else {
-                                adapter.remove(btn);
-                            }
-                        }
-
-                        @Override
-                        public void onError(ErrorResponse error) {
-                        }
-                    })
-                    .exec(item.parentFragment.getAccountID());
-                });
-
-                btn.setOnLongClickListener(e -> {
-                    EmojiReaction emojiReaction = item.reactions.get(reaction.reaction.name).reaction;
-                    Bundle args=new Bundle();
-                    args.putString("account", item.parentFragment.getAccountID());
-                    args.putString("statusID", item.status.id);
-                    int atSymbolIndex = emojiReaction.name.indexOf("@");
-                    args.putString("emoji", atSymbolIndex != -1 ? emojiReaction.name.substring(0, atSymbolIndex) : emojiReaction.name);
-                    args.putString("url", emojiReaction.url);
-                    args.putInt("count", emojiReaction.count);
-                    Nav.go(item.parentFragment.getActivity(), StatusEmojiReactionsListFragment.class, args);
-                    return true;
-                });
-
-                UiUtils.loadCustomEmojiInTextView(btn);
-            }
-
-            adapter = new ArrayAdapter<>(item.parentFragment.getContext(), 0, buttons) {
-                public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                    return getItem(position);
-                }
-            };
-            grid.setAdapter(adapter);
+			ListImageLoaderWrapper imgLoader=new ListImageLoaderWrapper(item.parentFragment.getContext(), list, new RecyclerViewDelegate(list), null);
+			list.setAdapter(new EmojiReactionsAdapter(imgLoader));
+			list.setLayoutManager(new LinearLayoutManager(item.parentFragment.getContext(), LinearLayoutManager.HORIZONTAL, false));
+			item.refreshRequests();
         }
 
-        @Override
-        public void setImage(int index, Drawable drawable){
-            item.emojiHelper.setImageDrawable(index, drawable);
-            buttons.get(index).invalidate();
-            if(drawable instanceof Animatable)
-                ((Animatable) drawable).start();
-        }
+		@Override
+		public void setImage(int index, Drawable image){
+			View child=list.getChildAt(index);
+			if(child==null) return;
+			((EmojiReactionViewHolder) list.getChildViewHolder(child)).setImage(index, image);
+		}
 
-        @Override
-        public void clearImage(int index){
-            setImage(index, null);
-        }
-    }
+		@Override
+		public void clearImage(int index){
+			setImage(index, item.placeholder);
+		}
 
-    private static class EmojiReactionDisplay {
-        public SpannableStringBuilder text;
-        public EmojiReaction reaction;
+		private class EmojiReactionsAdapter extends UsableRecyclerView.Adapter<EmojiReactionViewHolder> implements ImageLoaderRecyclerAdapter{
+			RecyclerView list;
+			ListImageLoaderWrapper imgLoader;
 
-        public EmojiReactionDisplay(SpannableStringBuilder text, EmojiReaction reaction) {
-            this.text = text;
-            this.reaction = reaction;
-        }
-    }
+			public EmojiReactionsAdapter(ListImageLoaderWrapper imgLoader){
+				super(imgLoader);
+				this.imgLoader=imgLoader;
+			}
+
+			@Override
+			public void onAttachedToRecyclerView(@NonNull RecyclerView list){
+				super.onAttachedToRecyclerView(list);
+				this.list=list;
+			}
+
+			@NonNull
+			@Override
+			public EmojiReactionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType){
+				Button btn=new Button(parent.getContext(), null, 0, R.style.Widget_Mastodon_M3_Button_Outlined_Icon);
+				ViewGroup.MarginLayoutParams params=new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+				params.setMarginEnd(V.dp(8));
+				btn.setLayoutParams(params);
+				btn.setCompoundDrawableTintList(null);
+				btn.setBackgroundResource(R.drawable.bg_button_m3_tonal);
+				btn.setCompoundDrawables(item.placeholder, null, null, null);
+				return new EmojiReactionViewHolder(btn, item);
+			}
+
+			@Override
+			public void onBindViewHolder(EmojiReactionViewHolder holder, int position){
+				holder.bind(item.status.reactions.get(position));
+				super.onBindViewHolder(holder, position);
+			}
+
+			@Override
+			public int getItemCount(){
+				return item.status.reactions.size();
+			}
+
+			@Override
+			public int getImageCountForItem(int position){
+				return item.status.reactions.get(position).url == null ? 0 : 1;
+			}
+
+			@Override
+			public ImageLoaderRequest getImageRequest(int position, int image){
+				return item.requests.get(position);
+			}
+		}
+
+		private static class EmojiReactionViewHolder extends BindableViewHolder<EmojiReaction> implements ImageLoaderViewHolder{
+			private final Button btn;
+			private final EmojiReactionsStatusDisplayItem parent;
+
+			public EmojiReactionViewHolder(@NonNull View itemView, EmojiReactionsStatusDisplayItem parent){
+				super(itemView);
+				btn=(Button) itemView;
+				this.parent=parent;
+			}
+
+			@Override
+			public void setImage(int index, Drawable drawable){
+				btn.setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, null, null, null);
+				if(drawable instanceof Animatable) ((Animatable) drawable).start();
+			}
+
+			@Override
+			public void clearImage(int index){
+				setImage(index, parent.placeholder);
+			}
+
+			@Override
+			public void onBind(EmojiReaction item){
+				btn.setText(String.valueOf(item.count));
+				if(item.url==null){
+					Paint p=new Paint();
+					p.setTextSize(V.sp(20));
+					TextDrawable drawable=new TextDrawable(p, item.name);
+					btn.setCompoundDrawablesRelative(drawable, null, null, null);
+				}else{
+					btn.setCompoundDrawablesRelative(parent.placeholder, null, null, null);
+				}
+				btn.setSelected(item.me);
+				btn.setOnClickListener(e -> {
+					boolean deleting=item.me;
+					MastodonAPIRequest<Status> req = deleting
+							? new PleromaDeleteStatusReaction(parent.status.id, item.name)
+							: new PleromaAddStatusReaction(parent.status.id, item.name);
+					req.setCallback(new Callback<>() {
+								@Override
+								public void onSuccess(Status result) {
+									List<EmojiReaction> oldList=new ArrayList<>(parent.status.reactions);
+									parent.status.reactions.clear();
+									parent.status.reactions.addAll(result.reactions);
+									EmojiReactionsAdapter adapter = (EmojiReactionsAdapter) getBindingAdapter();
+									
+									// this handles addition/removal of new reactions
+									UiUtils.updateList(oldList, result.reactions, adapter.list, adapter,
+											(e1, e2) -> e1.name.equals(e2.name));
+
+									// update the existing reactions' counts
+									for(int i=0; i<result.reactions.size(); i++){
+										int index=i;
+										EmojiReaction newReaction=result.reactions.get(index);
+										oldList.stream().filter(r->r.name.equals(newReaction.name)).findAny().ifPresent(r->{
+											if(newReaction.count!=r.count) adapter.notifyItemChanged(index);
+										});
+									}
+									parent.refreshRequests();
+									adapter.imgLoader.updateImages();
+								}
+
+								@Override
+								public void onError(ErrorResponse error) {
+									error.showToast(itemView.getContext());
+								}
+							})
+							.exec(parent.parentFragment.getAccountID());
+				});
+
+				btn.setOnLongClickListener(e->{
+					EmojiReaction emojiReaction=parent.status.reactions.stream().filter(r->r.name.equals(item.name)).findAny().orElseThrow();
+					Bundle args=new Bundle();
+					args.putString("account", parent.parentFragment.getAccountID());
+					args.putString("statusID", parent.status.id);
+					int atSymbolIndex = emojiReaction.name.indexOf("@");
+					args.putString("emoji", atSymbolIndex != -1 ? emojiReaction.name.substring(0, atSymbolIndex) : emojiReaction.name);
+					args.putString("url", emojiReaction.url);
+					args.putInt("count", emojiReaction.count);
+					Nav.go(parent.parentFragment.getActivity(), StatusEmojiReactionsListFragment.class, args);
+					return true;
+				});
+			}
+		}
+	}
 }

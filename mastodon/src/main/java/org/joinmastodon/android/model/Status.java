@@ -74,7 +74,8 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 
 	public Status quote; // can be boolean in calckey
 
-	public List<EmojiReaction> emojiReactions;
+	public List<EmojiReaction> reactions;
+	protected List<EmojiReaction> emojiReactions; // akkoma
 
 	public transient boolean filterRevealed;
 	public transient boolean spoilerRevealed;
@@ -116,6 +117,7 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 		spoilerRevealed=TextUtils.isEmpty(spoilerText);
 		sensitiveRevealed=!sensitive;
 		if (visibility.equals(StatusPrivacy.LOCAL)) localOnly = true;
+		if(emojiReactions!=null) reactions=emojiReactions;
 	}
 
 	@Override

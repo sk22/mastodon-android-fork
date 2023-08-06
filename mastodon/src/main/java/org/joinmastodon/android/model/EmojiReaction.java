@@ -12,4 +12,5 @@ public class EmojiReaction {
     public boolean me;
     public String name;
     public String url;
+	public String staticUrl;
 }
