@@ -129,7 +129,6 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
 				params.setMarginEnd(V.dp(8));
 				btn.setLayoutParams(params);
 				btn.setCompoundDrawableTintList(null);
-				btn.setPaddingRelative(V.dp(16), 0, V.dp(16), 0);
 				btn.setBackgroundResource(R.drawable.bg_button_m3_tonal);
 				btn.setCompoundDrawables(item.placeholder, null, null, null);
 				return new EmojiReactionViewHolder(btn, item);
@@ -180,7 +179,7 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
 
 			@Override
 			public void onBind(EmojiReaction item){
-				btn.setText(String.valueOf(item.count));
+				btn.setText(UiUtils.abbreviateNumber(item.count));
 				if(item.url==null){
 					Paint p=new Paint();
 					p.setTextSize(V.sp(18));
