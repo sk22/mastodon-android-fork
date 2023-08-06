@@ -34,6 +34,7 @@ android {
 		}
 		githubRelease { initWith release }
 		playRelease { initWith release }
+		fdroidRelease { initWith release }
 	}
 	compileOptions {
 		sourceCompatibility JavaVersion.VERSION_17
