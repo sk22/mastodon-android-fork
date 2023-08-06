@@ -183,7 +183,7 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
 				btn.setText(String.valueOf(item.count));
 				if(item.url==null){
 					Paint p=new Paint();
-					p.setTextSize(V.sp(20));
+					p.setTextSize(V.sp(18));
 					TextDrawable drawable=new TextDrawable(p, item.name);
 					btn.setCompoundDrawablesRelative(drawable, null, null, null);
 				}else{
