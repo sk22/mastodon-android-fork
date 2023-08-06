@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
-import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.LegacyFilter;
 import org.joinmastodon.android.model.Status;
 
 import java.util.List;
@@ -16,9 +16,9 @@ public class WarningFilteredStatusDisplayItem extends StatusDisplayItem{
 	public boolean loading;
 	public final Status status;
 	public List<StatusDisplayItem> filteredItems;
-	public Filter applyingFilter;
+	public LegacyFilter applyingFilter;
 
-	public WarningFilteredStatusDisplayItem(String parentID, BaseStatusListFragment<?> parentFragment, Status status, List<StatusDisplayItem> filteredItems, Filter applyingFilter){
+	public WarningFilteredStatusDisplayItem(String parentID, BaseStatusListFragment<?> parentFragment, Status status, List<StatusDisplayItem> filteredItems, LegacyFilter applyingFilter){
 		super(parentID, parentFragment);
 		this.status=status;
 		this.filteredItems = filteredItems;

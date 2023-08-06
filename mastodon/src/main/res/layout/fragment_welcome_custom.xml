@@ -6,7 +6,7 @@
 	android:orientation="vertical"
 	android:id="@+id/appkit_loader_root"
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:background="?colorBackgroundLight">
+	android:background="?colorM3SurfaceVariant">
 
 	<include layout="@layout/appkit_toolbar"/>
 
@@ -35,19 +35,19 @@
 	<View
 		android:layout_width="match_parent"
 		android:layout_height="0.5dp"
-		android:background="?attr/colorPollVoted"/>
+		android:background="?attr/colorM3OutlineVariant"/>
 
 	<LinearLayout
 		android:id="@+id/button_bar"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:background="?colorBackgroundLight"
+		android:background="?colorM3SurfaceVariant"
 		android:outlineProvider="bounds"
 		android:orientation="horizontal"
 		android:elevation="0dp">
 
 		<Button
-			style="?primaryLargeButtonStyle"
+			style="@style/Widget.Mastodon.M3.Button.Filled"
 			android:id="@+id/btn_next"
 			android:minWidth="145dp"
 			android:layout_width="0dp"

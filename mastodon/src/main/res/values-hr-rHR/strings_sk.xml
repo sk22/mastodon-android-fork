@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sk_expand">Proširi</string>
-    <string name="sk_notify_posts">Obavijesti o objavama</string>
+    <string name="sk_notification_type_posts">Obavijesti o objavama</string>
     <string name="sk_notification_type_status">Objave</string>
     <string name="sk_timeline_home">Home</string>
     <string name="sk_timeline_local">Lokalno</string>
@@ -27,7 +27,7 @@
     <string name="sk_welcome_title">Dobrodošli!</string>
     <string name="sk_welcome_text">Morski pas te pozdravlja! Za početak, u nastavku unesi naziv domene svoje početne instance.</string>
     <string name="sk_settings_always_reveal_content_warnings">Uvijek otkrij upozorenja o sadržaju</string>
-    <string name="sk_disable_marquee">Onemogući pomicanje teksta u naslovnim trakama</string>
+    <string name="sk_settings_enable_marquee">Onemogući pomicanje teksta u naslovnim trakama</string>
     <string name="sk_settings_contribute">Doprinesi Megalodonu</string>
     <string name="sk_reject_follow_request">Odbij zahtjev za praćenjem</string>
     <string name="sk_bookmarked_as">Označeno kao %s</string>
@@ -38,7 +38,7 @@
     <string name="sk_language_name">%s (%s)</string>
     <string name="sk_confirm_clear_recent_languages">Jesi li siguran da želiš izbrisati listu nedavno korištenih jezika\?</string>
     <string name="sk_example_domain">primjer.social</string>
-    <string name="sk_tabs_disable_swipe">Onemogući prelazak između kartica</string>
+    <string name="sk_settings_tabs_disable_swipe">Onemogući prelazak između kartica</string>
     <string name="sk_settings_profile">Postavi profil</string>
     <string name="sk_settings_posting">Postavke objavljivanja</string>
     <string name="sk_settings_filters">Konfiguriraj filtere</string>
@@ -58,7 +58,7 @@
     <string name="sk_delete_notification">Izbriši obavijesti</string>
     <string name="sk_delete_notification_confirm_action">Izbriši obavijest</string>
     <string name="sk_delete_notification_confirm">Jeste li sigurni da želite izbrisati ovu obavijest\?</string>
-    <string name="sk_enable_delete_notifications">Omogući brisanje obavijesti</string>
+    <string name="sk_settings_enable_delete_notifications">Omogući brisanje obavijesti</string>
     <string name="sk_settings_publish_button_text">Tekst gumba za objavljivanje</string>
     <string name="sk_settings_publish_button_text_title">Prilagodi tekst gumba za objavljivanje</string>
     <string name="sk_schedule">Zakaži</string>

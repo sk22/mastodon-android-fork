@@ -3,30 +3,54 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:paddingEnd="4dp"
-	android:paddingStart="16dp">
+	android:paddingRight="16dp"
+	android:paddingLeft="16dp">
 
 	<LinearLayout
 		android:id="@+id/buttons"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginTop="13dp"
+		android:layout_marginTop="6dp"
 		android:layout_alignParentTop="true"
 		android:layout_alignParentEnd="true">
 
+		<!-- announcements-only -->
 		<ImageView
 			android:id="@+id/unread_indicator"
 			android:layout_width="36dp"
-			android:layout_height="36dp"
+			android:layout_height="48dp"
 			android:visibility="gone"
 			android:tint="?android:colorAccent"
 			android:scaleType="center"
 			android:src="@drawable/ic_fluent_circle_small_20_filled" />
 
+		<ImageView
+			android:id="@+id/mark_as_read"
+			android:layout_width="36dp"
+			android:layout_height="48dp"
+			android:background="?android:actionBarItemBackground"
+			android:scaleType="center"
+			android:src="@drawable/ic_fluent_checkmark_24_regular"
+			android:tint="?colorM3OnSurfaceVariant"
+			android:contentDescription="@string/sk_mark_as_read"
+			android:tooltipText="@string/sk_mark_as_read"
+			android:visibility="gone" />
+
+		<!-- on start because it's hidden based on if spoiler is revealed -->
+		<ImageView
+			android:id="@+id/visibility"
+			android:layout_width="36dp"
+			android:layout_height="48dp"
+			android:background="?android:actionBarItemBackground"
+			android:scaleType="center"
+			android:src="@drawable/ic_fluent_eye_24_regular"
+			android:tint="?colorM3OnSurfaceVariant"
+			android:visibility="gone" />
+
 		<FrameLayout
 			android:id="@+id/collapse_btn"
 			android:layout_width="36dp"
-			android:layout_height="36dp"
+			android:layout_height="48dp"
 			android:background="?android:actionBarItemBackground"
 			android:visibility="gone"
 			android:importantForAccessibility="noHideDescendants">
@@ -42,43 +66,33 @@
 				android:importantForAccessibility="no"
 				android:scaleType="center"
 				android:src="@drawable/ic_fluent_chevron_down_20_filled"
-				android:tint="?android:textColorSecondary" />
+				android:tint="?colorM3OnSurfaceVariant" />
 
 		</FrameLayout>
 
 		<ImageView
-			android:id="@+id/visibility"
-			android:layout_width="36dp"
-			android:layout_height="36dp"
-			android:background="?android:actionBarItemBackground"
-			android:scaleType="center"
-			android:src="@drawable/ic_visibility"
-			android:tint="?android:textColorSecondary" />
-
-		<ImageView
 			android:id="@+id/delete_notification"
 			android:layout_width="36dp"
-			android:layout_height="36dp"
+			android:layout_height="48dp"
 			android:visibility="gone"
 			android:background="?android:actionBarItemBackground"
 			android:contentDescription="@string/sk_delete_notification"
 			android:tooltipText="@string/sk_delete_notification"
 			android:scaleType="center"
 			android:src="@drawable/ic_fluent_dismiss_20_filled"
-			android:tint="?android:textColorSecondary" />
+			android:tint="?colorM3OnSurfaceVariant" />
 
 		<ImageView
 			android:id="@+id/more"
 			android:layout_width="36dp"
-			android:layout_height="36dp"
+			android:layout_height="48dp"
 			android:background="?android:actionBarItemBackground"
-			android:contentDescription="@string/more_options"
 			android:scaleType="center"
-			android:src="@drawable/ic_fluent_more_vertical_20_filled"
-			android:tint="?android:textColorSecondary" />
-
+			android:tint="?colorM3OnSurfaceVariant"
+			android:tooltipText="@string/more_options"
+			android:contentDescription="@string/more_options"
+			android:src="@drawable/ic_fluent_more_vertical_20_filled" />
 	</LinearLayout>
-
 
 	<ImageView
 		android:id="@+id/avatar"
@@ -86,17 +100,17 @@
 		android:layout_height="46sp"
 		android:layout_alignParentStart="true"
 		android:layout_alignParentTop="true"
-		android:layout_marginEnd="12dp"
-		android:layout_marginTop="16dp" />
+		android:layout_marginTop="16dp"
+		android:layout_marginEnd="12dp" />
 
 	<org.joinmastodon.android.ui.views.HeaderSubtitleLinearLayout
 		android:id="@+id/name_wrap"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_marginEnd="8dp"
-		android:layout_toStartOf="@id/buttons"
 		android:layout_toEndOf="@id/avatar"
-		android:layout_above="@+id/username_wrap">
+		android:layout_toStartOf="@id/buttons"
+		android:layout_marginEnd="8dp"
+		android:layout_above="@+id/time_and_username">
 
 		<TextView
 			android:id="@+id/name"
@@ -104,9 +118,24 @@
 			android:layout_height="wrap_content"
 			android:ellipsize="end"
 			android:singleLine="true"
-			android:textAlignment="viewStart"
 			android:textAppearance="@style/m3_title_medium"
+			android:textColor="?colorM3OnSurface"
+			android:gravity="start|center_vertical"
 			tools:text="Eugen" />
+
+		<TextView
+			android:id="@+id/pronouns"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8sp"
+			android:maxWidth="161sp"
+			android:ellipsize="end"
+			android:singleLine="true"
+			android:textAppearance="@style/m3_title_medium"
+			android:fontFamily="sans-serif"
+			android:textAlignment="viewStart"
+			android:textColor="?colorM3OnSurface"
+			tools:text="they/them" />
 
 		<TextView
 			android:id="@+id/extra_text"
@@ -114,53 +143,29 @@
 			android:layout_height="wrap_content"
 			android:layout_marginStart="8sp"
 			android:ellipsize="end"
-			android:fontFamily="sans-serif"
 			android:singleLine="true"
-			android:textAlignment="viewStart"
 			android:textAppearance="@style/m3_title_medium"
+			android:fontFamily="sans-serif"
+			android:textAlignment="viewStart"
+			android:textColor="?colorM3OnSurface"
 			tools:text="boosted your cat picture" />
 
 	</org.joinmastodon.android.ui.views.HeaderSubtitleLinearLayout>
 
-	<org.joinmastodon.android.ui.views.HeaderSubtitleLinearLayout
-		android:id="@id/username_wrap"
+	<TextView
+		android:id="@+id/time_and_username"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:layout_alignBottom="@id/avatar"
 		android:layout_marginEnd="8dp"
 		android:layout_toStartOf="@id/buttons"
 		android:layout_toEndOf="@id/avatar"
-		android:layout_alignBottom="@id/avatar"
-		android:layoutDirection="locale"
-		android:paddingBottom="3sp"
-		android:orientation="horizontal">
-
-		<TextView
-			android:id="@+id/username"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:ellipsize="end"
-			android:singleLine="true"
-			android:textAppearance="@style/m3_title_small"
-			tools:text="\@Gargron" />
-
-		<TextView
-			android:id="@+id/separator"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginLeft="4sp"
-			android:layout_marginRight="4sp"
-			android:importantForAccessibility="no"
-			android:text="@string/sk_separator"
-			android:textAppearance="@style/m3_title_small" />
-
-		<TextView
-			android:id="@+id/timestamp"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:singleLine="true"
-			android:textAppearance="@style/m3_title_small"
-			tools:text="3h" />
-
-	</org.joinmastodon.android.ui.views.HeaderSubtitleLinearLayout>
+		android:layout_marginBottom="3sp"
+		android:textAlignment="viewStart"
+		android:singleLine="true"
+		android:ellipsize="end"
+		android:textAppearance="@style/m3_body_medium"
+		android:textColor="?colorM3OnSurfaceVariant"
+		tools:text="9h ago · \@Gargron@mastodon.social"/>
 
 </RelativeLayout>

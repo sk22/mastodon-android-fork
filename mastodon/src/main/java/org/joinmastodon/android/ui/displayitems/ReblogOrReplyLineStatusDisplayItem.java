@@ -40,7 +40,7 @@ public class ReblogOrReplyLineStatusDisplayItem extends StatusDisplayItem{
 	private int iconEnd;
 	private CustomEmojiHelper emojiHelper=new CustomEmojiHelper(), fullTextEmojiHelper;
 	private View.OnClickListener handleClick;
-	boolean belowHeader, needBottomPadding;
+	public boolean needBottomPadding;
 	ReblogOrReplyLineStatusDisplayItem extra;
 	CharSequence fullText;
 
@@ -106,7 +106,7 @@ public class ReblogOrReplyLineStatusDisplayItem extends StatusDisplayItem{
 			text=findViewById(R.id.text);
 			extraText=findViewById(R.id.extra_text);
 			separator=findViewById(R.id.separator);
-			if (GlobalUserPreferences.replyLineAboveHeader && GlobalUserPreferences.compactReblogReplyLine) {
+			if (GlobalUserPreferences.compactReblogReplyLine) {
 				parent.addOnLayoutChangeListener((v, l, t, right, b, ol, ot, oldRight, ob) -> {
 					if (right != oldRight) layoutLine();
 				});
@@ -131,7 +131,6 @@ public class ReblogOrReplyLineStatusDisplayItem extends StatusDisplayItem{
 			if (visibilityText != 0) text.setContentDescription(item.text + " (" + ctx.getString(visibilityText) + ")");
 			if(Build.VERSION.SDK_INT<Build.VERSION_CODES.N)
 				UiUtils.fixCompoundDrawableTintOnAndroid6(text);
-			text.setTextAppearance(item.belowHeader ? R.style.m3_label_large : R.style.m3_title_small);
 			text.setCompoundDrawableTintList(text.getTextColors());
 		}
 
@@ -141,19 +140,13 @@ public class ReblogOrReplyLineStatusDisplayItem extends StatusDisplayItem{
 			if (item.extra != null) bindLine(item.extra, extraText);
 			extraText.setVisibility(item.extra == null ? View.GONE : View.VISIBLE);
 			separator.setVisibility(item.extra == null ? View.GONE : View.VISIBLE);
-			ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-			params.bottomMargin = item.belowHeader ? V.dp(-6) : V.dp(-12);
-			params.topMargin = item.belowHeader ? V.dp(-6) : 0;
-			itemView.setLayoutParams(params);
 			itemView.setPadding(itemView.getPaddingLeft(), itemView.getPaddingTop(), itemView.getPaddingRight(), item.needBottomPadding ? V.dp(16) : 0);
 			layoutLine();
 		}
 
 		private void layoutLine() {
 			// layout line only if above header, compact and has extra
-			if (!GlobalUserPreferences.replyLineAboveHeader
-					|| !GlobalUserPreferences.compactReblogReplyLine
-					|| item.extra == null) return;
+			if (!GlobalUserPreferences.compactReblogReplyLine || item.extra == null) return;
 			itemView.measure(
 					View.MeasureSpec.makeMeasureSpec(parent.getWidth(), View.MeasureSpec.EXACTLY),
 					View.MeasureSpec.UNSPECIFIED);

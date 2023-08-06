@@ -1,0 +1,4 @@
+- Pregătirea fișierelelor pentru lansare pe F-Droid
+- Fix actualizator automat
+- Adăugare pictograme monocromatice înapoi în pictogramele de lansare
+- Înlocuire iconiță greșită nelistată în footer-ul extins

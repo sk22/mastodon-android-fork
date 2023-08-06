@@ -10,7 +10,7 @@
 &nbsp;
 <a href="#installation"><img height="50" alt="Get it on IzzyOnDroid" src="img/izzy-badge.png"></a>
 
-> A fork of the [Mastodon Android app](https://github.com/mastodon/mastodon-android) adding important features that are missing in the official app, focusing on [Glitch](https://glitch-soc.github.io/docs) compatibility, a pretty UI and adding new features that I feel make using the Fediverse a more pleasent experience.
+> A fork of the [Mastodon Android app](https://github.com/mastodon/mastodon-android) adding important features that are missing in the official app, focusing on [Glitch](https://glitch-soc.github.io/docs) compatibility, a pretty UI and adding new features that I feel make using the Fediverse a more pleasant experience.
 
 
 ## Key features
@@ -54,9 +54,15 @@ You can create drafts, edit them, send them manually later or set a scheduled da
 
 ## Installation
 
-### IzzyOnDroid
+### Google Play Store
 
-[apt.izzysoft.de/fdroid/index/apk/org.joinmastodon.android.sk](https://apt.izzysoft.de/fdroid/index/apk/org.joinmastodon.android.sk)
+[https://play.google.com/store/apps/details?id=org.joinmastodon.android.sk](https://play.google.com/store/apps/details?id=org.joinmastodon.android.sk)
+
+<a href="https://play.google.com/store/apps/details?id=org.joinmastodon.android.sk"><img height="50" alt="Get it on Google Play" src="img/google-play-badge.png"></a>
+
+### F-Droid via IzzyOnDroid
+
+[https://apt.izzysoft.de/fdroid/index/apk/org.joinmastodon.android.sk](https://apt.izzysoft.de/fdroid/index/apk/org.joinmastodon.android.sk)
 
 <a href="https://apt.izzysoft.de/fdroid/index/apk/org.joinmastodon.android.sk"><img height="50" alt="Get it on IzzyOnDroid" src="img/izzy-badge.png"></a>
 
@@ -64,11 +70,11 @@ Note that you'll need to add Izzy's F-Droid repository to your F-Droid app first
 
 [`https://apt.izzysoft.de/fdroid/repo`](https://apt.izzysoft.de/fdroid/repo)
 
-### Google Play Store
+### F-Droid via saunarepo
 
-[play.google.com/store/apps/details?id=org.joinmastodon.android.sk](https://play.google.com/store/apps/details?id=org.joinmastodon.android.sk)
+[https://repo.the-sauna.icu](https://repo.the-sauna.icu/)
 
-<a href="https://play.google.com/store/apps/details?id=org.joinmastodon.android.sk"><img height="50" alt="Get it on Google Play" src="img/google-play-badge.png"></a>
+<a href="https://repo.the-sauna.icu"><img height="28" alt="Get it on SaunaRepo" src="img/saunarepo-badge.svg"></a>
 
 ### F-Droid
 

@@ -18,7 +18,7 @@ import org.joinmastodon.android.api.requests.lists.UpdateList;
 import org.joinmastodon.android.api.requests.timelines.GetListTimeline;
 import org.joinmastodon.android.events.ListDeletedEvent;
 import org.joinmastodon.android.events.ListUpdatedCreatedEvent;
-import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.ListTimeline;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.model.TimelineDefinition;
@@ -134,7 +134,7 @@ public class ListTimelineFragment extends PinnableStatusListFragment {
 
     @Override
     protected void doLoadData(int offset, int count) {
-        currentRequest=new GetListTimeline(listID, offset==0 ? null : getMaxID(), null, count, null)
+        currentRequest=new GetListTimeline(listID, offset==0 ? null : getMaxID(), null, count, null, getLocalPrefs().timelineReplyVisibility)
                 .setCallback(new SimpleCallback<>(this) {
                     @Override
                     public void onSuccess(List<Status> result) {
@@ -167,8 +167,8 @@ public class ListTimelineFragment extends PinnableStatusListFragment {
 
 
     @Override
-    protected Filter.FilterContext getFilterContext() {
-        return Filter.FilterContext.HOME;
+    protected FilterContext getFilterContext() {
+        return FilterContext.HOME;
     }
 
     @Override

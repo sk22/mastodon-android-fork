@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--~ Copyright (c) 2023. ~ Microsoft Corporation. All rights reserved.-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_activated="true">
+        <layer-list>
+            <item
+                android:height="18dp"
+                android:width="18dp"
+                android:gravity="center"
+                android:drawable="@drawable/ic_fluent_flag_16_filled" />
+        </layer-list>
+    </item>
+    <item android:state_checked="true">
+        <layer-list>
+            <item
+                android:height="18dp"
+                android:width="18dp"
+                android:gravity="center"
+                android:drawable="@drawable/ic_fluent_flag_16_filled" />
+        </layer-list>
+    </item>
+    <item android:state_selected="true" android:height="18dp">
+        <layer-list>
+            <item
+                android:height="18dp"
+                android:width="18dp"
+                android:gravity="center"
+                android:drawable="@drawable/ic_fluent_flag_16_filled" />
+        </layer-list>
+    </item>
+    <item>
+        <layer-list>
+            <item
+                android:height="18dp"
+                android:width="18dp"
+                android:gravity="center"
+                android:drawable="@drawable/ic_fluent_flag_16_regular" />
+        </layer-list>
+    </item>
+</selector>

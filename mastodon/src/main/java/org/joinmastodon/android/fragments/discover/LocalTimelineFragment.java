@@ -7,54 +7,59 @@ import android.view.View;
 import org.joinmastodon.android.api.requests.timelines.GetPublicTimeline;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.StatusListFragment;
-import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.utils.DiscoverInfoBannerHelper;
-import org.joinmastodon.android.utils.StatusFilterPredicate;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+import androidx.recyclerview.widget.RecyclerView;
 import me.grishka.appkit.api.SimpleCallback;
+import me.grishka.appkit.utils.MergeRecyclerAdapter;
 
-public class LocalTimelineFragment extends StatusListFragment {
-	private DiscoverInfoBannerHelper bannerHelper=new DiscoverInfoBannerHelper(DiscoverInfoBannerHelper.BannerType.LOCAL_TIMELINE);
+public class LocalTimelineFragment extends StatusListFragment{
+	private DiscoverInfoBannerHelper bannerHelper;
+
 	private String maxID;
 
 	@Override
-	protected boolean wantsComposeButton() {
-		return true;
+	public void onCreate(Bundle savedInstanceState){
+		super.onCreate(savedInstanceState);
+		bannerHelper=new DiscoverInfoBannerHelper(DiscoverInfoBannerHelper.BannerType.LOCAL_TIMELINE, accountID);
 	}
 
 	@Override
 	protected void doLoadData(int offset, int count){
-		currentRequest=new GetPublicTimeline(true, false, refreshing ? null : maxID, count)
+		currentRequest=new GetPublicTimeline(true, false, refreshing ? null : maxID, count, getLocalPrefs().timelineReplyVisibility)
 				.setCallback(new SimpleCallback<>(this){
 					@Override
 					public void onSuccess(List<Status> result){
 						if(!result.isEmpty())
 							maxID=result.get(result.size()-1).id;
-						if (getActivity() == null) return;
-						result=result.stream().filter(new StatusFilterPredicate(accountID, getFilterContext())).collect(Collectors.toList());
-						onDataLoaded(result, !result.isEmpty());
+						boolean empty=result.isEmpty();
+						AccountSessionManager.get(accountID).filterStatuses(result, FilterContext.PUBLIC);
+						onDataLoaded(result, !empty);
+						bannerHelper.onBannerBecameVisible();
 					}
 				})
 				.exec(accountID);
 	}
 
 	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState){
-		super.onViewCreated(view, savedInstanceState);
-		bannerHelper.maybeAddBanner(contentWrap);
+	protected RecyclerView.Adapter<?> getAdapter(){
+		MergeRecyclerAdapter adapter=new MergeRecyclerAdapter();
+		bannerHelper.maybeAddBanner(list, adapter);
+		adapter.addAdapter(super.getAdapter());
+		return adapter;
 	}
 
 	@Override
-	protected Filter.FilterContext getFilterContext() {
-		return Filter.FilterContext.PUBLIC;
+	protected FilterContext getFilterContext() {
+		return FilterContext.PUBLIC;
 	}
 
 	@Override
-	public Uri getWebUri(Uri.Builder base) {
+	public Uri getWebUri(Uri.Builder base){
 		return base.path(isInstanceAkkoma() ? "/main/public" : "/public/local").build();
 	}
 }

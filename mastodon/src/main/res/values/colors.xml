@@ -7,7 +7,6 @@
 
 	<color name="gray_900">#18131c</color>
 	<color name="gray_800">#1E1824</color>
-	<color name="gray_800t">#CC1E1824</color>
 	<color name="gray_700">#2c2631</color>
 	<color name="gray_600">#403b45</color>
 	<color name="gray_500">#5b565f</color>
@@ -90,12 +89,11 @@
 
 	<color name="fab_icon">#282C37</color>
 	<color name="navigation_bar_bg">#282C37</color>
+	<color name="navigation_bar_bg_light">#282C37</color>
 	<color name="highlight_over_dark">#30FFFFFF</color>
-	<color name="highlight_over_light">#18000000</color>
 
 	<color name="favorite_selected">@color/warning_500</color>
 	<color name="bookmark_selected">@color/success_500</color>
-	<color name="boost_selected">@color/primary_500</color>
 
 	<color name="shortcut_icon_background">@color/gray_100</color>
 	<color name="shortcut_icon_foreground">@color/primary_700</color>
@@ -104,7 +102,6 @@
 	<color name="m3_navigation_bar_bg">@color/gray_50</color>
 
 	<color name="m3_neutral1_900">@color/gray_900</color>
-	<color name="m3_neutral1_800t">@color/gray_800t</color>
 	<color name="m3_neutral1_800">@color/gray_800</color>
 	<color name="m3_neutral1_700">@color/gray_700</color>
 	<color name="m3_neutral1_600">@color/gray_600</color>
@@ -118,7 +115,6 @@
 	<color name="m3_neutral1_25">@color/gray_25</color>
 
 	<color name="m3_neutral2_900">@color/gray_900</color>
-	<color name="m3_neutral2_800t">@color/gray_800t</color>
 	<color name="m3_neutral2_800">@color/gray_800</color>
 	<color name="m3_neutral2_700">@color/gray_700</color>
 	<color name="m3_neutral2_600">@color/gray_600</color>
@@ -187,6 +183,7 @@
 	<color name="m3_sys_light_surface_variant">#E7E0EC</color>
 	<color name="m3_sys_light_on_surface_variant">#49454F</color>
 	<color name="m3_sys_light_outline">#79747E</color>
+	<color name="m3_sys_light_outline_variant">#CAC4D0</color>
 
 	<!-- dark theme -->
 	<color name="m3_sys_dark_primary">#D0BCFF</color>
@@ -208,6 +205,10 @@
 	<color name="m3_sys_dark_surface_variant">#49454F</color>
 	<color name="m3_sys_dark_on_surface_variant">#CAC4D0</color>
 	<color name="m3_sys_dark_outline">#938F99</color>
+	<color name="m3_sys_dark_outline_variant">#49454F</color>
+
+	<item name="overlay_ripple_alpha" format="float" type="dimen">0.12</item>
+
 
 	<!-- PALETTE COLORS -->
 
@@ -237,7 +238,6 @@
 
 	<color name="brownish_gray_900">#110c10</color>
 	<color name="brownish_gray_800">#191417</color>
-	<color name="brownish_gray_800t">#cc191417</color>
 	<color name="brownish_gray_700">#231f22</color>
 	<color name="brownish_gray_600">#3b373a</color>
 	<color name="brownish_gray_500">#625d60</color>

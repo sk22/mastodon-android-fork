@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:padding="16dp"
-        android:text="@string/tap_to_reveal"
+        android:text="@string/spoiler_show"
         android:singleLine="true"
         android:ellipsize="end"
         android:textColor="?android:textColorSecondary" />

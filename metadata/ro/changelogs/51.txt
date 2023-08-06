@@ -1,0 +1,6 @@
+- Posibilitatea de a deschide mesajul original în timp ce răspundeți (făcând clic pe linia "Ca răspuns la...").
+- Unificarea modificărilor din amonte și a corecțiilor de erori
+- Eliminarea codului "App Center" nefolosit
+- Adăugarea unei versiuni fără cronologie federată pentru Play Store
+- Adăugarea unui URI de redirecționare personalizat pentru o autentificare mai ușoară
+- Modificarea linkului de contribuție

@@ -33,7 +33,7 @@
     <string name="sk_accept_follow_request">接受关注请求</string>
     <string name="sk_reject_follow_request">拒绝关注请求</string>
     <string name="sk_lists_with_user">包含 %s 的列表</string>
-    <string name="sk_disable_marquee">禁用标题栏的滚动文本</string>
+    <string name="sk_settings_enable_marquee">禁用标题栏的滚动文本</string>
     <string name="sk_settings_contribute">向 Megalodon 贡献</string>
     <string name="sk_settings_show_federated_timeline">显示联邦时间轴</string>
     <string name="sk_follow_requests">关注请求</string>
@@ -46,7 +46,7 @@
     <string name="sk_color_palette_brown">棕</string>
     <string name="sk_color_palette_yellow">黄</string>
     <string name="sk_notification_type_status">嘟文</string>
-    <string name="sk_notify_posts">嘟文通知</string>
+    <string name="sk_notification_type_posts">嘟文通知</string>
     <string name="sk_translate_post">翻译</string>
     <string name="sk_translate_show_original">显示原文</string>
     <string name="sk_poll_allow_multiple">允许多选</string>
@@ -59,7 +59,7 @@
     <string name="sk_available_languages">可用语言</string>
     <string name="sk_language_name">%1$s (%2$s)</string>
     <string name="sk_example_domain">example.social</string>
-    <string name="sk_tabs_disable_swipe">禁用选项卡之间的滑动</string>
+    <string name="sk_settings_tabs_disable_swipe">禁用选项卡之间的滑动</string>
     <string name="sk_settings_profile">设置个人资料</string>
     <string name="sk_settings_posting">发帖偏好</string>
     <string name="sk_settings_filters">配置过滤器</string>
@@ -70,7 +70,7 @@
     <string name="sk_color_palette_material3">系统</string>
     <string name="sk_color_palette_red">红</string>
     <string name="sk_delete_notification_confirm">你确定要删除此通知吗？</string>
-    <string name="sk_enable_delete_notifications">启用删除通知</string>
+    <string name="sk_settings_enable_delete_notifications">启用删除通知</string>
     <string name="sk_delete_notification">删除通知</string>
     <string name="sk_delete_notification_confirm_action">删除通知</string>
     <string name="sk_settings_publish_button_text">发布按钮文本</string>
@@ -273,4 +273,28 @@
     <string name="sk_reply_line_above_avatar">头像上方的 “回复” 一行</string>
     <string name="sk_compact_reblog_reply_line">紧凑转嘟/回复行</string>
     <string name="sk_show_thread">显示对话</string>
+    <string name="sk_settings_auto_reveal_nobody">没有人</string>
+    <string name="sk_settings_auto_reveal_author">作者</string>
+    <string name="sk_settings_auto_reveal_anyone">任何人</string>
+    <string name="sk_open_in_app_failed">无法在应用程序中打开</string>
+    <string name="sk_no_remote_info_hint">远程信息不可用</string>
+    <string name="sk_error_loading_profile">通过%s加载配置文件失败</string>
+    <string name="sk_settings_allow_remote_loading">从远程实例加载信息</string>
+    <string name="sk_content_type">内容类型</string>
+    <string name="sk_content_type_unspecified">未指定</string>
+    <string name="sk_content_type_plain">纯文本</string>
+    <string name="sk_content_type_html">HTML</string>
+    <string name="sk_content_type_markdown">Markdown</string>
+    <string name="sk_content_type_bbcode">BBCode</string>
+    <string name="sk_content_type_mfm">MFM</string>
+    <string name="sk_settings_content_types">启用嘟文格式</string>
+    <string name="sk_settings_content_types_explanation">允许在创建文章时设置类似Markdown的内容类型。注意，不是所有的实例都支持这个。</string>
+    <string name="sk_settings_default_content_type">默认的内容类型</string>
+    <string name="sk_timeline_bubble">Bubble</string>
+    <string name="sk_icon_feed">Feed</string>
+    <string name="sk_settings_default_content_type_explanation">这可以让你在创建新帖子时预选内容类型，覆盖 \"发帖偏好 \"中设置的值。</string>
+    <string name="sk_instance_info_unavailable">实例信息暂时不可用</string>
+    <string name="sk_open_in_app">在应用程序中打开</string>
+    <string name="sk_settings_confirm_before_reblog">转嘟前确认</string>
+    <string name="sk_reacted">反应</string>
 </resources>

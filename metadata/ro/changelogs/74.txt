@@ -1,0 +1,9 @@
+- Cronologia poate fi fixată și rearanjată
+- Suport postări exclusiv-locale
+- Indicator pentru lipsa textului alternativ
+- Editor de text alternativ îmbunătățit
+- Header în cronologie pentru hashtag-uri
+- Mai multe categorii de notificări
+- Re-adăugarea unui deschizător de fișiere
+- Prompt atunci când salvați schița editată
+- Opțiune de a dezactiva butonul „Vezi postări noi”

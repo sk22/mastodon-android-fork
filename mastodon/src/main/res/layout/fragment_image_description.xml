@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
+	android:orientation="vertical"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:orientation="vertical">
+	xmlns:app="http://schemas.android.com/apk/res-auto">
 
 	<ScrollView
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:layout_marginBottom="250dp"
-		android:layout_gravity="top">
+		android:layout_height="0dp"
+		android:layout_weight="1">
 
 		<org.joinmastodon.android.ui.views.MaxWidthFrameLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal"
 			android:maxWidth="@dimen/layout_max_width">
 
 			<ImageView
@@ -32,34 +33,35 @@
 		android:orientation="vertical"
 		android:layout_gravity="bottom"
 		android:layout_width="match_parent"
-		android:layout_height="250dp">
+		android:layout_height="wrap_content">
 
-		<View
-			android:layout_width="match_parent"
-			android:layout_height="0.5dp"
-			android:background="?attr/colorPollVoted"/>
-
-		<TextView
-			android:id="@+id/subtitle"
+		<org.joinmastodon.android.ui.views.FloatingHintEditTextLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginTop="16dp"
-			android:layout_marginLeft="16dp"
-			android:layout_marginRight="16dp"
-			android:textAppearance="@style/m3_title_small"
-			android:textColor="?android:textColorSecondary"
-			android:text="@string/alt_text_subtitle"/>
+			android:layout_marginBottom="4dp"
+			android:paddingTop="4dp"
+			android:paddingBottom="12dp"
+			app:labelTextColor="@color/m3_outlined_text_field_label"
+			android:foreground="@drawable/bg_m3_outlined_text_field">
 
-		<EditText
-			android:id="@+id/edit"
-			android:layout_width="match_parent"
-			android:layout_height="0dp"
-			android:layout_weight="1"
-			android:layout_margin="16dp"
-			android:gravity="top"
-			android:inputType="textCapSentences|textMultiLine"
-			android:hint="@string/alt_text_hint" />
+			<EditText
+				android:id="@+id/edit"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_marginStart="16dp"
+				android:layout_marginEnd="16dp"
+				android:layout_marginTop="8dp"
+				android:padding="16dp"
+				android:background="@null"
+				android:inputType="textMultiLine|textCapSentences"
+				android:minLines="3"
+				android:maxHeight="200dp"
+				android:gravity="top"
+				android:hint="@string/alt_text"/>
+
+		</org.joinmastodon.android.ui.views.FloatingHintEditTextLayout>
 
 	</LinearLayout>
 
-</FrameLayout>
+</LinearLayout>

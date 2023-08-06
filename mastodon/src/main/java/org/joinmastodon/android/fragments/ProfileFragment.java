@@ -9,17 +9,23 @@ import android.app.Fragment;
 import android.app.assist.AssistContent;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Outline;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
+import android.transition.ChangeBounds;
+import android.transition.Fade;
+import android.transition.TransitionManager;
+import android.transition.TransitionSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,13 +38,12 @@ import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
 import android.view.WindowInsets;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
@@ -51,18 +56,22 @@ import org.joinmastodon.android.api.requests.accounts.GetAccountStatuses;
 import org.joinmastodon.android.api.requests.accounts.GetOwnAccount;
 import org.joinmastodon.android.api.requests.accounts.SetAccountFollowed;
 import org.joinmastodon.android.api.requests.accounts.UpdateAccountCredentials;
+import org.joinmastodon.android.api.requests.instance.GetInstance;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.account_list.FollowerListFragment;
 import org.joinmastodon.android.fragments.account_list.FollowingListFragment;
 import org.joinmastodon.android.fragments.report.ReportReasonChoiceFragment;
+import org.joinmastodon.android.fragments.settings.SettingsServerFragment;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.AccountField;
 import org.joinmastodon.android.model.Attachment;
+import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Relationship;
 import org.joinmastodon.android.ui.BetterItemAnimator;
+import org.joinmastodon.android.ui.M3AlertDialogBuilder;
+import org.joinmastodon.android.ui.OutlineProviders;
 import org.joinmastodon.android.ui.SimpleViewHolder;
 import org.joinmastodon.android.ui.SingleImagePhotoViewerListener;
-import org.joinmastodon.android.ui.drawables.CoverOverlayGradientDrawable;
 import org.joinmastodon.android.ui.photoviewer.PhotoViewer;
 import org.joinmastodon.android.ui.tabs.TabLayout;
 import org.joinmastodon.android.ui.tabs.TabLayoutMediator;
@@ -71,9 +80,11 @@ import org.joinmastodon.android.ui.text.HtmlParser;
 import org.joinmastodon.android.ui.utils.SimpleTextWatcher;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.ui.views.CoverImageView;
+import org.joinmastodon.android.ui.views.CustomDrawingOrderLinearLayout;
 import org.joinmastodon.android.ui.views.LinkedTextView;
 import org.joinmastodon.android.ui.views.NestedRecyclerScrollView;
 import org.joinmastodon.android.ui.views.ProgressBarButton;
+import org.joinmastodon.android.utils.ElevationOnScrollListener;
 import org.joinmastodon.android.utils.ProvidesAssistContent;
 import org.parceler.Parcels;
 
@@ -92,7 +103,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager2.widget.ViewPager2;
-
 import me.grishka.appkit.Nav;
 import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
@@ -110,6 +120,7 @@ import me.grishka.appkit.imageloader.requests.UrlImageLoaderRequest;
 import me.grishka.appkit.utils.BindableViewHolder;
 import me.grishka.appkit.utils.CubicBezierInterpolator;
 import me.grishka.appkit.utils.V;
+import me.grishka.appkit.views.FragmentRootLinearLayout;
 import me.grishka.appkit.views.UsableRecyclerView;
 
 public class ProfileFragment extends LoaderFragment implements OnBackPressedListener, ScrollableToTop, HasFab, ProvidesAssistContent.ProvidesWebUri {
@@ -118,35 +129,36 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 
 	private ImageView avatar;
 	private CoverImageView cover;
-	private View avatarBorder, nameWrap;
-	private TextView name, username, bio, followersCount, followersLabel, followingCount, followingLabel, postsCount, postsLabel;
+	private View avatarBorder;
+	private TextView name, username, bio, followersCount, followersLabel, followingCount, followingLabel;
 	private ProgressBarButton actionButton, notifyButton;
 	private ViewPager2 pager;
 	private NestedRecyclerScrollView scrollView;
 	private AccountTimelineFragment postsFragment, postsWithRepliesFragment, mediaFragment;
 	private PinnedPostsListFragment pinnedPostsFragment;
-//	private ProfileAboutFragment aboutFragment;
 	private TabLayout tabbar;
 	private SwipeRefreshLayout refreshLayout;
-	private CoverOverlayGradientDrawable coverGradient=new CoverOverlayGradientDrawable();
-	private float titleTransY;
-	private View postsBtn, followersBtn, followingBtn, profileCounters;
+	private View followersBtn, followingBtn;
 	private EditText nameEdit, bioEdit;
 	private ProgressBar actionProgress, notifyProgress;
 	private FrameLayout[] tabViews;
 	private TabLayoutMediator tabLayoutMediator;
 	private TextView followsYouView;
 	private ViewGroup rolesView;
+	private LinearLayout countersLayout;
+	private View nameEditWrap, bioEditWrap;
+	private View tabsDivider;
+	private View actionButtonWrap;
+	private CustomDrawingOrderLinearLayout scrollableContent;
 
 	private Account account, remoteAccount;
 	private String accountID;
 	private String domain;
 	private Relationship relationship;
-	private int statusBarHeight;
 	private boolean isOwnProfile;
-	private ArrayList<AccountField> fields=new ArrayList<>();
+	private List<AccountField> fields=new ArrayList<>();
 
-	private boolean isInEditMode;
+	private boolean isInEditMode, editDirty;
 	private Uri editNewAvatar, editNewCover;
 	private String profileAccountID;
 	private boolean refreshing;
@@ -154,20 +166,20 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 	private WindowInsets childInsets;
 	private PhotoViewer currentPhotoViewer;
 	private boolean editModeLoading;
+	private ElevationOnScrollListener onScrollListener;
+	private Drawable tabsColorBackground;
+	private boolean tabBarIsAtTop;
+	private Animator tabBarColorAnim;
+	private MenuItem editSaveMenuItem;
+	private boolean savingEdits;
 
-	private int maxFields = 4;
+	private int maxFields = ProfileAboutFragment.MAX_FIELDS;
 
 	// from ProfileAboutFragment
 	public UsableRecyclerView list;
-	private List<AccountField> metadataListData=Collections.emptyList();
-	private MetadataAdapter adapter;
+	private AboutAdapter adapter;
 	private ItemTouchHelper dragHelper=new ItemTouchHelper(new ReorderCallback());
-	private RecyclerView.ViewHolder draggedViewHolder;
 	private ListImageLoaderWrapper imgLoader;
-
-	public ProfileFragment(){
-		super(R.layout.loader_fragment_overlay_toolbar);
-	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -188,8 +200,9 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			loaded=true;
 			if(!isOwnProfile)
 				loadRelationship();
-			else if (isInstanceAkkoma() && getInstance().isPresent())
+			else if (isInstanceAkkoma()) {
 				maxFields = getInstance().get().pleroma.metadata.fieldsLimits.maxFields;
+			}
 		}else{
 			profileAccountID=getArguments().getString("profileAccountID");
 			if(!getArguments().getBoolean("noAutoLoad", false))
@@ -216,19 +229,14 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		cover=content.findViewById(R.id.cover);
 		avatarBorder=content.findViewById(R.id.avatar_border);
 		name=content.findViewById(R.id.name);
-		nameWrap=content.findViewById(R.id.name_wrap);
 		username=content.findViewById(R.id.username);
 		bio=content.findViewById(R.id.bio);
-		profileCounters=content.findViewById(R.id.profile_counters);
 		followersCount=content.findViewById(R.id.followers_count);
 		followersLabel=content.findViewById(R.id.followers_label);
 		followersBtn=content.findViewById(R.id.followers_btn);
 		followingCount=content.findViewById(R.id.following_count);
 		followingLabel=content.findViewById(R.id.following_label);
 		followingBtn=content.findViewById(R.id.following_btn);
-		postsCount=content.findViewById(R.id.posts_count);
-		postsLabel=content.findViewById(R.id.posts_label);
-		postsBtn=content.findViewById(R.id.posts_btn);
 		actionButton=content.findViewById(R.id.profile_action_btn);
 		notifyButton=content.findViewById(R.id.notify_btn);
 		pager=content.findViewById(R.id.pager);
@@ -237,27 +245,26 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		refreshLayout=content.findViewById(R.id.refresh_layout);
 		nameEdit=content.findViewById(R.id.name_edit);
 		bioEdit=content.findViewById(R.id.bio_edit);
+		nameEditWrap=content.findViewById(R.id.name_edit_wrap);
+		bioEditWrap=content.findViewById(R.id.bio_edit_wrap);
 		actionProgress=content.findViewById(R.id.action_progress);
 		notifyProgress=content.findViewById(R.id.notify_progress);
 		fab=content.findViewById(R.id.fab);
 		followsYouView=content.findViewById(R.id.follows_you);
+		countersLayout=content.findViewById(R.id.profile_counters);
+		tabsDivider=content.findViewById(R.id.tabs_divider);
+		actionButtonWrap=content.findViewById(R.id.profile_action_btn_wrap);
+		scrollableContent=content.findViewById(R.id.scrollable_content);
 		list=content.findViewById(R.id.metadata);
 		rolesView=content.findViewById(R.id.roles);
 
-		avatar.setOutlineProvider(new ViewOutlineProvider(){
-			@Override
-			public void getOutline(View view, Outline outline){
-				outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), V.dp(25));
-			}
-		});
+		avatar.setOutlineProvider(OutlineProviders.roundedRect(24));
 		avatar.setClipToOutline(true);
 
 		FrameLayout sizeWrapper=new FrameLayout(getActivity()){
 			@Override
 			protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec){
-				Toolbar toolbar=getToolbar();
-				pager.getLayoutParams().height=MeasureSpec.getSize(heightMeasureSpec)-getPaddingTop()-getPaddingBottom()-toolbar.getLayoutParams().height-statusBarHeight-V.dp(38);
-				coverGradient.setTopPadding(statusBarHeight+toolbar.getLayoutParams().height);
+				pager.getLayoutParams().height=MeasureSpec.getSize(heightMeasureSpec)-getPaddingTop()-getPaddingBottom()-V.dp(48);
 				super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 			}
 		};
@@ -270,7 +277,6 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 				case 1 -> R.id.profile_posts_with_replies;
 				case 2 -> R.id.profile_pinned_posts;
 				case 3 -> R.id.profile_media;
-				case 4 -> R.id.profile_about;
 				default -> throw new IllegalStateException("Unexpected value: "+i);
 			});
 			tabView.setVisibility(View.GONE);
@@ -285,11 +291,12 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		pager.getLayoutParams().height=getResources().getDisplayMetrics().heightPixels;
 
 		scrollView.setScrollableChildSupplier(this::getScrollableRecyclerView);
+		scrollView.getViewTreeObserver().addOnGlobalLayoutListener(this::updateMetadataHeight);
 
 		sizeWrapper.addView(content);
 
-		tabbar.setTabTextColors(UiUtils.getThemeColor(getActivity(), android.R.attr.textColorSecondary), UiUtils.getThemeColor(getActivity(), android.R.attr.textColorPrimary));
-		tabbar.setTabTextSize(V.dp(16));
+		tabbar.setTabTextColors(UiUtils.getThemeColor(getActivity(), R.attr.colorM3OnSurfaceVariant), UiUtils.getThemeColor(getActivity(), R.attr.colorM3Primary));
+		tabbar.setTabTextSize(V.dp(14));
 		tabLayoutMediator=new TabLayoutMediator(tabbar, pager, new TabLayoutMediator.TabConfigurationStrategy(){
 			@Override
 			public void onConfigureTab(@NonNull TabLayout.Tab tab, int position){
@@ -298,13 +305,12 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 					case 1 -> R.string.posts_and_replies;
 					case 2 -> R.string.sk_pinned_posts;
 					case 3 -> R.string.media;
-					case 4 -> R.string.profile_about;
 					default -> throw new IllegalStateException();
 				});
+				if (position == 4) tab.view.setVisibility(View.GONE);
 			}
 		});
 
-		cover.setForeground(coverGradient);
 		cover.setOutlineProvider(new ViewOutlineProvider(){
 			@Override
 			public void getOutline(View view, Outline outline){
@@ -321,6 +327,13 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		fab.setOnClickListener(this::onFabClick);
 		fab.setOnLongClickListener(v->UiUtils.pickAccountForCompose(getActivity(), accountID, getPrefilledText()));
 
+		if(savedInstanceState!=null){
+			postsFragment=(AccountTimelineFragment) getChildFragmentManager().getFragment(savedInstanceState, "posts");
+			postsWithRepliesFragment=(AccountTimelineFragment) getChildFragmentManager().getFragment(savedInstanceState, "postsWithReplies");
+			mediaFragment=(AccountTimelineFragment) getChildFragmentManager().getFragment(savedInstanceState, "media");
+			pinnedPostsFragment=(PinnedPostsListFragment) getChildFragmentManager().getFragment(savedInstanceState, "pinnedPosts");
+		}
+
 		if(loaded){
 			bindHeaderView();
 			dataLoaded();
@@ -331,6 +344,31 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 
 		followersBtn.setOnClickListener(this::onFollowersOrFollowingClick);
 		followingBtn.setOnClickListener(this::onFollowersOrFollowingClick);
+
+		username.setOnClickListener(v->{
+			try {
+				new GetInstance()
+						.setCallback(new Callback<>(){
+							@Override
+							public void onSuccess(Instance result){
+								Bundle args = new Bundle();
+								args.putParcelable("instance", Parcels.wrap(result));
+								args.putString("account", accountID);
+								Nav.go(getActivity(), SettingsServerFragment.class, args);
+							}
+
+							@Override
+							public void onError(ErrorResponse error){
+								error.showToast(getContext());
+							}
+						})
+						.wrapProgress((Activity) getContext(), R.string.loading, true)
+						.execRemote(Uri.parse(account.url).getHost());
+			} catch (NullPointerException ignored) {
+				// maybe the url was malformed?
+				Toast.makeText(getContext(), R.string.error, Toast.LENGTH_SHORT);
+			}
+		});
 
 		username.setOnLongClickListener(v->{
 			String usernameString=account.acct;
@@ -346,8 +384,24 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		list.setDrawSelectorOnTop(true);
 		list.setLayoutManager(new LinearLayoutManager(getActivity()));
 		imgLoader=new ListImageLoaderWrapper(getActivity(), list, new RecyclerViewDelegate(list), null);
-		list.setAdapter(adapter=new MetadataAdapter());
+		list.setAdapter(adapter=new AboutAdapter());
 		list.setClipToPadding(false);
+
+		scrollableContent.setDrawingOrderCallback((count, pos)->{
+			// The header is the first child, draw it last to overlap everything for the photo viewer transition to look nice
+			if(pos==count-1)
+				return 0;
+			// Offset the order of other child views to compensate
+			return pos+1;
+		});
+
+		int colorBackground=UiUtils.getThemeColor(getActivity(), R.attr.colorM3Background);
+		int colorPrimary=UiUtils.getThemeColor(getActivity(), R.attr.colorM3Primary);
+		refreshLayout.setProgressBackgroundColorSchemeColor(UiUtils.alphaBlendColors(colorBackground, colorPrimary, 0.11f));
+		refreshLayout.setColorSchemeColors(colorPrimary);
+
+		nameEdit.addTextChangedListener(new SimpleTextWatcher(e->editDirty=true));
+		bioEdit.addTextChangedListener(new SimpleTextWatcher(e->editDirty=true));
 
 		return sizeWrapper;
 	}
@@ -418,20 +472,24 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 	public void dataLoaded(){
 		if(getActivity()==null)
 			return;
+		Bundle args=new Bundle();
+		args.putString("account", accountID);
+		args.putParcelable("profileAccount", Parcels.wrap(account));
+		args.putBoolean("__is_tab", true);
 		if(postsFragment==null){
 			postsFragment=AccountTimelineFragment.newInstance(accountID, account, GetAccountStatuses.Filter.DEFAULT, true);
+		}
+		if(postsWithRepliesFragment==null){
 			postsWithRepliesFragment=AccountTimelineFragment.newInstance(accountID, account, GetAccountStatuses.Filter.INCLUDE_REPLIES, false);
+		}
+		if(mediaFragment==null){
 			mediaFragment=AccountTimelineFragment.newInstance(accountID, account, GetAccountStatuses.Filter.MEDIA, false);
-
-			Bundle args=new Bundle();
-			args.putString("account", accountID);
-			args.putParcelable("profileAccount", Parcels.wrap(account));
-			args.putBoolean("__is_tab", true);
+		}
+		if(pinnedPostsFragment==null){
 			pinnedPostsFragment=new PinnedPostsListFragment();
 			pinnedPostsFragment.setArguments(args);
-//			aboutFragment=new ProfileAboutFragment();
-			setFields(fields);
 		}
+		setFields(fields);
 		pager.getAdapter().notifyDataSetChanged();
 		super.dataLoaded();
 	}
@@ -448,10 +506,8 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 				pager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback(){
 					@Override
 					public void onPageSelected(int position){
-						if(position==0)
-							return;
 						Fragment _page=getFragmentForPage(position);
-						if(_page instanceof BaseRecyclerFragment<?> page){
+						if(_page instanceof BaseRecyclerFragment<?> page && page.isAdded()){
 							if(!page.loaded && !page.isDataLoading())
 								page.loadData();
 						}
@@ -459,6 +515,8 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 
 					@Override
 					public void onPageScrollStateChanged(int state){
+						if(isInEditMode)
+							return;
 						refreshLayout.setEnabled(state!=ViewPager2.SCROLL_STATE_DRAGGING);
 					}
 				});
@@ -466,18 +524,39 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			}
 		});
 
+		tabsColorBackground=((LayerDrawable)tabbar.getBackground()).findDrawableByLayerId(R.id.color_overlay);
+
+		onScrollListener=new ElevationOnScrollListener((FragmentRootLinearLayout) view, getToolbar());
 		scrollView.setOnScrollChangeListener(this::onScrollChanged);
-		titleTransY=getToolbar().getLayoutParams().height;
-		if(toolbarTitleView!=null){
-			toolbarTitleView.setTranslationY(titleTransY);
-			toolbarSubtitleView.setTranslationY(titleTransY);
-		}
-		RecyclerFragment.setRefreshLayoutColors(refreshLayout);
+		scrollView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener(){
+			@Override
+			public boolean onPreDraw(){
+				scrollView.getViewTreeObserver().removeOnPreDrawListener(this);
+
+				tabBarIsAtTop=!scrollView.canScrollVertically(1) && scrollView.getHeight()>0;
+				if (UiUtils.isTrueBlackTheme()) tabBarIsAtTop=false;
+				tabsColorBackground.setAlpha(tabBarIsAtTop ? 20 : 0);
+				tabbar.setTranslationZ(tabBarIsAtTop ? V.dp(3) : 0);
+				tabsDivider.setAlpha(tabBarIsAtTop ? 0 : 1);
+
+				return true;
+			}
+		});
 	}
 
 	@Override
-	public void onDestroyView(){
-		super.onDestroyView();
+	public void onSaveInstanceState(Bundle outState){
+		super.onSaveInstanceState(outState);
+		if(postsFragment==null)
+			return;
+		if(postsFragment.isAdded())
+			getChildFragmentManager().putFragment(outState, "posts", postsFragment);
+		if(postsWithRepliesFragment.isAdded())
+			getChildFragmentManager().putFragment(outState, "postsWithReplies", postsWithRepliesFragment);
+		if(mediaFragment.isAdded())
+			getChildFragmentManager().putFragment(outState, "media", mediaFragment);
+		if(pinnedPostsFragment.isAdded())
+			getChildFragmentManager().putFragment(outState, "pinnedPosts", pinnedPostsFragment);
 	}
 
 	@Override
@@ -488,21 +567,18 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 
 	@Override
 	public void onApplyWindowInsets(WindowInsets insets){
-		statusBarHeight=insets.getSystemWindowInsetTop();
 		if(contentView!=null){
-			((ViewGroup.MarginLayoutParams) getToolbar().getLayoutParams()).topMargin=statusBarHeight;
-			refreshLayout.setProgressViewEndTarget(true, statusBarHeight+refreshLayout.getProgressCircleDiameter()+V.dp(24));
 			if(Build.VERSION.SDK_INT>=29 && insets.getTappableElementInsets().bottom==0){
 				int insetBottom=insets.getSystemWindowInsetBottom();
 				childInsets=insets.inset(insets.getSystemWindowInsetLeft(), insets.getSystemWindowInsetTop(), insets.getSystemWindowInsetRight(), 0);
-				((ViewGroup.MarginLayoutParams) fab.getLayoutParams()).bottomMargin=V.dp(24)+insetBottom;
+				((ViewGroup.MarginLayoutParams) fab.getLayoutParams()).bottomMargin=V.dp(16)+insetBottom;
 				applyChildWindowInsets();
 				insets=insets.inset(0, 0, 0, insetBottom);
 			}else{
-				((ViewGroup.MarginLayoutParams) fab.getLayoutParams()).bottomMargin=V.dp(24);
+				((ViewGroup.MarginLayoutParams) fab.getLayoutParams()).bottomMargin=V.dp(16);
 			}
 		}
-		super.onApplyWindowInsets(insets.replaceSystemWindowInsets(insets.getSystemWindowInsetLeft(), 0, insets.getSystemWindowInsetRight(), insets.getSystemWindowInsetBottom()));
+		super.onApplyWindowInsets(insets);
 	}
 
 	private void applyChildWindowInsets(){
@@ -518,13 +594,15 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		setTitle(account.displayName);
 		setSubtitle(getResources().getQuantityString(R.plurals.x_posts, (int)(account.statusesCount%1000), account.statusesCount));
 		ViewImageLoader.load(avatar, null, new UrlImageLoaderRequest(
-				TextUtils.isEmpty(account.avatar) ? getSession().getDefaultAvatarUrl() : GlobalUserPreferences.playGifs ? account.avatar : account.avatarStatic,
+				TextUtils.isEmpty(account.avatar) ? getSession().getDefaultAvatarUrl() :
+						GlobalUserPreferences.playGifs ? account.avatar : account.avatarStatic,
 				V.dp(100), V.dp(100)));
 		ViewImageLoader.load(cover, null, new UrlImageLoaderRequest(GlobalUserPreferences.playGifs ? account.header : account.headerStatic, 1000, 1000));
 		SpannableStringBuilder ssb=new SpannableStringBuilder(account.displayName);
+		if(AccountSessionManager.get(accountID).getLocalPreferences().customEmojiInNames)
 			HtmlParser.parseCustomEmoji(ssb, account.emojis);
-			name.setText(ssb);
-			setTitle(ssb);
+		name.setText(ssb);
+		setTitle(ssb);
 
 		if (account.roles != null && !account.roles.isEmpty()) {
 			rolesView.setVisibility(View.VISIBLE);
@@ -533,9 +611,10 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			for (Account.Role role : account.roles) {
 				TextView roleText = new TextView(getActivity(), null, 0, R.style.role_label);
 				roleText.setText(role.name);
+				roleText.setGravity(Gravity.CENTER_VERTICAL);
 				if (!TextUtils.isEmpty(role.color) && role.color.startsWith("#")) try {
 					GradientDrawable bg = (GradientDrawable) roleText.getBackground().mutate();
-					bg.setStroke(V.dp(2), Color.parseColor(role.color));
+					bg.setStroke(V.dp(1), Color.parseColor(role.color));
 				} catch (Exception ignored) {}
 				rolesView.addView(roleText);
 			}
@@ -568,13 +647,13 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		}
 		followersCount.setText(UiUtils.abbreviateNumber(account.followersCount));
 		followingCount.setText(UiUtils.abbreviateNumber(account.followingCount));
-		postsCount.setText(UiUtils.abbreviateNumber(account.statusesCount));
 		followersLabel.setText(getResources().getQuantityString(R.plurals.followers, (int)Math.min(999, account.followersCount)));
 		followingLabel.setText(getResources().getQuantityString(R.plurals.following, (int)Math.min(999, account.followingCount)));
-		postsLabel.setText(getResources().getQuantityString(R.plurals.posts, (int)Math.min(999, account.statusesCount)));
-
+		
 		if (account.followersCount < 0) followersBtn.setVisibility(View.GONE);
 		if (account.followingCount < 0) followingBtn.setVisibility(View.GONE);
+		if (account.followersCount < 0 || account.followingCount < 0)
+			countersLayout.findViewById(R.id.profile_counters_separator).setVisibility(View.GONE);
 
 		UiUtils.loadCustomEmojiInTextView(name);
 		UiUtils.loadCustomEmojiInTextView(bio);
@@ -582,6 +661,12 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		notifyButton.setVisibility(View.GONE);
 		if(AccountSessionManager.getInstance().isSelf(accountID, account)){
 			actionButton.setText(R.string.edit_profile);
+			TypedArray ta=actionButton.getContext().obtainStyledAttributes(R.style.Widget_Mastodon_M3_Button_Tonal, new int[]{android.R.attr.background});
+			actionButton.setBackground(ta.getDrawable(0));
+			ta.recycle();
+			ta=actionButton.getContext().obtainStyledAttributes(R.style.Widget_Mastodon_M3_Button_Tonal, new int[]{android.R.attr.textColor});
+			actionButton.setTextColor(ta.getColorStateList(0));
+			ta.recycle();
 		}else{
 			actionButton.setVisibility(View.GONE);
 		}
@@ -616,18 +701,11 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 	}
 
 	private void updateToolbar(){
-		getToolbar().setBackgroundColor(0);
-		if(toolbarTitleView!=null){
-			toolbarTitleView.setTranslationY(titleTransY);
-			toolbarSubtitleView.setTranslationY(titleTransY);
-		}
 		getToolbar().setOnClickListener(v->scrollToTop());
 		getToolbar().setNavigationContentDescription(R.string.back);
-	}
-
-	@Override
-	public boolean wantsLightStatusBar(){
-		return false;
+		if(onScrollListener!=null){
+			onScrollListener.setViews(getToolbar());
+		}
 	}
 
 	@Override
@@ -638,16 +716,10 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
 		if(isOwnProfile && isInEditMode){
-			Button cancelButton=new Button(getActivity(), null, 0, R.style.Widget_Mastodon_Button_Secondary_LightOnDark);
-			cancelButton.setText(R.string.cancel);
-			cancelButton.setOnClickListener(v->exitEditMode());
-			FrameLayout wrap=new FrameLayout(getActivity());
-			wrap.addView(cancelButton, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.TOP|Gravity.LEFT));
-			wrap.setPadding(V.dp(16), V.dp(4), V.dp(16), V.dp(8));
-			wrap.setClipToPadding(false);
-			MenuItem item=menu.add(R.string.cancel);
-			item.setActionView(wrap);
-			item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+			editSaveMenuItem=menu.add(0, R.id.save, 0, R.string.save_changes);
+			editSaveMenuItem.setIcon(R.drawable.ic_fluent_save_24_regular);
+			editSaveMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+			editSaveMenuItem.setVisible(!isActionButtonInView());
 			return;
 		}
 		if(relationship==null && !isOwnProfile)
@@ -664,7 +736,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 					getActivity(), s.getID(), account.url, false
 			));
 		}
-		menu.findItem(R.id.share).setTitle(getString(R.string.share_user, account.getShortUsername()));
+		menu.findItem(R.id.share).setTitle(R.string.share_user);
 		if(isOwnProfile) {
 			if (isInstancePixelfed()) menu.findItem(R.id.scheduled).setVisible(false);
 			return;
@@ -674,18 +746,17 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		mute.setTitle(getString(relationship.muting ? R.string.unmute_user : R.string.mute_user, account.getShortUsername()));
 		mute.setIcon(relationship.muting ? R.drawable.ic_fluent_speaker_0_24_regular : R.drawable.ic_fluent_speaker_off_24_regular);
 		UiUtils.insetPopupMenuIcon(getContext(), mute);
-
 		menu.findItem(R.id.block).setTitle(getString(relationship.blocking ? R.string.unblock_user : R.string.block_user, account.getShortUsername()));
 		menu.findItem(R.id.report).setTitle(getString(R.string.report_user, account.getShortUsername()));
 		menu.findItem(R.id.manage_user_lists).setVisible(relationship.following);
 		menu.findItem(R.id.soft_block).setVisible(relationship.followedBy && !relationship.following);
-		if(relationship.following) {
+		if (relationship.following) {
 			MenuItem hideBoosts = menu.findItem(R.id.hide_boosts);
 			hideBoosts.setTitle(getString(relationship.showingReblogs ? R.string.hide_boosts_from_user : R.string.show_boosts_from_user, account.getShortUsername()));
 			hideBoosts.setIcon(relationship.showingReblogs ? R.drawable.ic_fluent_arrow_repeat_all_off_24_regular : R.drawable.ic_fluent_arrow_repeat_all_24_regular);
 			UiUtils.insetPopupMenuIcon(getContext(), hideBoosts);
 			menu.findItem(R.id.manage_user_lists).setTitle(getString(R.string.sk_lists_with_user, account.getShortUsername()));
-		}else {
+		} else {
 			menu.findItem(R.id.hide_boosts).setVisible(false);
 		}
 		if(!account.isLocal())
@@ -697,8 +768,8 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item){
 		int id=item.getItemId();
-		if(id==R.id.share) {
-			Intent intent = new Intent(Intent.ACTION_SEND);
+		if(id==R.id.share){
+			Intent intent=new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain");
 			intent.putExtra(Intent.EXTRA_TEXT, account.url);
 			startActivity(Intent.createChooser(intent, item.getTitle()));
@@ -712,6 +783,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			Bundle args=new Bundle();
 			args.putString("account", accountID);
 			args.putParcelable("reportAccount", Parcels.wrap(account));
+			args.putParcelable("relationship", Parcels.wrap(relationship));
 			Nav.go(getActivity(), ReportReasonChoiceFragment.class, args);
 		}else if(id==R.id.open_in_browser){
 			UiUtils.launchWebBrowser(getActivity(), account.url);
@@ -759,13 +831,11 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			Bundle args=new Bundle();
 			args.putString("account", accountID);
 			Nav.go(getActivity(), ScheduledStatusListFragment.class, args);
+		}else if(id==R.id.save){
+			if(isInEditMode)
+				saveAndExitEditMode();
 		}
 		return true;
-	}
-
-	@Override
-	protected int getToolbarResource(){
-		return R.layout.profile_toolbar;
 	}
 
 	private void loadRelationship(){
@@ -792,8 +862,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		invalidateOptionsMenu();
 		actionButton.setVisibility(View.VISIBLE);
 		notifyButton.setVisibility(relationship.following ? View.VISIBLE : View.GONE);
-		UiUtils.setRelationshipToActionButton(relationship, actionButton);
-		UiUtils.setRelationshipToActionButton(relationship, notifyButton, true);
+		UiUtils.setRelationshipToActionButtonM3(relationship, actionButton);
 		actionProgress.setIndeterminateTintList(actionButton.getTextColors());
 		notifyProgress.setIndeterminateTintList(notifyButton.getTextColors());
 		followsYouView.setVisibility(relationship.followedBy ? View.VISIBLE : View.GONE);
@@ -822,34 +891,58 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 	}
 
 	private void onScrollChanged(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY){
-		int topBarsH=getToolbar().getHeight()+statusBarHeight;
-		if(scrollY>avatarBorder.getTop()-topBarsH){
-			float avaAlpha=Math.max(1f-((scrollY-(avatarBorder.getTop()-topBarsH))/(float)V.dp(38)), 0f);
-			avatarBorder.setAlpha(avaAlpha);
-		}else{
-			avatarBorder.setAlpha(1f);
-		}
-		if(scrollY>cover.getHeight()-topBarsH){
-			cover.setTranslationY(scrollY-(cover.getHeight()-topBarsH));
+		if(scrollY>cover.getHeight()){
+			cover.setTranslationY(scrollY-(cover.getHeight()));
 			cover.setTranslationZ(V.dp(10));
-			cover.setTransform(cover.getHeight()/2f-topBarsH/2f, 1f);
+			cover.setTransform(cover.getHeight()/2f);
 		}else{
 			cover.setTranslationY(0f);
 			cover.setTranslationZ(0f);
-			cover.setTransform(scrollY/2f, 1f);
+			cover.setTransform(scrollY/2f);
 		}
-		coverGradient.setTopOffset(scrollY);
 		cover.invalidate();
-		titleTransY=getToolbar().getHeight();
-		if(scrollY>nameWrap.getTop()-topBarsH){
-			titleTransY=Math.max(0f, titleTransY-(scrollY-(nameWrap.getTop()-topBarsH)));
-		}
-		if(toolbarTitleView!=null){
-			toolbarTitleView.setTranslationY(titleTransY);
-			toolbarSubtitleView.setTranslationY(titleTransY);
-		}
 		if(currentPhotoViewer!=null){
 			currentPhotoViewer.offsetView(0, oldScrollY-scrollY);
+		}
+		onScrollListener.onScrollChange(v, scrollX, scrollY, oldScrollX, oldScrollY);
+
+		boolean newTabBarIsAtTop=!scrollView.canScrollVertically(1);
+		if(newTabBarIsAtTop!=tabBarIsAtTop){
+			if(UiUtils.isTrueBlackTheme()) newTabBarIsAtTop=false;
+			tabBarIsAtTop=newTabBarIsAtTop;
+
+			if(tabBarIsAtTop){
+				// ScrollView would sometimes leave 1 pixel unscrolled, force it into the correct scrollY
+				int maxY=scrollView.getChildAt(0).getHeight()-scrollView.getHeight();
+				if(scrollView.getScrollY()!=maxY)
+					scrollView.scrollTo(0, maxY);
+			}
+
+			if(tabBarColorAnim!=null)
+				tabBarColorAnim.cancel();
+			AnimatorSet set=new AnimatorSet();
+			set.playTogether(
+					ObjectAnimator.ofInt(tabsColorBackground, "alpha", tabBarIsAtTop ? 20 : 0),
+					ObjectAnimator.ofFloat(tabbar, View.TRANSLATION_Z, tabBarIsAtTop ? V.dp(3) : 0),
+					ObjectAnimator.ofFloat(getToolbar(), View.TRANSLATION_Z, tabBarIsAtTop ? 0 : V.dp(3)),
+					ObjectAnimator.ofFloat(tabsDivider, View.ALPHA, tabBarIsAtTop ? 0 : 1)
+			);
+			set.setDuration(150);
+			set.setInterpolator(CubicBezierInterpolator.DEFAULT);
+			set.addListener(new AnimatorListenerAdapter(){
+				@Override
+				public void onAnimationEnd(Animator animation){
+					tabBarColorAnim=null;
+				}
+			});
+			tabBarColorAnim=set;
+			set.start();
+		}
+		if(isInEditMode && editSaveMenuItem!=null){
+			boolean buttonInView=isActionButtonInView();
+			if(buttonInView==editSaveMenuItem.isVisible()){
+				editSaveMenuItem.setVisible(!buttonInView);
+			}
 		}
 	}
 
@@ -859,13 +952,13 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			case 1 -> postsWithRepliesFragment;
 			case 2 -> pinnedPostsFragment;
 			case 3 -> mediaFragment;
-//			case 4 -> aboutFragment;
 			default -> throw new IllegalStateException();
 		};
 	}
 
 	private RecyclerView getScrollableRecyclerView(){
-		return getFragmentForPage(pager.getCurrentItem()).getView().findViewById(R.id.list);
+		return isInEditMode ? list :
+				getFragmentForPage(pager.getCurrentItem()).getView().findViewById(R.id.list);
 	}
 
 	private void onActionButtonClick(View v){
@@ -907,12 +1000,16 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 	private void setActionProgressVisible(boolean visible){
 		actionButton.setTextVisible(!visible);
 		actionProgress.setVisibility(visible ? View.VISIBLE : View.GONE);
+		if(visible)
+			actionProgress.setIndeterminateTintList(actionButton.getTextColors());
 		actionButton.setClickable(!visible);
 	}
 
 	private void setNotifyProgressVisible(boolean visible){
 		notifyButton.setTextVisible(!visible);
 		notifyProgress.setVisibility(visible ? View.VISIBLE : View.GONE);
+		if(visible)
+			notifyProgress.setIndeterminateTintList(notifyButton.getTextColors());
 		notifyButton.setClickable(!visible);
 	}
 
@@ -926,7 +1023,8 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 					@Override
 					public void onSuccess(Account result){
 						editModeLoading=false;
-						if (getActivity() == null) return;
+						if(getActivity()==null)
+							return;
 						enterEditMode(result);
 						setActionProgressVisible(false);
 					}
@@ -934,7 +1032,8 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 					@Override
 					public void onError(ErrorResponse error){
 						editModeLoading=false;
-						if (getActivity() == null) return;
+						if(getActivity()==null)
+							return;
 						error.showToast(getActivity());
 						setActionProgressVisible(false);
 					}
@@ -942,46 +1041,60 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 				.exec(accountID);
 	}
 
+	private void updateMetadataHeight() {
+		ViewGroup.LayoutParams params = list.getLayoutParams();
+		int desiredHeight = isInEditMode ? scrollView.getHeight() : ViewGroup.LayoutParams.WRAP_CONTENT;
+		if (params.height == desiredHeight) return;
+		params.height = desiredHeight;
+		list.requestLayout();
+	}
+
 	private void enterEditMode(Account account){
 		if(isInEditMode)
 			throw new IllegalStateException();
 		isInEditMode=true;
-		invalidateOptionsMenu();
-		pager.setUserInputEnabled(false);
-		actionButton.setText(R.string.done);
-		ArrayList<Animator> animators=new ArrayList<>();
-		Drawable overlay=getResources().getDrawable(R.drawable.edit_avatar_overlay, getActivity().getTheme()).mutate();
-		avatar.setForeground(overlay);
-		animators.add(ObjectAnimator.ofInt(overlay, "alpha", 0, 255));
-
-		nameWrap.setVisibility(View.GONE);
-		nameEdit.setVisibility(View.VISIBLE);
-		nameEdit.setText(account.displayName);
-		RelativeLayout.LayoutParams lp=(RelativeLayout.LayoutParams) username.getLayoutParams();
-		lp.addRule(RelativeLayout.BELOW, R.id.name_edit);
-		username.getParent().requestLayout();
-		animators.add(ObjectAnimator.ofFloat(nameEdit, View.ALPHA, 0f, 1f));
-
-		bioEdit.setVisibility(View.VISIBLE);
-		bioEdit.setText(account.source.note);
-		animators.add(ObjectAnimator.ofFloat(bioEdit, View.ALPHA, 0f, 1f));
-		animators.add(ObjectAnimator.ofFloat(bio, View.ALPHA, 0f));
-		profileCounters.setVisibility(View.GONE);
-		pager.setVisibility(View.GONE);
-		tabbar.setVisibility(View.GONE);
-
-		AnimatorSet set=new AnimatorSet();
-		set.playTogether(animators);
-		set.setDuration(300);
-		set.setInterpolator(CubicBezierInterpolator.DEFAULT);
-		set.start();
-
-//		aboutFragment.enterEditMode(account.source.fields);
-
-		V.setVisibilityAnimated(fab, View.GONE);
-		metadataListData=account.source.fields;
 		adapter.notifyDataSetChanged();
 		dragHelper.attachToRecyclerView(list);
+		editDirty=false;
+		invalidateOptionsMenu();
+		actionButton.setText(R.string.save_changes);
+		pager.setVisibility(View.GONE);
+		tabbar.setVisibility(View.GONE);
+		Drawable overlay=getResources().getDrawable(R.drawable.edit_avatar_overlay).mutate();
+		avatar.setForeground(overlay);
+		updateMetadataHeight();
+
+		Toolbar toolbar=getToolbar();
+		Drawable close=getToolbarContext().getDrawable(R.drawable.ic_baseline_close_24).mutate();
+		close.setTint(UiUtils.getThemeColor(getToolbarContext(), R.attr.colorM3OnSurfaceVariant));
+		toolbar.setNavigationIcon(close);
+		toolbar.setNavigationContentDescription(R.string.discard);
+
+		ViewGroup parent=contentView.findViewById(R.id.scrollable_content);
+		TransitionManager.beginDelayedTransition(parent, new TransitionSet()
+				.addTransition(new Fade(Fade.IN | Fade.OUT))
+				.addTransition(new ChangeBounds())
+				.setDuration(250)
+				.setInterpolator(CubicBezierInterpolator.DEFAULT)
+		);
+
+		name.setVisibility(View.GONE);
+		username.setVisibility(View.GONE);
+		bio.setVisibility(View.GONE);
+		countersLayout.setVisibility(View.GONE);
+
+		nameEditWrap.setVisibility(View.VISIBLE);
+		nameEdit.setText(account.displayName);
+
+		bioEditWrap.setVisibility(View.VISIBLE);
+		bioEdit.setText(account.source.note);
+
+		refreshLayout.setEnabled(false);
+		editDirty=false;
+		V.setVisibilityAnimated(fab, View.GONE);
+
+		fields = account.source.fields;
+		adapter.notifyDataSetChanged();
 	}
 
 	private void exitEditMode(){
@@ -990,35 +1103,37 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		isInEditMode=false;
 
 		invalidateOptionsMenu();
-		ArrayList<Animator> animators=new ArrayList<>();
 		actionButton.setText(R.string.edit_profile);
-		animators.add(ObjectAnimator.ofInt(avatar.getForeground(), "alpha", 0));
-		animators.add(ObjectAnimator.ofFloat(nameEdit, View.ALPHA, 0f));
-		animators.add(ObjectAnimator.ofFloat(bioEdit, View.ALPHA, 0f));
-		animators.add(ObjectAnimator.ofFloat(bio, View.ALPHA, 1f));
-		profileCounters.setVisibility(View.VISIBLE);
+		avatar.setForeground(null);
+
+		Toolbar toolbar=getToolbar();
+		if(canGoBack()){
+			Drawable back=getToolbarContext().getDrawable(R.drawable.ic_fluent_arrow_left_24_regular).mutate();
+			back.setTint(UiUtils.getThemeColor(getToolbarContext(), R.attr.colorM3OnSurfaceVariant));
+			toolbar.setNavigationIcon(back);
+			toolbar.setNavigationContentDescription(0);
+		}else{
+			toolbar.setNavigationIcon(null);
+		}
+		editSaveMenuItem=null;
+
+		ViewGroup parent=contentView.findViewById(R.id.scrollable_content);
+		TransitionManager.beginDelayedTransition(parent, new TransitionSet()
+				.addTransition(new Fade(Fade.IN | Fade.OUT))
+				.addTransition(new ChangeBounds())
+				.setDuration(250)
+				.setInterpolator(CubicBezierInterpolator.DEFAULT)
+		);
+		nameEditWrap.setVisibility(View.GONE);
+		bioEditWrap.setVisibility(View.GONE);
+		name.setVisibility(View.VISIBLE);
+		username.setVisibility(View.VISIBLE);
+		bio.setVisibility(View.VISIBLE);
+		countersLayout.setVisibility(View.VISIBLE);
+		refreshLayout.setEnabled(true);
 		pager.setVisibility(View.VISIBLE);
 		tabbar.setVisibility(View.VISIBLE);
-		V.setVisibilityAnimated(nameWrap, View.VISIBLE);
-
-		AnimatorSet set=new AnimatorSet();
-		set.playTogether(animators);
-		set.setDuration(200);
-		set.setInterpolator(CubicBezierInterpolator.DEFAULT);
-		set.addListener(new AnimatorListenerAdapter(){
-			@Override
-			public void onAnimationEnd(Animator animation){
-				pager.setUserInputEnabled(true);
-				nameEdit.setVisibility(View.GONE);
-				bioEdit.setVisibility(View.GONE);
-				RelativeLayout.LayoutParams lp=(RelativeLayout.LayoutParams) username.getLayoutParams();
-				lp.addRule(RelativeLayout.BELOW, R.id.name_wrap);
-				username.getParent().requestLayout();
-				avatar.setForeground(null);
-				scrollToTop();
-			}
-		});
-		set.start();
+		updateMetadataHeight();
 
 		InputMethodManager imm=getActivity().getSystemService(InputMethodManager.class);
 		imm.hideSoftInputFromWindow(content.getWindowToken(), 0);
@@ -1030,10 +1145,12 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		if(!isInEditMode)
 			throw new IllegalStateException();
 		setActionProgressVisible(true);
-		new UpdateAccountCredentials(nameEdit.getText().toString(), bioEdit.getText().toString(), editNewAvatar, editNewCover, metadataListData)
+		savingEdits=true;
+		new UpdateAccountCredentials(nameEdit.getText().toString(), bioEdit.getText().toString(), editNewAvatar, editNewCover, fields)
 				.setCallback(new Callback<>(){
 					@Override
 					public void onSuccess(Account result){
+						savingEdits=false;
 						account=result;
 						AccountSessionManager.getInstance().updateAccountInfo(accountID, account);
 						if (getActivity() == null) return;
@@ -1043,6 +1160,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 
 					@Override
 					public void onError(ErrorResponse error){
+						savingEdits=false;
 						error.showToast(getActivity());
 						setActionProgressVisible(false);
 					}
@@ -1070,7 +1188,17 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 	@Override
 	public boolean onBackPressed(){
 		if(isInEditMode){
-			exitEditMode();
+			if(savingEdits)
+				return true;
+			if(editDirty){
+				new M3AlertDialogBuilder(getActivity())
+						.setTitle(R.string.discard_changes)
+						.setPositiveButton(R.string.discard, (dlg, btn)->exitEditMode())
+						.setNegativeButton(R.string.cancel, null)
+						.show();
+			}else{
+				exitEditMode();
+			}
 			return true;
 		}
 		return false;
@@ -1123,9 +1251,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 	}
 
 	private void startImagePicker(int requestCode){
-		Intent intent=new Intent(Intent.ACTION_GET_CONTENT);
-		intent.setType("image/*");
-		intent.addCategory(Intent.CATEGORY_OPENABLE);
+		Intent intent=UiUtils.getMediaPickerIntent(new String[]{"image/*"}, 1);
 		startActivityForResult(intent, requestCode);
 	}
 
@@ -1134,10 +1260,12 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		if(resultCode==Activity.RESULT_OK){
 			if(requestCode==AVATAR_RESULT){
 				editNewAvatar=data.getData();
-				ViewImageLoader.load(avatar, null, new UrlImageLoaderRequest(editNewAvatar, V.dp(100), V.dp(100)));
+				ViewImageLoader.loadWithoutAnimation(avatar, null, new UrlImageLoaderRequest(editNewAvatar, V.dp(100), V.dp(100)));
+				editDirty=true;
 			}else if(requestCode==COVER_RESULT){
 				editNewCover=data.getData();
-				ViewImageLoader.load(cover, null, new UrlImageLoaderRequest(editNewCover, V.dp(1000), V.dp(1000)));
+				ViewImageLoader.loadWithoutAnimation(cover, null, new UrlImageLoaderRequest(editNewCover, V.dp(1000), V.dp(1000)));
+				editDirty=true;
 			}
 		}
 	}
@@ -1162,6 +1290,10 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		Nav.go(getActivity(), cls, args);
 	}
 
+	private boolean isActionButtonInView(){
+		return actionButton.getVisibility()==View.VISIBLE && actionButtonWrap.getTop()+actionButtonWrap.getHeight()>scrollView.getScrollY();
+	}
+
 	private class ProfilePagerAdapter extends RecyclerView.Adapter<SimpleViewHolder>{
 		@NonNull
 		@Override
@@ -1181,6 +1313,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 				holder.itemView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener(){
 					@Override
 					public boolean onPreDraw(){
+						getChildFragmentManager().executePendingTransactions();
 						if(fragment.isAdded()){
 							holder.itemView.getViewTreeObserver().removeOnPreDrawListener(this);
 							applyChildWindowInsets();
@@ -1202,16 +1335,6 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		}
 	}
 
-	// from ProfileAboutFragment
-	public void setFields(ArrayList<AccountField> fields){
-		metadataListData=fields;
-		if (isInEditMode) {
-			isInEditMode=false;
-			dragHelper.attachToRecyclerView(null);
-		}
-		if (adapter != null) adapter.notifyDataSetChanged();
-	}
-
 	@Override
 	public void onProvideAssistContent(AssistContent assistContent) {
 		callFragmentToProvideAssistContent(getFragmentForPage(pager.getCurrentItem()), assistContent);
@@ -1227,8 +1350,19 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		return Uri.parse(account.url);
 	}
 
-	private class MetadataAdapter extends UsableRecyclerView.Adapter<BaseViewHolder> implements ImageLoaderRecyclerAdapter {
-		public MetadataAdapter(){
+	// from ProfileAboutFragment
+	public void setFields(List<AccountField> fields){
+		this.fields=fields;
+		if(isInEditMode){
+			isInEditMode=false;
+//			dragHelper.attachToRecyclerView(null);
+		}
+		if(adapter!=null)
+			adapter.notifyDataSetChanged();
+	}
+
+	private class AboutAdapter extends UsableRecyclerView.Adapter<BaseViewHolder> implements ImageLoaderRecyclerAdapter {
+		public AboutAdapter(){
 			super(imgLoader);
 		}
 
@@ -1245,8 +1379,8 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 
 		@Override
 		public void onBindViewHolder(BaseViewHolder holder, int position){
-			if(position<metadataListData.size()){
-				holder.bind(metadataListData.get(position));
+			if(position<fields.size()){
+				holder.bind(fields.get(position));
 			}else{
 				holder.bind(null);
 			}
@@ -1256,31 +1390,30 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		@Override
 		public int getItemCount(){
 			if(isInEditMode){
-				int size=metadataListData.size();
+				int size=fields.size();
 				if(size<maxFields)
 					size++;
 				return size;
 			}
-			return metadataListData.size();
+			return fields.size();
 		}
 
 		@Override
 		public int getItemViewType(int position){
 			if(isInEditMode){
-				return position==metadataListData.size() ? 2 : 1;
+				return position==fields.size() ? 2 : 1;
 			}
 			return 0;
 		}
 
 		@Override
 		public int getImageCountForItem(int position){
-			return isInEditMode || metadataListData.get(position).emojiRequests==null
-					? 0 : metadataListData.get(position).emojiRequests.size();
+			return isInEditMode || fields.get(position).emojiRequests==null ? 0 : fields.get(position).emojiRequests.size();
 		}
 
 		@Override
 		public ImageLoaderRequest getImageRequest(int position, int image){
-			return metadataListData.get(position).emojiRequests.get(image);
+			return fields.get(position).emojiRequests.get(image);
 		}
 	}
 
@@ -1288,34 +1421,30 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		public BaseViewHolder(int layout){
 			super(getActivity(), layout, list);
 		}
+
+		@Override
+		public void onBind(AccountField item){
+		}
 	}
 
 	private class AboutViewHolder extends BaseViewHolder implements ImageLoaderViewHolder {
-		private TextView title;
-		private LinkedTextView value;
+		private final TextView title;
+		private final LinkedTextView value;
+//		private final ImageView verifiedIcon;
 
 		public AboutViewHolder(){
 			super(R.layout.item_profile_about);
 			title=findViewById(R.id.title);
 			value=findViewById(R.id.value);
+//			verifiedIcon=findViewById(R.id.verified_icon);
 		}
 
 		@Override
 		public void onBind(AccountField item){
+			super.onBind(item);
 			title.setText(item.parsedName);
 			value.setText(item.parsedValue);
-			if(item.verifiedAt!=null){
-				int textColor=UiUtils.isDarkTheme() ? 0xFF89bb9c : 0xFF5b8e63;
-				value.setTextColor(textColor);
-				value.setLinkTextColor(textColor);
-				Drawable check=getResources().getDrawable(R.drawable.ic_fluent_checkmark_24_regular, getActivity().getTheme()).mutate();
-				check.setTint(textColor);
-				value.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, check, null);
-			}else{
-				value.setTextColor(UiUtils.getThemeColor(getActivity(), android.R.attr.textColorPrimary));
-				value.setLinkTextColor(UiUtils.getThemeColor(getActivity(), android.R.attr.colorAccent));
-				value.setCompoundDrawables(null, null, null, null);
-			}
+//			verifiedIcon.setVisibility(item.verifiedAt!=null ? View.VISIBLE : View.GONE);
 		}
 
 		@Override
@@ -1333,36 +1462,49 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 	}
 
 	private class EditableAboutViewHolder extends BaseViewHolder {
-		private EditText title;
-		private EditText value;
+		private final EditText title;
+		private final EditText value;
+		private boolean ignoreTextChange;
 
 		public EditableAboutViewHolder(){
-			super(R.layout.item_profile_about_editable);
+			super(R.layout.onboarding_profile_field);
 			title=findViewById(R.id.title);
-			value=findViewById(R.id.value);
+			value=findViewById(R.id.content);
 			findViewById(R.id.dragger_thingy).setOnLongClickListener(v->{
 				dragHelper.startDrag(this);
 				return true;
 			});
-			title.addTextChangedListener(new SimpleTextWatcher(e->item.name=e.toString()));
-			value.addTextChangedListener(new SimpleTextWatcher(e->item.value=e.toString()));
-			findViewById(R.id.remove_row_btn).setOnClickListener(this::onRemoveRowClick);
+			title.addTextChangedListener(new SimpleTextWatcher(e->{
+				item.name=e.toString();
+				if(!ignoreTextChange)
+					editDirty=true;
+			}));
+			value.addTextChangedListener(new SimpleTextWatcher(e->{
+				item.value=e.toString();
+				if(!ignoreTextChange)
+					editDirty=true;
+			}));
+			findViewById(R.id.delete).setOnClickListener(this::onRemoveRowClick);
 		}
 
 		@Override
 		public void onBind(AccountField item){
+			super.onBind(item);
+			ignoreTextChange=true;
 			title.setText(item.name);
 			value.setText(item.value);
+			ignoreTextChange=false;
 		}
 
 		private void onRemoveRowClick(View v){
 			int pos=getAbsoluteAdapterPosition();
-			metadataListData.remove(pos);
+			fields.remove(pos);
 			adapter.notifyItemRemoved(pos);
 			for(int i=0;i<list.getChildCount();i++){
 				BaseViewHolder vh=(BaseViewHolder) list.getChildViewHolder(list.getChildAt(i));
 				vh.rebind();
 			}
+			list.measure(0, 0);
 		}
 	}
 
@@ -1373,17 +1515,15 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 
 		@Override
 		public void onClick(){
-			metadataListData.add(new AccountField());
-			if(metadataListData.size()==maxFields){ // replace this row with new row
-				adapter.notifyItemChanged(metadataListData.size()-1);
+			fields.add(new AccountField());
+			if(fields.size()==maxFields){ // replace this row with new row
+				adapter.notifyItemChanged(fields.size()-1);
 			}else{
-				adapter.notifyItemInserted(metadataListData.size()-1);
+				adapter.notifyItemInserted(fields.size()-1);
 				rebind();
 			}
+			list.measure(0, 0);
 		}
-
-		@Override
-		public void onBind(AccountField item) {}
 	}
 
 	private class ReorderCallback extends ItemTouchHelper.SimpleCallback{
@@ -1399,16 +1539,16 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			int toPosition=target.getAbsoluteAdapterPosition();
 			if (fromPosition<toPosition) {
 				for (int i=fromPosition;i<toPosition;i++) {
-					Collections.swap(metadataListData, i, i+1);
+					Collections.swap(fields, i, i+1);
 				}
 			} else {
 				for (int i=fromPosition;i>toPosition;i--) {
-					Collections.swap(metadataListData, i, i-1);
+					Collections.swap(fields, i, i-1);
 				}
 			}
 			adapter.notifyItemMoved(fromPosition, toPosition);
-			((BindableViewHolder)viewHolder).rebind();
-			((BindableViewHolder)target).rebind();
+			((BindableViewHolder<?>)viewHolder).rebind();
+			((BindableViewHolder<?>)target).rebind();
 			return true;
 		}
 
@@ -1423,7 +1563,6 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			if(actionState==ItemTouchHelper.ACTION_STATE_DRAG){
 				viewHolder.itemView.setTag(me.grishka.appkit.R.id.item_touch_helper_previous_elevation, viewHolder.itemView.getElevation()); // prevents the default behavior of changing elevation in onDraw()
 				viewHolder.itemView.animate().translationZ(V.dp(1)).setDuration(200).setInterpolator(CubicBezierInterpolator.DEFAULT).start();
-				draggedViewHolder=viewHolder;
 			}
 		}
 
@@ -1431,7 +1570,6 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder){
 			super.clearView(recyclerView, viewHolder);
 			viewHolder.itemView.animate().translationZ(0).setDuration(100).setInterpolator(CubicBezierInterpolator.DEFAULT).start();
-			draggedViewHolder=null;
 		}
 
 		@Override

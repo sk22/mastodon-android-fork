@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<style name="ColorPalette.AutoLightDark" parent="ColorPalette.Dark" />
+	<style name="ColorPalette.AutoLightDark.TrueBlack" parent="ColorPalette.Dark.TrueBlack" />
 	<style name="ColorPalette.Material3.AutoLightDark" parent="ColorPalette.Material3.Dark"/>
 </resources>

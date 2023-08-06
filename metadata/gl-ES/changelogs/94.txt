@@ -1,0 +1,8 @@
+- Visión de chío máis clara e mellorada
+- Abrir contas / publicacións compartindo un sitio web a Megalodon
+- Carga listas de seguidores/favoritos/... dende a instancia de orixe
+- Melloras de compatibilidade para servidores non-Mastodon
+- Opción para configurar o tipo de contido de publicación
+- Soporte para copiar URL de aplicacións recentes en dispositivos Pixel
+- Auto-revelar CWs iguais en fíos
+- Correccións de erros e melloras da interfaz de usuario

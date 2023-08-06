@@ -21,7 +21,7 @@ import me.grishka.appkit.api.SimpleCallback;
 import me.grishka.appkit.utils.BindableViewHolder;
 import me.grishka.appkit.views.UsableRecyclerView;
 
-public class FollowedHashtagsFragment extends RecyclerFragment<Hashtag> implements ScrollableToTop, ProvidesAssistContent.ProvidesWebUri {
+public class FollowedHashtagsFragment extends MastodonRecyclerFragment<Hashtag> implements ScrollableToTop, ProvidesAssistContent.ProvidesWebUri {
     private String nextMaxID;
     private String accountID;
 
@@ -47,7 +47,7 @@ public class FollowedHashtagsFragment extends RecyclerFragment<Hashtag> implemen
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        list.addItemDecoration(new DividerItemDecoration(getActivity(), R.attr.colorPollVoted, 0.5f, 56, 16));
+        list.addItemDecoration(new DividerItemDecoration(getActivity(), R.attr.colorM3OutlineVariant, 0.5f, 56, 16));
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.joinmastodon.android.fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.assist.AssistContent;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -24,6 +25,9 @@ import org.joinmastodon.android.E;
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.accounts.GetFollowRequests;
+import org.joinmastodon.android.api.requests.markers.SaveMarkers;
+import org.joinmastodon.android.api.requests.notifications.PleromaMarkNotificationsRead;
+import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.FollowRequestHandledEvent;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.HeaderPaginationList;
@@ -31,6 +35,8 @@ import org.joinmastodon.android.ui.SimpleViewHolder;
 import org.joinmastodon.android.ui.tabs.TabLayout;
 import org.joinmastodon.android.ui.tabs.TabLayoutMediator;
 import org.joinmastodon.android.ui.utils.UiUtils;
+import org.joinmastodon.android.utils.ElevationOnScrollListener;
+import org.joinmastodon.android.utils.ObjectIdComparator;
 import org.joinmastodon.android.utils.ProvidesAssistContent;
 
 import me.grishka.appkit.Nav;
@@ -38,15 +44,19 @@ import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
 import me.grishka.appkit.fragments.BaseRecyclerFragment;
 import me.grishka.appkit.utils.V;
+import me.grishka.appkit.views.FragmentRootLinearLayout;
 
-public class NotificationsFragment extends MastodonToolbarFragment implements ScrollableToTop, ProvidesAssistContent {
+public class NotificationsFragment extends MastodonToolbarFragment implements ScrollableToTop, ProvidesAssistContent, HasElevationOnScrollListener {
 
-	private TabLayout tabLayout;
+	TabLayout tabLayout;
 	private ViewPager2 pager;
 	private FrameLayout[] tabViews;
+	private View tabsDivider;
 	private TabLayoutMediator tabLayoutMediator;
-
+	String unreadMarker, realUnreadMarker;
+	private MenuItem markAllReadItem;
 	private NotificationsListFragment allNotificationsFragment, mentionsFragment;
+	private ElevationOnScrollListener elevationOnScrollListener;
 
 	private String accountID;
 	@Override
@@ -73,10 +83,18 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 	}
 
 	@Override
+	public void onShown() {
+		super.onShown();
+		unreadMarker=realUnreadMarker=AccountSessionManager.get(accountID).getLastKnownNotificationsMarker();
+	}
+
+	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
 		inflater.inflate(R.menu.notifications, menu);
 		menu.findItem(R.id.clear_notifications).setVisible(GlobalUserPreferences.enableDeleteNotifications);
-		UiUtils.enableOptionsMenuIcons(getActivity(), menu, R.id.follow_requests);
+		markAllReadItem=menu.findItem(R.id.mark_all_read);
+		updateMarkAllReadButton();
+		UiUtils.enableOptionsMenuIcons(getActivity(), menu, R.id.follow_requests, R.id.mark_all_read);
 	}
 
 	@Override
@@ -93,8 +111,32 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 				}
 			});
 			return true;
+		} else if (item.getItemId() == R.id.mark_all_read) {
+			markAsRead();
+			if (getCurrentFragment() instanceof NotificationsListFragment nlf) {
+				nlf.resetUnreadBackground();
+			}
+			return true;
 		}
 		return false;
+	}
+
+	void markAsRead(){
+		if(allNotificationsFragment.getData().isEmpty()) return;
+		String id=allNotificationsFragment.getData().get(0).id;
+		if(ObjectIdComparator.INSTANCE.compare(id, realUnreadMarker)>0){
+			new SaveMarkers(null, id).exec(accountID);
+			if (allNotificationsFragment.isInstanceAkkoma()) {
+				new PleromaMarkNotificationsRead(id).exec(accountID);
+			}
+			AccountSessionManager.get(accountID).setNotificationsMarker(id, true);
+			realUnreadMarker=id;
+			updateMarkAllReadButton();
+		}
+	}
+
+	public void updateMarkAllReadButton(){
+		markAllReadItem.setVisible(!allNotificationsFragment.getData().isEmpty() && realUnreadMarker!=null && !realUnreadMarker.equals(allNotificationsFragment.getData().get(0).id));
 	}
 
 	@Override
@@ -102,6 +144,7 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 		LinearLayout view=(LinearLayout) inflater.inflate(R.layout.fragment_notifications, container, false);
 
 		tabLayout=view.findViewById(R.id.tabbar);
+		tabsDivider=view.findViewById(R.id.tabs_divider);
 		pager=view.findViewById(R.id.pager);
 		UiUtils.reduceSwipeSensitivity(pager);
 
@@ -119,7 +162,7 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 		}
 
 		tabLayout.setTabTextSize(V.dp(16));
-		tabLayout.setTabTextColors(UiUtils.getThemeColor(getActivity(), R.attr.colorTabInactive), UiUtils.getThemeColor(getActivity(), android.R.attr.textColorPrimary));
+		tabLayout.setTabTextColors(UiUtils.getThemeColor(getActivity(), R.attr.colorM3OnSurfaceVariant), UiUtils.getThemeColor(getActivity(), R.attr.colorM3Primary));
 		tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 			@Override
 			public void onTabSelected(TabLayout.Tab tab) {}
@@ -139,6 +182,8 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 		pager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback(){
 			@Override
 			public void onPageSelected(int position){
+				if (elevationOnScrollListener != null && getCurrentFragment() instanceof IsOnTop f)
+					elevationOnScrollListener.handleScroll(getContext(), f.isOnTop());
 				if(position==0)
 					return;
 				Fragment _page=getFragmentForPage(position);
@@ -176,12 +221,33 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 					case 1 -> R.string.mentions;
 					default -> throw new IllegalStateException("Unexpected value: "+position);
 				});
-				tab.view.textView.setAllCaps(true);
 			}
 		});
 		tabLayoutMediator.attach();
 
 		return view;
+	}
+
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		elevationOnScrollListener = new ElevationOnScrollListener((FragmentRootLinearLayout) view, getToolbar(), tabLayout);
+		elevationOnScrollListener.setDivider(tabsDivider);
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		if (elevationOnScrollListener == null) return;
+		elevationOnScrollListener.setViews(getToolbar(), tabLayout);
+		if (getCurrentFragment() instanceof IsOnTop f) {
+			elevationOnScrollListener.handleScroll(getContext(), f.isOnTop());
+		}
+	}
+
+	@Override
+	public ElevationOnScrollListener getElevationOnScrollListener() {
+		return elevationOnScrollListener;
 	}
 
 	public void refreshFollowRequestsBadge() {
@@ -226,6 +292,10 @@ public class NotificationsFragment extends MastodonToolbarFragment implements Sc
 			case 1 -> mentionsFragment;
 			default -> throw new IllegalStateException("Unexpected value: "+page);
 		};
+	}
+
+	public Fragment getCurrentFragment() {
+		return getFragmentForPage(pager.getCurrentItem());
 	}
 
 	@Override

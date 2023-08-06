@@ -15,22 +15,23 @@
 
 			<ImageButton
 				android:id="@+id/button"
-				style="?android:editTextStyle"
 				android:layout_width="wrap_content"
 				android:layout_height="match_parent"
 				android:layout_marginTop="4dp"
-				android:layout_marginBottom="16dp"
 				android:layout_marginStart="24dp"
 				android:layout_marginEnd="6dp"
-				android:contentDescription="@string/sk_timeline_icon"
-				android:paddingHorizontal="14dp" />
+				android:background="@drawable/bg_m3_outlined_text_field_nopad"
+				android:minHeight="48dp"
+				android:minWidth="48dp"
+				android:tint="?colorM3OnSurface"
+				android:tooltipText="@string/sk_timeline_icon"
+				android:contentDescription="@string/sk_timeline_icon" />
 
 			<EditText
 				android:id="@+id/input"
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"
 				android:layout_marginTop="4dp"
-				android:layout_marginBottom="16dp"
 				android:layout_marginStart="6dp"
 				android:layout_marginEnd="24dp"
 				android:layout_weight="1" />
@@ -41,18 +42,18 @@
 			android:id="@+id/divider"
 			android:layout_width="match_parent"
 			android:layout_height="1dp"
-			android:background="?colorPollVoted" />
+			android:layout_marginTop="24dp"
+			android:visibility="gone"
+			android:background="?colorM3Outline" />
 
 		<Button
 			android:id="@+id/advanced"
+			style="@style/Widget.Mastodon.M3.Button.Outlined"
+			android:background="@drawable/bg_button_m3_tonal"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginHorizontal="24dp"
 			android:layout_marginTop="20dp"
-			android:layout_marginBottom="16dp"
-			android:minHeight="32dp"
-			android:background="@drawable/bg_inline_button"
-			android:elevation="0dp"
 			android:fontFamily="sans-serif-medium"
 			android:textColor="?android:textColorPrimary"
 			android:textSize="16sp"
@@ -62,6 +63,7 @@
 			android:id="@+id/tag_wrap"
 			android:orientation="vertical"
 			android:visibility="gone"
+			android:layout_marginTop="16dp"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content">
 
@@ -97,7 +99,7 @@
 				android:textColor="?android:textColorSecondary" />
 
 			<com.hootsuite.nachos.NachoTextView
-				style="@style/Widget.Mastodon.EditText"
+				style="@style/Widget.Mastodon.M3.EditText"
 				android:id="@+id/tags_any"
 				android:hint="@string/sk_edit_timeline_tags_hint"
 				android:paddingVertical="8sp"
@@ -105,7 +107,7 @@
 				android:layout_height="wrap_content"
 				android:layout_marginHorizontal="24dp"
 				android:layout_marginBottom="16dp"
-				app:chipBackground="?colorAccentLightest"
+				app:chipBackground="?colorM3SecondaryContainer"
 				app:chipTextColor="?android:textColorPrimary" />
 
 			<TextView
@@ -120,7 +122,7 @@
 				android:textColor="?android:textColorSecondary" />
 
 			<com.hootsuite.nachos.NachoTextView
-				style="@style/Widget.Mastodon.EditText"
+				style="@style/Widget.Mastodon.M3.EditText"
 				android:id="@+id/tags_all"
 				android:hint="@string/sk_edit_timeline_tags_hint"
 				android:paddingVertical="8sp"
@@ -128,7 +130,7 @@
 				android:layout_height="wrap_content"
 				android:layout_marginHorizontal="24dp"
 				android:layout_marginBottom="16dp"
-				app:chipBackground="?colorAccentLightest"
+				app:chipBackground="?colorM3SecondaryContainer"
 				app:chipTextColor="?android:textColorPrimary" />
 
 			<TextView
@@ -143,7 +145,7 @@
 				android:textColor="?android:textColorSecondary" />
 
 			<com.hootsuite.nachos.NachoTextView
-				style="@style/Widget.Mastodon.EditText"
+				style="@style/Widget.Mastodon.M3.EditText"
 				android:id="@+id/tags_none"
 				android:hint="@string/sk_edit_timeline_tags_hint"
 				android:paddingVertical="8sp"
@@ -151,7 +153,7 @@
 				android:layout_height="wrap_content"
 				android:layout_marginHorizontal="24dp"
 				android:layout_marginBottom="16dp"
-				app:chipBackground="?colorAccentLightest"
+				app:chipBackground="?colorM3SecondaryContainer"
 				app:chipTextColor="?android:textColorPrimary" />
 
 			<TextView
@@ -169,7 +171,6 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_marginHorizontal="24dp"
-				android:layout_marginBottom="16dp"
 				android:minHeight="48dp"
 				android:gravity="center_vertical"
 				android:layoutDirection="locale">
@@ -186,7 +187,7 @@
 					android:drawablePadding="16dp"
 					android:text="@string/sk_hashtag_timeline_local_only_switch" />
 
-				<Switch
+				<org.joinmastodon.android.ui.views.M3Switch
 					android:id="@+id/local_only_switch"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"

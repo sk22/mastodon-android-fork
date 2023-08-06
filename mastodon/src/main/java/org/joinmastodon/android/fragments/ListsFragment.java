@@ -42,7 +42,7 @@ import me.grishka.appkit.api.SimpleCallback;
 import me.grishka.appkit.utils.BindableViewHolder;
 import me.grishka.appkit.views.UsableRecyclerView;
 
-public class ListsFragment extends RecyclerFragment<ListTimeline> implements ScrollableToTop, ProvidesAssistContent.ProvidesWebUri {
+public class ListsFragment extends MastodonRecyclerFragment<ListTimeline> implements ScrollableToTop, ProvidesAssistContent.ProvidesWebUri {
 	private String accountID;
 	private String profileAccountId;
 	private final HashMap<String, Boolean> userInListBefore = new HashMap<>();
@@ -80,7 +80,7 @@ public class ListsFragment extends RecyclerFragment<ListTimeline> implements Scr
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		list.addItemDecoration(new DividerItemDecoration(getActivity(), R.attr.colorPollVoted, 0.5f, 56, 16));
+		list.addItemDecoration(new DividerItemDecoration(getActivity(), R.attr.colorM3OutlineVariant, 0.5f, 56, 16));
 	}
 
 	@Override

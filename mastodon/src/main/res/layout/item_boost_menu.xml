@@ -77,7 +77,7 @@
         android:layout_height="1dp"
         android:layout_width="match_parent"
         android:layout_marginVertical="8dp"
-        android:background="?colorPollVoted" />
+        android:background="?colorM3Outline" />
     <TextView
         android:id="@+id/reblog_as"
         android:layout_width="match_parent"

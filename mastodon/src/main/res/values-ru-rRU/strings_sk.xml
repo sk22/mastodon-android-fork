@@ -16,7 +16,7 @@
     <string name="sk_mark_media_as_sensitive">Отметить медиафайл как деликатный</string>
     <string name="sk_settings_app_version">Megalodon v%1$s (%2$d)</string>
     <string name="sk_notification_type_status">Публикации</string>
-    <string name="sk_notify_posts">Уведомдения о</string>
+    <string name="sk_notification_type_posts">Уведомдения о</string>
     <string name="sk_settings_color_palette">Цветовая схема</string>
     <string name="sk_color_palette_pink">Розовый</string>
     <string name="sk_color_palette_purple">Фиолетовый</string>
@@ -59,9 +59,9 @@
     <string name="sk_color_palette_material3">Система</string>
     <string name="sk_settings_show_boosts">Показать репосты</string>
     <string name="sk_settings_show_interaction_counts">Показывать количество взаимодействий</string>
-    <string name="sk_disable_marquee">Отключить прокручиваемый текст в заголовках</string>
+    <string name="sk_settings_enable_marquee">Отключить прокручиваемый текст в заголовках</string>
     <string name="sk_color_palette_red">Красный</string>
-    <string name="sk_tabs_disable_swipe">Отключить жесты переключения между вкладками</string>
+    <string name="sk_settings_tabs_disable_swipe">Отключить жесты переключения между вкладками</string>
     <string name="sk_settings_profile">Настроить профиль</string>
     <string name="sk_settings_posting">Настройки публикации</string>
     <string name="sk_settings_filters">Настройки фильтров</string>
@@ -72,7 +72,7 @@
     <string name="sk_delete_notification">Удаление уведомления</string>
     <string name="sk_delete_notification_confirm_action">Удалить уведомление</string>
     <string name="sk_delete_notification_confirm">Вы точно хотите удалить это уведомление\?</string>
-    <string name="sk_enable_delete_notifications">Включить удаление уведомлений</string>
+    <string name="sk_settings_enable_delete_notifications">Включить удаление уведомлений</string>
     <string name="sk_settings_publish_button_text">Текст кнопки публикации</string>
     <string name="sk_settings_publish_button_text_title">Настройка текста кнопки публикации</string>
     <string name="sk_settings_translate_only_opened">Спрятать кнопку перевода во временной шкале</string>

@@ -17,7 +17,7 @@ import org.joinmastodon.android.events.StatusCountersUpdatedEvent;
 import org.joinmastodon.android.events.StatusCreatedEvent;
 import org.joinmastodon.android.events.StatusUpdatedEvent;
 import org.joinmastodon.android.model.Account;
-import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.model.StatusContext;
 import org.joinmastodon.android.ui.BetterItemAnimator;
@@ -152,6 +152,26 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 				}).exec(accountID);
 	}
 
+	private void restoreStatusStates(List<Status> newData, Map<String, Status> oldData) {
+		for (Status s : newData) {
+			if (s == mainStatus) continue;
+			Status oldStatus = oldData == null ? null : oldData.get(s.id);
+			// restore previous spoiler/filter revealed states when refreshing
+			if (oldStatus != null) {
+				s.spoilerRevealed = oldStatus.spoilerRevealed;
+				s.sensitiveRevealed = oldStatus.sensitiveRevealed;
+				s.filterRevealed = oldStatus.filterRevealed;
+			}
+			if (GlobalUserPreferences.autoRevealEqualSpoilers != AutoRevealMode.NEVER &&
+					s.spoilerText != null &&
+					s.spoilerText.equals(mainStatus.spoilerText)) {
+				if (GlobalUserPreferences.autoRevealEqualSpoilers == AutoRevealMode.DISCUSSIONS || Objects.equals(mainStatus.account.id, s.account.id)) {
+					s.spoilerRevealed = mainStatus.spoilerRevealed;
+				}
+			}
+		}
+
+	}
 	protected void maybeApplyContext() {
 		if (!transitionFinished || result == null || getContext() == null) return;
 		Map<String, Status> oldData = null;
@@ -170,6 +190,8 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 
 		result.descendants=filterStatuses(result.descendants);
 		result.ancestors=filterStatuses(result.ancestors);
+		restoreStatusStates(result.descendants, oldData);
+		restoreStatusStates(result.ancestors, oldData);
 
 		for (NeighborAncestryInfo i : mapNeighborhoodAncestry(mainStatus, result)) {
 			ancestryMap.put(i.status.id, i);
@@ -178,8 +200,10 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 		if(footerProgress!=null)
 			footerProgress.setVisibility(View.GONE);
 		data.addAll(result.descendants);
+
 		int prevCount=displayItems.size();
 		onAppendItems(result.descendants);
+
 		int count=displayItems.size();
 		if(!refreshing)
 			adapter.notifyItemRangeInserted(prevCount, count-prevCount);
@@ -188,22 +212,6 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 			displayItems.remove(prependedCount);
 			adapter.notifyItemRemoved(prependedCount);
 			count--;
-		}
-
-		for (Status s : data) {
-			Status oldStatus = oldData == null ? null : oldData.get(s.id);
-			// restore previous spoiler/filter revealed states when refreshing
-			if (oldStatus != null) {
-				s.spoilerRevealed = oldStatus.spoilerRevealed;
-				s.filterRevealed = oldStatus.filterRevealed;
-			} else if (GlobalUserPreferences.autoRevealEqualSpoilers != AutoRevealMode.NEVER &&
-					s.spoilerText != null &&
-					s.spoilerText.equals(mainStatus.spoilerText) &&
-					mainStatus.spoilerRevealed) {
-				if (GlobalUserPreferences.autoRevealEqualSpoilers == AutoRevealMode.DISCUSSIONS || Objects.equals(mainStatus.account.id, s.account.id)) {
-					s.spoilerRevealed = true;
-				}
-			}
 		}
 
 		dataLoaded();
@@ -222,13 +230,13 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 
 		result = null;
 	}
-
 	protected Object maybeApplyMainStatus() {
 		if (updatedStatus == null || !contextInitiallyRendered) return null;
 
 		// restore revealed states for main status because it gets updated after doLoadData
 		updatedStatus.filterRevealed = mainStatus.filterRevealed;
 		updatedStatus.spoilerRevealed = mainStatus.spoilerRevealed;
+		updatedStatus.sensitiveRevealed = mainStatus.sensitiveRevealed;
 
 		// returning fired event object to facilitate testing
 		Object event;
@@ -352,9 +360,9 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 		});
 	}
 
-	protected void onStatusCreated(StatusCreatedEvent ev){
-		if (ev.status.inReplyToId == null) return;
-		Status repliedToStatus = getStatusByID(ev.status.inReplyToId);
+	protected void onStatusCreated(Status status){
+		if (status.inReplyToId == null) return;
+		Status repliedToStatus = getStatusByID(status.inReplyToId);
 		if (repliedToStatus == null) return;
 		NeighborAncestryInfo ancestry = ancestryMap.get(repliedToStatus.id);
 
@@ -400,12 +408,12 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 		}
 
 		// update replied-to status' ancestry
-		if (ancestry != null) ancestry.descendantNeighbor = ev.status;
+		if (ancestry != null) ancestry.descendantNeighbor = status;
 
 		// add ancestry for newly created status before building its display items
-		ancestryMap.put(ev.status.id, new NeighborAncestryInfo(ev.status, null, repliedToStatus));
-		displayItems.addAll(nextDisplayItemsIndex, buildDisplayItems(ev.status));
-		data.add(nextDataIndex, ev.status);
+		ancestryMap.put(status.id, new NeighborAncestryInfo(status, null, repliedToStatus));
+		displayItems.addAll(nextDisplayItemsIndex, buildDisplayItems(status));
+		data.add(nextDataIndex, status);
 		adapter.notifyDataSetChanged();
 	}
 
@@ -426,8 +434,8 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 
 
 	@Override
-	protected Filter.FilterContext getFilterContext() {
-		return Filter.FilterContext.THREAD;
+	protected FilterContext getFilterContext() {
+		return FilterContext.THREAD;
 	}
 
 	@Override

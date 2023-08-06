@@ -1,10 +1,13 @@
 package org.joinmastodon.android.ui.text;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.BackgroundColorSpan;
 import android.text.style.BulletSpan;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.LeadingMarginSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StrikethroughSpan;
@@ -17,14 +20,18 @@ import android.widget.TextView;
 
 import com.twitter.twittertext.Regex;
 
+import org.joinmastodon.android.R;
 import org.joinmastodon.android.model.Emoji;
+import org.joinmastodon.android.model.FilterResult;
 import org.joinmastodon.android.model.Hashtag;
 import org.joinmastodon.android.model.Mention;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
+import org.jsoup.safety.Cleaner;
 import org.jsoup.safety.Safelist;
 import org.jsoup.select.NodeVisitor;
 
@@ -129,7 +136,7 @@ public class HtmlParser{
 							}else{
 								linkType=LinkSpan.Type.URL;
 							}
-							openSpans.add(new SpanInfo(new LinkSpan(href, null, linkType, accountID, text), ssb.length(), el));
+							openSpans.add(new SpanInfo(new LinkSpan(href, null, linkType, accountID), ssb.length(), el));
 						}
 						case "br" -> ssb.append('\n');
 						case "span" -> {
@@ -244,6 +251,13 @@ public class HtmlParser{
 		return Jsoup.clean(html, Safelist.none());
 	}
 
+	public static String stripAndRemoveInvisibleSpans(String html){
+		Document doc=Jsoup.parseBodyFragment(html);
+		doc.body().select("span.invisible").remove();
+		Cleaner cleaner=new Cleaner(Safelist.none());
+		return cleaner.clean(doc).body().html();
+	}
+
 	public static String text(String html) {
 		return Jsoup.parse(html).body().wholeText();
 	}
@@ -257,8 +271,27 @@ public class HtmlParser{
 			String url=matcher.group(3);
 			if(TextUtils.isEmpty(matcher.group(4)))
 				url="http://"+url;
-			ssb.setSpan(new LinkSpan(url, null, LinkSpan.Type.URL, null, url), matcher.start(3), matcher.end(3), 0);
+			ssb.setSpan(new LinkSpan(url, null, LinkSpan.Type.URL, null), matcher.start(3), matcher.end(3), 0);
 		}while(matcher.find()); // Find more URLs
 		return ssb;
+	}
+
+	public static void applyFilterHighlights(Context context, SpannableStringBuilder text, List<FilterResult> filters){
+		if (filters == null) return;
+		int fgColor=UiUtils.getThemeColor(context, R.attr.colorM3Error);
+		int bgColor=UiUtils.getThemeColor(context, R.attr.colorM3ErrorContainer);
+		for(FilterResult filter:filters){
+			if(!filter.filter.isActive())
+				continue;;
+			for(String word:filter.keywordMatches){
+				Matcher matcher=Pattern.compile("\\b"+Pattern.quote(word)+"\\b", Pattern.CASE_INSENSITIVE).matcher(text);
+				while(matcher.find()){
+					ForegroundColorSpan fg=new ForegroundColorSpan(fgColor);
+					BackgroundColorSpan bg=new BackgroundColorSpan(bgColor);
+					text.setSpan(bg, matcher.start(), matcher.end(), 0);
+					text.setSpan(fg, matcher.start(), matcher.end(), 0);
+				}
+			}
+		}
 	}
 }

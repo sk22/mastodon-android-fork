@@ -74,6 +74,7 @@
 					android:layout_gravity="center_vertical"
 					android:paddingStart="8dp"
 					android:minWidth="16dp"
+					android:duplicateParentState="true"
 					android:textColor="@color/boost_icon"
 					android:gravity="center_vertical"
 					android:textAppearance="@style/m3_label_large"

@@ -49,6 +49,7 @@ public abstract class MastodonAPIRequest<T> extends APIRequest<T>{
 	Token token;
 	boolean canceled, isRemote;
 	Map<String, String> headers;
+	long timeout;
 	private ProgressDialog progressDialog;
 	protected boolean removeUnsupportedItems;
 	@Nullable Context context;
@@ -117,16 +118,16 @@ public abstract class MastodonAPIRequest<T> extends APIRequest<T>{
 						.findAny())
 				.map(AccountSession::getID)
 				.map(this::exec)
-				.orElse(this.execNoAuth(domain));
+				.orElseGet(() -> this.execNoAuth(domain));
 	}
 
-	public MastodonAPIRequest<T> wrapProgress(Activity activity, @StringRes int message, boolean cancelable){
-		return wrapProgress(activity, message, cancelable, null);
+	public MastodonAPIRequest<T> wrapProgress(Context context, @StringRes int message, boolean cancelable){
+		return wrapProgress(context, message, cancelable, null);
 	}
 
-	public MastodonAPIRequest<T> wrapProgress(Activity activity, @StringRes int message, boolean cancelable, Consumer<ProgressDialog> transform){
-		progressDialog=new ProgressDialog(activity);
-		progressDialog.setMessage(activity.getString(message));
+	public MastodonAPIRequest<T> wrapProgress(Context context, @StringRes int message, boolean cancelable, Consumer<ProgressDialog> transform){
+		progressDialog=new ProgressDialog(context);
+		progressDialog.setMessage(context.getString(message));
 		progressDialog.setCancelable(cancelable);
 		if (transform != null) transform.accept(progressDialog);
 		if(cancelable){
@@ -150,6 +151,10 @@ public abstract class MastodonAPIRequest<T> extends APIRequest<T>{
 		if(headers==null)
 			headers=new HashMap<>();
 		headers.put(key, value);
+	}
+
+	protected void setTimeout(long timeout){
+		this.timeout=timeout;
 	}
 
 	protected String getPathPrefix(){

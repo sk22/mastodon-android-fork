@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="sk_notify_posts">Сповіщення про дописи</string>
+    <string name="sk_notification_type_posts">Сповіщення про дописи</string>
     <string name="sk_settings_color_palette">Колірна палітра</string>
     <string name="sk_color_palette_purple">Фіолетова</string>
     <string name="sk_color_palette_green">Зелена</string>
@@ -42,7 +42,7 @@
     <string name="sk_accept_follow_request">Погодити запит на стеження</string>
     <string name="sk_reject_follow_request">Відхилити запит на стеження</string>
     <string name="sk_lists_with_user">Списки з %s</string>
-    <string name="sk_disable_marquee">Вимкнути прокручування тексту у рядках заголовка</string>
+    <string name="sk_settings_enable_marquee">Вимкнути прокручування тексту у рядках заголовка</string>
     <string name="sk_settings_contribute">Допомогти у розробці Megalodon</string>
     <string name="sk_mark_media_as_sensitive">Позначити медіа делікатним</string>
     <string name="sk_settings_show_boosts">Показувати поширення</string>
@@ -70,7 +70,7 @@
     <string name="sk_delete_notification">Видалити сповіщення</string>
     <string name="sk_delete_notification_confirm_action">Видалити сповіщення</string>
     <string name="sk_delete_notification_confirm">Ви впевнені, що хочете видалити це сповіщення\?</string>
-    <string name="sk_enable_delete_notifications">Увімкнути видалення сповіщень</string>
+    <string name="sk_settings_enable_delete_notifications">Увімкнути видалення сповіщень</string>
     <string name="sk_settings_publish_button_text">Текст кнопки \"опублікувати\"</string>
     <string name="sk_settings_publish_button_text_title">Змінити текст кнопки \"опублікувати\"</string>
     <string name="sk_settings_translate_only_opened">Сховати кнопку \"перекласти\" у стрічці</string>
@@ -82,7 +82,7 @@
     <string name="sk_undo_reblog">Скасувати поширення</string>
     <string name="sk_reblog_with_visibility">Поширення з видимістю</string>
     <string name="sk_quote_post">Цитувати допис</string>
-    <string name="sk_tabs_disable_swipe">Вимкнути жест гортання між вкладками</string>
+    <string name="sk_settings_tabs_disable_swipe">Вимкнути жест гортання між вкладками</string>
     <string name="sk_settings_auth">Налаштування безпеки</string>
     <string name="sk_clear_all_notifications_confirm_action">Видалити все</string>
     <string name="sk_copy_link_to_post">Скопіювати посилання на допис</string>
@@ -254,7 +254,7 @@
     <string name="sk_expand">Розгорнути</string>
     <string name="sk_collapse">Згорнути</string>
     <string name="sk_unfinished_attachments">Виправити вкладення\?</string>
-    <string name="sk_settings_prefix_reply_cw_with_re">Префікс «re:» під час відповіді CW</string>
+    <string name="sk_settings_prefix_reply_cw_with_re">Префікс CW з «re:» під час відповіді</string>
     <string name="sk_settings_collapse_long_posts">Згортати надто довгі дописи</string>
     <string name="sk_unfinished_attachments_message">Деякі вкладення не повністю завантажилися.</string>
     <string name="sk_spectator_mode">Режим глядача</string>
@@ -273,8 +273,8 @@
     <string name="sk_show_thread">Показати потік</string>
     <string name="sk_compact_reblog_reply_line">Компактний рядок для поширеного допису/відповіді</string>
     <string name="sk_settings_confirm_before_reblog">Підтверджувати поширення</string>
-    <string name="sk_reacted">реагує</string>
-    <string name="sk_reacted_with">реагує з %s</string>
+    <string name="sk_reacted">%s реагує</string>
+    <string name="sk_reacted_with">%1$s реагує з %2$s</string>
     <string name="sk_content_type_unspecified">Не визначено</string>
     <string name="sk_content_type_plain">Звичайний текст</string>
     <string name="sk_content_type_html">HTML</string>
@@ -296,5 +296,43 @@
     <string name="sk_no_remote_info_hint">віддалена інформація недоступна</string>
     <string name="sk_settings_allow_remote_loading">Завантажити інформацію з віддалених серверів</string>
     <string name="sk_settings_allow_remote_loading_explanation">Спробуйте отримати точніші списки підписників, вподобань і поширень, завантаживши інформацію з джерела.</string>
-    <string name="sk_error_loading_profile">Не вдалося завантажити профіль на ваш домашній сервер.</string>
+    <string name="sk_error_loading_profile">Не вдалося завантажити профіль через %s</string>
+    <string name="sk_settings_auto_reveal_equal_spoilers">Авторозгортання еквівалентних CW у відповідях</string>
+    <string name="sk_settings_auto_reveal_nobody">Ніколи</string>
+    <string name="sk_settings_auto_reveal_author">Відповіді того ж автора</string>
+    <string name="sk_settings_auto_reveal_anyone">Відповіді від усіх</string>
+    <string name="sk_settings_prefix_replies_always">Відповіді будь-кому</string>
+    <string name="sk_settings_prefix_replies_never">Ніколи</string>
+    <string name="sk_settings_prefix_replies_to_others">Лише у відповідь іншим</string>
+    <string name="sk_settings_forward_report_default">Усталений перемикач “Пересилати звіт”</string>
+    <string name="sk_icon_feed">Стрічка</string>
+    <string name="sk_exclusive_list">Список виключення</string>
+    <string name="sk_list_exclusive_switch">Створити список виключень</string>
+    <string name="sk_list_exclusive_switch_explanation">Учасники списку виключень не будуть показані на вашій домашній стрічці — якщо ваш сервер підтримує цю функцію.</string>
+    <string name="sk_icon_beaker">Лабораторна склянка</string>
+    <string name="sk_icon_bed">Ліжко</string>
+    <string name="sk_edit_timeline_tag_main">Дописи з хештегом…</string>
+    <string name="sk_edit_timeline_tag_any">…або з будь-чим із цього</string>
+    <string name="sk_edit_timeline_tag_all">…і з кожним з цього</string>
+    <string name="sk_edit_timeline_tag_none">…але не з жодним з цього</string>
+    <string name="sk_edit_timeline_tag_hint">Введіть хештег…</string>
+    <string name="sk_edit_timeline_tags_hint">Введіть хештеги…</string>
+    <string name="sk_edit_timeline_tags_explanation">Зауважте, що ці операції обробляються сервером. Об\'єднання їх може не підтримуватися.</string>
+    <string name="sk_hashtag_timeline_local_only_switch">Показувати лише локальні дописи\?</string>
+    <string name="sk_add_timeline_tag_error_empty">Хештег не повинен бути порожнім</string>
+    <string name="sk_advanced_options_show">Показати додаткові опції</string>
+    <string name="sk_advanced_options_hide">Сховати додаткові опції</string>
+    <string name="sk_icon_recycle_bin">Смітник</string>
+    <string name="sk_icon_verified">Верифіковано</string>
+    <string name="sk_icon_doctor">Лікар</string>
+    <string name="sk_icon_diamond">Діамант</string>
+    <string name="sk_icon_umbrella">Парасолька</string>
+    <string name="sk_add_timeline">Додати стрічку</string>
+    <string name="sk_pronouns_label">Вимова</string>
+    <string name="sk_switch_timeline">Перемкнути стрічку</string>
+    <string name="sk_settings_instance">Сервер</string>
+    <string name="sk_settings_true_black">Абсолютно чорний режим</string>
+    <string name="sk_gif_badge">GIF</string>
+    <string name="sk_spoiler_show">Показати матеріали</string>
+    <string name="sk_disable_pill_shaped_active_indicator">Вимкнути індикатор активної вкладки у формі таблетки</string>
 </resources>

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="wrap_content">
+	android:layout_height="wrap_content"
+	xmlns:tools="http://schemas.android.com/tools">
 
 	<ImageView
 		android:id="@+id/photo"
@@ -12,12 +13,35 @@
 
 	<View
 		android:id="@+id/play_button"
-		android:layout_width="52dp"
-		android:layout_height="52dp"
-		android:layout_gravity="center"
-		android:elevation="3dp"
-		android:background="@drawable/play_button"/>
+		android:layout_width="128dp"
+		android:layout_height="128dp"
+		android:layout_gravity="center"/>
 
-	<include layout="@layout/alt_badge" />
+	<LinearLayout
+		android:id="@+id/extra_badge"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:layout_margin="12dp"
+		android:layout_gravity="start|bottom">
+
+		<TextView
+			android:id="@+id/duration"
+			android:layout_width="wrap_content"
+			android:layout_height="24dp"
+			android:paddingHorizontal="6dp"
+			android:paddingVertical="3dp"
+			android:layout_marginEnd="4dp"
+			android:importantForAccessibility="no"
+			android:textAppearance="@style/m3_label_large"
+			android:textColor="?colorM3DarkOnSurface"
+			android:gravity="center"
+			android:includeFontPadding="false"
+			android:background="@drawable/bg_image_alt_overlay"
+			android:fontFeatureSettings="'tnum'"
+			tools:text="1:23"/>
+	</LinearLayout>
+
+	<include layout="@layout/alt_text_badge" />
 
 </FrameLayout>

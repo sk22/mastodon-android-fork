@@ -1,0 +1,6 @@
+- Les filtres ont été améliorés, incluant la compatibilité avec "cacher avec avertissement"
+- La page de profil a été repensée avec les méta données directement en dessous de la bio.
+- Fonction pour Fermer / ouvrir les messages très longs
+- Option pour automatiquement préfixer les réponses CW avec "re:"
+- Option pour cacher les boutons d'interactions dans la chronologie.
+- Correction de bugs divers, petites améliorations ou ajustements.

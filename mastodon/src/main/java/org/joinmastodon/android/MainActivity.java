@@ -5,13 +5,16 @@ import android.app.Fragment;
 import android.app.assist.AssistContent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import org.joinmastodon.android.api.ObjectValidationException;
+import org.joinmastodon.android.api.requests.search.GetSearchResults;
 import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.ComposeFragment;
@@ -21,6 +24,7 @@ import org.joinmastodon.android.fragments.ThreadFragment;
 import org.joinmastodon.android.fragments.onboarding.AccountActivationFragment;
 import org.joinmastodon.android.fragments.onboarding.CustomWelcomeFragment;
 import org.joinmastodon.android.model.Notification;
+import org.joinmastodon.android.model.SearchResults;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.updater.GithubSelfUpdater;
 import org.joinmastodon.android.utils.ProvidesAssistContent;
@@ -28,6 +32,9 @@ import org.parceler.Parcels;
 
 import androidx.annotation.Nullable;
 import me.grishka.appkit.FragmentStackActivity;
+import me.grishka.appkit.Nav;
+import me.grishka.appkit.api.Callback;
+import me.grishka.appkit.api.ErrorResponse;
 
 public class MainActivity extends FragmentStackActivity implements ProvidesAssistContent {
 	@Override
@@ -73,6 +80,8 @@ public class MainActivity extends FragmentStackActivity implements ProvidesAssis
 					showFragmentForNotification(notification, session.getID());
 				} else if (intent.getBooleanExtra("compose", false)){
 					showCompose();
+				} else if (Intent.ACTION_VIEW.equals(intent.getAction())){
+					handleURL(intent.getData(), null);
 				} else {
 					showFragmentClearingBackStack(fragment);
 					maybeRequestNotificationsPermission();
@@ -111,9 +120,53 @@ public class MainActivity extends FragmentStackActivity implements ProvidesAssis
 			}
 		}else if(intent.getBooleanExtra("compose", false)){
 			showCompose();
+		}else if(Intent.ACTION_VIEW.equals(intent.getAction())){
+			handleURL(intent.getData(), null);
 		}/*else if(intent.hasExtra(PackageInstaller.EXTRA_STATUS) && GithubSelfUpdater.needSelfUpdating()){
 			GithubSelfUpdater.getInstance().handleIntentFromInstaller(intent, this);
 		}*/
+	}
+
+	public void handleURL(Uri uri, String accountID){
+		if(uri==null)
+			return;
+		if(!"https".equals(uri.getScheme()) && !"http".equals(uri.getScheme()))
+			return;
+		AccountSession session;
+		if(accountID==null)
+			session=AccountSessionManager.getInstance().getLastActiveAccount();
+		else
+			session=AccountSessionManager.get(accountID);
+		if(session==null || !session.activated)
+			return;
+		openSearchQuery(uri.toString(), session.getID(), R.string.opening_link, false);
+	}
+
+	public void openSearchQuery(String q, String accountID, int progressText, boolean fromSearch){
+		new GetSearchResults(q, null, true)
+				.setCallback(new Callback<>(){
+					@Override
+					public void onSuccess(SearchResults result){
+						Bundle args=new Bundle();
+						args.putString("account", accountID);
+						if(result.statuses!=null && !result.statuses.isEmpty()){
+							args.putParcelable("status", Parcels.wrap(result.statuses.get(0)));
+							Nav.go(MainActivity.this, ThreadFragment.class, args);
+						}else if(result.accounts!=null && !result.accounts.isEmpty()){
+							args.putParcelable("profileAccount", Parcels.wrap(result.accounts.get(0)));
+							Nav.go(MainActivity.this, ProfileFragment.class, args);
+						}else{
+							Toast.makeText(MainActivity.this, fromSearch ? R.string.no_search_results : R.string.link_not_supported, Toast.LENGTH_SHORT).show();
+						}
+					}
+
+					@Override
+					public void onError(ErrorResponse error){
+						error.showToast(MainActivity.this);
+					}
+				})
+				.wrapProgress(this, progressText, true)
+				.exec(accountID);
 	}
 
 	private void showFragmentForNotification(Notification notification, String accountID){

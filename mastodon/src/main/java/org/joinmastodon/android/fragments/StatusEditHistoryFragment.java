@@ -7,7 +7,7 @@ import android.view.View;
 
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.statuses.GetStatusEditHistory;
-import org.joinmastodon.android.model.Filter;
+import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.ui.displayitems.ReblogOrReplyLineStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.StatusDisplayItem;
@@ -57,7 +57,7 @@ public class StatusEditHistoryFragment extends StatusListFragment{
 
 	@Override
 	protected List<StatusDisplayItem> buildDisplayItems(Status s){
-		List<StatusDisplayItem> items=StatusDisplayItem.buildItems(this, s, accountID, s, knownAccounts, true, false, null, null);
+		List<StatusDisplayItem> items=StatusDisplayItem.buildItems(this, s, accountID, s, knownAccounts, null, StatusDisplayItem.FLAG_NO_FOOTER | StatusDisplayItem.FLAG_INSET);
 		int idx=data.indexOf(s);
 		if(idx>=0){
 			String date=UiUtils.DATE_TIME_FORMATTER.format(s.createdAt.atZone(ZoneId.systemDefault()));
@@ -143,7 +143,9 @@ public class StatusEditHistoryFragment extends StatusListFragment{
 				}
 			}
 			String sep = getString(R.string.sk_separator);
-			items.add(0, new ReblogOrReplyLineStatusDisplayItem(s.id, this, action+" "+sep+" "+date, Collections.emptyList(), 0, null, null));
+			ReblogOrReplyLineStatusDisplayItem line=new ReblogOrReplyLineStatusDisplayItem(s.id, this, action+" "+sep+" "+date, Collections.emptyList(), 0, null, null);
+			line.needBottomPadding=true;
+			items.add(0, line);
 		}
 		return items;
 	}
@@ -160,7 +162,7 @@ public class StatusEditHistoryFragment extends StatusListFragment{
 	}
 
 	@Override
-	protected Filter.FilterContext getFilterContext() {
+	protected FilterContext getFilterContext() {
 		return null;
 	}
 

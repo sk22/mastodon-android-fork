@@ -1,163 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:id="@+id/display_item_text"
+	android:orientation="vertical"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:paddingTop="10dp"
-	android:paddingBottom="12dp">
+	android:paddingTop="12dp"
+	android:paddingBottom="16dp">
 
-	<LinearLayout
-		android:id="@+id/text_wrap"
-		android:orientation="vertical"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
-
-		<LinearLayout
-			android:id="@+id/spoiler_header"
-			android:orientation="vertical"
-			android:layout_marginTop="6dp"
-			android:layout_marginBottom="8dp"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:visibility="gone">
-			<View
-				android:id="@+id/border_top"
-				android:layout_width="match_parent"
-				android:layout_height="0.5dp"
-				android:background="?attr/colorPollVoted"/>
-
-			<TextView
-				android:id="@+id/spoiler_title_inline"
-				android:paddingHorizontal="16dp"
-				android:paddingVertical="14dp"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:textAppearance="@style/m3_title_medium"
-				android:background="?colorBackgroundLight"
-				tools:text="CW title"/>
-
-			<View
-				android:id="@+id/border_bottom"
-				android:layout_width="match_parent"
-				android:layout_height="0.5dp"
-				android:background="?attr/colorPollVoted"/>
-		</LinearLayout>
-
-		<org.joinmastodon.android.ui.views.UntouchableScrollView
-			android:id="@+id/text_scroll_view"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:paddingHorizontal="16dp"
-			android:requiresFadingEdge="vertical"
-			android:scrollbars="none"
-			android:fadingEdgeLength="36dp">
-
-			<org.joinmastodon.android.ui.views.LinkedTextView
-				android:id="@+id/text"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:textSize="16sp"
-				android:textAppearance="@style/m3_body_large"/>
-
-		</org.joinmastodon.android.ui.views.UntouchableScrollView>
-
-		<Space
-			android:id="@+id/space_below_text"
-			android:layout_width="match_parent"
-			android:layout_height="8dp"
-			android:visibility="gone" />
-
-		<Button
-			android:id="@+id/read_more"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="@drawable/bg_text_button"
-			android:textColor="?android:textColorSecondary"
-			android:layout_marginHorizontal="16dp"
-			android:paddingHorizontal="8dp"
-			android:textAppearance="@style/m3_label_medium"
-			android:textAllCaps="true"
-			android:text="@string/sk_expand"
-			android:visibility="gone"
-			android:importantForAccessibility="no"/>
-
-		<org.joinmastodon.android.ui.views.AutoOrientationLinearLayout
-			android:id="@+id/translate_wrap"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:gravity="center_vertical"
-			android:visibility="gone">
-
-			<FrameLayout
-				android:id="@+id/action_btn_wrap"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginHorizontal="8dp"
-				android:clipToPadding="false">
-				<org.joinmastodon.android.ui.views.ProgressBarButton
-					android:id="@+id/translate_btn"
-					android:background="@drawable/bg_text_button"
-					android:textColor="?android:textColorSecondary"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:paddingHorizontal="8dp"
-					tools:text="@string/sk_translate_post"/>
-				<ProgressBar
-					android:id="@+id/translate_progress"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_gravity="center"
-					android:indeterminate="true"
-					style="?android:progressBarStyleSmall"
-					android:elevation="10dp"
-					android:outlineProvider="none"
-					android:indeterminateTint="?android:textColorPrimary"
-					android:visibility="gone"/>
-			</FrameLayout>
-
-			<Space
-				android:layout_width="0dp"
-				android:layout_height="0dp"
-				android:layout_weight="1" />
-
-			<TextView
-				android:id="@+id/translate_info"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginHorizontal="16dp"
-				android:textColor="?android:textColorSecondary"
-				android:textAlignment="textEnd"
-				tools:text="Translated using TranslateEngine" />
-
-		</org.joinmastodon.android.ui.views.AutoOrientationLinearLayout>
-
-	</LinearLayout>
-
-	<LinearLayout
-		android:visibility="gone"
-		android:id="@+id/spoiler_overlay"
+	<org.joinmastodon.android.ui.views.UntouchableScrollView
+		android:id="@+id/text_scroll_view"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_gravity="center_vertical"
 		android:paddingHorizontal="16dp"
-		android:orientation="vertical">
+		android:requiresFadingEdge="vertical"
+		android:scrollbars="none"
+		android:fadingEdgeLength="36dp">
 
-		<TextView
-			android:id="@+id/spoiler_title"
+		<org.joinmastodon.android.ui.views.LinkedTextView
+			android:id="@+id/text"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:gravity="center_horizontal"
-			android:textAppearance="@style/m3_title_large"
-			tools:text="CW title"/>
+			android:textSize="16sp"
+			android:textAppearance="@style/m3_body_large"/>
+
+	</org.joinmastodon.android.ui.views.UntouchableScrollView>
+
+	<Space
+		android:id="@+id/space_below_text"
+		android:layout_width="match_parent"
+		android:layout_height="8dp"
+		android:visibility="gone" />
+
+	<Button
+		android:id="@+id/read_more"
+		style="@style/Widget.Mastodon.M3.Button.Text"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginHorizontal="16dp"
+		android:minHeight="48dp"
+		android:textAppearance="@style/m3_label_small"
+		android:textAllCaps="true"
+		android:text="@string/sk_expand"
+		android:visibility="gone"
+		android:importantForAccessibility="no"/>
+
+	<org.joinmastodon.android.ui.views.AutoOrientationLinearLayout
+		android:id="@+id/translate_wrap"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:paddingTop="6dp"
+		android:gravity="center_vertical"
+		android:visibility="gone">
+
+		<FrameLayout
+			android:id="@+id/action_btn_wrap"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginHorizontal="6dp"
+			android:clipToPadding="false">
+			<org.joinmastodon.android.ui.views.ProgressBarButton
+				android:id="@+id/translate_btn"
+				style="@style/Widget.Mastodon.M3.Button.Text"
+				android:textColor="?colorM3OnSurfaceVariant"
+				android:paddingStart="10dp"
+				android:paddingEnd="10dp"
+				android:minWidth="0dp"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				tools:text="@string/sk_translate_post"/>
+			<ProgressBar
+				android:id="@+id/translate_progress"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:indeterminate="true"
+				style="?android:progressBarStyleSmall"
+				android:elevation="10dp"
+				android:outlineProvider="none"
+				android:visibility="gone"/>
+		</FrameLayout>
+
+		<Space
+			android:layout_width="0dp"
+			android:layout_height="0dp"
+			android:layout_weight="1" />
 
 		<TextView
-			android:layout_width="match_parent"
+			android:id="@+id/translate_info"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="8dp"
-			android:gravity="center_horizontal"
-			android:text="@string/tap_to_reveal"/>
+			android:layout_marginHorizontal="16dp"
+			android:textColor="?colorM3OnSurfaceVariant"
+			android:textAlignment="textEnd"
+			tools:text="Translated using TranslateEngine" />
 
-	</LinearLayout>
+	</org.joinmastodon.android.ui.views.AutoOrientationLinearLayout>
 
-</FrameLayout>
+</LinearLayout>

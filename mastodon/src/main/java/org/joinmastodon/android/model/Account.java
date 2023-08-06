@@ -162,10 +162,14 @@ public class Account extends BaseModel implements Searchable{
 		if(fields!=null){
 			for(AccountField f:fields)
 				f.postprocess();
+		} else {
+			fields = Collections.emptyList();
 		}
 		if(emojis!=null){
 			for(Emoji e:emojis)
 				e.postprocess();
+		} else {
+			emojis = Collections.emptyList();
 		}
 		if(moved!=null)
 			moved.postprocess();
@@ -178,7 +182,6 @@ public class Account extends BaseModel implements Searchable{
 		if(url == null) url = "";
 		if(note == null) note = "";
 		if(avatar == null) avatar = "";
-		if(emojis == null) emojis = Collections.emptyList();
 	}
 
 	public boolean isLocal(){
