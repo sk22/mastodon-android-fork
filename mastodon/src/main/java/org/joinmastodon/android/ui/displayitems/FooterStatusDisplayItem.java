@@ -1,11 +1,9 @@
 package org.joinmastodon.android.ui.displayitems;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
@@ -26,9 +24,6 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
@@ -105,12 +100,14 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 			}
 		};
 
+		private static final float ALPHA_PRESSED=0.55f;
+
 		static {
-			opacityOut = new AlphaAnimation(1, 0.55f);
+			opacityOut = new AlphaAnimation(1, ALPHA_PRESSED);
 			opacityOut.setDuration(300);
 			opacityOut.setInterpolator(CubicBezierInterpolator.DEFAULT);
 			opacityOut.setFillAfter(true);
-			opacityIn = new AlphaAnimation(0.55f, 1);
+			opacityIn = new AlphaAnimation(ALPHA_PRESSED, 1);
 			opacityIn.setDuration(400);
 			opacityIn.setInterpolator(CubicBezierInterpolator.DEFAULT);
 		}
@@ -147,6 +144,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 			favorite.setAccessibilityDelegate(buttonAccessibilityDelegate);
 			react.setOnTouchListener(this::onButtonTouch);
 			react.setOnClickListener(this::onReactClick);
+			react.setOnLongClickListener(this::onReactLongClick);
 			react.setAccessibilityDelegate(buttonAccessibilityDelegate);
 			bookmark.setOnTouchListener(this::onButtonTouch);
 			bookmark.setOnClickListener(this::onBookmarkClick);
@@ -167,6 +165,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 							imm.hideSoftInputFromWindow(reactInput.getWindowToken(), 0);
 							addEmojiReaction(s.toString().substring(before));
 							reactInput.getText().clear();
+							react.setAlpha(1);
 						} else {
 							Toast.makeText(activity, R.string.sk_specify_select_emoji, Toast.LENGTH_SHORT).show();
 						}
@@ -404,30 +403,41 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 			return true;
 		}
 
-		private void onReactClick(View v) {
-			if (reactVisibilityState == ReactVisibilityState.HIDDEN) {
-				emojiKeyboard.toggleKeyboardPopup(null);
-				reactVisibilityState = ReactVisibilityState.CUSTOM_EMOJI_KEYBOARD;
-				Toast.makeText(activity, R.string.sk_again_for_system_keyboard, Toast.LENGTH_SHORT).show();
-				DisplayMetrics displayMetrics = new DisplayMetrics();
-				int[] locationOnScreen = new int[2];
-				activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-				v.getLocationOnScreen(locationOnScreen);
-				double fromScreenTop = (double) locationOnScreen[1] / displayMetrics.heightPixels;
-				if (fromScreenTop > 0.75) {
-					item.parentFragment.scrollBy(0, (int) (displayMetrics.heightPixels * 0.3));
-				}
-			} else if (reactVisibilityState == ReactVisibilityState.CUSTOM_EMOJI_KEYBOARD) {
-				reactInput.requestFocus();
-				imm.showSoftInput(reactInput, InputMethodManager.SHOW_FORCED);
-				emojiKeyboard.toggleKeyboardPopup(null);
-				reactVisibilityState = ReactVisibilityState.SYSTEM_KEYBOARD;
-				Toast.makeText(activity, R.string.sk_select_emoji, Toast.LENGTH_SHORT).show();
-			} else if (reactVisibilityState == ReactVisibilityState.SYSTEM_KEYBOARD) {
-				imm.hideSoftInputFromWindow(reactInput.getWindowToken(), 0);
-				reactVisibilityState = ReactVisibilityState.HIDDEN;
-				v.startAnimation(opacityIn);
+		private boolean resetReact(View v){
+			if (reactVisibilityState == ReactVisibilityState.HIDDEN) return false;
+			if(emojiKeyboard.isVisible()) emojiKeyboard.toggleKeyboardPopup(null);
+			imm.hideSoftInputFromWindow(reactInput.getWindowToken(), 0);
+			reactVisibilityState=ReactVisibilityState.HIDDEN;
+			v.setAlpha(1);
+			v.startAnimation(opacityIn);
+			return true;
+		}
+
+		private void onReactClick(View v){
+			if (resetReact(v)) return;
+
+			reactVisibilityState = ReactVisibilityState.CUSTOM_EMOJI_KEYBOARD;
+			emojiKeyboard.toggleKeyboardPopup(null);
+			DisplayMetrics displayMetrics = new DisplayMetrics();
+			int[] locationOnScreen = new int[2];
+			activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+			v.getLocationOnScreen(locationOnScreen);
+			double fromScreenTop = (double) locationOnScreen[1] / displayMetrics.heightPixels;
+			if (fromScreenTop > 0.75) {
+				item.parentFragment.scrollBy(0, (int) (displayMetrics.heightPixels * 0.3));
 			}
+		}
+
+		private boolean onReactLongClick(View v){
+			if (resetReact(v)) return true;
+
+			v.setAlpha(ALPHA_PRESSED);
+			reactVisibilityState = ReactVisibilityState.SYSTEM_KEYBOARD;
+			reactInput.requestFocus();
+			imm.showSoftInput(reactInput, InputMethodManager.SHOW_FORCED);
+			if (emojiKeyboard.isVisible()) emojiKeyboard.toggleKeyboardPopup(null);
+			Toast.makeText(activity, R.string.sk_select_emoji, Toast.LENGTH_SHORT).show();
+			return true;
 		}
 
 		private void onBookmarkClick(View v){

@@ -154,8 +154,8 @@
 					<EditText
 						android:layout_width="100dp"
 						android:layout_height="20dp"
-						android:focusable = "true"
-						android:focusableInTouchMode = "true"
+						android:focusable="true"
+						android:focusableInTouchMode="true"
 						android:id="@+id/react_input"/>
 				</LinearLayout>
 			</FrameLayout>
