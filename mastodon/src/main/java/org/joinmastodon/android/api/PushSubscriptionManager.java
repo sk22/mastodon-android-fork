@@ -122,6 +122,12 @@ public class PushSubscriptionManager{
 
 
 	public void registerAccountForPush(PushSubscription subscription){
+		// this function is used for registering push notifications using FCM
+		// to avoid NonFreeNet in F-Droid, this registration is disabled in it
+		// see https://github.com/LucasGGamerM/moshidon/issues/206 for more context
+		if(BuildConfig.BUILD_TYPE.equals("fdroidRelease"))
+			return;
+
 		if(TextUtils.isEmpty(deviceToken))
 			throw new IllegalStateException("No device push token available");
 		String endpoint = "https://app.joinmastodon.org/relay-to/fcm/"+deviceToken+"/"+accountID;
