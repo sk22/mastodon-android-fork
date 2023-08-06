@@ -34,8 +34,8 @@ public class StatusEmojiReactionsListFragment extends BaseAccountListFragment {
         url = getArguments().getString("url");
         count = getArguments().getInt("count");
 
-        SpannableStringBuilder title = new SpannableStringBuilder(getResources().getString(R.string.sk_x_reacted_with_x, count,
-                url == null ? emojiName : ":"+emojiName+":"));
+        SpannableStringBuilder title = new SpannableStringBuilder(getResources().getQuantityString(R.plurals.sk_users_reacted_with, count,
+				count, url == null ? emojiName : ":"+emojiName+":"));
         if (url != null) {
             Emoji emoji = new Emoji();
             emoji.shortcode = emojiName;
