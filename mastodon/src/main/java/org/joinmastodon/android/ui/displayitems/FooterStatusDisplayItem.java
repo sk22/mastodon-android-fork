@@ -192,11 +192,10 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 			bookmark.setSelected(item.status.bookmarked);
 			boost.setEnabled(item.status.isReblogPermitted(item.accountID));
 
-			AccountSession accountSession = AccountSessionManager.getInstance().getAccount(item.accountID);
-			if (!accountSession.getLocalPreferences().emojiReactionsEnabled)
-				reactLayout.setVisibility(View.GONE);
-			else
-				reactLayout.setVisibility(View.VISIBLE);
+			AccountSession accountSession=AccountSessionManager.get(item.accountID);
+			reactLayout.setVisibility(accountSession.getLocalPreferences().emojiReactionsEnabled
+						? View.VISIBLE
+						: View.GONE);
 
 			int nextPos = getAbsoluteAdapterPosition() + 1;
 			boolean nextIsWarning = item.parentFragment.getDisplayItems().size() > nextPos &&

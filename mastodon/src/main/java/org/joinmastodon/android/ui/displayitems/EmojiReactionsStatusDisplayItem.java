@@ -13,10 +13,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.joinmastodon.android.E;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.MastodonAPIRequest;
 import org.joinmastodon.android.api.requests.statuses.PleromaAddStatusReaction;
 import org.joinmastodon.android.api.requests.statuses.PleromaDeleteStatusReaction;
+import org.joinmastodon.android.events.StatusCountersUpdatedEvent;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.fragments.account_list.StatusEmojiReactionsListFragment;
 import org.joinmastodon.android.model.EmojiReaction;
@@ -85,7 +87,7 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
         @Override
         public void onBind(EmojiReactionsStatusDisplayItem item) {
 			ListImageLoaderWrapper imgLoader=new ListImageLoaderWrapper(item.parentFragment.getContext(), list, new RecyclerViewDelegate(list), null);
-			list.setAdapter(new EmojiReactionsAdapter(imgLoader));
+			list.setAdapter(new EmojiReactionsAdapter(this, imgLoader));
 			list.setLayoutManager(new LinearLayoutManager(item.parentFragment.getContext(), LinearLayoutManager.HORIZONTAL, false));
 			item.refreshRequests();
         }
@@ -105,9 +107,11 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
 		private class EmojiReactionsAdapter extends UsableRecyclerView.Adapter<EmojiReactionViewHolder> implements ImageLoaderRecyclerAdapter{
 			RecyclerView list;
 			ListImageLoaderWrapper imgLoader;
+			Holder parentHolder;
 
-			public EmojiReactionsAdapter(ListImageLoaderWrapper imgLoader){
+			public EmojiReactionsAdapter(Holder parentHolder, ListImageLoaderWrapper imgLoader){
 				super(imgLoader);
+				this.parentHolder=parentHolder;
 				this.imgLoader=imgLoader;
 			}
 
@@ -125,6 +129,7 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
 				params.setMarginEnd(V.dp(8));
 				btn.setLayoutParams(params);
 				btn.setCompoundDrawableTintList(null);
+				btn.setPaddingRelative(V.dp(16), 0, V.dp(16), 0);
 				btn.setBackgroundResource(R.drawable.bg_button_m3_tonal);
 				btn.setCompoundDrawables(item.placeholder, null, null, null);
 				return new EmojiReactionViewHolder(btn, item);
@@ -197,7 +202,7 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
 									parent.status.reactions.clear();
 									parent.status.reactions.addAll(result.reactions);
 									EmojiReactionsAdapter adapter = (EmojiReactionsAdapter) getBindingAdapter();
-									
+
 									// this handles addition/removal of new reactions
 									UiUtils.updateList(oldList, result.reactions, adapter.list, adapter,
 											(e1, e2) -> e1.name.equals(e2.name));
@@ -212,6 +217,7 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
 									}
 									parent.refreshRequests();
 									adapter.imgLoader.updateImages();
+									E.post(new StatusCountersUpdatedEvent(result, adapter.parentHolder));
 								}
 
 								@Override

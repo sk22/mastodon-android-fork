@@ -23,6 +23,7 @@ import org.parceler.Parcel;
 
 import java.lang.reflect.Type;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Parcel
@@ -113,11 +114,12 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 			for(FilterResult fr:filtered)
 				fr.postprocess();
 
-		if (!TextUtils.isEmpty(spoilerText)) sensitive = true;
+		if(!TextUtils.isEmpty(spoilerText)) sensitive=true;
 		spoilerRevealed=TextUtils.isEmpty(spoilerText);
 		sensitiveRevealed=!sensitive;
-		if (visibility.equals(StatusPrivacy.LOCAL)) localOnly = true;
+		if(visibility.equals(StatusPrivacy.LOCAL)) localOnly=true;
 		if(emojiReactions!=null) reactions=emojiReactions;
+		if(reactions==null) reactions=new ArrayList<>();
 	}
 
 	@Override
@@ -173,6 +175,8 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 		reblogged=ev.reblogged;
 		bookmarked=ev.bookmarked;
 		pinned=ev.pinned;
+		reactions.clear();
+		reactions.addAll(ev.reactions);
 	}
 
 	public Status getContentStatus(){
