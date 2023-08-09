@@ -196,7 +196,8 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 			// remove additional padding when (transparently padded) translate button is visible
 			int nextPos = getAbsoluteAdapterPosition() + 1;
 			boolean nextIsFooter = item.parentFragment.getDisplayItems().size() > nextPos &&
-					item.parentFragment.getDisplayItems().get(nextPos) instanceof FooterStatusDisplayItem;
+					(item.parentFragment.getDisplayItems().get(nextPos) instanceof FooterStatusDisplayItem
+					|| item.parentFragment.getDisplayItems().get(nextPos) instanceof EmojiReactionsStatusDisplayItem);
 			int bottomPadding = (translateVisible && nextIsFooter) ? 0
 					: nextIsFooter ? V.dp(6)
 					: V.dp(12);

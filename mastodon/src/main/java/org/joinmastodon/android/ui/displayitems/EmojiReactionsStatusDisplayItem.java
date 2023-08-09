@@ -90,6 +90,11 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
 			list.setAdapter(new EmojiReactionsAdapter(this, imgLoader));
 			list.setLayoutManager(new LinearLayoutManager(item.parentFragment.getContext(), LinearLayoutManager.HORIZONTAL, false));
 			item.refreshRequests();
+
+			int prevPos = getAbsoluteAdapterPosition() - 1;
+			boolean prevIsText = prevPos >= 0 &&
+					item.parentFragment.getDisplayItems().get(prevPos) instanceof TextStatusDisplayItem;
+			list.setPadding(list.getPaddingLeft(), prevIsText ? 0 : V.dp(8), list.getPaddingRight(), 0);
         }
 
 		@Override
