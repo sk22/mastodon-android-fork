@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Paint;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -185,6 +186,8 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
 			@Override
 			public void onBind(EmojiReaction item){
 				btn.setText(UiUtils.abbreviateNumber(item.count));
+				btn.setContentDescription(item.name);
+				if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)btn.setTooltipText(item.name);
 				if(item.url==null){
 					Paint p=new Paint();
 					p.setTextSize(V.sp(18));
