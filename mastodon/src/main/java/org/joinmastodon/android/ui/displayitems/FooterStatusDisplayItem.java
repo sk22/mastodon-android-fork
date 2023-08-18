@@ -27,6 +27,8 @@ import android.widget.Toast;
 
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
+import org.joinmastodon.android.api.MastodonAPIRequest;
+import org.joinmastodon.android.api.requests.statuses.AddStatusReaction;
 import org.joinmastodon.android.api.requests.statuses.PleromaAddStatusReaction;
 import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
@@ -457,17 +459,21 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 		}
 
 		private void addEmojiReaction(String emoji) {
-			new PleromaAddStatusReaction(item.status.id, emoji)
-					.setCallback(new Callback<>() {
-						@Override
-						public void onSuccess(Status result) {
-							item.parentFragment.updateEmojiReactions(result, getItemID());
-						}
+			MastodonAPIRequest<Status> req = item.parentFragment.isInstanceAkkoma()
+					? new PleromaAddStatusReaction(item.status.id, emoji)
+					: new AddStatusReaction(item.status.id, emoji);
+			req.setCallback(new Callback<>() {
+				@Override
+				public void onSuccess(Status result) {
+					item.parentFragment.updateEmojiReactions(result, getItemID());
+				}
 
-						@Override
-						public void onError(ErrorResponse error) {}
-					})
-					.exec(item.accountID);
+				@Override
+				public void onError(ErrorResponse error) {
+					error.showToast(item.parentFragment.getContext());
+				}
+			})
+			.exec(item.accountID);
 			reactKeyboardVisible=false;
 			react.startAnimation(opacityIn);
 		}

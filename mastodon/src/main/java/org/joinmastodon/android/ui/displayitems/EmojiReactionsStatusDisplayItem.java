@@ -18,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.joinmastodon.android.E;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.MastodonAPIRequest;
+import org.joinmastodon.android.api.requests.statuses.AddStatusReaction;
+import org.joinmastodon.android.api.requests.statuses.DeleteStatusReaction;
 import org.joinmastodon.android.api.requests.statuses.PleromaAddStatusReaction;
 import org.joinmastodon.android.api.requests.statuses.PleromaDeleteStatusReaction;
 import org.joinmastodon.android.events.StatusCountersUpdatedEvent;
@@ -184,7 +186,8 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
 
 			@Override
 			public void setImage(int index, Drawable drawable){
-				btn.setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, null, null, null);
+				drawable.setBounds(0, 0, V.sp(24), V.sp(24));
+				btn.setCompoundDrawablesRelative(drawable, null, null, null);
 				if(drawable instanceof Animatable) ((Animatable) drawable).start();
 			}
 
@@ -209,9 +212,10 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
 				btn.setSelected(item.me);
 				btn.setOnClickListener(e -> {
 					boolean deleting=item.me;
+					boolean ak=parent.parentFragment.isInstanceAkkoma();
 					MastodonAPIRequest<Status> req = deleting
-							? new PleromaDeleteStatusReaction(parent.status.id, item.name)
-							: new PleromaAddStatusReaction(parent.status.id, item.name);
+							? (ak ? new PleromaDeleteStatusReaction(parent.status.id, item.name) : new DeleteStatusReaction(parent.status.id, item.name))
+							: (ak ? new PleromaAddStatusReaction(parent.status.id, item.name) : new AddStatusReaction(parent.status.id, item.name));
 					req.setCallback(new Callback<>() {
 								@Override
 								public void onSuccess(Status result) {
@@ -245,18 +249,21 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
 							.exec(parent.parentFragment.getAccountID());
 				});
 
-				btn.setOnLongClickListener(e->{
-					EmojiReaction emojiReaction=parent.status.reactions.stream().filter(r->r.name.equals(item.name)).findAny().orElseThrow();
-					Bundle args=new Bundle();
-					args.putString("account", parent.parentFragment.getAccountID());
-					args.putString("statusID", parent.status.id);
-					int atSymbolIndex = emojiReaction.name.indexOf("@");
-					args.putString("emoji", atSymbolIndex != -1 ? emojiReaction.name.substring(0, atSymbolIndex) : emojiReaction.name);
-					args.putString("url", emojiReaction.url);
-					args.putInt("count", emojiReaction.count);
-					Nav.go(parent.parentFragment.getActivity(), StatusEmojiReactionsListFragment.class, args);
-					return true;
-				});
+				if (parent.parentFragment.isInstanceAkkoma()) {
+					// glitch-soc doesn't have this, afaik
+					btn.setOnLongClickListener(e->{
+						EmojiReaction emojiReaction=parent.status.reactions.stream().filter(r->r.name.equals(item.name)).findAny().orElseThrow();
+						Bundle args=new Bundle();
+						args.putString("account", parent.parentFragment.getAccountID());
+						args.putString("statusID", parent.status.id);
+						int atSymbolIndex = emojiReaction.name.indexOf("@");
+						args.putString("emoji", atSymbolIndex != -1 ? emojiReaction.name.substring(0, atSymbolIndex) : emojiReaction.name);
+						args.putString("url", emojiReaction.url);
+						args.putInt("count", emojiReaction.count);
+						Nav.go(parent.parentFragment.getActivity(), StatusEmojiReactionsListFragment.class, args);
+						return true;
+					});
+				}
 			}
 		}
 	}
