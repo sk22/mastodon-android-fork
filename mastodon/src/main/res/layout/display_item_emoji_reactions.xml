@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<me.grishka.appkit.views.UsableRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/reaction_layout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingHorizontal="12dp"
-	android:clipToPadding="false"
-    android:stretchMode="spacingWidth">
-</me.grishka.appkit.views.UsableRecyclerView>

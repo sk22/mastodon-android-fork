@@ -6,6 +6,7 @@ import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -81,8 +82,17 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
         private final UsableRecyclerView list;
 
 		public Holder(Activity activity, ViewGroup parent) {
-            super(activity, R.layout.display_item_emoji_reactions, parent);
-            this.list=findViewById(R.id.reaction_layout);
+			super(new UsableRecyclerView(activity) {
+				@Override
+				public boolean onTouchEvent(MotionEvent e){
+					super.onTouchEvent(e);
+					// to pass through touch events (i.e. clicking the status) to the parent view
+					return false;
+				}
+			});
+			list=(UsableRecyclerView) itemView;
+			list.setPadding(V.dp(12), 0, V.dp(12), 0);
+			list.setClipToPadding(false);
         }
 
         @Override
