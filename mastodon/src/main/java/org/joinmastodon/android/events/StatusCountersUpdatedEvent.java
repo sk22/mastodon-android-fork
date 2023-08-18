@@ -6,6 +6,7 @@ import org.joinmastodon.android.api.CacheController;
 import org.joinmastodon.android.model.EmojiReaction;
 import org.joinmastodon.android.model.Status;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StatusCountersUpdatedEvent{
@@ -30,7 +31,7 @@ public class StatusCountersUpdatedEvent{
 		reblogged=s.reblogged;
 		bookmarked=s.bookmarked;
 		pinned=s.pinned;
-		reactions=s.reactions;
+		reactions=new ArrayList<>(s.reactions);
 		viewHolder=vh;
 	}
 }

@@ -51,7 +51,7 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
 
     public EmojiReactionsStatusDisplayItem(String parentID, BaseStatusListFragment<?> parentFragment, Status status) {
         super(parentID, parentFragment);
-        this.status=status;
+		this.status=status;
 		placeholder=parentFragment.getContext().getDrawable(R.drawable.image_placeholder).mutate();
 		placeholder.setBounds(0, 0, V.sp(24), V.sp(24));
     }
