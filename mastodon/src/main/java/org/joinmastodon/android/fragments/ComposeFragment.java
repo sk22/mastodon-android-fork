@@ -301,6 +301,13 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			}
 
 			@Override
+			public void onEmojiSelected(String emoji){
+				if(getActivity().getCurrentFocus() instanceof EditText edit && edit == mainEditText){
+					edit.getText().replace(edit.getSelectionStart(), edit.getSelectionEnd(), emoji);
+				}
+			}
+
+			@Override
 			public void onBackspace(){
 				getActivity().dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
 				getActivity().dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DEL));
