@@ -53,16 +53,18 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
 	private List<ImageLoaderRequest> requests;
 
     public EmojiReactionsStatusDisplayItem(String parentID, BaseStatusListFragment<?> parentFragment, Status status) {
-        super(parentID, parentFragment);
+		super(parentID, parentFragment);
 		this.status=status;
 		placeholder=parentFragment.getContext().getDrawable(R.drawable.image_placeholder).mutate();
 		placeholder.setBounds(0, 0, V.sp(24), V.sp(24));
     }
 
-	private void refreshRequests() {
+	private void refresh(Holder holder) {
 		requests=status.reactions.stream()
 				.map(e->e.url!=null ? new UrlImageLoaderRequest(e.url, V.sp(24), V.sp(24)) : null)
 				.collect(Collectors.toList());
+		holder.list.setPadding(holder.list.getPaddingLeft(),
+				status.reactions.isEmpty() ? 0 : V.dp(8), holder.list.getPaddingRight(), 0);
 	}
 
 	@Override
@@ -102,12 +104,7 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
 			ListImageLoaderWrapper imgLoader=new ListImageLoaderWrapper(item.parentFragment.getContext(), list, new RecyclerViewDelegate(list), null);
 			list.setAdapter(new EmojiReactionsAdapter(this, imgLoader));
 			list.setLayoutManager(new LinearLayoutManager(item.parentFragment.getContext(), LinearLayoutManager.HORIZONTAL, false));
-			item.refreshRequests();
-
-			int prevPos = getAbsoluteAdapterPosition() - 1;
-			boolean prevIsText = prevPos >= 0 &&
-					item.parentFragment.getDisplayItems().get(prevPos) instanceof TextStatusDisplayItem;
-			list.setPadding(list.getPaddingLeft(), prevIsText ? 0 : V.dp(8), list.getPaddingRight(), 0);
+			item.refresh(this);
         }
 
 		@Override
@@ -236,7 +233,7 @@ public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
 											if(newReaction.count!=r.count) adapter.notifyItemChanged(index);
 										});
 									}
-									parent.refreshRequests();
+									parent.refresh(adapter.parentHolder);
 									adapter.imgLoader.updateImages();
 									E.post(new StatusCountersUpdatedEvent(result, adapter.parentHolder));
 								}
