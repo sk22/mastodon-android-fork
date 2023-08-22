@@ -372,4 +372,7 @@
 	<string name="sk_duration_days_3">3 days</string>
 	<string name="sk_duration_days_7">7 days</string>
 	<string name="sk_notification_mention">You were mentioned by %s</string>
+	<string name="sk_suicide_search_term">Suicide</string>
+	<string name="sk_search_suicide_help">If you\'re looking for a sign not to kill yourself, this is it. If you need further help, please call your local suicide hotline</string>
+	<string name="sk_do_not_show_again">Don\'t show again</string>
 </resources>

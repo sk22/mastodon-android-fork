@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.MainActivity;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.search.GetSearchResults;
@@ -38,6 +39,7 @@ import org.joinmastodon.android.model.SearchResults;
 import org.joinmastodon.android.model.viewmodel.ListItem;
 import org.joinmastodon.android.model.viewmodel.SearchResultViewModel;
 import org.joinmastodon.android.ui.DividerItemDecoration;
+import org.joinmastodon.android.ui.M3AlertDialogBuilder;
 import org.joinmastodon.android.ui.SearchViewHelper;
 import org.joinmastodon.android.ui.adapters.GenericListItemsAdapter;
 import org.joinmastodon.android.ui.utils.HideableSingleViewRecyclerAdapter;
@@ -50,6 +52,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -390,6 +393,17 @@ public class SearchQueryFragment extends MastodonRecyclerFragment<SearchResultVi
 	}
 
 	private void onSearchViewEnter(){
+		String localizedSuicideSearchTerm = getContext().getString(R.string.sk_suicide_search_term).toLowerCase();
+		if(currentQuery.trim().toLowerCase().equals(localizedSuicideSearchTerm) && GlobalUserPreferences.showSuicideHelp)
+			new M3AlertDialogBuilder(getActivity())
+					.setTitle("❤️")
+					.setMessage(R.string.sk_search_suicide_help)
+					.setNegativeButton(R.string.sk_do_not_show_again, (dialog, which) -> {
+						GlobalUserPreferences.showSuicideHelp = false;
+						GlobalUserPreferences.save();
+					})
+					.setPositiveButton(R.string.ok, (dialog, which) -> {})
+					.show();
 		deliverResult(currentQuery, null);
 	}
 

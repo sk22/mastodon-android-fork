@@ -60,6 +60,7 @@ public class GlobalUserPreferences{
 	public static boolean showNavigationLabels;
 	public static boolean displayPronounsInTimelines, displayPronounsInThreads, displayPronounsInUserListings;
 	public static boolean overlayMedia;
+	public static boolean showSuicideHelp;
 
 	private static SharedPreferences getPrefs(){
 		return MastodonApp.context.getSharedPreferences("global", Context.MODE_PRIVATE);
@@ -119,6 +120,7 @@ public class GlobalUserPreferences{
 		displayPronounsInThreads=prefs.getBoolean("displayPronounsInThreads", true);
 		displayPronounsInUserListings=prefs.getBoolean("displayPronounsInUserListings", true);
 		overlayMedia=prefs.getBoolean("overlayMedia", false);
+		showSuicideHelp=prefs.getBoolean("showSuicideHelp", true);
 
 		if (prefs.contains("prefixRepliesWithRe")) {
 			prefixReplies = prefs.getBoolean("prefixRepliesWithRe", false)
@@ -177,6 +179,7 @@ public class GlobalUserPreferences{
 				.putBoolean("displayPronounsInThreads", displayPronounsInThreads)
 				.putBoolean("displayPronounsInUserListings", displayPronounsInUserListings)
 				.putBoolean("overlayMedia", overlayMedia)
+				.putBoolean("showSuicideHelp", showSuicideHelp)
 				.apply();
 	}
 
