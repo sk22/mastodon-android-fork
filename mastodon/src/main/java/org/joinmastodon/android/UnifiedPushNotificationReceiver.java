@@ -29,7 +29,7 @@ public class UnifiedPushNotificationReceiver extends MessagingReceiver{
 		Log.d(TAG, "onNewEndpoint: New Endpoint " + endpoint + " for "+ instance);
 		AccountSession account = AccountSessionManager.getInstance().getLastActiveAccount();
 		if (account != null)
-			account.getPushSubscriptionManager().registerAccountForPush(null);
+			account.getPushSubscriptionManager().registerAccountForPush(null, endpoint);
 	}
 
 	@Override
