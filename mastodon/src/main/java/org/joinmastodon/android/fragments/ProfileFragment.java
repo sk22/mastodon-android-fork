@@ -624,19 +624,27 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		String acct = ((isSelf || account.isRemote)
 					? account.getFullyQualifiedName()
 					: account.acct);
+
+		ssb=new SpannableStringBuilder("@");
+		ssb.append(acct);
+		ssb.append(" ");
+
 		if(account.locked){
-			ssb=new SpannableStringBuilder("@");
-			ssb.append(acct);
-			ssb.append(" ");
 			Drawable lock=username.getResources().getDrawable(R.drawable.ic_lock, getActivity().getTheme()).mutate();
 			lock.setBounds(0, 0, lock.getIntrinsicWidth(), lock.getIntrinsicHeight());
 			lock.setTint(username.getCurrentTextColor());
 			ssb.append(getString(R.string.manually_approves_followers), new ImageSpan(lock, ImageSpan.ALIGN_BASELINE), 0);
-			username.setText(ssb);
-		}else{
-			// noinspection SetTextI18n
-			username.setText('@'+acct);
 		}
+
+		if(account.bot){
+			Drawable botIcon=username.getResources().getDrawable(R.drawable.ic_fluent_bot_16_filled, getActivity().getTheme()).mutate();
+			botIcon.setBounds(0, 0, botIcon.getIntrinsicWidth(), botIcon.getIntrinsicHeight());
+			botIcon.setTint(username.getCurrentTextColor());
+			ssb.append(getString(R.string.sk_icon_bot), new ImageSpan(botIcon, ImageSpan.ALIGN_BASELINE), 0);
+		}
+
+		username.setText(ssb);
+
 		CharSequence parsedBio=HtmlParser.parse(account.note, account.emojis, Collections.emptyList(), Collections.emptyList(), accountID);
 		if(TextUtils.isEmpty(parsedBio)){
 			bio.setVisibility(View.GONE);
