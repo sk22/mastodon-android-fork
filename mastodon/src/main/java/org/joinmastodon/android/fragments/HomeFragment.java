@@ -126,19 +126,19 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 		tabBar.setListeners(this::onTabSelected, this::onTabLongClick);
 		tabBarWrap=content.findViewById(R.id.tabbar_wrap);
 
-		View[] tabs={
-				tabBar.findViewById(R.id.tab_home),
-				tabBar.findViewById(R.id.tab_search),
-				tabBar.findViewById(R.id.tab_notifications),
-				tabBar.findViewById(R.id.tab_profile)
-		};
-
 		// this one's for the pill haters (https://m3.material.io/components/navigation-bar/overview)
 		if(GlobalUserPreferences.disableM3PillActiveIndicator){
 			tabBar.findViewById(R.id.tab_home_pill).setBackground(null);
 			tabBar.findViewById(R.id.tab_search_pill).setBackground(null);
 			tabBar.findViewById(R.id.tab_notifications_pill).setBackground(null);
 			tabBar.findViewById(R.id.tab_profile_pill).setBackgroundResource(R.drawable.bg_tab_profile);
+
+			View[] tabs={
+					tabBar.findViewById(R.id.tab_home),
+					tabBar.findViewById(R.id.tab_search),
+					tabBar.findViewById(R.id.tab_notifications),
+					tabBar.findViewById(R.id.tab_profile)
+			};
 
 			for(View tab : tabs){
 				tab.setBackgroundResource(R.drawable.bg_tabbar_tab_ripple);
@@ -152,10 +152,6 @@ public class HomeFragment extends AppKitFragment implements OnBackPressedListene
 			tabBar.findViewById(R.id.tab_search_label).setVisibility(View.GONE);
 			tabBar.findViewById(R.id.tab_notifications_label).setVisibility(View.GONE);
 			tabBar.findViewById(R.id.tab_profile_label).setVisibility(View.GONE);
-			for(View tab : tabs){
-				tab.setPadding(tab.getPaddingLeft(), tab.getPaddingTop(), tab.getPaddingRight(), tabBar.getPaddingBottom());
-			}
-			tabBar.setPadding(tabBar.getPaddingLeft(), tabBar.getPaddingTop(), tabBar.getPaddingRight(), 4);
 		}
 
 		tabBarAvatar=tabBar.findViewById(R.id.tab_profile_ava);
