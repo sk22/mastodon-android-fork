@@ -173,6 +173,16 @@
 			android:textColor="?colorM3OnSurfaceVariant"
 			tools:text="\@Gargron@mastodon.social"/>
 
+		<ImageView
+			android:id="@+id/bot_icon"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:visibility="gone"
+			android:importantForAccessibility="no"
+			android:contentDescription="@string/sk_icon_bot"
+			android:layout_marginTop="2dp"
+			android:src="@drawable/ic_fluent_bot_16_filled" />
+
 		<TextView
 			android:id="@+id/separator"
 			android:layout_width="wrap_content"

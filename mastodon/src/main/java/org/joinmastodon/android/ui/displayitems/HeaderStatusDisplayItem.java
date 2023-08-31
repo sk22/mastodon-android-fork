@@ -134,7 +134,7 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 	public static class Holder extends StatusDisplayItem.Holder<HeaderStatusDisplayItem> implements ImageLoaderViewHolder{
 		private final TextView name, time, username, extraText, pronouns;
 		private final View collapseBtn, timeUsernameSeparator;
-		private final ImageView avatar, more, visibility, deleteNotification, unreadIndicator, markAsRead, collapseBtnIcon;
+		private final ImageView avatar, more, visibility, deleteNotification, unreadIndicator, markAsRead, collapseBtnIcon, botIcon;
 		private final PopupMenu optionsMenu;
 		private Relationship relationship;
 		private APIRequest<?> currentRelationshipRequest;
@@ -148,6 +148,7 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 			name=findViewById(R.id.name);
 			time=findViewById(R.id.time);
 			username=findViewById(R.id.username);
+			botIcon=findViewById(R.id.bot_icon);
 			timeUsernameSeparator=findViewById(R.id.separator);
 			avatar=findViewById(R.id.avatar);
 			more=findViewById(R.id.more);
@@ -321,6 +322,9 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 			this.timeUsernameSeparator.setVisibility(time==null ? View.GONE : View.VISIBLE);
 			this.time.setVisibility(time==null ? View.GONE : View.VISIBLE);
 			if(time!=null) this.time.setText(time);
+
+			botIcon.setVisibility(item.user.bot ? View.VISIBLE : View.GONE);
+			botIcon.setColorFilter(username.getCurrentTextColor());
 
 			deleteNotification.setVisibility(GlobalUserPreferences.enableDeleteNotifications && item.notification!=null && !item.inset ? View.VISIBLE : View.GONE);
 			if (item.hasVisibilityToggle){
