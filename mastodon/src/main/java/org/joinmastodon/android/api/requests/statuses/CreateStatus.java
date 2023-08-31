@@ -36,6 +36,7 @@ public class CreateStatus extends MastodonAPIRequest<Status>{
 
 	public static class Request{
 		public String status;
+		public List<MediaAttribute> mediaAttributes;
 		public List<String> mediaIds;
 		public Poll poll;
 		public String inReplyToId;
@@ -54,6 +55,18 @@ public class CreateStatus extends MastodonAPIRequest<Status>{
 			public int expiresIn;
 			public boolean multiple;
 			public boolean hideTotals;
+		}
+
+		public static class MediaAttribute{
+			public String id;
+			public String description;
+			public String focus;
+
+			public MediaAttribute(String id, String description, String focus){
+				this.id=id;
+				this.description=description;
+				this.focus=focus;
+			}
 		}
 	}
 }

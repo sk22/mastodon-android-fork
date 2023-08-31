@@ -1066,6 +1066,9 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		req.scheduledAt=scheduledAt;
 		if(!mediaViewController.isEmpty()){
 			req.mediaIds=mediaViewController.getAttachmentIDs();
+			if(editingStatus != null){
+				req.mediaAttributes=mediaViewController.getAttachmentAttributes();
+			}
 		}
 		// ask whether to publish now when editing an existing draft
 		if (!force && editingStatus != null && scheduledAt != null && scheduledAt.isAfter(DRAFTS_AFTER_INSTANT)) {
