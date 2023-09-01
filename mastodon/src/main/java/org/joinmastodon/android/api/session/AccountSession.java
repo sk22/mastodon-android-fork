@@ -146,6 +146,8 @@ public class AccountSession{
 					@Override
 					public void onError(ErrorResponse error){
 						Log.w(TAG, "Failed to load preferences for account "+getID()+": "+error);
+						if (preferences==null)
+							preferences=new Preferences();
 					}
 				})
 				.exec(getID());
