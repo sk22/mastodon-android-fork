@@ -167,17 +167,56 @@
 
 				</org.joinmastodon.android.ui.views.AutoOrientationLinearLayout>
 
-				<TextView
-					android:id="@+id/username"
+				<org.joinmastodon.android.ui.views.AutoOrientationLinearLayout
+					android:id="@+id/username_wrap"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_marginLeft="16dp"
-					android:paddingTop="2dp"
-					android:paddingBottom="8dp"
-					android:layout_marginRight="16dp"
-					android:textAppearance="@style/m3_title_small"
-					android:textColor="?colorM3OnSurfaceVariant"
-					tools:text="\@Gargron" />
+					android:layout_marginStart="16dp"
+					android:layout_marginEnd="12dp"
+					android:layout_marginBottom="8dp">
+
+					<TextView
+						android:id="@+id/username"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="2dp"
+						android:layout_marginEnd="4dp"
+						android:maxLines="1"
+						android:ellipsize="end"
+						android:textAppearance="@style/m3_title_small"
+						android:textColor="?colorM3OnSurfaceVariant"
+						tools:text="\@Gargron" />
+
+					<LinearLayout
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:layout_marginTop="2dp">
+
+						<ImageView
+							android:id="@+id/lock_icon"
+							android:layout_width="18sp"
+							android:layout_height="18sp"
+							android:layout_marginEnd="4dp"
+							android:layout_gravity="center_vertical"
+							android:visibility="gone"
+							android:importantForAccessibility="no"
+							android:contentDescription="@string/manually_approves_followers"
+							android:src="@drawable/ic_fluent_lock_closed_20_filled" />
+
+						<ImageView
+							android:id="@+id/bot_icon"
+							android:layout_width="18sp"
+							android:layout_height="18sp"
+							android:layout_marginEnd="4dp"
+							android:layout_gravity="center_vertical"
+							android:visibility="gone"
+							android:importantForAccessibility="no"
+							android:contentDescription="@string/sk_icon_bot"
+							android:src="@drawable/ic_fluent_bot_20_filled" />
+
+					</LinearLayout>
+
+				</org.joinmastodon.android.ui.views.AutoOrientationLinearLayout>
 
 				<org.joinmastodon.android.ui.views.LinkedTextView
 					android:id="@+id/bio"

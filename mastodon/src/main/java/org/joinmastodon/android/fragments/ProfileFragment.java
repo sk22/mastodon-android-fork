@@ -4,10 +4,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.assist.AssistContent;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -131,6 +133,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 	private CoverImageView cover;
 	private View avatarBorder;
 	private TextView name, username, bio, followersCount, followersLabel, followingCount, followingLabel;
+	private ImageView lockIcon, botIcon;
 	private ProgressBarButton actionButton, notifyButton;
 	private ViewPager2 pager;
 	private NestedRecyclerScrollView scrollView;
@@ -230,6 +233,8 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		avatarBorder=content.findViewById(R.id.avatar_border);
 		name=content.findViewById(R.id.name);
 		username=content.findViewById(R.id.username);
+		lockIcon=content.findViewById(R.id.lock_icon);
+		botIcon=content.findViewById(R.id.bot_icon);
 		bio=content.findViewById(R.id.bio);
 		followersCount=content.findViewById(R.id.followers_count);
 		followersLabel=content.findViewById(R.id.followers_label);
@@ -347,7 +352,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		followersBtn.setOnClickListener(this::onFollowersOrFollowingClick);
 		followingBtn.setOnClickListener(this::onFollowersOrFollowingClick);
 
-		username.setOnClickListener(v->{
+		content.findViewById(R.id.username_wrap).setOnClickListener(v->{
 			try {
 				new GetInstance()
 						.setCallback(new Callback<>(){
@@ -368,7 +373,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 						.execRemote(Uri.parse(account.url).getHost());
 			} catch (NullPointerException ignored) {
 				// maybe the url was malformed?
-				Toast.makeText(getContext(), R.string.error, Toast.LENGTH_SHORT);
+				Toast.makeText(getContext(), R.string.error, Toast.LENGTH_SHORT).show();
 			}
 		});
 
@@ -592,6 +597,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		}
 	}
 
+	@SuppressLint("SetTextI18n")
 	private void bindHeaderView(){
 		setTitle(account.displayName);
 		setSubtitle(getResources().getQuantityString(R.plurals.x_posts, (int)(account.statusesCount%1000), account.statusesCount));
@@ -625,25 +631,13 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 					? account.getFullyQualifiedName()
 					: account.acct);
 
-		ssb=new SpannableStringBuilder("@");
-		ssb.append(acct);
-		ssb.append(" ");
+		username.setText('@'+acct);
 
-		if(account.locked){
-			Drawable lock=username.getResources().getDrawable(R.drawable.ic_lock, getActivity().getTheme()).mutate();
-			lock.setBounds(0, 0, lock.getIntrinsicWidth(), lock.getIntrinsicHeight());
-			lock.setTint(username.getCurrentTextColor());
-			ssb.append(getString(R.string.manually_approves_followers), new ImageSpan(lock, ImageSpan.ALIGN_BASELINE), 0);
-		}
+		lockIcon.setVisibility(account.locked ? View.VISIBLE : View.GONE);
+		lockIcon.setImageTintList(ColorStateList.valueOf(username.getCurrentTextColor()));
 
-		if(account.bot){
-			Drawable botIcon=username.getResources().getDrawable(R.drawable.ic_fluent_bot_16_filled, getActivity().getTheme()).mutate();
-			botIcon.setBounds(0, 0, botIcon.getIntrinsicWidth(), botIcon.getIntrinsicHeight());
-			botIcon.setTint(username.getCurrentTextColor());
-			ssb.append(getString(R.string.sk_icon_bot), new ImageSpan(botIcon, ImageSpan.ALIGN_BASELINE), 0);
-		}
-
-		username.setText(ssb);
+		botIcon.setVisibility(account.bot ? View.VISIBLE : View.GONE);
+		botIcon.setImageTintList(ColorStateList.valueOf(username.getCurrentTextColor()));
 
 		CharSequence parsedBio=HtmlParser.parse(account.note, account.emojis, Collections.emptyList(), Collections.emptyList(), accountID);
 		if(TextUtils.isEmpty(parsedBio)){
