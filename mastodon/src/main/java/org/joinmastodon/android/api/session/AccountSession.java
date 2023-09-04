@@ -312,8 +312,8 @@ public class AccountSession{
 	}
 
 	public String getDefaultAvatarUrl() {
-		Optional<Instance> optionalInstance = getInstance();
-		return optionalInstance.map(instance -> "https://" + domain + (instance.isAkkoma() ? "/images/avi.png" : "/avatars/original/missing.png"))
+		return getInstance()
+				.map(instance->"https://"+domain+(instance.isAkkoma() ? "/images/avi.png" : "/avatars/original/missing.png"))
 				.orElse("");
 	}
 }
