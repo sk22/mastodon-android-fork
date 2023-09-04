@@ -1,5 +1,8 @@
 package org.joinmastodon.android.ui.displayitems;
 
+import static org.joinmastodon.android.api.session.AccountLocalPreferences.ShowEmojiReactions.ALWAYS;
+import static org.joinmastodon.android.api.session.AccountLocalPreferences.ShowEmojiReactions.ONLY_OPENED;
+
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
@@ -12,6 +15,7 @@ import android.view.ViewGroup;
 
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
+import org.joinmastodon.android.api.session.AccountLocalPreferences;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.fragments.HashtagTimelineFragment;
@@ -49,8 +53,8 @@ import me.grishka.appkit.views.UsableRecyclerView;
 
 public abstract class StatusDisplayItem{
 	public final String parentID;
-	public final BaseStatusListFragment parentFragment;
-	public boolean inset;
+	public final BaseStatusListFragment<?> parentFragment;
+	public boolean inset, insetPadding=true;
 	public int index;
 	public boolean
 			hasDescendantNeighbor = false,
@@ -78,7 +82,7 @@ public abstract class StatusDisplayItem{
 		this.isDirectDescendant = isDirectDescendant;
 	}
 
-	public StatusDisplayItem(String parentID, BaseStatusListFragment parentFragment){
+	public StatusDisplayItem(String parentID, BaseStatusListFragment<?> parentFragment){
 		this.parentID=parentID;
 		this.parentFragment=parentFragment;
 	}
@@ -118,19 +122,6 @@ public abstract class StatusDisplayItem{
 			case NOTIFICATION_HEADER -> new NotificationHeaderStatusDisplayItem.Holder(activity, parent);
 			case DUMMY -> new DummyStatusDisplayItem.Holder(activity);
 		};
-	}
-
-	public static ArrayList<StatusDisplayItem> buildItems(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parentObject, Map<String, Account> knownAccounts, boolean inset, boolean showReactions, boolean addFooter, boolean disableTranslate, FilterContext filterContext) {
-		int flags=0;
-		if(inset)
-			flags|=FLAG_INSET;
-		if(!addFooter)
-			flags|=FLAG_NO_FOOTER;
-		if (disableTranslate)
-			flags|=FLAG_NO_TRANSLATE;
-		if (!showReactions)
-			flags|=FLAG_NO_EMOJI_REACTIONS;
-		return buildItems(fragment, status, accountID, parentObject, knownAccounts, filterContext, flags);
 	}
 
 	public static ReblogOrReplyLineStatusDisplayItem buildReplyLine(BaseStatusListFragment<?> fragment, Status status, String accountID, DisplayItemsParent parent, Account account, boolean threadReply) {
@@ -226,7 +217,7 @@ public abstract class StatusDisplayItem{
 		}
 
 		ArrayList<StatusDisplayItem> contentItems;
-		if(!TextUtils.isEmpty(statusForContent.spoilerText)){
+		if(statusForContent.hasSpoiler()){
 			if (AccountSessionManager.get(accountID).getLocalPreferences().revealCWs) statusForContent.spoilerRevealed = true;
 			SpoilerStatusDisplayItem spoilerItem=new SpoilerStatusDisplayItem(parentID, fragment, null, statusForContent, Type.SPOILER);
 			items.add(spoilerItem);
@@ -254,7 +245,7 @@ public abstract class StatusDisplayItem{
 		}else if(!hasSpoiler && header!=null){
 			header.needBottomPadding=true;
 		}else if(hasSpoiler){
-			contentItems.add(new DummyStatusDisplayItem(parentID, fragment, true));
+			contentItems.add(new DummyStatusDisplayItem(parentID, fragment));
 		}
 
 		List<Attachment> imageAttachments=statusForContent.mediaAttachments.stream().filter(att->att.type.isImage()).collect(Collectors.toList());
@@ -290,12 +281,16 @@ public abstract class StatusDisplayItem{
 		if(contentItems!=items && statusForContent.spoilerRevealed){
 			items.addAll(contentItems);
 		}
-		if((flags & FLAG_NO_EMOJI_REACTIONS)==0 && AccountSessionManager.get(accountID).getLocalPreferences().emojiReactionsEnabled){
+		AccountLocalPreferences lp=fragment.getLocalPrefs();
+		if((flags & FLAG_NO_EMOJI_REACTIONS)==0 && lp.emojiReactionsEnabled &&
+				(lp.showEmojiReactions!=ONLY_OPENED || fragment instanceof ThreadFragment)){
 			boolean isMainStatus=fragment instanceof ThreadFragment t && t.getMainStatus().id.equals(statusForContent.id);
-			items.add(new EmojiReactionsStatusDisplayItem(parentID, fragment, statusForContent, accountID, !isMainStatus));
+			boolean showAddButton=lp.showEmojiReactions==ALWAYS || isMainStatus;
+			items.add(new EmojiReactionsStatusDisplayItem(parentID, fragment, statusForContent, accountID, !showAddButton, false));
 		}
+		FooterStatusDisplayItem footer=null;
 		if((flags & FLAG_NO_FOOTER)==0){
-			FooterStatusDisplayItem footer=new FooterStatusDisplayItem(parentID, fragment, statusForContent, accountID);
+			footer=new FooterStatusDisplayItem(parentID, fragment, statusForContent, accountID);
 			footer.hideCounts=hideCounts;
 			items.add(footer);
 			if(status.hasGapAfter && !(fragment instanceof ThreadFragment))
@@ -304,10 +299,12 @@ public abstract class StatusDisplayItem{
 		int i=1;
 		boolean inset=(flags & FLAG_INSET)!=0;
 		// add inset dummy so last content item doesn't clip out of inset bounds
-		if (inset) {
-			items.add(new DummyStatusDisplayItem(parentID, fragment,
-					!contentItems.isEmpty() && contentItems
-							.get(contentItems.size() - 1) instanceof MediaGridStatusDisplayItem));
+		if((inset || footer==null) && (flags & FLAG_CHECKABLE)==0){
+			items.add(new DummyStatusDisplayItem(parentID, fragment));
+			// in case we ever need the dummy to display a margin for the media grid again:
+			// (i forgot why we apparently don't need this anymore)
+			// !contentItems.isEmpty() && contentItems
+			// 	.get(contentItems.size() - 1) instanceof MediaGridStatusDisplayItem));
 		}
 		for(StatusDisplayItem item:items){
 			item.inset=inset;
@@ -382,6 +379,35 @@ public abstract class StatusDisplayItem{
 		@Override
 		public void onClick(){
 			item.parentFragment.onItemClick(item.parentID);
+		}
+
+		public Optional<StatusDisplayItem> getNextVisibleDisplayItem(){
+			Optional<StatusDisplayItem> next=getNextDisplayItem();
+			for(int offset=1; next.isPresent(); next=getDisplayItemOffset(++offset)){
+				if(!next.map(n->
+						(n instanceof EmojiReactionsStatusDisplayItem e && e.isHidden()) ||
+						(n instanceof DummyStatusDisplayItem)
+				).orElse(false)) return next;
+			}
+			return Optional.empty();
+		}
+
+		public Optional<StatusDisplayItem> getNextDisplayItem(){
+			return getDisplayItemOffset(1);
+		}
+
+		public Optional<StatusDisplayItem> getDisplayItemOffset(int offset){
+			int nextPos=getAbsoluteAdapterPosition() + offset;
+			List<StatusDisplayItem> displayItems=item.parentFragment.getDisplayItems();
+			return displayItems.size() > nextPos
+					? Optional.of(displayItems.get(nextPos))
+					: Optional.empty();
+		}
+
+		public boolean isLastDisplayItemForStatus(){
+			return getNextVisibleDisplayItem()
+					.map(n->!n.parentID.equals(item.parentID))
+					.orElse(true);
 		}
 
 		@Override

@@ -4,10 +4,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.assist.AssistContent;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -131,6 +133,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 	private CoverImageView cover;
 	private View avatarBorder;
 	private TextView name, username, bio, followersCount, followersLabel, followingCount, followingLabel;
+	private ImageView lockIcon, botIcon;
 	private ProgressBarButton actionButton, notifyButton;
 	private ViewPager2 pager;
 	private NestedRecyclerScrollView scrollView;
@@ -230,6 +233,8 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		avatarBorder=content.findViewById(R.id.avatar_border);
 		name=content.findViewById(R.id.name);
 		username=content.findViewById(R.id.username);
+		lockIcon=content.findViewById(R.id.lock_icon);
+		botIcon=content.findViewById(R.id.bot_icon);
 		bio=content.findViewById(R.id.bio);
 		followersCount=content.findViewById(R.id.followers_count);
 		followersLabel=content.findViewById(R.id.followers_label);
@@ -258,6 +263,8 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		list=content.findViewById(R.id.metadata);
 		rolesView=content.findViewById(R.id.roles);
 
+		avatarBorder.setOutlineProvider(OutlineProviders.roundedRect(26));
+		avatarBorder.setClipToOutline(true);
 		avatar.setOutlineProvider(OutlineProviders.roundedRect(24));
 		avatar.setClipToOutline(true);
 
@@ -345,7 +352,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		followersBtn.setOnClickListener(this::onFollowersOrFollowingClick);
 		followingBtn.setOnClickListener(this::onFollowersOrFollowingClick);
 
-		username.setOnClickListener(v->{
+		content.findViewById(R.id.username_wrap).setOnClickListener(v->{
 			try {
 				new GetInstance()
 						.setCallback(new Callback<>(){
@@ -366,11 +373,11 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 						.execRemote(Uri.parse(account.url).getHost());
 			} catch (NullPointerException ignored) {
 				// maybe the url was malformed?
-				Toast.makeText(getContext(), R.string.error, Toast.LENGTH_SHORT);
+				Toast.makeText(getContext(), R.string.error, Toast.LENGTH_SHORT).show();
 			}
 		});
 
-		username.setOnLongClickListener(v->{
+		content.findViewById(R.id.username_wrap).setOnLongClickListener(v->{
 			String usernameString=account.acct;
 			if(!usernameString.contains("@")){
 				usernameString+="@"+domain;
@@ -590,10 +597,14 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		}
 	}
 
+	@SuppressLint("SetTextI18n")
 	private void bindHeaderView(){
 		setTitle(account.displayName);
 		setSubtitle(getResources().getQuantityString(R.plurals.x_posts, (int)(account.statusesCount%1000), account.statusesCount));
-		ViewImageLoader.load(avatar, null, new UrlImageLoaderRequest(GlobalUserPreferences.playGifs ? account.avatar : account.avatarStatic, V.dp(100), V.dp(100)));
+		ViewImageLoader.load(avatar, null, new UrlImageLoaderRequest(
+				TextUtils.isEmpty(account.avatar) ? getSession().getDefaultAvatarUrl() :
+						GlobalUserPreferences.playGifs ? account.avatar : account.avatarStatic,
+				V.dp(100), V.dp(100)));
 		ViewImageLoader.load(cover, null, new UrlImageLoaderRequest(GlobalUserPreferences.playGifs ? account.header : account.headerStatic, 1000, 1000));
 		SpannableStringBuilder ssb=new SpannableStringBuilder(account.displayName);
 		if(AccountSessionManager.get(accountID).getLocalPreferences().customEmojiInNames)
@@ -622,19 +633,15 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		String acct = ((isSelf || account.isRemote)
 					? account.getFullyQualifiedName()
 					: account.acct);
-		if(account.locked){
-			ssb=new SpannableStringBuilder("@");
-			ssb.append(acct);
-			ssb.append(" ");
-			Drawable lock=username.getResources().getDrawable(R.drawable.ic_lock, getActivity().getTheme()).mutate();
-			lock.setBounds(0, 0, lock.getIntrinsicWidth(), lock.getIntrinsicHeight());
-			lock.setTint(username.getCurrentTextColor());
-			ssb.append(getString(R.string.manually_approves_followers), new ImageSpan(lock, ImageSpan.ALIGN_BASELINE), 0);
-			username.setText(ssb);
-		}else{
-			// noinspection SetTextI18n
-			username.setText('@'+acct);
-		}
+
+		username.setText('@'+acct);
+
+		lockIcon.setVisibility(account.locked ? View.VISIBLE : View.GONE);
+		lockIcon.setImageTintList(ColorStateList.valueOf(username.getCurrentTextColor()));
+
+		botIcon.setVisibility(account.bot ? View.VISIBLE : View.GONE);
+		botIcon.setImageTintList(ColorStateList.valueOf(username.getCurrentTextColor()));
+
 		CharSequence parsedBio=HtmlParser.parse(account.note, account.emojis, Collections.emptyList(), Collections.emptyList(), accountID);
 		if(TextUtils.isEmpty(parsedBio)){
 			bio.setVisibility(View.GONE);
@@ -1057,7 +1064,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		actionButton.setText(R.string.save_changes);
 		pager.setVisibility(View.GONE);
 		tabbar.setVisibility(View.GONE);
-		Drawable overlay=getResources().getDrawable(R.drawable.edit_avatar_overlay).mutate();
+		Drawable overlay=getResources().getDrawable(R.drawable.edit_avatar_overlay, getActivity().getTheme()).mutate();
 		avatar.setForeground(overlay);
 		updateMetadataHeight();
 
@@ -1076,6 +1083,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		);
 
 		name.setVisibility(View.GONE);
+		rolesView.setVisibility(View.GONE);
 		username.setVisibility(View.GONE);
 		bio.setVisibility(View.GONE);
 		countersLayout.setVisibility(View.GONE);
@@ -1124,6 +1132,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		nameEditWrap.setVisibility(View.GONE);
 		bioEditWrap.setVisibility(View.GONE);
 		name.setVisibility(View.VISIBLE);
+		rolesView.setVisibility(View.VISIBLE);
 		username.setVisibility(View.VISIBLE);
 		bio.setVisibility(View.VISIBLE);
 		countersLayout.setVisibility(View.VISIBLE);
@@ -1223,7 +1232,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			if(ava==null)
 				return;
 			int radius=V.dp(25);
-			currentPhotoViewer=new PhotoViewer(getActivity(), createFakeAttachments(account.avatar, ava), 0,
+			currentPhotoViewer=new PhotoViewer(getActivity(), createFakeAttachments(TextUtils.isEmpty(account.avatar) ? getSession().getDefaultAvatarUrl() : account.avatar, ava), 0,
 					new SingleImagePhotoViewerListener(avatar, avatarBorder, new int[]{radius, radius, radius, radius}, this, ()->currentPhotoViewer=null, ()->ava, null, null));
 		}
 	}
@@ -1424,16 +1433,14 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		}
 	}
 
-	private class AboutViewHolder extends BaseViewHolder implements ImageLoaderViewHolder {
+	private class AboutViewHolder extends BaseViewHolder implements ImageLoaderViewHolder{
 		private final TextView title;
 		private final LinkedTextView value;
-//		private final ImageView verifiedIcon;
 
 		public AboutViewHolder(){
 			super(R.layout.item_profile_about);
 			title=findViewById(R.id.title);
 			value=findViewById(R.id.value);
-//			verifiedIcon=findViewById(R.id.verified_icon);
 		}
 
 		@Override
@@ -1441,7 +1448,18 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			super.onBind(item);
 			title.setText(item.parsedName);
 			value.setText(item.parsedValue);
-//			verifiedIcon.setVisibility(item.verifiedAt!=null ? View.VISIBLE : View.GONE);
+			if(item.verifiedAt!=null){
+				int textColor=UiUtils.isDarkTheme() ? 0xFF89bb9c : 0xFF5b8e63;
+				value.setTextColor(textColor);
+				value.setLinkTextColor(textColor);
+				Drawable check=getResources().getDrawable(R.drawable.ic_fluent_checkmark_starburst_20_regular, getActivity().getTheme()).mutate();
+				check.setTint(textColor);
+				value.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, check, null);
+			}else{
+				value.setTextColor(UiUtils.getThemeColor(getActivity(), android.R.attr.textColorPrimary));
+				value.setLinkTextColor(UiUtils.getThemeColor(getActivity(), android.R.attr.colorAccent));
+				value.setCompoundDrawables(null, null, null, null);
+			}
 		}
 
 		@Override

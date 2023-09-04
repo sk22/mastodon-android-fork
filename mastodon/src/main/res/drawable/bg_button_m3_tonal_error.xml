@@ -2,7 +2,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 	<item android:state_enabled="true">
 		<ripple android:color="@color/m3_on_secondary_container_overlay">
-			<item>
+			<item android:gravity="center_vertical" android:height="40dp">
 				<shape>
 					<solid android:color="?colorM3ErrorContainer"/>
 					<corners android:radius="20dp"/>
@@ -11,9 +11,13 @@
 		</ripple>
 	</item>
 	<item>
-		<shape>
-			<solid android:color="?colorM3DisabledBackground"/>
-			<corners android:radius="20dp"/>
-		</shape>
+		<layer-list>
+			<item android:gravity="center_vertical" android:height="40dp">
+				<shape>
+					<solid android:color="?colorM3DisabledBackground"/>
+					<corners android:radius="20dp"/>
+				</shape>
+			</item>
+		</layer-list>
 	</item>
 </selector>

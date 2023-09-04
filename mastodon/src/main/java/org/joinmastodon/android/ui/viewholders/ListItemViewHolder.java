@@ -40,11 +40,9 @@ public abstract class ListItemViewHolder<T extends ListItem<?>> extends Bindable
 
 		if(TextUtils.isEmpty(item.subtitle) && item.subtitleRes==0){
 			subtitle.setVisibility(View.GONE);
-			title.setMaxLines(2);
 			view.setMinimumHeight(V.dp(56));
 		}else{
 			subtitle.setVisibility(View.VISIBLE);
-			title.setMaxLines(1);
 			view.setMinimumHeight(V.dp(72));
 			if(TextUtils.isEmpty(item.subtitle))
 				subtitle.setText(item.subtitleRes);

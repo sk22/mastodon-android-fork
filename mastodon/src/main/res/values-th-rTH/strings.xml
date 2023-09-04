@@ -354,7 +354,7 @@
 	<string name="spoiler_hide">ซ่อนใหม่</string>
 	<string name="poll_multiple_choice">เลือกจำนวนหนึ่งหรือมากกว่า</string>
 	<string name="save_changes">บันทึกการเปลี่ยนแปลง</string>
-	<string name="profile_featured">แนะนำ</string>
+	<string name="profile_featured">น่าสนใจ</string>
 	<string name="profile_timeline">เส้นเวลา</string>
 	<string name="view_all">ดูทั้งหมด</string>
 	<string name="profile_endorsed_accounts">บัญชี</string>
@@ -368,7 +368,7 @@
 	<string name="welcome_to_mastodon">ยินดีต้อนรับสู่ Mastodon</string>
 	<string name="welcome_paragraph1">Mastodon เป็นเครือข่ายสังคมแบบกระจายศูนย์ หมายความว่าไม่มีบริษัทใดควบคุมเครือข่ายสังคม เครือข่ายสังคมประกอบด้วยเซิร์ฟเวอร์ที่ทำงานอย่างอิสระจำนวนมาก ทั้งหมดเชื่อมต่อเข้าด้วยกัน</string>
 	<string name="what_are_servers">เซิร์ฟเวอร์คืออะไร?</string>
-	<string name="welcome_paragraph2"><![CDATA[ทุกบัญชี Mastodon ได้รับการโฮสต์ในเซิร์ฟเวอร์ — แต่ละแห่งมีค่า, กฎ และผู้ดูแลของเซิร์ฟเวอร์เอง ไม่ว่าคุณจะเลือกเซิร์ฟเวอร์ใด คุณสามารถติดตามและโต้ตอบกับผู้คนในเซิร์ฟเวอร์ใด ๆ]]></string>
+	<string name="welcome_paragraph2">ทุกบัญชี Mastodon ได้รับการโฮสต์ในเซิร์ฟเวอร์ — แต่ละแห่งมีค่า, กฎ และผู้ดูแลของเซิร์ฟเวอร์เอง ไม่ว่าคุณจะเลือกเซิร์ฟเวอร์ใด คุณสามารถติดตามและโต้ตอบกับผู้คนในเซิร์ฟเวอร์ใด ๆ</string>
 	<string name="opening_link">กำลังเปิดลิงก์…</string>
 	<string name="link_not_supported">ไม่รองรับลิงก์นี้ในแอป</string>
 	<string name="log_out_all_accounts">ออกจากระบบบัญชีทั้งหมด</string>
@@ -509,7 +509,7 @@
 	</plurals>
 	<string name="selection_2_options">%1$s และ %2$s</string>
 	<string name="selection_3_options">%1$s, %2$s และ %3$s</string>
-	<string name="selection_4_or_more">%1$s, %2$s และเพิ่มเติมอีก %3$d</string>
+	<string name="selection_4_or_more">%1$s, %2$s และอีก %3$d เพิ่มเติม</string>
 	<string name="filter_context_home_lists">หน้าแรกและรายการ</string>
 	<string name="filter_context_notifications">การแจ้งเตือน</string>
 	<string name="filter_context_public_timelines">เส้นเวลาสาธารณะ</string>

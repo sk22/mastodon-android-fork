@@ -213,6 +213,7 @@ public class AccountViewHolder extends BindableViewHolder<AccountViewModel> impl
 		Account account=item.account;
 
 		menu.findItem(R.id.share).setTitle(fragment.getString(R.string.share_user, account.getDisplayUsername()));
+		menu.findItem(R.id.manage_user_lists).setTitle(fragment.getString(R.string.sk_lists_with_user, account.getShortUsername()));
 		menu.findItem(R.id.mute).setTitle(fragment.getString(relationship.muting ? R.string.unmute_user : R.string.mute_user, account.getDisplayUsername()));
 		menu.findItem(R.id.block).setTitle(fragment.getString(relationship.blocking ? R.string.unblock_user : R.string.block_user, account.getDisplayUsername()));
 		menu.findItem(R.id.report).setTitle(fragment.getString(R.string.report_user, account.getDisplayUsername()));

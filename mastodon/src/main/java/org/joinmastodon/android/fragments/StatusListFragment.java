@@ -1,5 +1,7 @@
 package org.joinmastodon.android.fragments;
 
+import static org.joinmastodon.android.api.session.AccountLocalPreferences.ShowEmojiReactions.ONLY_OPENED;
+
 import android.content.res.Configuration;
 import android.os.Bundle;
 
@@ -7,7 +9,9 @@ import com.squareup.otto.Subscribe;
 
 import org.joinmastodon.android.E;
 import org.joinmastodon.android.GlobalUserPreferences;
+import org.joinmastodon.android.api.session.AccountLocalPreferences;
 import org.joinmastodon.android.api.session.AccountSessionManager;
+import org.joinmastodon.android.events.EmojiReactionsUpdatedEvent;
 import org.joinmastodon.android.events.PollUpdatedEvent;
 import org.joinmastodon.android.events.RemoveAccountPostsEvent;
 import org.joinmastodon.android.events.StatusCountersUpdatedEvent;
@@ -20,6 +24,7 @@ import org.joinmastodon.android.ui.displayitems.EmojiReactionsStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.ExtendedFooterStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.FooterStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.StatusDisplayItem;
+import org.joinmastodon.android.ui.displayitems.TextStatusDisplayItem;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -36,9 +41,10 @@ public abstract class StatusListFragment extends BaseStatusListFragment<Status> 
 	protected List<StatusDisplayItem> buildDisplayItems(Status s){
 		boolean isMainThreadStatus = this instanceof ThreadFragment t && s.id.equals(t.mainStatus.id);
 		int flags = 0;
+		AccountLocalPreferences lp=getLocalPrefs();
 		if (GlobalUserPreferences.spectatorMode)
 			flags |= StatusDisplayItem.FLAG_NO_FOOTER;
-		if (!getLocalPrefs().showEmojiReactionsInLists)
+		if (!lp.emojiReactionsEnabled || lp.showEmojiReactions==ONLY_OPENED)
 			flags |= StatusDisplayItem.FLAG_NO_EMOJI_REACTIONS;
 		return StatusDisplayItem.buildItems(this, s, accountID, s, knownAccounts, getFilterContext(), isMainThreadStatus ? 0 : flags);
 	}
@@ -223,8 +229,30 @@ public abstract class StatusListFragment extends BaseStatusListFragment<Status> 
 							footer.rebind();
 						}else if(holder instanceof ExtendedFooterStatusDisplayItem.Holder footer && footer.getItem().status==s.getContentStatus()){
 							footer.rebind();
-						}else if(holder instanceof EmojiReactionsStatusDisplayItem.Holder reactions && reactions.getItem().status==s.getContentStatus() && ev.viewHolder!=holder){
+						}
+					}
+				}
+			}
+			for(Status s:preloadedData){
+				if(s.getContentStatus().id.equals(ev.id)){
+					s.getContentStatus().update(ev);
+					AccountSessionManager.get(accountID).getCacheController().updateStatus(s);
+				}
+			}
+		}
+
+		@Subscribe
+		public void onEmojiReactionsChanged(EmojiReactionsUpdatedEvent ev){
+			for(Status s:data){
+				if(s.getContentStatus().id.equals(ev.id)){
+					s.getContentStatus().update(ev);
+					AccountSessionManager.get(accountID).getCacheController().updateStatus(s);
+					for(int i=0;i<list.getChildCount();i++){
+						RecyclerView.ViewHolder holder=list.getChildViewHolder(list.getChildAt(i));
+						if(holder instanceof EmojiReactionsStatusDisplayItem.Holder reactions && reactions.getItem().status==s.getContentStatus() && ev.viewHolder!=holder){
 							reactions.rebind();
+						}else if(holder instanceof TextStatusDisplayItem.Holder text && text.getItem().parentID.equals(s.getID())){
+							text.rebind();
 						}
 					}
 				}

@@ -194,16 +194,12 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 
 			readMore.setText(item.status.textExpanded ? R.string.sk_collapse : R.string.sk_expand);
 
-			// remove additional padding when (transparently padded) translate button is visible
-			int nextPos = getAbsoluteAdapterPosition() + 1;
-			int bottomPadding=V.dp(12);
-			if(item.parentFragment.getDisplayItems().size() > nextPos){
-				if(item.parentFragment.getDisplayItems().get(nextPos) instanceof FooterStatusDisplayItem) bottomPadding=V.dp(6);
-				if(item.parentFragment.getDisplayItems().get(nextPos) instanceof EmojiReactionsStatusDisplayItem){
-					boolean reactionsHidden=item.status.reactions.isEmpty() && !(item.parentFragment instanceof ThreadFragment);
-					bottomPadding=reactionsHidden ? V.dp(6) : 0;
-				}
-			}
+			StatusDisplayItem next=getNextVisibleDisplayItem().orElse(null);
+			if(next!=null && !next.parentID.equals(item.parentID)) next=null;
+			int bottomPadding=next instanceof FooterStatusDisplayItem ? V.dp(6)
+					: item.inset ? V.dp(12)
+					: (next instanceof EmojiReactionsStatusDisplayItem || next==null) ? 0
+					: V.dp(12);
 			itemView.setPadding(itemView.getPaddingLeft(), itemView.getPaddingTop(), itemView.getPaddingRight(), bottomPadding);
 
 			if (!GlobalUserPreferences.collapseLongPosts) {
@@ -239,7 +235,7 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 
 			// compensate for spoiler's bottom margin
 			ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) itemView.getLayoutParams();
-			params.setMargins(params.leftMargin, (item.inset || GlobalUserPreferences.spectatorMode) && hasSpoiler ? V.dp(-16) : 0,
+			params.setMargins(params.leftMargin, item.inset && hasSpoiler ? V.dp(-16) : 0,
 					params.rightMargin, params.bottomMargin);
 		}
 

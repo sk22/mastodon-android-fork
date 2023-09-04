@@ -35,6 +35,7 @@
 	<attr name="colorProfileHeaderBackground" format="color"/>
 	<attr name="colorM3DarkOnSurface" format="color" />
 	<attr name="colorTabBarAlpha" format="color" />
+	<attr name="colorFilledCardAlpha" format="color" />
 
 	<attr name="colorPrimary25" format="color" />
 	<attr name="colorPrimary50" format="color" />

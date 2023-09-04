@@ -1,9 +1,11 @@
 package org.joinmastodon.android.model;
 
+import org.joinmastodon.android.api.ObjectValidationException;
 import org.joinmastodon.android.api.RequiredField;
 import org.parceler.Parcel;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Parcel
@@ -20,6 +22,7 @@ public class Announcement extends BaseModel implements DisplayItemsParent {
     public Instant updatedAt;
     public boolean read;
     public List<Emoji> emojis;
+	public List<EmojiReaction> reactions;
     public List<Mention> mentions;
     public List<Hashtag> tags;
 
@@ -41,10 +44,17 @@ public class Announcement extends BaseModel implements DisplayItemsParent {
                 '}';
     }
 
-    public Status toStatus() {
-        Status s = Status.ofFake(id, content, publishedAt);
-        s.createdAt = startsAt != null ? startsAt : publishedAt;
-        if (updatedAt != null) s.editedAt = updatedAt;
+	@Override
+	public void postprocess() throws ObjectValidationException{
+		super.postprocess();
+		if(reactions==null) reactions=new ArrayList<>();
+	}
+
+	public Status toStatus() {
+        Status s=Status.ofFake(id, content, publishedAt);
+        s.createdAt=startsAt != null ? startsAt : publishedAt;
+		s.reactions=reactions;
+        if(updatedAt != null) s.editedAt=updatedAt;
         return s;
     }
 

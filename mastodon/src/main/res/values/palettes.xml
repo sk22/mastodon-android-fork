@@ -28,6 +28,7 @@
 	</style>
 
 	<style name="ColorPalette">
+		<!-- https://m3.material.io/styles/color/the-color-system/tokens -->
 		<item name="colorM3Primary">?colorPrimary600</item>
 		<item name="colorM3OnPrimary">@color/white</item>
 		<item name="colorM3PrimaryContainer">?colorPrimary100</item>
@@ -56,6 +57,7 @@
 		<item name="colorBoost">?colorM3Primary</item>
 		<item name="colorPoll">@color/bookmark_selected</item>
 		<item name="colorTabBarAlpha">#14000000</item>
+		<item name="colorFilledCardAlpha">#22000000</item>
 
 		<item name="colorM3DisabledBackground">#1F1F1F1F</item>
 		<item name="colorM3Error">#B3261E</item>
@@ -151,6 +153,7 @@
 		<item name="colorM3SurfaceVariant">?colorNeutral900</item>
 		<item name="colorM3SecondaryContainer">?colorNeutral800</item>
 		<item name="colorTabBarAlpha">#00000000</item>
+		<item name="colorFilledCardAlpha">#00000000</item>
 	</style>
 
 	<style name="ColorPalette.Material3">
@@ -238,7 +241,7 @@
 		<item name="colorNeutral100">@color/m3_neutral2_100</item>
 		<item name="colorNeutral50t">@color/m3_neutral2_50t</item>
 		<item name="colorNeutral50">@color/m3_neutral2_50</item>
-		<item name="colorNeutral25">@color/m3_neutral2_25</item>
+		<item name="colorNeutral25">@color/m3_neutral2_10</item>
 	</style>
 
 	<style name="ColorPalette.Material3.Dark">

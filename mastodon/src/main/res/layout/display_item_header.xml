@@ -152,20 +152,62 @@
 
 	</org.joinmastodon.android.ui.views.HeaderSubtitleLinearLayout>
 
-	<TextView
-		android:id="@+id/time_and_username"
+	<org.joinmastodon.android.ui.views.HeaderSubtitleLinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:id="@+id/time_and_username"
 		android:layout_alignBottom="@id/avatar"
 		android:layout_marginEnd="8dp"
 		android:layout_toStartOf="@id/buttons"
 		android:layout_toEndOf="@id/avatar"
-		android:layout_marginBottom="3sp"
-		android:textAlignment="viewStart"
-		android:singleLine="true"
-		android:ellipsize="end"
-		android:textAppearance="@style/m3_body_medium"
-		android:textColor="?colorM3OnSurfaceVariant"
-		tools:text="9h ago · \@Gargron@mastodon.social"/>
+		android:layout_marginBottom="3sp">
+
+		<TextView
+			android:id="@+id/username"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAlignment="viewStart"
+			android:singleLine="true"
+			android:ellipsize="end"
+			android:textAppearance="@style/m3_body_medium"
+			android:textColor="?colorM3OnSurfaceVariant"
+			tools:text="\@Gargron@mastodon.social"/>
+
+		<ImageView
+			android:id="@+id/bot_icon"
+			android:layout_width="16sp"
+			android:layout_height="16sp"
+			android:layout_marginStart="4sp"
+			android:layout_gravity="center_vertical"
+			android:visibility="gone"
+			android:importantForAccessibility="no"
+			android:contentDescription="@string/sk_icon_bot"
+			android:src="@drawable/ic_fluent_bot_20_filled" />
+
+		<TextView
+			android:id="@+id/separator"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginHorizontal="4sp"
+			android:textAlignment="viewStart"
+			android:importantForAccessibility="no"
+			android:singleLine="true"
+			android:textAppearance="@style/m3_body_medium"
+			android:textColor="?colorM3OnSurfaceVariant"
+			android:text="@string/sk_separator"/>
+
+
+		<TextView
+			android:id="@+id/time"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAlignment="viewStart"
+			android:singleLine="true"
+			android:ellipsize="end"
+			android:textAppearance="@style/m3_body_medium"
+			android:textColor="?colorM3OnSurfaceVariant"
+			tools:text="9h ago"/>
+
+	</org.joinmastodon.android.ui.views.HeaderSubtitleLinearLayout>
 
 </RelativeLayout>

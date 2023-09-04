@@ -26,6 +26,7 @@ import org.joinmastodon.android.R;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.model.Attachment;
 import org.joinmastodon.android.model.Status;
+import org.joinmastodon.android.ui.OutlineProviders;
 import org.joinmastodon.android.ui.PhotoLayoutHelper;
 import org.joinmastodon.android.ui.drawables.SpoilerStripesDrawable;
 import org.joinmastodon.android.ui.photoviewer.PhotoViewerHost;
@@ -210,6 +211,10 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 				sensitiveText.setText(R.string.media_hidden);
 			else
 				sensitiveText.setText(R.string.sensitive_content_explain);
+
+			boolean insetAndLast=item.inset && isLastDisplayItemForStatus();
+			wrapper.setClipToOutline(insetAndLast);
+			wrapper.setOutlineProvider(insetAndLast ? OutlineProviders.bottomRoundedRect(12) : null);
 		}
 
 		@Override

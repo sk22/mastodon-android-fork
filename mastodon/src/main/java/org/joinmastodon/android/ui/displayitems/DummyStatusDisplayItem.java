@@ -4,16 +4,16 @@ import android.content.Context;
 import android.view.ViewGroup;
 import android.widget.Space;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 
 import me.grishka.appkit.utils.V;
 
 public class DummyStatusDisplayItem extends StatusDisplayItem {
-	private final boolean addMediaGridMargin;
 
-	public DummyStatusDisplayItem(String parentID, BaseStatusListFragment<?> parentFragment, boolean addMediaGridMargin) {
+	public DummyStatusDisplayItem(String parentID, BaseStatusListFragment<?> parentFragment) {
 		super(parentID, parentFragment);
-		this.addMediaGridMargin = addMediaGridMargin;
 	}
 
 	@Override
@@ -22,19 +22,21 @@ public class DummyStatusDisplayItem extends StatusDisplayItem {
 	}
 
 	public static class Holder extends StatusDisplayItem.Holder<DummyStatusDisplayItem> {
+		private final RecyclerView.LayoutParams params;
+
 		public Holder(Context context) {
 			super(new Space(context));
-		}
+			params=new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
 
-		@Override
-		public void onBind(DummyStatusDisplayItem item) {
 			// BetterItemAnimator appears not to handle InsetStatusItemDecoration's getItemOffsets
 			// correctly, causing removed inset views to jump while animating. i don't quite
 			// understand it, but this workaround appears to work.
 			// see InsetStatusItemDecoration#getItemOffsets
-			ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
-			params.setMargins(0, item.addMediaGridMargin ? V.dp(0) : 0, 0, V.dp(16));
+			params.setMargins(0, 0, 0, V.dp(16));
 			itemView.setLayoutParams(params);
 		}
+
+		@Override
+		public void onBind(DummyStatusDisplayItem item) {}
 	}
 }

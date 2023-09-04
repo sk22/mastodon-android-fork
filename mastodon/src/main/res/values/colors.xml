@@ -125,7 +125,7 @@
 	<color name="m3_neutral2_100">@color/gray_100</color>
 	<color name="m3_neutral2_50t">@color/gray_50t</color>
 	<color name="m3_neutral2_50">@color/gray_50</color>
-	<color name="m3_neutral2_25">@color/gray_25</color>
+	<color name="m3_neutral2_10">@color/gray_25</color>
 
 	<color name="m3_accent1_25">@color/primary_25</color>
 	<color name="m3_accent1_50">@color/primary_50</color>

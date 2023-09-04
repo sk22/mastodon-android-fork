@@ -310,4 +310,8 @@
     <string name="sk_instance_info_unavailable">Instance informatie tijdelijk niet beschikbaar</string>
     <string name="sk_settings_show_labels_in_navigation_bar">Toon tab labels op navigatiebalk</string>
     <string name="sk_tab_profile">Profiel</string>
+    <plurals name="sk_posts_count_label">
+        <item quantity="one">bericht</item>
+        <item quantity="other">berichten</item>
+    </plurals>
 </resources>

@@ -37,6 +37,16 @@ public class OutlineProviders{
 		}
 	};
 
+	private final static int BUTTON_BG_HEIGHT=V.dp(40);
+	public static final ViewOutlineProvider M3_BUTTON=new ViewOutlineProvider(){
+		@Override
+		public void getOutline(View view, Outline outline){
+			int viewHeight=view.getHeight();
+			int top=Math.floorDiv(viewHeight - BUTTON_BG_HEIGHT, 2);
+			outline.setRoundRect(0, top, view.getWidth(), top + BUTTON_BG_HEIGHT, V.dp(20));
+		}
+	};
+
 	public static ViewOutlineProvider roundedRect(int dp){
 		ViewOutlineProvider provider=roundedRects.get(dp);
 		if(provider!=null)

@@ -323,4 +323,12 @@
     <string name="sk_content_type_unspecified">Не указано</string>
     <string name="sk_bubble_timeline_info_banner">Это недавние посты из сети, управляемой администраторами этого сервера.</string>
     <string name="sk_search_fediverse">Искать в Федивёрсе</string>
+    <string name="sk_settings_unifiedpush">Использовать UnifiedPush</string>
+    <string name="sk_settings_unifiedpush_choose">Выберите распределитель</string>
+    <string name="sk_settings_unifiedpush_no_distributor_body">Для работы уведомлений Вам необходимо установить распределитель UnifiedPush. Подробности: https://unifiedpush.org/</string>
+    <string name="sk_content_type_mfm">MFM</string>
+    <string name="sk_settings_auto_reveal_equal_spoilers">Автоотображение идентичных предупреждений о содержимом в ответах</string>
+    <string name="sk_settings_prefix_replies_to_others">Только в ответ другим</string>
+    <string name="sk_settings_unifiedpush_no_distributor">Распределители не найдены</string>
+    <string name="sk_settings_content_types_explanation">Позволяет устанавливать тип содержимого вроде Markdown при создании поста. Имейте в виду, что это поддерживается не на всех серверах.</string>
 </resources>

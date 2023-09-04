@@ -15,6 +15,7 @@ import org.joinmastodon.android.E;
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.session.AccountSessionManager;
+import org.joinmastodon.android.events.EmojiReactionsUpdatedEvent;
 import org.joinmastodon.android.events.PollUpdatedEvent;
 import org.joinmastodon.android.events.RemoveAccountPostsEvent;
 import org.joinmastodon.android.events.StatusCountersUpdatedEvent;
@@ -27,10 +28,10 @@ import org.joinmastodon.android.ui.displayitems.ExtendedFooterStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.FooterStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.NotificationHeaderStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.StatusDisplayItem;
+import org.joinmastodon.android.ui.displayitems.TextStatusDisplayItem;
 import org.joinmastodon.android.ui.utils.DiscoverInfoBannerHelper;
 import org.joinmastodon.android.ui.utils.InsetStatusItemDecoration;
 import org.joinmastodon.android.ui.utils.UiUtils;
-import org.joinmastodon.android.utils.ElevationOnScrollListener;
 import org.joinmastodon.android.utils.ObjectIdComparator;
 import org.parceler.Parcels;
 
@@ -44,7 +45,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import me.grishka.appkit.api.SimpleCallback;
 import me.grishka.appkit.utils.MergeRecyclerAdapter;
-import me.grishka.appkit.views.FragmentRootLinearLayout;
 
 public class NotificationsListFragment extends BaseStatusListFragment<Notification> {
 	private boolean onlyMentions;
@@ -96,15 +96,13 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 		if (n.type == Notification.Type.FOLLOW_REQUEST) {
 			ArrayList<StatusDisplayItem> items = new ArrayList<>();
 			items.add(titleItem);
-			items.add(new AccountCardStatusDisplayItem(n.id, this, n.account, n));
+			items.add(new AccountCardStatusDisplayItem(n.id, this, accountID, n.account, n));
 			return items;
 		}
 		if(n.status!=null){
 			int flags=titleItem==null ? 0 : (StatusDisplayItem.FLAG_NO_FOOTER | StatusDisplayItem.FLAG_INSET | StatusDisplayItem.FLAG_NO_EMOJI_REACTIONS); // | StatusDisplayItem.FLAG_NO_HEADER);
 			if (GlobalUserPreferences.spectatorMode)
 				flags |= StatusDisplayItem.FLAG_NO_FOOTER;
-			if (!getLocalPrefs().showEmojiReactionsInLists)
-				flags |= StatusDisplayItem.FLAG_NO_EMOJI_REACTIONS;
 			ArrayList<StatusDisplayItem> items=StatusDisplayItem.buildItems(this, n.status, accountID, n, knownAccounts, null, flags);
 			if(titleItem!=null)
 				items.add(0, titleItem);
@@ -249,8 +247,7 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 	@Subscribe
 	public void onStatusCountersUpdated(StatusCountersUpdatedEvent ev){
 		for(Notification n:data){
-			if (n.status == null) continue;
-			if(n.status.getContentStatus().id.equals(ev.id)){
+			if(n.status!=null && n.status.getContentStatus().id.equals(ev.id)){
 				n.status.getContentStatus().update(ev);
 				AccountSessionManager.get(accountID).getCacheController().updateNotification(n);
 				for(int i=0;i<list.getChildCount();i++){
@@ -259,15 +256,36 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 						footer.rebind();
 					}else if(holder instanceof ExtendedFooterStatusDisplayItem.Holder footer && footer.getItem().status==n.status.getContentStatus()){
 						footer.rebind();
-					}else if(holder instanceof EmojiReactionsStatusDisplayItem.Holder reactions && ev.viewHolder!=holder){
-						reactions.rebind();
 					}
 				}
 			}
 		}
 		for(Notification n:preloadedData){
-			if (n.status == null) continue;
-			if(n.status.getContentStatus().id.equals(ev.id)){
+			if(n.status!=null && n.status.getContentStatus().id.equals(ev.id)){
+				n.status.getContentStatus().update(ev);
+				AccountSessionManager.get(accountID).getCacheController().updateNotification(n);
+			}
+		}
+	}
+
+	@Subscribe
+	public void onEmojiReactionsChanged(EmojiReactionsUpdatedEvent ev){
+		for(Notification n : data){
+			if(n.status!=null && n.status.getContentStatus().id.equals(ev.id)){
+				n.status.getContentStatus().update(ev);
+				AccountSessionManager.get(accountID).getCacheController().updateNotification(n);
+				for(int i=0; i<list.getChildCount(); i++){
+					RecyclerView.ViewHolder holder=list.getChildViewHolder(list.getChildAt(i));
+					if(holder instanceof EmojiReactionsStatusDisplayItem.Holder reactions && reactions.getItem().status==n.status.getContentStatus() && ev.viewHolder!=holder){
+						reactions.rebind();
+					}else if(holder instanceof TextStatusDisplayItem.Holder text && text.getItem().parentID.equals(n.getID())){
+						text.rebind();
+					}
+				}
+			}
+		}
+		for(Notification n : preloadedData){
+			if(n.status!=null && n.status.getContentStatus().id.equals(ev.id)){
 				n.status.getContentStatus().update(ev);
 				AccountSessionManager.get(accountID).getCacheController().updateNotification(n);
 			}

@@ -91,50 +91,6 @@
 
 			</RelativeLayout>
 
-			<LinearLayout
-				android:id="@+id/forward_report"
-				android:orientation="horizontal"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginBottom="16dp"
-				android:paddingHorizontal="8dp"
-				android:paddingVertical="8dp"
-				android:gravity="center_vertical"
-				android:layoutDirection="locale"
-				android:background="?android:selectableItemBackground">
-
-				<ImageView
-					android:id="@+id/icon"
-					android:layout_width="24dp"
-					android:layout_height="24dp"
-					android:layout_marginStart="16dp"
-					android:layout_marginEnd="32dp"
-					android:importantForAccessibility="no"
-					android:tint="?android:textColorPrimary"
-					android:src="@drawable/ic_fluent_arrow_forward_24_regular"/>
-
-				<TextView
-					android:id="@+id/forward_report_text"
-					android:layout_width="0dp"
-					android:layout_height="wrap_content"
-					android:layout_weight="1"
-					android:paddingVertical="8dp"
-					android:textSize="16sp"
-					android:text="@string/sk_forward_report_to"
-					android:textColor="?android:textColorPrimary" />
-
-				<Switch
-					android:id="@+id/forward_report_switch"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:duplicateParentState="true"
-					android:layout_marginStart="16dp"
-					android:layout_marginEnd="12dp"
-					android:focusable="false"
-					android:clickable="false"/>
-
-			</LinearLayout>
-
 		</LinearLayout>
 
 	</ScrollView>

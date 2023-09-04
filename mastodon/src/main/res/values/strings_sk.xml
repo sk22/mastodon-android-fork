@@ -352,8 +352,10 @@
 	<string name="sk_settings_show_labels_in_navigation_bar">Show tab labels in the navigation bar</string>
     <string name="sk_settings_emoji_reactions">Enable emoji reactions</string>
     <string name="sk_settings_emoji_reactions_explanation">Displays emoji reactions to posts and lets you interact with them. Some modified versions of Mastodon support this, but Mastodon doesn\'t.</string>
-    <string name="sk_settings_emoji_reactions_in_lists">Show emoji reactions in timelines</string>
-    <string name="sk_settings_emoji_reactions_in_lists_explanation">Whether emoji reactions should be displayed on timelines. If this option is off, emoji reactions will only be displayed when viewing a thread.</string>
+    <string name="sk_settings_show_emoji_reactions">Show emoji reactions in timelines</string>
+	<string name="sk_settings_show_emoji_reactions_hide_empty">Hide empty emoji reactions</string>
+	<string name="sk_settings_show_emoji_reactions_only_opened">Only when post is opened</string>
+	<string name="sk_settings_show_emoji_reactions_always">Always show add button</string>
 	<plurals name="sk_users_reacted_with">
 		<item quantity="one">One user reacted with %2$s</item>
 		<item quantity="other">%1$,d users reacted with %2$s</item>
@@ -375,4 +377,8 @@
 	<string name="sk_suicide_search_term">Suicide</string>
 	<string name="sk_search_suicide_help">If you\'re looking for a sign not to kill yourself, this is it. If you need further help, please call your local suicide hotline</string>
 	<string name="sk_do_not_show_again">Don\'t show again</string>
+	<plurals name="sk_posts_count_label">
+		<item quantity="one">post</item>
+		<item quantity="other">posts</item>
+	</plurals>
 </resources>

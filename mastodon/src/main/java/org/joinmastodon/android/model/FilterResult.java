@@ -14,6 +14,7 @@ public class FilterResult extends BaseModel {
     @Override
     public void postprocess() throws ObjectValidationException {
         super.postprocess();
-        if (filter != null) filter.postprocess();
+        if(filter!=null) filter.postprocess();
+		if(keywordMatches==null) keywordMatches=List.of();
     }
 }

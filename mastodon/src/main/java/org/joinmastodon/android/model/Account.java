@@ -7,11 +7,16 @@ import androidx.annotation.Nullable;
 
 import org.joinmastodon.android.api.ObjectValidationException;
 import org.joinmastodon.android.api.RequiredField;
+import org.joinmastodon.android.api.requests.instance.GetInstance;
 import org.parceler.Parcel;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
+
+import me.grishka.appkit.api.Callback;
+import me.grishka.appkit.api.ErrorResponse;
 
 /**
  * Represents a user of Mastodon and their associated profile.
@@ -23,22 +28,22 @@ public class Account extends BaseModel implements Searchable{
 	/**
 	 * The account id
 	 */
-	@RequiredField
+//	@RequiredField
 	public String id;
 	/**
 	 * The username of the account, not including domain.
 	 */
-	@RequiredField
+//	@RequiredField
 	public String username;
 	/**
 	 * The Webfinger account URI. Equal to username for local users, or username@domain for remote users.
 	 */
-	@RequiredField
+//	@RequiredField
 	public String acct;
 	/**
 	 * The location of the user's profile page.
 	 */
-	@RequiredField
+//	@RequiredField
 	public String url;
 
 	// Display attributes
@@ -51,12 +56,12 @@ public class Account extends BaseModel implements Searchable{
 	/**
 	 * The profile's bio / description.
 	 */
-	@RequiredField
+//	@RequiredField
 	public String note;
 	/**
 	 * An image icon that is shown next to statuses and in the profile.
 	 */
-	@RequiredField
+//	@RequiredField
 	public String avatar;
 	/**
 	 * A static version of the avatar. Equal to avatar if its value is a static image; different if avatar is an animated GIF.
@@ -157,16 +162,26 @@ public class Account extends BaseModel implements Searchable{
 		if(fields!=null){
 			for(AccountField f:fields)
 				f.postprocess();
+		} else {
+			fields = Collections.emptyList();
 		}
 		if(emojis!=null){
 			for(Emoji e:emojis)
 				e.postprocess();
+		} else {
+			emojis = Collections.emptyList();
 		}
 		if(moved!=null)
 			moved.postprocess();
-		if(TextUtils.isEmpty(displayName))
-			displayName=username;
 		if(fqn == null) fqn = getFullyQualifiedName();
+		if(id == null) id = "";
+		if(username == null) username = "";
+		if(TextUtils.isEmpty(displayName))
+			displayName = !TextUtils.isEmpty(username) ? username : "";
+		if(acct == null) acct = "";
+		if(url == null) url = "";
+		if(note == null) note = "";
+		if(avatar == null) avatar = "";
 	}
 
 	public boolean isLocal(){
@@ -191,6 +206,8 @@ public class Account extends BaseModel implements Searchable{
 	}
 
 	public String getFullyQualifiedName() {
+		if (TextUtils.isEmpty(acct))
+			return "";
 		return fqn != null ? fqn : acct.split("@")[0] + "@" + getDomainFromURL();
 	}
 

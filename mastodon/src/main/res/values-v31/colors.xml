@@ -40,7 +40,7 @@
 	<color name="m3_neutral2_100">@android:color/system_neutral2_100</color>
 	<color name="m3_neutral2_50t">@android:color/system_neutral2_50</color>
 	<color name="m3_neutral2_50">@android:color/system_neutral2_50</color>
-	<color name="m3_neutral2_25">@android:color/system_neutral2_10</color>
+	<color name="m3_neutral2_10">@android:color/system_neutral2_10</color>
 
 	<color name="m3_accent2_25">@android:color/system_accent2_10</color>
 	<color name="m3_accent2_50">@android:color/system_accent2_50</color>

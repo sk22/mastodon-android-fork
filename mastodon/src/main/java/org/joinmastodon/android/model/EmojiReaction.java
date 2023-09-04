@@ -1,5 +1,6 @@
 package org.joinmastodon.android.model;
 
+import org.joinmastodon.android.GlobalUserPreferences;
 import org.parceler.Parcel;
 
 import java.util.ArrayList;
@@ -21,6 +22,12 @@ public class EmojiReaction {
 	public String staticUrl;
 
 	public transient ImageLoaderRequest request;
+
+	public String getUrl(boolean playGifs){
+		String idealUrl=playGifs ? url : staticUrl;
+		if(idealUrl==null) return url==null ? staticUrl : url;
+		return idealUrl;
+	}
 
 	public static EmojiReaction of(Emoji info, Account me){
 		EmojiReaction reaction=new EmojiReaction();

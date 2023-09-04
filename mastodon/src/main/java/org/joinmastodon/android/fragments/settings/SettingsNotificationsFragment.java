@@ -98,6 +98,7 @@ public class SettingsNotificationsFragment extends BaseSettingsFragment<Void>{
 
 		typeItems=List.of(mentionsItem, boostsItem, favoritesItem, followersItem, pollsItem, updateItem, postsItem);
 		pauseItem.checkedChangeListener=checked->onPauseNotificationsClick(true);
+		unifiedPushItem.checkedChangeListener=checked->onUnifiedPush();
 		updatePolicyItem(null);
 		updatePauseItem();
 	}
@@ -347,7 +348,7 @@ public class SettingsNotificationsFragment extends BaseSettingsFragment<Void>{
 
 	private void showUnifiedPushRegisterDialog(List<String> distributors){
 		new M3AlertDialogBuilder(getContext()).setTitle(R.string.sk_settings_unifiedpush_choose).setItems(distributors.toArray(String[]::new),
-				(dialog, which) ->{
+				(dialog, which)->{
 					String userDistrib = distributors.get(which);
 					UnifiedPush.saveDistributor(getContext(), userDistrib);
 					UnifiedPush.registerApp(
@@ -358,6 +359,6 @@ public class SettingsNotificationsFragment extends BaseSettingsFragment<Void>{
 					);
 					unifiedPushItem.toggle();
 					rebindItem(unifiedPushItem);
-				}).show();
+				}).setOnCancelListener(d->rebindItem(unifiedPushItem)).show();
 	}
 }

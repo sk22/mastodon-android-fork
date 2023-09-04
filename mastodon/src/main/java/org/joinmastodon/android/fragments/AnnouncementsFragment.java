@@ -26,6 +26,8 @@ import org.joinmastodon.android.model.HeaderPaginationList;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.ScheduledStatus;
 import org.joinmastodon.android.model.Status;
+import org.joinmastodon.android.ui.displayitems.DummyStatusDisplayItem;
+import org.joinmastodon.android.ui.displayitems.EmojiReactionsStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.HeaderStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.StatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.TextStatusDisplayItem;
@@ -69,10 +71,12 @@ public class AnnouncementsFragment extends BaseStatusListFragment<Announcement> 
 		Status fakeStatus = a.toStatus();
 		TextStatusDisplayItem textItem = new TextStatusDisplayItem(a.id, HtmlParser.parse(a.content, a.emojis, a.mentions, a.tags, accountID), this, fakeStatus, true);
 		textItem.textSelectable = true;
-		return List.of(
-				HeaderStatusDisplayItem.fromAnnouncement(a, fakeStatus, instanceUser, this, accountID, this::onMarkAsRead),
-				textItem
-		);
+
+		List<StatusDisplayItem> items=new ArrayList<>();
+		items.add(HeaderStatusDisplayItem.fromAnnouncement(a, fakeStatus, instanceUser, this, accountID, this::onMarkAsRead));
+		items.add(textItem);
+		if(!isInstanceAkkoma()) items.add(new EmojiReactionsStatusDisplayItem(a.id, this, fakeStatus, accountID, false, true));
+		return items;
 	}
 
 	public void onMarkAsRead(String id) {

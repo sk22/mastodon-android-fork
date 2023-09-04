@@ -373,4 +373,9 @@
     <string name="sk_settings_emoji_reactions_in_lists_explanation">Las reacciones con los emoticonos deben mostrarse en las líneas de tiempo. Si esta opción está desactivada, las reacciones con los emoticonos solo se mostrarán al ver un hilo.</string>
     <string name="sk_button_react">Reacciona con un emoticono</string>
     <string name="sk_again_for_system_keyboard">Pulsa de nuevo para el Teclado del sistema</string>
+    <plurals name="sk_posts_count_label">
+        <item quantity="one">tema</item>
+        <item quantity="many">temas</item>
+        <item quantity="other">temas</item>
+    </plurals>
 </resources>

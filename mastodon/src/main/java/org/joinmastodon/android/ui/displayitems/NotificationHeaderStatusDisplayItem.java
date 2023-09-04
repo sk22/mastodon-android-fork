@@ -20,6 +20,8 @@ import android.widget.TextView;
 
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
+import org.joinmastodon.android.api.session.AccountSession;
+import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.fragments.ProfileFragment;
 import org.joinmastodon.android.model.Emoji;
@@ -53,7 +55,11 @@ public class NotificationHeaderStatusDisplayItem extends StatusDisplayItem{
 		if(notification.type==Notification.Type.POLL){
 			text=parentFragment.getString(R.string.poll_ended);
 		}else{
-			avaRequest=new UrlImageLoaderRequest(GlobalUserPreferences.playGifs ? notification.account.avatar : notification.account.avatarStatic, V.dp(50), V.dp(50));
+			AccountSession session = AccountSessionManager.get(accountID);
+			avaRequest=new UrlImageLoaderRequest(
+					TextUtils.isEmpty(notification.account.avatar) ? session.getDefaultAvatarUrl() :
+						GlobalUserPreferences.playGifs ? notification.account.avatar : notification.account.avatarStatic,
+					V.dp(50), V.dp(50));
 			SpannableStringBuilder parsedName=new SpannableStringBuilder(notification.account.displayName);
 			HtmlParser.parseCustomEmoji(parsedName, notification.account.emojis);
 			String str = parentFragment.getString(switch(notification.type){

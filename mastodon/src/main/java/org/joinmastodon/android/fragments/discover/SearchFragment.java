@@ -70,7 +70,7 @@ public class SearchFragment extends BaseStatusListFragment<SearchResult>{
 		return switch(s.type){
 			case ACCOUNT -> Collections.singletonList(new AccountStatusDisplayItem(s.id, this, s.account));
 			case HASHTAG -> Collections.singletonList(new HashtagStatusDisplayItem(s.id, this, s.hashtag));
-			case STATUS -> StatusDisplayItem.buildItems(this, s.status, accountID, s, knownAccounts, FilterContext.PUBLIC, !getLocalPrefs().showEmojiReactionsInLists ? StatusDisplayItem.FLAG_NO_EMOJI_REACTIONS : 0);
+			case STATUS -> StatusDisplayItem.buildItems(this, s.status, accountID, s, knownAccounts, FilterContext.PUBLIC, 0);
 		};
 	}
 

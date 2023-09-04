@@ -8,8 +8,6 @@ import android.view.View;
 
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
-import org.joinmastodon.android.ui.displayitems.LinkCardStatusDisplayItem;
-import org.joinmastodon.android.ui.displayitems.MediaGridStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.StatusDisplayItem;
 
 import java.util.List;
@@ -89,10 +87,10 @@ public class InsetStatusItemDecoration extends RecyclerView.ItemDecoration{
 					pad=V.dp(16);
 //				else
 //					pad=V.dp(12);
-				boolean insetLeft=true, insetRight=true;
-				if(insetLeft)
+				boolean insetPadding=((StatusDisplayItem.Holder<?>) holder).getItem().insetPadding;
+				if(insetPadding)
 					outRect.left=pad;
-				if(insetRight)
+				if(insetPadding)
 					outRect.right=pad;
 
 				// had to comment this out because animations with offsets aren't handled properly.

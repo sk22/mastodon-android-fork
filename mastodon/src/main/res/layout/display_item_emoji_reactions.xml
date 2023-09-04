@@ -9,17 +9,32 @@
 		android:layout_height="wrap_content"
 		android:orientation="horizontal">
 
-		<ImageButton
-			android:id="@+id/add_btn"
-			android:layout_width="wrap_content"
+		<FrameLayout
+			android:id="@+id/add_btn_wrap"
 			android:layout_height="wrap_content"
-			android:layout_marginStart="2dp"
-			android:minHeight="48dp"
-			android:minWidth="48dp"
-			android:background="@drawable/bg_button_m3_tonal_circle"
-			android:tooltipText="@string/sk_button_react"
-			android:contentDescription="@string/sk_button_react"
-			android:src="@drawable/ic_fluent_add_24_filled" />
+			android:layout_width="wrap_content"
+			android:layout_marginStart="2dp">
+			<ProgressBar
+				android:id="@+id/progress"
+				style="?android:progressBarStyleSmall"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:elevation="10dp"
+				android:indeterminate="true"
+				android:outlineProvider="none"
+				android:visibility="gone"/>
+			<ImageButton
+				android:id="@+id/add_btn"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:minHeight="48dp"
+				android:minWidth="48dp"
+				android:background="@drawable/bg_button_m3_tonal_circle"
+				android:tooltipText="@string/sk_button_react"
+				android:contentDescription="@string/sk_button_react"
+				android:src="@drawable/ic_fluent_add_24_filled" />
+		</FrameLayout>
 
 		<org.joinmastodon.android.ui.views.EmojiReactionsRecyclerView
 			android:id="@+id/list"
@@ -28,6 +43,7 @@
 			android:layout_height="wrap_content"
 			android:layout_marginStart="-4dp"
 			android:paddingStart="8dp"
+			android:paddingEnd="3dp"
 			android:clipToPadding="false"
 			android:requiresFadingEdge="horizontal"
 			android:fadingEdgeLength="24dp" />

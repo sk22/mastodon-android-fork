@@ -86,10 +86,14 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 
 	public HeaderStatusDisplayItem(String parentID, Account user, Instant createdAt, BaseStatusListFragment parentFragment, String accountID, Status status, CharSequence extraText, Notification notification, ScheduledStatus scheduledStatus){
 		super(parentID, parentFragment);
-		user=scheduledStatus != null ? AccountSessionManager.getInstance().getAccount(accountID).self : user;
+		AccountSession session = AccountSessionManager.get(accountID);
+		user=scheduledStatus != null ? session.self : user;
 		this.user=user;
 		this.createdAt=createdAt;
-		avaRequest=new UrlImageLoaderRequest(GlobalUserPreferences.playGifs ? user.avatar : user.avatarStatic, V.dp(50), V.dp(50));
+		avaRequest=new UrlImageLoaderRequest(
+				TextUtils.isEmpty(user.avatar) ? session.getDefaultAvatarUrl() :
+						GlobalUserPreferences.playGifs ? user.avatar : user.avatarStatic,
+				V.dp(50), V.dp(50));
 		this.accountID=accountID;
 		parsedName=new SpannableStringBuilder(user.displayName);
 		this.status=status;
@@ -132,9 +136,9 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 	}
 
 	public static class Holder extends StatusDisplayItem.Holder<HeaderStatusDisplayItem> implements ImageLoaderViewHolder{
-		private final TextView name, timeAndUsername, extraText, pronouns;
-		private final View collapseBtn;
-		private final ImageView avatar, more, visibility, deleteNotification, unreadIndicator, markAsRead, collapseBtnIcon;
+		private final TextView name, time, username, extraText, pronouns;
+		private final View collapseBtn, timeUsernameSeparator;
+		private final ImageView avatar, more, visibility, deleteNotification, unreadIndicator, markAsRead, collapseBtnIcon, botIcon;
 		private final PopupMenu optionsMenu;
 		private Relationship relationship;
 		private APIRequest<?> currentRelationshipRequest;
@@ -146,7 +150,10 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 		protected Holder(Activity activity, @LayoutRes int layout, ViewGroup parent){
 			super(activity, layout, parent);
 			name=findViewById(R.id.name);
-			timeAndUsername=findViewById(R.id.time_and_username);
+			time=findViewById(R.id.time);
+			username=findViewById(R.id.username);
+			botIcon=findViewById(R.id.bot_icon);
+			timeUsernameSeparator=findViewById(R.id.separator);
 			avatar=findViewById(R.id.avatar);
 			more=findViewById(R.id.more);
 			visibility=findViewById(R.id.visibility);
@@ -190,7 +197,7 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 						}
 					}
 					boolean isPixelfed = item.parentFragment.isInstancePixelfed();
-					boolean textEmpty = TextUtils.isEmpty(item.status.content) && TextUtils.isEmpty(item.status.spoilerText);
+					boolean textEmpty = TextUtils.isEmpty(item.status.content) && !item.status.hasSpoiler();
 					if(!redraft && (isPixelfed || textEmpty)){
 						// pixelfed doesn't support /statuses/:id/source :/
 						if (isPixelfed) {
@@ -315,18 +322,26 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 			else if (item.status != null && item.status.editedAt != null)
 				time=item.parentFragment.getString(R.string.edited_timestamp, UiUtils.formatRelativeTimestamp(itemView.getContext(), item.status.editedAt));
 
-			String sepp = item.parentFragment.getString(R.string.sk_separator);
-			String username = "@" + item.user.acct;
-			timeAndUsername.setText(time == null ? username :
-				username + " " + sepp + " " + time);
+			this.username.setText(item.user.getDisplayUsername());
+			this.timeUsernameSeparator.setVisibility(time==null ? View.GONE : View.VISIBLE);
+			this.time.setVisibility(time==null ? View.GONE : View.VISIBLE);
+			if(time!=null) this.time.setText(time);
+
+			botIcon.setVisibility(item.user.bot ? View.VISIBLE : View.GONE);
+			botIcon.setColorFilter(username.getCurrentTextColor());
 
 			deleteNotification.setVisibility(GlobalUserPreferences.enableDeleteNotifications && item.notification!=null && !item.inset ? View.VISIBLE : View.GONE);
 			if (item.hasVisibilityToggle){
-				boolean disabled = !item.status.sensitiveRevealed ||
-						(!TextUtils.isEmpty(item.status.spoilerText) &&
-								!item.status.spoilerRevealed);
-				visibility.setEnabled(!disabled);
-				V.setVisibilityAnimated(visibility, disabled ? View.INVISIBLE : View.VISIBLE);
+				boolean hidden = !item.status.sensitiveRevealed || (item.status.hasSpoiler() && !item.status.spoilerRevealed);
+
+				// doing this because V.setVisibilityAnimated ignores changes between INVISIBLE and GONE
+				int newVis=hidden ? View.INVISIBLE : View.VISIBLE;
+				if(newVis==View.INVISIBLE && visibility.getVisibility()==View.GONE)
+					visibility.setVisibility(newVis);
+				else
+					V.setVisibilityAnimated(visibility, newVis);
+
+				visibility.setEnabled(!hidden);
 				visibility.setContentDescription(item.parentFragment.getString(item.status.sensitiveRevealed ? R.string.spoiler_hide : R.string.spoiler_show));
 				if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
 					visibility.setTooltipText(visibility.getContentDescription());
@@ -419,6 +434,8 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 		}
 
 		private void onAvaClick(View v){
+			if (TextUtils.isEmpty(item.user.url))
+				return;
 			if (item.announcement != null) {
 				UiUtils.openURL(item.parentFragment.getActivity(), item.parentFragment.getAccountID(), item.user.url);
 				return;

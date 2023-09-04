@@ -374,4 +374,10 @@
     <string name="sk_enter_emoji_toast">Вам потрібно ввести емоджі</string>
     <string name="sk_enter_emoji_hint">Введіть, щоб відреагувати з емоджі</string>
     <string name="sk_settings_emoji_reactions_in_lists_explanation">Чи відображати реакції емоджі у стрічках. Якщо цю опцію вимкнено, реакції емоджі показуватимуться лише під час перегляду гілки.</string>
+    <plurals name="sk_posts_count_label">
+        <item quantity="one">допис</item>
+        <item quantity="few">дописи</item>
+        <item quantity="many">дописів</item>
+        <item quantity="other">дописів</item>
+    </plurals>
 </resources>

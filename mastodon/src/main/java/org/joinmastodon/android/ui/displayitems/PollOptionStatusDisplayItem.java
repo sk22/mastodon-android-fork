@@ -79,7 +79,7 @@ public class PollOptionStatusDisplayItem extends StatusDisplayItem{
 			progressBg=activity.getResources().getDrawable(R.drawable.bg_poll_option_voted, activity.getTheme()).mutate();
 			progressBgInset=activity.getResources().getDrawable(R.drawable.bg_poll_option_voted_inset, activity.getTheme()).mutate();
 			itemView.setOnClickListener(this::onButtonClick);
-			button.setOutlineProvider(OutlineProviders.roundedRect(24));
+			button.setOutlineProvider(OutlineProviders.M3_BUTTON);
 			button.setClipToOutline(true);
 		}
 

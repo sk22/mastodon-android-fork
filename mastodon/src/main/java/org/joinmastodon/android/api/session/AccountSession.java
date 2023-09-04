@@ -146,6 +146,9 @@ public class AccountSession{
 					@Override
 					public void onError(ErrorResponse error){
 						Log.w(TAG, "Failed to load preferences for account "+getID()+": "+error);
+						if (preferences==null)
+							preferences=new Preferences();
+						preferencesFromAccountSource(self);
 					}
 				})
 				.exec(getID());
@@ -309,5 +312,11 @@ public class AccountSession{
 				.scheme("https")
 				.authority(getInstance().map(i -> i.normalizedUri).orElse(domain))
 				.build();
+	}
+
+	public String getDefaultAvatarUrl() {
+		return getInstance()
+				.map(instance->"https://"+domain+(instance.isAkkoma() ? "/images/avi.png" : "/avatars/original/missing.png"))
+				.orElse("");
 	}
 }

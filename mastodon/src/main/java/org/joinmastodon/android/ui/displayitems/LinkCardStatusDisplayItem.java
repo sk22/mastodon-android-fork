@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,12 +14,14 @@ import org.joinmastodon.android.R;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.model.Card;
 import org.joinmastodon.android.model.Status;
+import org.joinmastodon.android.ui.OutlineProviders;
 import org.joinmastodon.android.ui.drawables.BlurhashCrossfadeDrawable;
 import org.joinmastodon.android.ui.utils.UiUtils;
 
 import me.grishka.appkit.imageloader.ImageLoaderViewHolder;
 import me.grishka.appkit.imageloader.requests.ImageLoaderRequest;
 import me.grishka.appkit.imageloader.requests.UrlImageLoaderRequest;
+import me.grishka.appkit.utils.V;
 
 public class LinkCardStatusDisplayItem extends StatusDisplayItem{
 	private final Status status;
@@ -51,6 +54,7 @@ public class LinkCardStatusDisplayItem extends StatusDisplayItem{
 	public static class Holder extends StatusDisplayItem.Holder<LinkCardStatusDisplayItem> implements ImageLoaderViewHolder{
 		private final TextView title, description, domain;
 		private final ImageView photo;
+		private final View inner;
 		private BlurhashCrossfadeDrawable crossfadeDrawable=new BlurhashCrossfadeDrawable();
 		private boolean didClear;
 
@@ -60,7 +64,8 @@ public class LinkCardStatusDisplayItem extends StatusDisplayItem{
 			description=findViewById(R.id.description);
 			domain=findViewById(R.id.domain);
 			photo=findViewById(R.id.photo);
-			findViewById(R.id.inner).setOnClickListener(this::onClick);
+			inner=findViewById(R.id.inner);
+			inner.setOnClickListener(this::onClick);
 		}
 
 		@Override
@@ -84,6 +89,15 @@ public class LinkCardStatusDisplayItem extends StatusDisplayItem{
 				photo.setImageDrawable(crossfadeDrawable);
 				didClear=false;
 			}
+
+			// if there's no image, we don't want to cover the inset borders
+			FrameLayout.LayoutParams params=(FrameLayout.LayoutParams) inner.getLayoutParams();
+			int margin=item.inset && item.imgRequest == null ? V.dp(1) : 0;
+			params.setMargins(margin, 0, margin, margin);
+
+			boolean insetAndLast=item.inset && isLastDisplayItemForStatus();
+			inner.setClipToOutline(insetAndLast);
+			inner.setOutlineProvider(insetAndLast ? OutlineProviders.bottomRoundedRect(12) : null);
 		}
 
 		@Override

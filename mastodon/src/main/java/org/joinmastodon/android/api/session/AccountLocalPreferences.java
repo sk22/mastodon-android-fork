@@ -13,7 +13,6 @@ import org.joinmastodon.android.model.TimelineDefinition;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
 
 public class AccountLocalPreferences{
 	private final SharedPreferences prefs;
@@ -39,7 +38,7 @@ public class AccountLocalPreferences{
 	public boolean keepOnlyLatestNotification;
 
 	public boolean emojiReactionsEnabled;
-	public boolean showEmojiReactionsInLists;
+	public ShowEmojiReactions showEmojiReactions;
 
 	private final static Type recentLanguagesType = new TypeToken<ArrayList<String>>() {}.getType();
 	private final static Type timelinesType = new TypeToken<ArrayList<TimelineDefinition>>() {}.getType();
@@ -66,7 +65,7 @@ public class AccountLocalPreferences{
 		timelineReplyVisibility=prefs.getString("timelineReplyVisibility", null);
 		keepOnlyLatestNotification=prefs.getBoolean("keepOnlyLatestNotification", false);
 		emojiReactionsEnabled=prefs.getBoolean("emojiReactionsEnabled", session.getInstance().isPresent() && session.getInstance().get().isAkkoma());
-		showEmojiReactionsInLists=prefs.getBoolean("showEmojiReactionsInLists", false);
+		showEmojiReactions=ShowEmojiReactions.valueOf(prefs.getString("showEmojiReactions", ShowEmojiReactions.HIDE_EMPTY.name()));
 	}
 
 	public long getNotificationsPauseEndTime(){
@@ -99,7 +98,13 @@ public class AccountLocalPreferences{
 				.putString("timelineReplyVisibility", timelineReplyVisibility)
 				.putBoolean("keepOnlyLatestNotification", keepOnlyLatestNotification)
 				.putBoolean("emojiReactionsEnabled", emojiReactionsEnabled)
-				.putBoolean("showEmojiReactionsInLists", showEmojiReactionsInLists)
+				.putString("showEmojiReactions", showEmojiReactions.name())
 				.apply();
+	}
+
+	public enum ShowEmojiReactions{
+		HIDE_EMPTY,
+		ONLY_OPENED,
+		ALWAYS
 	}
 }

@@ -27,9 +27,9 @@ public class UnifiedPushNotificationReceiver extends MessagingReceiver{
 	public void onNewEndpoint(@NotNull Context context, @NotNull String endpoint, @NotNull String instance) {
 		// Called when a new endpoint be used for sending push messages
 		Log.d(TAG, "onNewEndpoint: New Endpoint " + endpoint + " for "+ instance);
-		AccountSession account = AccountSessionManager.getInstance().getLastActiveAccount();
+		AccountSession account = AccountSessionManager.getInstance().tryGetAccount(instance);
 		if (account != null)
-			account.getPushSubscriptionManager().registerAccountForPush(null);
+			account.getPushSubscriptionManager().registerAccountForPush(null, endpoint);
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class UnifiedPushNotificationReceiver extends MessagingReceiver{
 		// called when the registration is not possible, eg. no network
 		Log.d(TAG, "onRegistrationFailed: " + instance);
 		//re-register for gcm
-		AccountSession account = AccountSessionManager.getInstance().getLastActiveAccount();
+		AccountSession account = AccountSessionManager.getInstance().tryGetAccount(instance);
 		if (account != null)
 			account.getPushSubscriptionManager().registerAccountForPush(null);
 	}
@@ -47,7 +47,7 @@ public class UnifiedPushNotificationReceiver extends MessagingReceiver{
 		// called when this application is unregistered from receiving push messages
 		Log.d(TAG, "onUnregistered: " + instance);
 		//re-register for gcm
-		AccountSession account = AccountSessionManager.getInstance().getLastActiveAccount();
+		AccountSession account = AccountSessionManager.getInstance().tryGetAccount(instance);
 		if (account != null)
 			account.getPushSubscriptionManager().registerAccountForPush(null);
 	}
@@ -55,7 +55,10 @@ public class UnifiedPushNotificationReceiver extends MessagingReceiver{
 	@Override
 	public void onMessage(@NotNull Context context, @NotNull byte[] message, @NotNull String instance) {
 		// Called when a new message is received. The message contains the full POST body of the push message
-		AccountSession account = AccountSessionManager.getInstance().getAccount(instance);
+		AccountSession account = AccountSessionManager.getInstance().tryGetAccount(instance);
+
+		if (account == null)
+		    return;
 
 		//this is stupid
 		// Mastodon stores the info to decrypt the message in the HTTP headers, which are not accessible in UnifiedPush,

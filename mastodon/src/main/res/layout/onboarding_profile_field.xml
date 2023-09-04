@@ -1,30 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:orientation="horizontal"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:paddingStart="8dp"
-	android:paddingEnd="16dp"
+	android:paddingTop="8dp"
 	android:clipToPadding="false"
-	android:background="?colorM3Background">
+	android:background="?colorM3Background"
+	tools:ignore="RtlSymmetry">
 
 	<ImageView
 		android:id="@+id/dragger_thingy"
-		android:layout_width="40dp"
-		android:layout_height="40dp"
+		android:layout_width="48dp"
+		android:layout_height="48dp"
 		android:layout_alignParentStart="true"
-		android:layout_marginEnd="8dp"
 		android:scaleType="center"
 		android:tint="?colorM3OnSurface"
 		android:contentDescription="@string/reorder"
-		android:src="@drawable/ic_drag_handle_24px"/>
+		android:src="@drawable/ic_fluent_re_order_dots_vertical_24_regular"/>
 
 	<ImageButton
 		android:id="@+id/delete"
-		android:layout_width="40dp"
-		android:layout_height="40dp"
+		android:layout_width="48dp"
+		android:layout_height="48dp"
 		android:layout_alignParentEnd="true"
 		android:layout_marginStart="8dp"
+		android:layout_marginEnd="8dp"
 		android:scaleType="center"
 		android:tint="?colorM3OnSurface"
 		android:background="?android:actionBarItemBackground"
@@ -32,31 +33,36 @@
 		android:src="@drawable/ic_fluent_delete_24_regular"/>
 
 	<EditText
+		android:id="@+id/title"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="6dp"
+		android:layout_toEndOf="@id/dragger_thingy"
+		android:layout_toStartOf="@id/delete"
+		style="@style/Widget.Mastodon.M3.EditText"
+		android:inputType="textCapSentences"
+		android:hint="@string/field_label"
+		android:saveEnabled="false"
+		android:singleLine="true"/>
+
+	<EditText
 		android:id="@+id/content"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_marginTop="8dp"
 		android:layout_toEndOf="@id/dragger_thingy"
 		android:layout_toStartOf="@id/delete"
+		android:layout_below="@id/title"
 		style="@style/Widget.Mastodon.M3.EditText"
 		android:inputType="textCapSentences"
 		android:hint="@string/field_content"
 		android:saveEnabled="false"
 		android:singleLine="true"/>
 
-	<EditText
-		android:id="@+id/title"
+	<View
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginTop="8dp"
-		android:layout_marginBottom="8dp"
-		android:layout_toEndOf="@id/dragger_thingy"
-		android:layout_toStartOf="@id/delete"
+		android:layout_height="1dp"
 		android:layout_below="@id/content"
-		style="@style/Widget.Mastodon.M3.EditText"
-		android:inputType="textCapSentences"
-		android:hint="@string/field_label"
-		android:saveEnabled="false"
-		android:singleLine="true"/>
+		android:layout_marginTop="8dp"
+		android:background="?colorM3SurfaceVariant"/>
 
 </RelativeLayout>

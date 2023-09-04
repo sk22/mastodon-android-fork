@@ -11,13 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CreateStatus extends MastodonAPIRequest<Status>{
-	public static final Instant DRAFTS_AFTER_INSTANT = Instant.ofEpochMilli(253370764799999L) /* end of 9998 */;
-	private static final float draftFactor = 31536000000f /* one year */ / 253370764799999f /* end of 9998 */;
+	public static long EPOCH_OF_THE_YEAR_FIVE_THOUSAND=95617584000000L;
+	public static final Instant DRAFTS_AFTER_INSTANT=Instant.ofEpochMilli(EPOCH_OF_THE_YEAR_FIVE_THOUSAND - 1) /* end of 4999 */;
 
 	public static Instant getDraftInstant() {
-		// returns an instant between 9999-01-01 00:00:00 and 9999-12-31 23:59:59
-		// yes, this is a weird implementation for something that hardly matters
-		return DRAFTS_AFTER_INSTANT.plusMillis(1 + (long) (System.currentTimeMillis() * draftFactor));
+		return DRAFTS_AFTER_INSTANT.plusMillis(System.currentTimeMillis());
 	}
 
 	public CreateStatus(CreateStatus.Request req, String uuid){
@@ -36,6 +34,7 @@ public class CreateStatus extends MastodonAPIRequest<Status>{
 
 	public static class Request{
 		public String status;
+		public List<MediaAttribute> mediaAttributes;
 		public List<String> mediaIds;
 		public Poll poll;
 		public String inReplyToId;
@@ -54,6 +53,18 @@ public class CreateStatus extends MastodonAPIRequest<Status>{
 			public int expiresIn;
 			public boolean multiple;
 			public boolean hideTotals;
+		}
+
+		public static class MediaAttribute{
+			public String id;
+			public String description;
+			public String focus;
+
+			public MediaAttribute(String id, String description, String focus){
+				this.id=id;
+				this.description=description;
+				this.focus=focus;
+			}
 		}
 	}
 }

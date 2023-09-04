@@ -41,6 +41,12 @@ public class Emoji extends BaseModel{
 		this.staticUrl = staticUrl;
 	}
 
+	public String getUrl(boolean playGifs){
+		String idealUrl=playGifs ? url : staticUrl;
+		if(idealUrl==null) return url==null ? staticUrl : url;
+		return idealUrl;
+	}
+
 	@Override
 	public String toString(){
 		return "Emoji{"+
