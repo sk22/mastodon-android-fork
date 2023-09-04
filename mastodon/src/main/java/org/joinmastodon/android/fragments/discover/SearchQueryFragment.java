@@ -10,7 +10,6 @@ import android.graphics.Outline;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -27,7 +26,6 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 
 import org.joinmastodon.android.GlobalUserPreferences;
-import org.joinmastodon.android.MainActivity;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.search.GetSearchResults;
 import org.joinmastodon.android.api.session.AccountSessionManager;
@@ -46,14 +44,9 @@ import org.joinmastodon.android.ui.utils.HideableSingleViewRecyclerAdapter;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.ui.viewholders.AccountViewHolder;
 import org.joinmastodon.android.ui.viewholders.SimpleListItemViewHolder;
-import org.parceler.Parcels;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -384,27 +377,54 @@ public class SearchQueryFragment extends MastodonRecyclerFragment<SearchResultVi
 	}
 
 	private void openHashtag(SearchResult res){
-		UiUtils.openHashtagTimeline(getActivity(), accountID, res.hashtag.name, res.hashtag.following);
-		AccountSessionManager.getInstance().getAccount(accountID).getCacheController().putRecentSearch(res);
+		wrapSuicideDialog(()->{
+			UiUtils.openHashtagTimeline(getActivity(), accountID, res.hashtag.name, res.hashtag.following);
+			AccountSessionManager.getInstance().getAccount(accountID).getCacheController().putRecentSearch(res);
+		});
 	}
 
 	private boolean isInRecentMode(){
 		return TextUtils.isEmpty(currentQuery);
 	}
 
+	private void wrapSuicideDialog(Runnable r){
+		if(!GlobalUserPreferences.showSuicideHelp){
+			r.run();
+			return;
+		}
+
+		String[] terms=getContext().getString(R.string.sk_suicide_search_terms).toLowerCase().split(",");
+		String query=currentQuery.trim().toLowerCase();
+		boolean termMatches=false;
+		for(String term : terms){
+			if(query.contains(term)){
+				termMatches=true;
+				break;
+			}
+		}
+
+		if(!termMatches){
+			r.run();
+			return;
+		}
+
+		String url=getContext().getString(R.string.sk_suicide_helplines_url);
+		new M3AlertDialogBuilder(getActivity())
+				.setTitle(R.string.sk_search_suicide_title)
+				.setMessage(R.string.sk_search_suicide_message)
+				.setNegativeButton(R.string.sk_do_not_show_again, (dialog, which)->{
+					GlobalUserPreferences.showSuicideHelp = false;
+					GlobalUserPreferences.save();
+					r.run();
+				})
+				.setNeutralButton(R.string.sk_search_suicide_hotlines, (dialog, which)->UiUtils.launchWebBrowser(getContext(), url))
+				.setPositiveButton(R.string.ok, (dialog, which)->r.run())
+				.setOnDismissListener((dialog)->{})
+				.show();
+	}
+
 	private void onSearchViewEnter(){
-		String localizedSuicideSearchTerm = getContext().getString(R.string.sk_suicide_search_term).toLowerCase();
-		if(currentQuery.trim().toLowerCase().equals(localizedSuicideSearchTerm) && GlobalUserPreferences.showSuicideHelp)
-			new M3AlertDialogBuilder(getActivity())
-					.setTitle("❤️")
-					.setMessage(R.string.sk_search_suicide_help)
-					.setNegativeButton(R.string.sk_do_not_show_again, (dialog, which) -> {
-						GlobalUserPreferences.showSuicideHelp = false;
-						GlobalUserPreferences.save();
-					})
-					.setPositiveButton(R.string.ok, (dialog, which) -> {})
-					.show();
-		deliverResult(currentQuery, null);
+		wrapSuicideDialog(()->deliverResult(currentQuery, null));
 	}
 
 	private void onOpenURLClick(){
@@ -412,10 +432,12 @@ public class SearchQueryFragment extends MastodonRecyclerFragment<SearchResultVi
 	}
 
 	private void onGoToHashtagClick(){
-		String q=searchViewHelper.getQuery();
-		if(q.startsWith("#"))
-			q=q.substring(1);
-		UiUtils.openHashtagTimeline(getActivity(), accountID, q, null);
+		wrapSuicideDialog(()->{
+			String q=searchViewHelper.getQuery();
+			if(q.startsWith("#"))
+				q=q.substring(1);
+			UiUtils.openHashtagTimeline(getActivity(), accountID, q, null);
+		});
 	}
 
 	private void onGoToAccountClick(){
@@ -436,11 +458,11 @@ public class SearchQueryFragment extends MastodonRecyclerFragment<SearchResultVi
 	}
 
 	private void onGoToStatusSearchClick(){
-		deliverResult(searchViewHelper.getQuery(), SearchResult.Type.STATUS);
+		wrapSuicideDialog(()->deliverResult(searchViewHelper.getQuery(), SearchResult.Type.STATUS));
 	}
 
 	private void onGoToAccountSearchClick(){
-		deliverResult(searchViewHelper.getQuery(), SearchResult.Type.ACCOUNT);
+		wrapSuicideDialog(()->deliverResult(searchViewHelper.getQuery(), SearchResult.Type.ACCOUNT));
 	}
 
 	private void onClearRecentClick(){
