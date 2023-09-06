@@ -388,7 +388,7 @@ public class SearchQueryFragment extends MastodonRecyclerFragment<SearchResultVi
 	}
 
 	private void wrapSuicideDialog(Runnable r){
-		if(!GlobalUserPreferences.showSuicideHelp){
+		if(!GlobalUserPreferences.showSuicideHelp || currentQuery==null){
 			r.run();
 			return;
 		}
