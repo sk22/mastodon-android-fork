@@ -322,7 +322,7 @@ public class PushNotificationReceiver extends BroadcastReceiver{
 		CreateStatus.Request req=new CreateStatus.Request();
 		req.status = initialText + input.toString();
 		req.language = preferences.postingDefaultLanguage;
-		req.visibility = preferences.postingDefaultVisibility;
+		req.visibility = notification.status.visibility;
 		req.inReplyToId = notification.status.id;
 
 		if (notification.status.hasSpoiler() &&
