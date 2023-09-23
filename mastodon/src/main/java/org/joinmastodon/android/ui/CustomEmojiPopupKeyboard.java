@@ -144,20 +144,7 @@ public class CustomEmojiPopupKeyboard extends PopupKeyboard{
 		topPanel.setPadding(V.dp(16), V.dp(8), V.dp(16), V.dp(8));
 		topPanel.setBackgroundResource(R.drawable.bg_m3_surface2);
 
-		InputMethodManager imm=(InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-		EditText search=new EditText(activity);
-		search.setHint(R.string.sk_search_emoji_hint);
-		search.addTextChangedListener(new TextWatcher() {
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				for(int i = 0; i < adapter.getAdapterCount(); i++) {
-					SingleCategoryAdapter currentAdapter=(SingleCategoryAdapter) adapter.getAdapterAt(i);
-					currentAdapter.getFilter().filter(s.toString());
-				}
-			}
-			@Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-			@Override public void afterTextChanged(Editable s) {}
-		});
+
 
 		ll.addView(topPanel, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
@@ -171,6 +158,22 @@ public class CustomEmojiPopupKeyboard extends PopupKeyboard{
 
 		if(forReaction){
 			ll.setMinimumHeight(V.dp(300));
+
+			InputMethodManager imm=(InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+			EditText search=new EditText(activity);
+			search.setHint(R.string.sk_search_emoji_hint);
+			search.addTextChangedListener(new TextWatcher() {
+				@Override
+				public void onTextChanged(CharSequence s, int start, int before, int count) {
+					for(int i = 0; i < adapter.getAdapterCount(); i++) {
+						SingleCategoryAdapter currentAdapter=(SingleCategoryAdapter) adapter.getAdapterAt(i);
+						currentAdapter.getFilter().filter(s.toString());
+					}
+				}
+				@Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+				@Override public void afterTextChanged(Editable s) {}
+			});
+
 			EditText input=new EditText(activity);
 			input.setHint(R.string.sk_enter_emoji_hint);
 			input.addTextChangedListener(new TextWatcher() {
