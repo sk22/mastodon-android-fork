@@ -363,7 +363,8 @@
         <item quantity="other">%1$,d users reacted with %2$s</item>
     </plurals>
     <string name="sk_button_react">React with emoji</string>
-    <string name="sk_enter_emoji_toast">Please type an emoji</string>
+	<string name="sk_enter_emoji_toast">Please type an emoji</string>
+	<string name="sk_search_emoji_hint">Type to search for an emoji</string>
     <string name="sk_enter_emoji_hint">Type to react with an emoji</string>
     <string name="sk_mute_label">Duration</string>
     <string name="sk_duration_indefinite">Indefinite</string>
