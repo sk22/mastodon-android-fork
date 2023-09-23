@@ -237,7 +237,7 @@ public class CustomEmojiPopupKeyboard extends PopupKeyboard{
 		private EmojiCategory category;
 
 		private final EmojiCategory originalCategory;
-		private final List<ImageLoaderRequest> requests;
+		private List<ImageLoaderRequest> requests;
 
 		public SingleCategoryAdapter(EmojiCategory category){
 			super(imgLoader);
@@ -317,6 +317,7 @@ public class CustomEmojiPopupKeyboard extends PopupKeyboard{
 			protected void publishResults(CharSequence charSequence, FilterResults filterResults){
 				category.emojis.clear();
 				category.emojis.addAll((List) filterResults.values);
+				requests=category.emojis.stream().map(e->new UrlImageLoaderRequest(e.getUrl(playGifs), V.dp(24), V.dp(24))).collect(Collectors.toList());
 				notifyDataSetChanged();
 			}
 		};
