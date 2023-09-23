@@ -301,7 +301,7 @@ public class CustomEmojiPopupKeyboard extends PopupKeyboard{
 				if(charSequence==null || charSequence.length()==0){
 
 					filteredEmoji.addAll(originalCategory.emojis);
-				} else{
+				}else{
 					for(Emoji emoji : category.emojis){
 						if(emoji.shortcode.toLowerCase().contains(search)){
 							filteredEmoji.add(emoji);
@@ -309,28 +309,10 @@ public class CustomEmojiPopupKeyboard extends PopupKeyboard{
 					}
 
 				}
-				FilterResults results = new FilterResults();
-				results.values = filteredEmoji;
+				FilterResults results=new FilterResults();
+				results.values=filteredEmoji;
 				return results;
-
-//				List<EmojiCategory> filteredList=new ArrayList<>();
-//				if (charSequence == null || charSequence.length() == 0) {
-//					emojis.clear();
-//					emojis.addAll(emojisFull);
-//				} else{
-//					for(EmojiCategory category : emojisFull){
-//						List<Emoji> matchedEmoji=new ArrayList<>();
-//						matchedEmoji.addAll(category.emojis.stream().filter(emoji->{
-//							return emoji.shortcode.toLowerCase().contains(search);
-//						}).collect(Collectors.toList()));
-//						if(matchedEmoji.size()>0){
-//							filteredList.add(new EmojiCategory(category.title, matchedEmoji));
-//						}
-//					}
-//				}
-
 			}
-
 			@Override
 			protected void publishResults(CharSequence charSequence, FilterResults filterResults){
 				category.emojis.clear();
