@@ -157,48 +157,41 @@ public class CustomEmojiPopupKeyboard extends PopupKeyboard{
 		ll.addView(bottomPanel, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
 		if(forReaction){
-			ll.setMinimumHeight(V.dp(300));
-
 			InputMethodManager imm=(InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-			EditText search=new EditText(activity);
-			search.setHint(R.string.sk_search_emoji_hint);
-			search.addTextChangedListener(new TextWatcher() {
-				@Override
-				public void onTextChanged(CharSequence s, int start, int before, int count) {
-					for(int i = 0; i < adapter.getAdapterCount(); i++) {
-						SingleCategoryAdapter currentAdapter=(SingleCategoryAdapter) adapter.getAdapterAt(i);
-						currentAdapter.getFilter().filter(s.toString());
-					}
-				}
-				@Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-				@Override public void afterTextChanged(Editable s) {}
-			});
-
 			EditText input=new EditText(activity);
 			input.setHint(R.string.sk_enter_emoji_hint);
 			input.addTextChangedListener(new TextWatcher() {
 				@Override
-				public void onTextChanged(CharSequence s, int start, int before, int count) {
-					if (!s.toString().isEmpty()) {
-						if (emojiRegex.matcher(s.toString()).find()) {
+				public void onTextChanged(CharSequence s, int start, int before, int count){
+					if(emojiRegex.matcher(s.toString()).find()){
+						if(s.length() > 0){
 							imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
 							listener.onEmojiSelected(s.toString().substring(before));
 							input.getText().clear();
-						} else {
-							Toast.makeText(activity, R.string.sk_enter_emoji_toast, Toast.LENGTH_SHORT).show();
-							input.getText().clear();
+						}
+					} else{
+						for(int i=0; i<adapter.getAdapterCount(); i++){
+							SingleCategoryAdapter currentAdapter=(SingleCategoryAdapter) adapter.getAdapterAt(i);
+							currentAdapter.getFilter().filter(s.toString());
 						}
 					}
 				}
-
 				@Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 				@Override public void afterTextChanged(Editable s) {}
+			});
+			input.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener(){
+				@Override
+				public void onViewAttachedToWindow(@NonNull View view){}
+
+				@Override
+				public void onViewDetachedFromWindow(@NonNull View view){
+					input.getText().clear();
+				}
 			});
 			FrameLayout.LayoutParams params=new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.START);
 			int pad=forReaction ? 0 : V.dp(36 + 16);
 			params.setMargins(pad, V.dp(8), pad, V.dp(8));
-			topPanel.addView(search, params);
-			bottomPanel.addView(input, params);
+			topPanel.addView(input, params);
 		}
 
 		if(!forReaction){
@@ -216,14 +209,12 @@ public class CustomEmojiPopupKeyboard extends PopupKeyboard{
 			backspace.setOnClickListener(v->listener.onBackspace());
 			bottomPanel.addView(backspace, new FrameLayout.LayoutParams(V.dp(48), V.dp(48), Gravity.END | Gravity.CENTER_VERTICAL));
 		}
-
 		return ll;
 	}
 
 	public void setListener(Listener listener){
 		this.listener=listener;
 	}
-
 	@SuppressLint("NotifyDataSetChanged")
 	@Subscribe
 	public void onEmojiUpdated(EmojiUpdatedEvent ev){
@@ -242,7 +233,7 @@ public class CustomEmojiPopupKeyboard extends PopupKeyboard{
 		public SingleCategoryAdapter(EmojiCategory category){
 			super(imgLoader);
 			this.category=category;
-			this.originalCategory = new EmojiCategory(category.title, new ArrayList<>(category.emojis));
+			this.originalCategory = new EmojiCategory(category);
 			requests=category.emojis.stream().map(e->new UrlImageLoaderRequest(e.getUrl(playGifs), V.dp(24), V.dp(24))).collect(Collectors.toList());
 		}
 
@@ -292,7 +283,7 @@ public class CustomEmojiPopupKeyboard extends PopupKeyboard{
 		public Filter getFilter(){
 			return emojiFilter;
 		}
-		private  Filter emojiFilter = new Filter(){
+		private final Filter emojiFilter = new Filter(){
 			@Override
 			protected FilterResults performFiltering(CharSequence charSequence){
 				List<Emoji> filteredEmoji=new ArrayList<>();
