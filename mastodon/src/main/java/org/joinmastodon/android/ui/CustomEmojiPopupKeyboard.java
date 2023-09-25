@@ -163,17 +163,17 @@ public class CustomEmojiPopupKeyboard extends PopupKeyboard{
 			input.addTextChangedListener(new TextWatcher() {
 				@Override
 				public void onTextChanged(CharSequence s, int start, int before, int count){
-					if(emojiRegex.matcher(s.toString()).find()){
-						if(s.length() > 0){
+					// Only check the emoji regex if the text field was empty before
+					if(start == 0){
+						if(emojiRegex.matcher(s.toString()).find()){
 							imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
 							listener.onEmojiSelected(s.toString().substring(before));
 							input.getText().clear();
 						}
-					} else{
-						for(int i=0; i<adapter.getAdapterCount(); i++){
-							SingleCategoryAdapter currentAdapter=(SingleCategoryAdapter) adapter.getAdapterAt(i);
-							currentAdapter.getFilter().filter(s.toString());
-						}
+					}
+					for(int i=0; i<adapter.getAdapterCount(); i++){
+						SingleCategoryAdapter currentAdapter=(SingleCategoryAdapter) adapter.getAdapterAt(i);
+						currentAdapter.getFilter().filter(s.toString());
 					}
 				}
 				@Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -293,7 +293,7 @@ public class CustomEmojiPopupKeyboard extends PopupKeyboard{
 
 					filteredEmoji.addAll(originalCategory.emojis);
 				}else{
-					for(Emoji emoji : category.emojis){
+					for(Emoji emoji : originalCategory.emojis){
 						if(emoji.shortcode.toLowerCase().contains(search)){
 							filteredEmoji.add(emoji);
 						}
