@@ -207,7 +207,7 @@ public class PushNotificationReceiver extends BroadcastReceiver{
 				.setShowWhen(true)
 				.setCategory(Notification.CATEGORY_SOCIAL)
 				.setAutoCancel(true)
-				.setLights(context.getColor(android.R.attr.colorAccent), 500, 1000)
+				.setLights(UiUtils.getThemeColor(context, android.R.attr.colorAccent), 500, 1000)
 				.setColor(UiUtils.getThemeColor(context, android.R.attr.colorAccent));
 
 		if (!GlobalUserPreferences.uniformNotificationIcon) {
