@@ -6,16 +6,15 @@ import android.os.Bundle;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.HeaderPaginationRequest;
 import org.joinmastodon.android.api.requests.accounts.GetAccountBlocks;
-import org.joinmastodon.android.api.requests.accounts.GetAccountMutes;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.ui.viewholders.AccountViewHolder;
 
-public class BlocksListFragment extends AccountRelatedAccountListFragment{
+public class BlockedAccountsListFragment extends AccountRelatedAccountListFragment{
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		setTitle(R.string.sk_blocked_account);
+		setTitle(R.string.sk_blocked_accounts);
 	}
 
 	@Override

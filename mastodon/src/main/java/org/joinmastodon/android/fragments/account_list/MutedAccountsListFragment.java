@@ -9,12 +9,12 @@ import org.joinmastodon.android.api.requests.accounts.GetAccountMutes;
 import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.ui.viewholders.AccountViewHolder;
 
-public class MutesListFragment extends AccountRelatedAccountListFragment{
+public class MutedAccountsListFragment extends AccountRelatedAccountListFragment{
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		setTitle(R.string.sk_muted_account);
+		setTitle(R.string.sk_muted_accounts);
 	}
 
 	@Override
