@@ -45,8 +45,8 @@ public class FeaturedHashtagsListFragment extends BaseStatusListFragment<Hashtag
 	}
 
 	@Override
-	public void onItemClick(String hashtag){
-		UiUtils.openHashtagTimeline(getActivity(), accountID, hashtag, data.stream().filter(h -> Objects.equals(h.name, hashtag)).findAny().map(h -> h.following).orElse(null));
+	public void onItemClick(String id){
+		UiUtils.openHashtagTimeline(getActivity(), accountID, Objects.requireNonNull(findItemOfType(id, HashtagStatusDisplayItem.class)).tag);
 	}
 
 	@Override

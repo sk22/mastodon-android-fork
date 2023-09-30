@@ -219,7 +219,7 @@ public class TimelineDefinition {
             args.putString("listID", listId);
             args.putBoolean("listIsExclusive", listIsExclusive);
         } else if (type == TimelineType.HASHTAG) {
-            args.putString("hashtag", hashtagName);
+            args.putString("hashtagName", hashtagName);
             args.putBoolean("localOnly", hashtagLocalOnly);
             args.putStringArrayList("any", hashtagAny == null ? new ArrayList<>() : new ArrayList<>(hashtagAny));
             args.putStringArrayList("all", hashtagAll == null ? new ArrayList<>() : new ArrayList<>(hashtagAll));

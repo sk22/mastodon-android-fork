@@ -5,8 +5,21 @@ import static org.joinmastodon.android.api.MastodonAPIController.gsonWithoutDese
 
 import android.text.TextUtils;
 
+import org.joinmastodon.android.api.ObjectValidationException;
+import org.joinmastodon.android.api.RequiredField;
+import org.joinmastodon.android.events.StatusCountersUpdatedEvent;
+import org.joinmastodon.android.ui.text.HtmlParser;
+import org.parceler.Parcel;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+
 import androidx.annotation.NonNull;
 
+import com.github.bottomSoftwareFoundation.bottom.Bottom;
+import com.github.bottomSoftwareFoundation.bottom.TranslationError;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -15,16 +28,21 @@ import com.google.gson.JsonParseException;
 
 import org.joinmastodon.android.api.ObjectValidationException;
 import org.joinmastodon.android.api.RequiredField;
+import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.EmojiReactionsUpdatedEvent;
 import org.joinmastodon.android.events.StatusCountersUpdatedEvent;
 import org.joinmastodon.android.ui.text.HtmlParser;
+import org.joinmastodon.android.utils.StatusTextEncoder;
 import org.parceler.Parcel;
 
 import java.lang.reflect.Type;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 @Parcel
 public class Status extends BaseModel implements DisplayItemsParent, Searchable{
@@ -83,9 +101,9 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 	public transient boolean sensitiveRevealed;
 	public transient boolean textExpanded, textExpandable;
 	public transient boolean hasGapAfter;
-	public transient TranslatedStatus translation;
-	public transient boolean translationShown;
 	private transient String strippedText;
+	public transient TranslationState translationState=TranslationState.HIDDEN;
+	public transient Translation translation;
 
 	public Status(){}
 
@@ -199,6 +217,38 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 	@Override
 	public Status clone(){
 		return (Status) super.clone();
+	}
+
+	public static final Pattern BOTTOM_TEXT_PATTERN = Pattern.compile("(?:[\uD83E\uDEC2\uD83D\uDC96✨\uD83E\uDD7A,]+|❤️)(?:\uD83D\uDC49\uD83D\uDC48(?:[\uD83E\uDEC2\uD83D\uDC96✨\uD83E\uDD7A,]+|❤️))*\uD83D\uDC49\uD83D\uDC48");
+	public boolean isEligibleForTranslation(AccountSession session){
+		Instance instanceInfo = AccountSessionManager.getInstance().getInstanceInfo(session.domain);
+		boolean translateEnabled = instanceInfo != null &&
+				instanceInfo.v2 != null && instanceInfo.v2.configuration.translation != null &&
+				instanceInfo.v2.configuration.translation.enabled;
+
+		try {
+			String bottomText = BOTTOM_TEXT_PATTERN.matcher(getStrippedText()).find()
+					? new StatusTextEncoder(Bottom::decode).decode(getStrippedText(), BOTTOM_TEXT_PATTERN)
+					: null;
+			if(bottomText==null || bottomText.length()==0 || bottomText.equals("\u0005")) bottomText=null;
+			if(bottomText!=null){
+				translation=new Translation();
+				translation.content=bottomText;
+				translation.detectedSourceLanguage="\uD83E\uDD7A\uD83D\uDC49\uD83D\uDC48";
+				translation.provider="bottom-java";
+				return true;
+			}
+		} catch (TranslationError ignored) {}
+
+		return translateEnabled && !TextUtils.isEmpty(content) && !TextUtils.isEmpty(language)
+				&& !Objects.equals(Locale.getDefault().getLanguage(), language)
+				&& (visibility==StatusPrivacy.PUBLIC || visibility==StatusPrivacy.UNLISTED);
+	}
+
+	public enum TranslationState{
+		HIDDEN,
+		SHOWN,
+		LOADING
 	}
 
 	public boolean isReblogPermitted(String accountID){

@@ -104,6 +104,7 @@ import org.joinmastodon.android.model.AccountField;
 import org.joinmastodon.android.model.Emoji;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Notification;
+import org.joinmastodon.android.model.Hashtag;
 import org.joinmastodon.android.model.Relationship;
 import org.joinmastodon.android.model.ScheduledStatus;
 import org.joinmastodon.android.model.SearchResults;
@@ -445,12 +446,18 @@ public class UiUtils {
 		Nav.go((Activity) context, ProfileFragment.class, args);
 	}
 
-	public static void openHashtagTimeline(Context context, String accountID, String hashtag, @Nullable Boolean following) {
-		Bundle args = new Bundle();
+	public static void openHashtagTimeline(Context context, String accountID, Hashtag hashtag){
+		Bundle args=new Bundle();
 		args.putString("account", accountID);
-		args.putString("hashtag", hashtag);
-		if (following != null) args.putBoolean("following", following);
-		Nav.go((Activity) context, HashtagTimelineFragment.class, args);
+		args.putParcelable("hashtag", Parcels.wrap(hashtag));
+		Nav.go((Activity)context, HashtagTimelineFragment.class, args);
+	}
+
+	public static void openHashtagTimeline(Context context, String accountID, String hashtag){
+		Bundle args=new Bundle();
+		args.putString("account", accountID);
+		args.putString("hashtagName", hashtag);
+		Nav.go((Activity)context, HashtagTimelineFragment.class, args);
 	}
 
 	public static void showConfirmationAlert(Context context, @StringRes int title, @StringRes int message, @StringRes int confirmButton, Runnable onConfirmed) {
@@ -1157,7 +1164,7 @@ public class UiUtils {
 			return Optional.empty();
 		}
 
-		return Optional.of(new GetSearchResults(query.getQuery(), type, true).setCallback(new Callback<>() {
+		return Optional.of(new GetSearchResults(query.getQuery(), type, true, null, 0, 0).setCallback(new Callback<>() {
 			@Override
 			public void onSuccess(SearchResults results) {
 				Optional<T> result = extractResult.apply(results);
@@ -1254,7 +1261,7 @@ public class UiUtils {
 	}
 	public static MastodonAPIRequest<SearchResults> lookupAccountHandle(Context context, String accountID, Pair<String, Optional<String>> queryHandle, BiConsumer<Class<? extends Fragment>, Bundle> go) {
 		String fullHandle = ("@" + queryHandle.first) + (queryHandle.second.map(domain -> "@" + domain).orElse(""));
-		return new GetSearchResults(fullHandle, GetSearchResults.Type.ACCOUNTS, true)
+		return new GetSearchResults(fullHandle, GetSearchResults.Type.ACCOUNTS, true, null, 0, 0)
 				.setCallback(new Callback<>() {
 					@Override
 					public void onSuccess(SearchResults results) {
@@ -1317,7 +1324,7 @@ public class UiUtils {
 						})
 						.execNoAuth(uri.getHost()));
 			} else if (looksLikeFediverseUrl(url)) {
-				return Optional.of(new GetSearchResults(url, null, true)
+				return Optional.of(new GetSearchResults(url, null, true, null, 0, 0)
 						.setCallback(new Callback<>() {
 							@Override
 							public void onSuccess(SearchResults results) {

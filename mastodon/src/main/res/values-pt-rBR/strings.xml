@@ -8,7 +8,7 @@
 	<string name="ok">OK</string>
 	<string name="preparing_auth">Preparando para autenticação…</string>
 	<string name="finishing_auth">Finalizando autenticação…</string>
-	<string name="user_boosted">%s impulsionado</string>
+	<string name="user_boosted">%s impulsionou</string>
 	<string name="in_reply_to">Em resposta à %s</string>
 	<string name="notifications">Notificações</string>
 	<string name="user_followed_you">%s seguiu você</string>
@@ -571,4 +571,6 @@
 	<string name="time_minutes_ago_short">%dm atrás</string>
 	<string name="time_hours_ago_short">%dh atrás</string>
 	<string name="time_days_ago_short">%dd atrás</string>
+	<!-- %s is the name of the post language -->
+	<!-- %1$s is the language, %2$s is the name of the translation service -->
 </resources>

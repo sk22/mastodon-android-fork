@@ -33,7 +33,7 @@ public class SettingsAboutAppFragment extends BaseSettingsFragment<Void>{
 		setTitle(getString(R.string.about_app, getString(R.string.sk_app_name)));
 		AccountSession s=AccountSessionManager.get(accountID);
 		onDataLoaded(List.of(
-				new ListItem<>(R.string.sk_settings_donate, 0, R.drawable.ic_fluent_heart_24_regular, ()->UiUtils.openHashtagTimeline(getActivity(), accountID, getString(R.string.donate_hashtag), null)),
+				new ListItem<>(R.string.sk_settings_donate, 0, R.drawable.ic_fluent_heart_24_regular, ()->UiUtils.openHashtagTimeline(getActivity(), accountID, getString(R.string.donate_hashtag))),
 				new ListItem<>(R.string.sk_settings_contribute, 0, R.drawable.ic_fluent_open_24_regular, ()->UiUtils.launchWebBrowser(getActivity(), getString(R.string.repo_url))),
 				new ListItem<>(R.string.settings_tos, 0, R.drawable.ic_fluent_open_24_regular, ()->UiUtils.launchWebBrowser(getActivity(), "https://"+s.domain+"/terms")),
 				new ListItem<>(R.string.settings_privacy_policy, 0, R.drawable.ic_fluent_open_24_regular, ()->UiUtils.launchWebBrowser(getActivity(), getString(R.string.privacy_policy_url)), 0, true),
