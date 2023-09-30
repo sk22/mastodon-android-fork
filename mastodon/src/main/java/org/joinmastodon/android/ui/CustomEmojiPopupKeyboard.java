@@ -140,23 +140,14 @@ public class CustomEmojiPopupKeyboard extends PopupKeyboard{
 		ll.setElevation(V.dp(3));
 		ll.setBackgroundResource(R.drawable.bg_m3_surface1);
 
-		FrameLayout topPanel=new FrameLayout(activity);
-		topPanel.setPadding(V.dp(16), V.dp(8), V.dp(16), V.dp(8));
-		topPanel.setBackgroundResource(R.drawable.bg_m3_surface2);
-
-
-
-		ll.addView(topPanel, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
-		ll.addView(list, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0 , 1f));
-
-
-		FrameLayout bottomPanel=new FrameLayout(activity);
-		bottomPanel.setPadding(V.dp(16), V.dp(8), V.dp(16), V.dp(8));
-		bottomPanel.setBackgroundResource(R.drawable.bg_m3_surface2);
-		ll.addView(bottomPanel, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+		ll.addView(list, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
 
 		if(forReaction){
+			FrameLayout topPanel=new FrameLayout(activity);
+			topPanel.setPadding(V.dp(16), V.dp(12), V.dp(16), V.dp(12));
+			topPanel.setBackgroundResource(R.drawable.bg_m3_surface2);
+			ll.addView(topPanel, 0, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+			
 			InputMethodManager imm=(InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
 			EditText input=new EditText(activity);
 			input.setHint(R.string.sk_enter_emoji_hint);
@@ -176,6 +167,7 @@ public class CustomEmojiPopupKeyboard extends PopupKeyboard{
 						currentAdapter.getFilter().filter(s.toString());
 					}
 				}
+
 				@Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 				@Override public void afterTextChanged(Editable s) {}
 			});
@@ -188,13 +180,14 @@ public class CustomEmojiPopupKeyboard extends PopupKeyboard{
 					input.getText().clear();
 				}
 			});
-			FrameLayout.LayoutParams params=new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.START);
-			int pad=forReaction ? 0 : V.dp(36 + 16);
-			params.setMargins(pad, V.dp(8), pad, V.dp(8));
-			topPanel.addView(input, params);
-		}
+			topPanel.addView(input);
 
-		if(!forReaction){
+		}else{ // in compose fragment
+			FrameLayout bottomPanel=new FrameLayout(activity);
+			bottomPanel.setPadding(V.dp(16), V.dp(8), V.dp(16), V.dp(8));
+			bottomPanel.setBackgroundResource(R.drawable.bg_m3_surface2);
+			ll.addView(bottomPanel, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
 			ImageButton hideKeyboard=new ImageButton(activity);
 			hideKeyboard.setImageResource(R.drawable.ic_fluent_keyboard_dock_24_regular);
 			hideKeyboard.setImageTintList(ColorStateList.valueOf(UiUtils.getThemeColor(activity, R.attr.colorM3OnSurfaceVariant)));
@@ -209,12 +202,14 @@ public class CustomEmojiPopupKeyboard extends PopupKeyboard{
 			backspace.setOnClickListener(v->listener.onBackspace());
 			bottomPanel.addView(backspace, new FrameLayout.LayoutParams(V.dp(48), V.dp(48), Gravity.END | Gravity.CENTER_VERTICAL));
 		}
+
 		return ll;
 	}
 
 	public void setListener(Listener listener){
 		this.listener=listener;
 	}
+
 	@SuppressLint("NotifyDataSetChanged")
 	@Subscribe
 	public void onEmojiUpdated(EmojiUpdatedEvent ev){
@@ -233,7 +228,7 @@ public class CustomEmojiPopupKeyboard extends PopupKeyboard{
 		public SingleCategoryAdapter(EmojiCategory category){
 			super(imgLoader);
 			this.category=category;
-			this.originalCategory = new EmojiCategory(category);
+			this.originalCategory=new EmojiCategory(category);
 			requests=category.emojis.stream().map(e->new UrlImageLoaderRequest(e.getUrl(playGifs), V.dp(24), V.dp(24))).collect(Collectors.toList());
 		}
 
@@ -290,7 +285,6 @@ public class CustomEmojiPopupKeyboard extends PopupKeyboard{
 				String search=charSequence.toString().toLowerCase().trim();
 
 				if(charSequence==null || charSequence.length()==0){
-
 					filteredEmoji.addAll(originalCategory.emojis);
 				}else{
 					for(Emoji emoji : originalCategory.emojis){
