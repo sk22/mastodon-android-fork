@@ -23,7 +23,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.style.ImageSpan;
 import android.transition.ChangeBounds;
 import android.transition.Fade;
 import android.transition.TransitionManager;
@@ -60,8 +59,10 @@ import org.joinmastodon.android.api.requests.accounts.SetAccountFollowed;
 import org.joinmastodon.android.api.requests.accounts.UpdateAccountCredentials;
 import org.joinmastodon.android.api.requests.instance.GetInstance;
 import org.joinmastodon.android.api.session.AccountSessionManager;
+import org.joinmastodon.android.fragments.account_list.BlockedAccountsListFragment;
 import org.joinmastodon.android.fragments.account_list.FollowerListFragment;
 import org.joinmastodon.android.fragments.account_list.FollowingListFragment;
+import org.joinmastodon.android.fragments.account_list.MutedAccountsListFragment;
 import org.joinmastodon.android.fragments.report.ReportReasonChoiceFragment;
 import org.joinmastodon.android.fragments.settings.SettingsServerFragment;
 import org.joinmastodon.android.model.Account;
@@ -846,6 +847,16 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 				args.putString("profileDisplayUsername", account.getDisplayUsername());
 			}
 			Nav.go(getActivity(), ListsFragment.class, args);
+		}else if(id==R.id.muted_accounts){
+			final Bundle args=new Bundle();
+			args.putString("account", accountID);
+			args.putParcelable("targetAccount", Parcels.wrap(account));
+			Nav.go(getActivity(), MutedAccountsListFragment.class, args);
+		}else if(id==R.id.blocked_accounts){
+			final Bundle args=new Bundle();
+			args.putString("account", accountID);
+			args.putParcelable("targetAccount", Parcels.wrap(account));
+			Nav.go(getActivity(), BlockedAccountsListFragment.class, args);
 		}else if(id==R.id.followed_hashtags){
 			Bundle args=new Bundle();
 			args.putString("account", accountID);

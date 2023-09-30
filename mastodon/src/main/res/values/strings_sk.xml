@@ -404,4 +404,6 @@
 		<item quantity="one">%d day</item>
 		<item quantity="other">%d days</item>
 	</plurals>
+	<string name="sk_muted_accounts">Muted accounts</string>
+	<string name="sk_blocked_accounts">Blocked accounts</string>
 </resources>
