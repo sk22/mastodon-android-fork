@@ -524,9 +524,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			if (list.repliesPolicy != null) args.putInt("repliesPolicy", list.repliesPolicy.ordinal());
 			Nav.go(getActivity(), ListTimelineFragment.class, args);
 		} else if ((hashtag = hashtagsItems.get(id)) != null) {
-			args.putString("hashtag", hashtag.name);
-			args.putBoolean("following", hashtag.following);
-			Nav.go(getActivity(), HashtagTimelineFragment.class, args);
+			UiUtils.openHashtagTimeline(getContext(), accountID, hashtag);
 		}
 		return true;
 	}

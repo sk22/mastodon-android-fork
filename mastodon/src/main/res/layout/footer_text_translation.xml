@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:paddingTop="6dp"
+	android:gravity="center_vertical">
+
+	<FrameLayout
+		android:id="@+id/translation_btn_wrap"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginHorizontal="6dp"
+		android:clipToPadding="false">
+		<ProgressBar
+			android:id="@+id/translation_progress"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:layout_marginStart="10dp"
+			android:layout_marginEnd="8dp"
+			android:indeterminate="true"
+			style="?android:progressBarStyleSmall"
+			android:visibility="gone"/>
+		<Button
+			android:id="@+id/translation_btn"
+			style="@style/Widget.Mastodon.M3.Button.Text"
+			android:textColor="?colorM3OnSurfaceVariant"
+			android:paddingStart="10dp"
+			android:paddingEnd="10dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/translation_show_original"/>
+	</FrameLayout>
+
+	<TextView
+		android:id="@+id/translation_info_text"
+		android:layout_width="0dp"
+		android:layout_weight="1"
+		android:layout_height="wrap_content"
+		android:layout_marginEnd="16dp"
+		android:maxLines="1"
+		android:ellipsize="end"
+		android:textAppearance="@style/m3_body_small"
+		android:textColor="?colorM3OnSurfaceVariant"
+		android:textAlignment="textEnd"
+		tools:text="Translated using TranslateEngine" />
+
+</LinearLayout>

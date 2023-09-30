@@ -36,6 +36,7 @@
 		<item name="android:windowActionModeOverlay">true</item>
 		<item name="android:actionModeBackground">?colorM3PrimaryContainer</item>
 		<item name="android:actionModeCloseDrawable">@drawable/ic_fluent_dismiss_24_regular</item>
+<!--		<item name="appkitEmptyTextAppearance">@style/empty_text</item>-->
 
 		<item name="android:statusBarColor">?colorM3Background</item>
 		<item name="android:navigationBarColor">?colorM3Background</item>
@@ -72,6 +73,7 @@
 		<item name="android:windowActionModeOverlay">true</item>
 		<item name="android:actionModeBackground">?colorM3PrimaryContainer</item>
 		<item name="android:actionModeCloseDrawable">@drawable/ic_fluent_dismiss_24_regular</item>
+<!--		<item name="appkitEmptyTextAppearance">@style/empty_text</item>-->
 
 		<item name="colorM3DisabledBackground">#1FE3E3E3</item>
 		<item name="colorM3Error">#F2B8B5</item>
@@ -380,5 +382,9 @@
 
 	<style name="window_fade_out">
 		<item name="android:windowExitAnimation">@anim/fade_out_fast</item>
+	</style>
+
+	<style name="empty_text" parent="m3_body_large">
+		<item name="android:textColor">?colorM3OnSurfaceVariant</item>
 	</style>
 </resources>

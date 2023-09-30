@@ -122,7 +122,7 @@ public class SearchQueryFragment extends MastodonRecyclerFragment<SearchResultVi
 				recentsHeader.setVisible(!data.isEmpty());
 			});
 		}else{
-			currentRequest=new GetSearchResults(currentQuery, null, false)
+			currentRequest=new GetSearchResults(currentQuery, null, false, null, 0, 0)
 					.limit(2)
 					.setCallback(new SimpleCallback<>(this){
 						@Override
@@ -378,7 +378,7 @@ public class SearchQueryFragment extends MastodonRecyclerFragment<SearchResultVi
 
 	private void openHashtag(SearchResult res){
 		wrapSuicideDialog(()->{
-			UiUtils.openHashtagTimeline(getActivity(), accountID, res.hashtag.name, res.hashtag.following);
+			UiUtils.openHashtagTimeline(getActivity(), accountID, res.hashtag);
 			AccountSessionManager.getInstance().getAccount(accountID).getCacheController().putRecentSearch(res);
 		});
 	}
@@ -424,6 +424,8 @@ public class SearchQueryFragment extends MastodonRecyclerFragment<SearchResultVi
 	}
 
 	private void onSearchViewEnter(){
+		if(TextUtils.isEmpty(currentQuery) || currentQuery.trim().isEmpty())
+			return;
 		wrapSuicideDialog(()->deliverResult(currentQuery, null));
 	}
 
@@ -436,7 +438,7 @@ public class SearchQueryFragment extends MastodonRecyclerFragment<SearchResultVi
 			String q=searchViewHelper.getQuery();
 			if(q.startsWith("#"))
 				q=q.substring(1);
-			UiUtils.openHashtagTimeline(getActivity(), accountID, q, null);
+			UiUtils.openHashtagTimeline(getActivity(), accountID, q);
 		});
 	}
 

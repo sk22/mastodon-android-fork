@@ -180,10 +180,8 @@ public abstract class StatusDisplayItem{
 						.ifPresent(hashtag -> items.add(new ReblogOrReplyLineStatusDisplayItem(
 								parentID, fragment, hashtag.name, List.of(),
 								R.drawable.ic_fluent_number_symbol_20sp_filled, null,
-								i -> {
-									args.putString("hashtag", hashtag.name);
-									Nav.go(fragment.getActivity(), HashtagTimelineFragment.class, args);
-								}, status
+								i->UiUtils.openHashtagTimeline(fragment.getActivity(), accountID, hashtag),
+								status
 						)));
 			}
 

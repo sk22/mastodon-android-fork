@@ -382,10 +382,6 @@
         <item quantity="other">Beiträge</item>
     </plurals>
     <string name="sk_settings_show_labels_in_navigation_bar">Tab-Bezeichnungen in der Navigationsleiste anzeigen</string>
-    <string name="sk_time_seconds">%d Sekunden</string>
-    <string name="sk_time_minutes">%d Minuten</string>
-    <string name="sk_time_hours">%d Stunden</string>
-    <string name="sk_time_days">%d Tage</string>
     <string name="sk_suicide_helplines_url">https://findahelpline.com</string>
     <string name="sk_load_missing_posts_below">Ältere Beiträge laden</string>
     <string name="sk_load_missing_posts_above">Neuere Beiträge laden</string>

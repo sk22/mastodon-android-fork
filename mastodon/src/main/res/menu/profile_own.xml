@@ -7,6 +7,8 @@
 	</item>
 	<item android:id="@+id/manage_user_lists" android:title="@string/sk_your_lists" android:icon="@drawable/ic_fluent_people_24_regular"/>
 	<item android:id="@+id/favorites" android:title="@string/your_favorites" android:icon="@drawable/ic_fluent_star_24_regular"/>
+	<item android:id="@+id/muted_accounts" android:title="@string/sk_muted_accounts" android:icon="@drawable/ic_fluent_speaker_off_24_regular"/>
+	<item android:id="@+id/blocked_accounts" android:title="@string/sk_blocked_accounts" android:icon="@drawable/ic_fluent_shield_24_regular"/>
 	<item android:id="@+id/scheduled" android:title="@string/sk_unsent_posts" android:icon="@drawable/ic_fluent_folder_open_24_regular"/>
 	<item android:id="@+id/share" android:title="@string/share_user" android:icon="@drawable/ic_fluent_share_24_regular"/>
 </menu>

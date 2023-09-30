@@ -370,9 +370,5 @@
     <string name="sk_settings_auto_reveal_equal_spoilers">Revelar automaticamente Avisos de Conteúdo nas respostas</string>
     <string name="sk_icon_recycle_bin">Lixeira de reciclagem</string>
     <string name="sk_tab_search">Pesquisar</string>
-    <string name="sk_time_minutes">%d minutos</string>
-    <string name="sk_time_hours">%d horas</string>
     <string name="sk_suicide_search_terms">Suicídio</string>
-    <string name="sk_time_seconds">%d segundos</string>
-    <string name="sk_time_days">%d dias</string>
 </resources>

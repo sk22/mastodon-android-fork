@@ -388,8 +388,22 @@
     <string name="sk_post_contains_media">Post contains media</string>
     <string name="sk_load_missing_posts_above">Load newer posts</string>
     <string name="sk_load_missing_posts_below">Load older posts</string>
-    <string name="sk_time_seconds">%d seconds</string>
-    <string name="sk_time_minutes">%d minutes</string>
-    <string name="sk_time_hours">%d hours</string>
-    <string name="sk_time_days">%d days</string>
+	<plurals name="sk_time_seconds">
+		<item quantity="one">%d second</item>
+		<item quantity="other">%d seconds</item>
+	</plurals>
+	<plurals name="sk_time_minutes">
+		<item quantity="one">%d minute</item>
+		<item quantity="other">%d minutes</item>
+	</plurals>
+	<plurals name="sk_time_hours">
+		<item quantity="one">%d hour</item>
+		<item quantity="other">%d hours</item>
+	</plurals>
+	<plurals name="sk_time_days">
+		<item quantity="one">%d day</item>
+		<item quantity="other">%d days</item>
+	</plurals>
+	<string name="sk_muted_accounts">Muted accounts</string>
+	<string name="sk_blocked_accounts">Blocked accounts</string>
 </resources>
