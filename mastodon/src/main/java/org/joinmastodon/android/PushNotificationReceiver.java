@@ -176,6 +176,8 @@ public class PushNotificationReceiver extends BroadcastReceiver{
 				List<NotificationChannel> channels=Arrays.stream(PushNotification.Type.values())
 						.map(type->{
 							NotificationChannel channel=new NotificationChannel(accountID+"_"+type, context.getString(type.localizedName), NotificationManager.IMPORTANCE_DEFAULT);
+							channel.setLightColor(context.getColor(R.color.primary_700));
+							channel.enableLights(true);
 							channel.setGroup(accountID);
 							return channel;
 						})
@@ -205,6 +207,7 @@ public class PushNotificationReceiver extends BroadcastReceiver{
 				.setShowWhen(true)
 				.setCategory(Notification.CATEGORY_SOCIAL)
 				.setAutoCancel(true)
+				.setLights(UiUtils.getThemeColor(context, android.R.attr.colorAccent), 500, 1000)
 				.setColor(UiUtils.getThemeColor(context, android.R.attr.colorAccent));
 
 		if (!GlobalUserPreferences.uniformNotificationIcon) {
@@ -321,8 +324,8 @@ public class PushNotificationReceiver extends BroadcastReceiver{
 
 		CreateStatus.Request req=new CreateStatus.Request();
 		req.status = initialText + input.toString();
-		req.language = preferences.postingDefaultLanguage;
-		req.visibility = preferences.postingDefaultVisibility;
+		req.language = notification.status.language;
+		req.visibility = notification.status.visibility;
 		req.inReplyToId = notification.status.id;
 
 		if (notification.status.hasSpoiler() &&

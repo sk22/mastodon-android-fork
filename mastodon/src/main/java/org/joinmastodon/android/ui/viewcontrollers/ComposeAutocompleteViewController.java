@@ -15,15 +15,12 @@ import android.widget.TextView;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.search.GetSearchResults;
 import org.joinmastodon.android.api.session.AccountSessionManager;
-import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.Emoji;
 import org.joinmastodon.android.model.Hashtag;
 import org.joinmastodon.android.model.SearchResults;
 import org.joinmastodon.android.model.viewmodel.AccountViewModel;
 import org.joinmastodon.android.ui.BetterItemAnimator;
 import org.joinmastodon.android.ui.OutlineProviders;
-import org.joinmastodon.android.ui.text.HtmlParser;
-import org.joinmastodon.android.ui.utils.CustomEmojiHelper;
 import org.joinmastodon.android.ui.utils.HideableSingleViewRecyclerAdapter;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.ui.views.FilterChipView;
@@ -94,6 +91,24 @@ public class ComposeAutocompleteViewController{
 			public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state){
 				if(parent.getChildAdapterPosition(view)<parent.getAdapter().getItemCount()-1)
 					outRect.right=V.dp(8);
+			}
+		});
+		// Set empty adapter to prevent NPEs
+		list.setAdapter(new RecyclerView.Adapter<>(){
+			@NonNull
+			@Override
+			public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType){
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position){
+
+			}
+
+			@Override
+			public int getItemCount(){
+				return 0;
 			}
 		});
 		contentView.addView(list, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -222,11 +237,13 @@ public class ComposeAutocompleteViewController{
 	}
 
 	private void doSearchUsers(){
-		currentRequest=new GetSearchResults(lastText, GetSearchResults.Type.ACCOUNTS, false)
+		currentRequest=new GetSearchResults(lastText, GetSearchResults.Type.ACCOUNTS, false, null, 0, 0)
 				.setCallback(new Callback<>(){
 					@Override
 					public void onSuccess(SearchResults result){
 						currentRequest=null;
+						if(mode!=Mode.USERS)
+							return;
 						List<AccountViewModel> oldList=users;
 						users=result.accounts.stream().map(a->new AccountViewModel(a, accountID)).collect(Collectors.toList());
 						if(isLoading){
@@ -256,7 +273,7 @@ public class ComposeAutocompleteViewController{
 	}
 
 	private void doSearchHashtags(){
-		currentRequest=new GetSearchResults(lastText, GetSearchResults.Type.HASHTAGS, false)
+		currentRequest=new GetSearchResults(lastText, GetSearchResults.Type.HASHTAGS, false, null, 0, 0)
 				.setCallback(new Callback<>(){
 					@Override
 					public void onSuccess(SearchResults result){

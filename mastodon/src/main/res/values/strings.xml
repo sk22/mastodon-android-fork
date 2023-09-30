@@ -589,4 +589,23 @@
 	<string name="time_minutes_ago_short">%dm ago</string>
 	<string name="time_hours_ago_short">%dh ago</string>
 	<string name="time_days_ago_short">%dd ago</string>
+
+	<!-- %s is the name of the post language -->
+	<string name="translate_post">Translate from %s</string>
+	<!-- %1$s is the language, %2$s is the name of the translation service -->
+	<string name="post_translated">Translated from %1$s using %2$s</string>
+	<string name="translation_show_original">Show original</string>
+	<string name="translation_failed">Translation failed. Maybe the administrator has not enabled translations on this server or this server is running an older version of Mastodon where translations are not yet supported.</string>
+	<string name="settings_privacy">Privacy and reach</string>
+	<string name="settings_discoverable">Feature profile and posts in discovery algorithms</string>
+	<string name="settings_indexable">Include public posts in search results</string>
+
+	<plurals name="x_participants">
+		<item quantity="one">%,d participant</item>
+		<item quantity="other">%,d participants</item>
+	</plurals>
+	<plurals name="x_posts_today">
+		<item quantity="one">%,d post today</item>
+		<item quantity="other">%,d posts today</item>
+	</plurals>
 </resources>

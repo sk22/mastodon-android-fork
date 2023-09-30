@@ -239,16 +239,21 @@ public class EditTimelinesFragment extends MastodonRecyclerFragment<TimelineDefi
 
     private boolean setTagListContent(NachoTextView editText, @Nullable List<String> tags) {
         if (tags == null || tags.isEmpty()) return false;
-        editText.setText(String.join(",", tags));
-        editText.chipifyAllUnterminatedTokens();
+		editText.setText(tags);
+		editText.chipifyAllUnterminatedTokens();
         return true;
     }
 
     private NachoTextView prepareChipTextView(NachoTextView nacho) {
-        nacho.addChipTerminator(',', BEHAVIOR_CHIPIFY_ALL);
-        nacho.addChipTerminator('\n', BEHAVIOR_CHIPIFY_ALL);
-        nacho.addChipTerminator(' ', BEHAVIOR_CHIPIFY_ALL);
-        nacho.addChipTerminator(';', BEHAVIOR_CHIPIFY_ALL);
+		//I’ll Be Back
+		nacho.setChipTerminators(
+				Map.of(
+						',', BEHAVIOR_CHIPIFY_ALL,
+						'\n', BEHAVIOR_CHIPIFY_ALL,
+						' ', BEHAVIOR_CHIPIFY_ALL,
+						';', BEHAVIOR_CHIPIFY_ALL
+				)
+		);
         nacho.enableEditChipOnTouch(true, true);
         nacho.setOnFocusChangeListener((v, hasFocus) -> nacho.chipifyAllUnterminatedTokens());
         return nacho;

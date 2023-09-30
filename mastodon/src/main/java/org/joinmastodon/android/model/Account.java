@@ -139,6 +139,7 @@ public class Account extends BaseModel implements Searchable{
 	 * When a timed mute will expire, if applicable.
 	 */
 	public Instant muteExpiresAt;
+	public boolean noindex;
 
 	public List<Role> roles;
 
@@ -238,6 +239,7 @@ public class Account extends BaseModel implements Searchable{
 				", source="+source+
 				", suspended="+suspended+
 				", muteExpiresAt="+muteExpiresAt+
+				", noindex="+noindex+
 				'}';
 	}
 }

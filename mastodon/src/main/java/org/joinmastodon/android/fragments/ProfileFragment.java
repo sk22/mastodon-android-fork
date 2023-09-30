@@ -23,7 +23,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.style.ImageSpan;
 import android.transition.ChangeBounds;
 import android.transition.Fade;
 import android.transition.TransitionManager;
@@ -60,8 +59,10 @@ import org.joinmastodon.android.api.requests.accounts.SetAccountFollowed;
 import org.joinmastodon.android.api.requests.accounts.UpdateAccountCredentials;
 import org.joinmastodon.android.api.requests.instance.GetInstance;
 import org.joinmastodon.android.api.session.AccountSessionManager;
+import org.joinmastodon.android.fragments.account_list.BlockedAccountsListFragment;
 import org.joinmastodon.android.fragments.account_list.FollowerListFragment;
 import org.joinmastodon.android.fragments.account_list.FollowingListFragment;
+import org.joinmastodon.android.fragments.account_list.MutedAccountsListFragment;
 import org.joinmastodon.android.fragments.report.ReportReasonChoiceFragment;
 import org.joinmastodon.android.fragments.settings.SettingsServerFragment;
 import org.joinmastodon.android.model.Account;
@@ -304,6 +305,12 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 
 		tabbar.setTabTextColors(UiUtils.getThemeColor(getActivity(), R.attr.colorM3OnSurfaceVariant), UiUtils.getThemeColor(getActivity(), R.attr.colorM3Primary));
 		tabbar.setTabTextSize(V.dp(14));
+		tabLayoutMediator=new TabLayoutMediator(tabbar, pager, (tab, position)->tab.setText(switch(position){
+			case 0 -> R.string.profile_featured;
+			case 1 -> R.string.profile_timeline;
+			case 2 -> R.string.profile_about;
+			default -> throw new IllegalStateException();
+		}));
 		tabLayoutMediator=new TabLayoutMediator(tabbar, pager, new TabLayoutMediator.TabConfigurationStrategy(){
 			@Override
 			public void onConfigureTab(@NonNull TabLayout.Tab tab, int position){
@@ -315,6 +322,19 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 					default -> throw new IllegalStateException();
 				});
 				if (position == 4) tab.view.setVisibility(View.GONE);
+			}
+		});
+		tabbar.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener(){
+			@Override
+			public void onTabSelected(TabLayout.Tab tab){}
+
+			@Override
+			public void onTabUnselected(TabLayout.Tab tab){}
+
+			@Override
+			public void onTabReselected(TabLayout.Tab tab){
+				if(getFragmentForPage(tab.getPosition()) instanceof ScrollableToTop stt)
+					stt.scrollToTop();
 			}
 		});
 
@@ -827,6 +847,16 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 				args.putString("profileDisplayUsername", account.getDisplayUsername());
 			}
 			Nav.go(getActivity(), ListsFragment.class, args);
+		}else if(id==R.id.muted_accounts){
+			final Bundle args=new Bundle();
+			args.putString("account", accountID);
+			args.putParcelable("targetAccount", Parcels.wrap(account));
+			Nav.go(getActivity(), MutedAccountsListFragment.class, args);
+		}else if(id==R.id.blocked_accounts){
+			final Bundle args=new Bundle();
+			args.putString("account", accountID);
+			args.putParcelable("targetAccount", Parcels.wrap(account));
+			Nav.go(getActivity(), BlockedAccountsListFragment.class, args);
 		}else if(id==R.id.followed_hashtags){
 			Bundle args=new Bundle();
 			args.putString("account", accountID);
@@ -1304,9 +1334,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		@NonNull
 		@Override
 		public SimpleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType){
-			FrameLayout view=tabViews[viewType];
-			if (view.getParent() != null) ((ViewGroup)view.getParent()).removeView(view);
-			view.setVisibility(View.VISIBLE);
+			FrameLayout view=new FrameLayout(parent.getContext());
 			view.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 			return new SimpleViewHolder(view);
 		}
@@ -1314,8 +1342,13 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		@Override
 		public void onBindViewHolder(@NonNull SimpleViewHolder holder, int position){
 			Fragment fragment=getFragmentForPage(position);
+			FrameLayout fragmentView=tabViews[position];
+			fragmentView.setVisibility(View.VISIBLE);
+			if(fragmentView.getParent() instanceof ViewGroup parent)
+				parent.removeView(fragmentView);
+			((FrameLayout)holder.itemView).addView(fragmentView);
 			if(!fragment.isAdded()){
-				getChildFragmentManager().beginTransaction().add(holder.itemView.getId(), fragment).commit();
+				getChildFragmentManager().beginTransaction().add(fragmentView.getId(), fragment).commit();
 				holder.itemView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener(){
 					@Override
 					public boolean onPreDraw(){
