@@ -45,56 +45,10 @@
 		android:visibility="gone"
 		android:importantForAccessibility="no"/>
 
-	<org.joinmastodon.android.ui.views.AutoOrientationLinearLayout
-		android:id="@+id/translate_wrap"
+	<ViewStub
+		android:id="@+id/translation_info"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:paddingTop="6dp"
-		android:gravity="center_vertical"
-		android:visibility="gone">
-
-		<FrameLayout
-			android:id="@+id/action_btn_wrap"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginHorizontal="6dp"
-			android:clipToPadding="false">
-			<org.joinmastodon.android.ui.views.ProgressBarButton
-				android:id="@+id/translate_btn"
-				style="@style/Widget.Mastodon.M3.Button.Text"
-				android:textColor="?colorM3OnSurfaceVariant"
-				android:paddingStart="10dp"
-				android:paddingEnd="10dp"
-				android:minWidth="0dp"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				tools:text="@string/sk_translate_post"/>
-			<ProgressBar
-				android:id="@+id/translate_progress"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center"
-				android:indeterminate="true"
-				style="?android:progressBarStyleSmall"
-				android:elevation="10dp"
-				android:outlineProvider="none"
-				android:visibility="gone"/>
-		</FrameLayout>
-
-		<Space
-			android:layout_width="0dp"
-			android:layout_height="0dp"
-			android:layout_weight="1" />
-
-		<TextView
-			android:id="@+id/translate_info"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginHorizontal="16dp"
-			android:textColor="?colorM3OnSurfaceVariant"
-			android:textAlignment="textEnd"
-			tools:text="Translated using TranslateEngine" />
-
-	</org.joinmastodon.android.ui.views.AutoOrientationLinearLayout>
+		android:layout="@layout/footer_text_translation"/>
 
 </LinearLayout>

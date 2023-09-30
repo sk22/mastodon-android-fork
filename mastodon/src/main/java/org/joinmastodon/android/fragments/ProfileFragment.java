@@ -304,6 +304,12 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 
 		tabbar.setTabTextColors(UiUtils.getThemeColor(getActivity(), R.attr.colorM3OnSurfaceVariant), UiUtils.getThemeColor(getActivity(), R.attr.colorM3Primary));
 		tabbar.setTabTextSize(V.dp(14));
+		tabLayoutMediator=new TabLayoutMediator(tabbar, pager, (tab, position)->tab.setText(switch(position){
+			case 0 -> R.string.profile_featured;
+			case 1 -> R.string.profile_timeline;
+			case 2 -> R.string.profile_about;
+			default -> throw new IllegalStateException();
+		}));
 		tabLayoutMediator=new TabLayoutMediator(tabbar, pager, new TabLayoutMediator.TabConfigurationStrategy(){
 			@Override
 			public void onConfigureTab(@NonNull TabLayout.Tab tab, int position){
@@ -315,6 +321,19 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 					default -> throw new IllegalStateException();
 				});
 				if (position == 4) tab.view.setVisibility(View.GONE);
+			}
+		});
+		tabbar.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener(){
+			@Override
+			public void onTabSelected(TabLayout.Tab tab){}
+
+			@Override
+			public void onTabUnselected(TabLayout.Tab tab){}
+
+			@Override
+			public void onTabReselected(TabLayout.Tab tab){
+				if(getFragmentForPage(tab.getPosition()) instanceof ScrollableToTop stt)
+					stt.scrollToTop();
 			}
 		});
 
@@ -1304,9 +1323,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		@NonNull
 		@Override
 		public SimpleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType){
-			FrameLayout view=tabViews[viewType];
-			if (view.getParent() != null) ((ViewGroup)view.getParent()).removeView(view);
-			view.setVisibility(View.VISIBLE);
+			FrameLayout view=new FrameLayout(parent.getContext());
 			view.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 			return new SimpleViewHolder(view);
 		}
@@ -1314,8 +1331,13 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		@Override
 		public void onBindViewHolder(@NonNull SimpleViewHolder holder, int position){
 			Fragment fragment=getFragmentForPage(position);
+			FrameLayout fragmentView=tabViews[position];
+			fragmentView.setVisibility(View.VISIBLE);
+			if(fragmentView.getParent() instanceof ViewGroup parent)
+				parent.removeView(fragmentView);
+			((FrameLayout)holder.itemView).addView(fragmentView);
 			if(!fragment.isAdded()){
-				getChildFragmentManager().beginTransaction().add(holder.itemView.getId(), fragment).commit();
+				getChildFragmentManager().beginTransaction().add(fragmentView.getId(), fragment).commit();
 				holder.itemView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener(){
 					@Override
 					public boolean onPreDraw(){

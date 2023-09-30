@@ -176,6 +176,8 @@ public class PushNotificationReceiver extends BroadcastReceiver{
 				List<NotificationChannel> channels=Arrays.stream(PushNotification.Type.values())
 						.map(type->{
 							NotificationChannel channel=new NotificationChannel(accountID+"_"+type, context.getString(type.localizedName), NotificationManager.IMPORTANCE_DEFAULT);
+							channel.setLightColor(context.getColor(R.color.primary_700));
+							channel.enableLights(true);
 							channel.setGroup(accountID);
 							return channel;
 						})
@@ -205,6 +207,7 @@ public class PushNotificationReceiver extends BroadcastReceiver{
 				.setShowWhen(true)
 				.setCategory(Notification.CATEGORY_SOCIAL)
 				.setAutoCancel(true)
+				.setLights(context.getColor(android.R.attr.colorAccent), 500, 1000)
 				.setColor(UiUtils.getThemeColor(context, android.R.attr.colorAccent));
 
 		if (!GlobalUserPreferences.uniformNotificationIcon) {

@@ -121,7 +121,7 @@ public class FollowedHashtagsFragment extends MastodonRecyclerFragment<Hashtag> 
 
         @Override
         public void onClick() {
-            UiUtils.openHashtagTimeline(getActivity(), accountID, item.name, item.following);
+            UiUtils.openHashtagTimeline(getActivity(), accountID, item.name);
         }
     }
 }
