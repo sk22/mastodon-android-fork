@@ -85,7 +85,7 @@ public class HashtagTimelineFragment extends PinnableStatusListFragment{
 
 	@Override
 	protected TimelineDefinition makeTimelineDefinition() {
-		return TimelineDefinition.ofHashtag(hashtag);
+		return TimelineDefinition.ofHashtag(hashtagName);
 	}
 
 	@Override
