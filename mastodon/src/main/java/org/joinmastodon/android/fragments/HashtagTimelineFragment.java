@@ -217,8 +217,6 @@ public class HashtagTimelineFragment extends PinnableStatusListFragment{
 		followMenuItem=optionsMenu.findItem(R.id.follow_hashtag);
 		pinMenuItem=optionsMenu.findItem(R.id.pin);
 		followMenuItem.setVisible(toolbarContentVisible);
-		followMenuItem.setTitle(getString(hashtag.following ? R.string.unfollow_user : R.string.follow_user, "#"+hashtagName));
-		followMenuItem.setIcon(hashtag.following ? R.drawable.ic_fluent_person_delete_24_filled : R.drawable.ic_fluent_person_add_24_regular);
 		pinMenuItem.setShowAsAction(toolbarContentVisible ? MenuItem.SHOW_AS_ACTION_NEVER : MenuItem.SHOW_AS_ACTION_ALWAYS);
 		super.updatePinButton(pinMenuItem);
 		if(toolbarContentVisible){
