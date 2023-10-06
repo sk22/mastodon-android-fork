@@ -207,8 +207,10 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 				translationFooter.setVisibility(translateEnabled ? View.VISIBLE : View.GONE);
 				translationProgress.setVisibility(View.GONE);
 				Translation existingTrans=item.status.getContentStatus().translation;
-				String lang=existingTrans!=null ? existingTrans.detectedSourceLanguage : null;
-				String displayLang=Locale.forLanguageTag(lang!=null ? lang : (item.status.getContentStatus().language != null ? item.status.getContentStatus().language : AccountSessionManager.get(item.parentFragment.getAccountID()).preferences.postingDefaultLanguage)).getDisplayLanguage();
+				String existingTransLang=existingTrans!=null ? existingTrans.detectedSourceLanguage : null;
+				String lang=existingTransLang!=null ? existingTransLang : item.status.getContentStatus().language;
+				String displayLang=Locale.forLanguageTag(lang != null ? lang
+						: AccountSessionManager.get(item.parentFragment.getAccountID()).preferences.postingDefaultLanguage).getDisplayLanguage();
 				translationButton.setText(item.parentFragment.getString(R.string.translate_post, !displayLang.isBlank() ? displayLang : lang));
 				translationButton.setEnabled(true);
 				translationButton.setAlpha(1);
