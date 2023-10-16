@@ -63,8 +63,8 @@ public class SettingsMainFragment extends BaseSettingsFragment<Void>{
 
 		Instance instance = AccountSessionManager.getInstance().getInstanceInfo(account.domain);
 		if (!instance.isAkkoma()){
-			data.add(2, new ListItem<>(R.string.settings_filters, 0, R.drawable.ic_fluent_filter_24_regular, this::onFiltersClick));
 			data.add(2, new ListItem<>(R.string.settings_privacy, 0, R.drawable.ic_fluent_shield_24_regular, this::onPrivacyClick));
+			data.add(3, new ListItem<>(R.string.settings_filters, 0, R.drawable.ic_fluent_filter_24_regular, this::onFiltersClick));
 		}
 
 		if(BuildConfig.DEBUG || BuildConfig.BUILD_TYPE.equals("appcenterPrivateBeta")){
