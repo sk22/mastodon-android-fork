@@ -13,8 +13,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.joinmastodon.android.R;
+import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.IsOnTop;
 import org.joinmastodon.android.fragments.ScrollableToTop;
+import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.SearchResult;
 import org.joinmastodon.android.ui.OutlineProviders;
 import org.joinmastodon.android.ui.SimpleViewHolder;
@@ -155,7 +157,7 @@ public class DiscoverFragment extends AppKitFragment implements ScrollableToTop,
 			}
 		});
 
-		disableDiscover=getArguments().getBoolean("disableDiscover");
+		disableDiscover=AccountSessionManager.get(accountID).getInstance().map(Instance::isAkkoma).orElse(false);
 		searchView=view.findViewById(R.id.search_fragment);
 		if(searchFragment==null){
 			searchFragment=new SearchFragment();
