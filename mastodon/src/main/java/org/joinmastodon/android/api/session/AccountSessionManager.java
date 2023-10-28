@@ -1,5 +1,7 @@
 package org.joinmastodon.android.api.session;
 
+import static org.unifiedpush.android.connector.UnifiedPush.getDistributor;
+
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.ComponentName;
@@ -34,6 +36,7 @@ import org.joinmastodon.android.model.EmojiCategory;
 import org.joinmastodon.android.model.LegacyFilter;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Token;
+import org.unifiedpush.android.connector.UnifiedPush;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -101,6 +104,7 @@ public class AccountSessionManager{
 	}
 
 	public void addAccount(Instance instance, Token token, Account self, Application app, AccountActivationInfo activationInfo){
+		Context context = MastodonApp.context;
 		instances.put(instance.uri, instance);
 		AccountSession session=new AccountSession(token, self, app, instance.uri, activationInfo==null, activationInfo);
 		sessions.put(session.getID(), session);
@@ -113,7 +117,14 @@ public class AccountSessionManager{
 		MastodonAPIController.runInBackground(()->writeInstanceInfoFile(wrapper, instance.uri));
 
 		updateMoreInstanceInfo(instance, instance.uri);
-		if(PushSubscriptionManager.arePushNotificationsAvailable()){
+		if (!UnifiedPush.getDistributor(context).isEmpty()) {
+			UnifiedPush.registerApp(
+					context,
+					session.getID(),
+					new ArrayList<>(),
+					context.getPackageName()
+			);
+		} else if(PushSubscriptionManager.arePushNotificationsAvailable()){
 			session.getPushSubscriptionManager().registerAccountForPush(null);
 		}
 		maybeUpdateShortcuts();
