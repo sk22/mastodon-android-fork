@@ -417,4 +417,7 @@
     <string name="sk_settings_lock_account">Manually approve new followers</string>
 	<string name="sk_settings_default_visibility">Default posting visibility</string>
 	<string name="sk_button_mutuals">Mutuals</string>
+	<string name="sk_personal_note">Add a note about this profile</string>
+	<string name="sk_personal_note_confirm">Confirm changes to note</string>
+	<string name="sk_personal_note_update_failed">Failed to save note</string>
 </resources>
