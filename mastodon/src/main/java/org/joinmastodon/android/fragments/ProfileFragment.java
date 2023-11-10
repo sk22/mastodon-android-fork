@@ -278,60 +278,27 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		avatar.setOutlineProvider(OutlineProviders.roundedRect(24));
 		avatar.setClipToOutline(true);
 
-		noteEdit = content.findViewById(R.id.note_edit);
-		noteWrap = content.findViewById(R.id.note_edit_wrap);
-		ImageButton noteEditConfirm = content.findViewById(R.id.note_edit_confirm);
+		noteEdit=content.findViewById(R.id.note_edit);
+		noteWrap=content.findViewById(R.id.note_edit_wrap);
+		ImageButton noteEditConfirm=content.findViewById(R.id.note_edit_confirm);
 
 		noteEditConfirm.setOnClickListener((v -> {
-			if (!noteEdit.getText().toString().trim().equals(note)) {
-				savePrivateNote();
-			}
-			InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+			if(!noteEdit.getText().toString().equals(note)) savePrivateNote();
+			InputMethodManager imm=(InputMethodManager) getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(this.getView().getRootView().getWindowToken(), 0);
 			noteEdit.clearFocus();
 		}));
 
 
-		noteEdit.setOnFocusChangeListener((v, hasFocus) -> {
-			if (hasFocus) {
-				fab.setVisibility(View.INVISIBLE);
-				TranslateAnimation animate = new TranslateAnimation(
-						0,
-						0,
-						0,
-						fab.getHeight() * 2);
-				animate.setDuration(300);
-				fab.startAnimation(animate);
-
-				noteEditConfirm.setVisibility(View.VISIBLE);
-				noteEditConfirm.animate()
-						.alpha(1.0f)
-						.setDuration(700);
-			} else {
-				fab.setVisibility(View.VISIBLE);
-				TranslateAnimation animate = new TranslateAnimation(
-						0,
-						0,
-						fab.getHeight() * 2,
-						0);
-				animate.setDuration(300);
-				fab.startAnimation(animate);
-
-				noteEditConfirm.animate()
-						.alpha(0.0f)
-						.setDuration(700);
-				noteEditConfirm.setVisibility(View.INVISIBLE);
+		noteEdit.setOnFocusChangeListener((v, hasFocus)->{
+			if(hasFocus){
+				hideFab();
+				V.setVisibilityAnimated(noteEditConfirm, View.VISIBLE);
+			}else{
+				showFab();
+				V.setVisibilityAnimated(noteEditConfirm, View.INVISIBLE);
 			}
 		});
-
-		noteEditConfirm.setOnClickListener((v -> {
-			if (!noteEdit.getText().toString().trim().equals(note)) {
-				savePrivateNote();
-			}
-			InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
-			imm.hideSoftInputFromWindow(this.getView().getRootView().getWindowToken(), 0);
-			noteEdit.clearFocus();
-		}));
 
 		FrameLayout sizeWrapper=new FrameLayout(getActivity()){
 			@Override
