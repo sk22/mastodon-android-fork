@@ -151,12 +151,6 @@ public class StatusEditHistoryFragment extends StatusListFragment{
 	}
 
 	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState){
-		super.onViewCreated(view, savedInstanceState);
-		list.addItemDecoration(new InsetStatusItemDecoration(this));
-	}
-
-	@Override
 	public boolean isItemEnabled(String id){
 		return false;
 	}

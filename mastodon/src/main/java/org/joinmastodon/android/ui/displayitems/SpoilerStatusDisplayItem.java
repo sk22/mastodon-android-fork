@@ -24,7 +24,6 @@ import me.grishka.appkit.imageloader.ImageLoaderViewHolder;
 import me.grishka.appkit.imageloader.requests.ImageLoaderRequest;
 
 public class SpoilerStatusDisplayItem extends StatusDisplayItem{
-	public final Status status;
 	public final ArrayList<StatusDisplayItem> contentItems=new ArrayList<>();
 	private final CharSequence parsedTitle;
 	private final CustomEmojiHelper emojiHelper;

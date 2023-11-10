@@ -60,6 +60,7 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 		super.onCreate(savedInstanceState);
 		mainStatus=Parcels.unwrap(getArguments().getParcelable("status"));
 		Account inReplyToAccount=Parcels.unwrap(getArguments().getParcelable("inReplyToAccount"));
+		refreshing=contextInitiallyRendered=getArguments().getBoolean("refresh", false);
 		if(inReplyToAccount!=null)
 			knownAccounts.put(inReplyToAccount.id, inReplyToAccount);
 		data.add(mainStatus);

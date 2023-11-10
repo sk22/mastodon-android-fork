@@ -47,6 +47,7 @@ import org.joinmastodon.android.ui.displayitems.TextStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.WarningFilteredStatusDisplayItem;
 import org.joinmastodon.android.ui.photoviewer.PhotoViewer;
 import org.joinmastodon.android.ui.photoviewer.PhotoViewerHost;
+import org.joinmastodon.android.ui.utils.InsetStatusItemDecoration;
 import org.joinmastodon.android.ui.utils.MediaAttachmentViewController;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.utils.ProvidesAssistContent;
@@ -358,6 +359,7 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 			}
 		});
 		list.addItemDecoration(new StatusListItemDecoration());
+		list.addItemDecoration(new InsetStatusItemDecoration(this));
 		((UsableRecyclerView)list).setSelectorBoundsProvider(new UsableRecyclerView.SelectorBoundsProvider(){
 			private Rect tmpRect=new Rect();
 			@Override
@@ -564,7 +566,8 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 
 	public void onRevealSpoilerClick(SpoilerStatusDisplayItem.Holder holder){
 		Status status=holder.getItem().status;
-		toggleSpoiler(status, holder.getItemID());
+		boolean isForQuote=holder.getItem().isForQuote;
+		toggleSpoiler(status, isForQuote, holder.getItemID());
 	}
 
 	public void onVisibilityIconClick(HeaderStatusDisplayItem.Holder holder) {
@@ -586,15 +589,16 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 		else notifyItemChangedBefore(holder.getItem(), HeaderStatusDisplayItem.class);
 	}
 
-	protected void toggleSpoiler(Status status, String itemID){
+	protected void toggleSpoiler(Status status, boolean isForQuote, String itemID){
 		status.spoilerRevealed=!status.spoilerRevealed;
 		if (!status.spoilerRevealed && !AccountSessionManager.get(accountID).getLocalPreferences().revealCWs)
 			status.sensitiveRevealed = false;
 
-		SpoilerStatusDisplayItem.Holder spoiler=findHolderOfType(itemID, SpoilerStatusDisplayItem.Holder.class);
+		List<SpoilerStatusDisplayItem.Holder> spoilers=findAllHoldersOfType(itemID, SpoilerStatusDisplayItem.Holder.class);
+		SpoilerStatusDisplayItem.Holder spoiler=spoilers.size() > 1 && isForQuote ? spoilers.get(1) : spoilers.get(0);
 		if(spoiler!=null) spoiler.rebind();
 		else notifyItemChanged(itemID, SpoilerStatusDisplayItem.class);
-		SpoilerStatusDisplayItem spoilerItem=Objects.requireNonNull(findItemOfType(itemID, SpoilerStatusDisplayItem.class));
+		SpoilerStatusDisplayItem spoilerItem=Objects.requireNonNull(spoiler.getItem());
 
 		int index=displayItems.indexOf(spoilerItem);
 		if(status.spoilerRevealed){

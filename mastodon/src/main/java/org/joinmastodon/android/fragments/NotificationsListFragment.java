@@ -174,7 +174,6 @@ public class NotificationsListFragment extends BaseStatusListFragment<Notificati
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState){
 		super.onViewCreated(view, savedInstanceState);
-		list.addItemDecoration(new InsetStatusItemDecoration(this));
 		list.addItemDecoration(new RecyclerView.ItemDecoration(){
 			private Paint paint=new Paint();
 			private Rect tmpRect=new Rect();

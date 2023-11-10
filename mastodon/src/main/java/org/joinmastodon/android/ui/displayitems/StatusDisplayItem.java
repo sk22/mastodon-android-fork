@@ -58,13 +58,15 @@ import me.grishka.appkit.views.UsableRecyclerView;
 public abstract class StatusDisplayItem{
 	public final String parentID;
 	public final BaseStatusListFragment<?> parentFragment;
+	public Status status;
 	public boolean inset;
 	public int index;
 	public boolean
 			hasDescendantNeighbor=false,
 			hasAncestoringNeighbor=false,
 			isMainStatus=true,
-			isDirectDescendant=false;
+			isDirectDescendant=false,
+			isForQuote=false;
 
 	public static final int FLAG_INSET=1;
 	public static final int FLAG_NO_FOOTER=1 << 1;
@@ -238,14 +240,10 @@ public abstract class StatusDisplayItem{
 			contentItems=items;
 		}
 
-		if (statusForContent.quote != null) {
-			boolean hasQuoteInlineTag = statusForContent.content.contains("<span class=\"quote-inline\">");
-			if (!hasQuoteInlineTag) {
-				String quoteUrl = statusForContent.quote.url;
-				String quoteInline = String.format("<span class=\"quote-inline\">%sRE: <a href=\"%s\">%s</a></span>",
-						statusForContent.content.endsWith("</p>") ? "" : "<br/><br/>", quoteUrl, quoteUrl);
-				statusForContent.content += quoteInline;
-			}
+		if(statusForContent.quote!=null) {
+			int quoteInlineIndex=statusForContent.content.indexOf("<span class=\"quote-inline\">");
+			if (quoteInlineIndex!=-1)
+				statusForContent.content=statusForContent.content.substring(0, quoteInlineIndex);
 		}
 
 		boolean hasSpoiler=!TextUtils.isEmpty(statusForContent.spoilerText);
@@ -287,15 +285,30 @@ public abstract class StatusDisplayItem{
 		if(statusForContent.poll!=null){
 			buildPollItems(parentID, fragment, statusForContent.poll, contentItems);
 		}
-		if(statusForContent.card!=null && statusForContent.mediaAttachments.isEmpty()){
+		if(statusForContent.card!=null && statusForContent.mediaAttachments.isEmpty() && statusForContent.quote==null){
 			contentItems.add(new LinkCardStatusDisplayItem(parentID, fragment, statusForContent));
+		}
+		if(statusForContent.quote!=null && !(parentObject instanceof Notification)){
+			contentItems.addAll(
+				buildItems(fragment, statusForContent.quote, accountID, parentObject, knownAccounts, filterContext, FLAG_NO_FOOTER | FLAG_INSET | FLAG_NO_EMOJI_REACTIONS)
+						.stream().peek(item->{
+							item.status=statusForContent.quote;
+							item.isForQuote=true;
+							if(item instanceof SpoilerStatusDisplayItem spoiler){
+								for(StatusDisplayItem spoilerItem:spoiler.contentItems){
+									spoilerItem.isForQuote=true;
+								}
+							}
+						}).collect(Collectors.toList())
+			);
 		}
 		if(contentItems!=items && statusForContent.spoilerRevealed){
 			items.addAll(contentItems);
 		}
 		AccountLocalPreferences lp=fragment.getLocalPrefs();
 		if((flags & FLAG_NO_EMOJI_REACTIONS)==0 && lp.emojiReactionsEnabled &&
-				(lp.showEmojiReactions!=ONLY_OPENED || fragment instanceof ThreadFragment)){
+				(lp.showEmojiReactions!=ONLY_OPENED || fragment instanceof ThreadFragment) &&
+				statusForContent.reactions!=null){
 			boolean isMainStatus=fragment instanceof ThreadFragment t && t.getMainStatus().id.equals(statusForContent.id);
 			boolean showAddButton=lp.showEmojiReactions==ALWAYS || isMainStatus;
 			items.add(new EmojiReactionsStatusDisplayItem(parentID, fragment, statusForContent, accountID, !showAddButton, false));
@@ -320,12 +333,14 @@ public abstract class StatusDisplayItem{
 			items.add(gap=new GapStatusDisplayItem(parentID, fragment, status));
 		int i=1;
 		for(StatusDisplayItem item:items){
-			item.inset=inset;
+			if(inset)
+				item.inset=true;
 			item.index=i++;
 		}
 		if(items!=contentItems && !statusForContent.spoilerRevealed){
 			for(StatusDisplayItem item:contentItems){
-				item.inset=inset;
+				if(inset)
+					item.inset=true;
 				item.index=i++;
 			}
 		}
@@ -375,12 +390,15 @@ public abstract class StatusDisplayItem{
 	}
 
 	public static abstract class Holder<T extends StatusDisplayItem> extends BindableViewHolder<T> implements UsableRecyclerView.DisableableClickable{
+		private Context context;
+
 		public Holder(View itemView){
 			super(itemView);
 		}
 
 		public Holder(Context context, int layout, ViewGroup parent){
 			super(context, layout, parent);
+			this.context=context;
 		}
 
 		public String getItemID(){
@@ -389,6 +407,16 @@ public abstract class StatusDisplayItem{
 
 		@Override
 		public void onClick(){
+			if(item.isForQuote){
+				item.status.filterRevealed=true;
+				Bundle args=new Bundle();
+				args.putString("account", item.parentFragment.getAccountID());
+				args.putParcelable("status", Parcels.wrap(item.status.clone()));
+				args.putBoolean("refresh", true);
+				Nav.go((Activity) context, ThreadFragment.class, args);
+				return;
+			}
+
 			item.parentFragment.onItemClick(item.parentID);
 		}
 
@@ -426,7 +454,7 @@ public abstract class StatusDisplayItem{
 
 		@Override
 		public boolean isEnabled(){
-			return item.parentFragment.isItemEnabled(item.parentID);
+			return item.parentFragment.isItemEnabled(item.parentID) || item.isForQuote;
 		}
 	}
 }

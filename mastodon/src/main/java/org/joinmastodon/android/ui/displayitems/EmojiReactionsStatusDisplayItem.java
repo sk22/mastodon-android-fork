@@ -58,7 +58,6 @@ import me.grishka.appkit.utils.V;
 import me.grishka.appkit.views.UsableRecyclerView;
 
 public class EmojiReactionsStatusDisplayItem extends StatusDisplayItem {
-	public final Status status;
 	private final Drawable placeholder;
 	private final boolean hideEmpty, forAnnouncement, playGifs;
 	private final String accountID;

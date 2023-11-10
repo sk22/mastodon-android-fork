@@ -32,7 +32,6 @@ import me.grishka.appkit.imageloader.requests.UrlImageLoaderRequest;
 import me.grishka.appkit.utils.V;
 
 public class AudioStatusDisplayItem extends StatusDisplayItem{
-	public final Status status;
 	public final Attachment attachment;
 	private final ImageLoaderRequest imageRequest;
 

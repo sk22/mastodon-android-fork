@@ -24,7 +24,6 @@ import me.grishka.appkit.imageloader.requests.UrlImageLoaderRequest;
 import me.grishka.appkit.utils.V;
 
 public class LinkCardStatusDisplayItem extends StatusDisplayItem{
-	private final Status status;
 	private final UrlImageLoaderRequest imgRequest;
 
 	public LinkCardStatusDisplayItem(String parentID, BaseStatusListFragment parentFragment, Status status){

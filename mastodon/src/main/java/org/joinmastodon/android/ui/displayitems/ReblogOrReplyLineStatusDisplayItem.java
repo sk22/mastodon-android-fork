@@ -43,7 +43,6 @@ public class ReblogOrReplyLineStatusDisplayItem extends StatusDisplayItem{
 	public boolean needBottomPadding;
 	ReblogOrReplyLineStatusDisplayItem extra;
 	CharSequence fullText;
-	Status status;
 
 	public ReblogOrReplyLineStatusDisplayItem(String parentID, BaseStatusListFragment parentFragment, CharSequence text, List<Emoji> emojis, @DrawableRes int icon, StatusPrivacy visibility, @Nullable View.OnClickListener handleClick, Status status) {
 		this(parentID, parentFragment, text, emojis, icon, visibility, handleClick, text, status);

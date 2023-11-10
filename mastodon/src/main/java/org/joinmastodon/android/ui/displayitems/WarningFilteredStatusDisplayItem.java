@@ -14,7 +14,6 @@ import java.util.List;
 
 public class WarningFilteredStatusDisplayItem extends StatusDisplayItem{
 	public boolean loading;
-	public final Status status;
 	public List<StatusDisplayItem> filteredItems;
 	public LegacyFilter applyingFilter;
 

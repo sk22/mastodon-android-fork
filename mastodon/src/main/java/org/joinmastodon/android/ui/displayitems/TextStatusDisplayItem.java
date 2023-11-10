@@ -39,7 +39,6 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 	public boolean textSelectable;
 	public boolean reduceTopPadding;
 	public boolean disableTranslate;
-	public final Status status;
 
 	public TextStatusDisplayItem(String parentID, CharSequence text, BaseStatusListFragment parentFragment, Status status, boolean disableTranslate){
 		super(parentID, parentFragment);
@@ -113,7 +112,7 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 				text.setText(item.text);
 			}
 			text.setTextIsSelectable(false);
-			if(item.textSelectable) itemView.post(() -> text.setTextIsSelectable(true));
+			if(item.textSelectable && !item.isForQuote) itemView.post(() -> text.setTextIsSelectable(true));
 			text.setInvalidateOnEveryFrame(false);
 			itemView.setClickable(false);
 			itemView.setPadding(itemView.getPaddingLeft(), item.reduceTopPadding ? V.dp(6) : V.dp(12), itemView.getPaddingRight(), itemView.getPaddingBottom());

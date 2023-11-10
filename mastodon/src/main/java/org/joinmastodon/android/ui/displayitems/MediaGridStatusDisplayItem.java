@@ -53,7 +53,6 @@ public class MediaGridStatusDisplayItem extends StatusDisplayItem{
 	private final TypedObjectPool<GridItemType, MediaAttachmentViewController> viewPool;
 	private final List<Attachment> attachments;
 	private final ArrayList<ImageLoaderRequest> requests=new ArrayList<>();
-	public final Status status;
 	public String sensitiveTitle;
 
 	public MediaGridStatusDisplayItem(String parentID, BaseStatusListFragment<?> parentFragment, PhotoLayoutHelper.TiledLayoutResult tiledLayout, List<Attachment> attachments, Status status){

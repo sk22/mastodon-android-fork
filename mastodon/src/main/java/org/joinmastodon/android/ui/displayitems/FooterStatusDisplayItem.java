@@ -38,7 +38,6 @@ import me.grishka.appkit.utils.CubicBezierInterpolator;
 import me.grishka.appkit.utils.V;
 
 public class FooterStatusDisplayItem extends StatusDisplayItem{
-	public final Status status;
 	private final String accountID;
 	public boolean hideCounts;
 

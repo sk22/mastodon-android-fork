@@ -36,7 +36,6 @@ import androidx.annotation.PluralsRes;
 import me.grishka.appkit.Nav;
 
 public class ExtendedFooterStatusDisplayItem extends StatusDisplayItem{
-	public final Status status;
 	public final String accountID;
 
 	private static final DateTimeFormatter TIME_FORMATTER=DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG, FormatStyle.SHORT);
