@@ -1683,12 +1683,14 @@ public class UiUtils {
 			"pronouns.page/"
 	};
 
-	private static final Pattern trimPronouns=Pattern.compile("[^\\w*]*([\\w*].*[\\w*]|[\\w*])\\W*");
+	private static final String PRONOUN_CHARS="\\w*¿¡!?";
+	private static final Pattern trimPronouns=
+			Pattern.compile("[^"+PRONOUN_CHARS+"]*(["+PRONOUN_CHARS+"].*["+PRONOUN_CHARS+"]|["+PRONOUN_CHARS+"])\\W*");
 	private static String extractPronounsFromField(String localizedPronouns, AccountField field) {
 		if(!field.name.toLowerCase().contains(localizedPronouns) &&
 				!field.name.toLowerCase().contains("pronouns")) return null;
 		String text=HtmlParser.text(field.value);
-		if(field.value.toLowerCase().contains("https://")){
+		if(text.toLowerCase().contains("https://")){
 			for(String pronounUrl : pronounsUrls){
 				int index=text.indexOf(pronounUrl);
 				int beginPronouns=index+pronounUrl.length();
@@ -1707,13 +1709,20 @@ public class UiUtils {
 		Matcher matcher=trimPronouns.matcher(text);
 		if(!matcher.find()) return null;
 		String pronouns=matcher.group(1);
-		// crude fix to allow for pronouns like "it(/she)"
-		int missingClosingParens=0;
+
+		// crude fix to allow for pronouns like "it(/she)" or "(de) sie/ihr"
+		int missingParens=0, missingBrackets=0;
 		for(char c : pronouns.toCharArray()){
-			if(c=='(') missingClosingParens++;
-			if(c==')') missingClosingParens--;
+			if(c=='(') missingParens++;
+			else if(c=='[') missingBrackets++;
+			else if(c==')') missingParens--;
+			else if(c==']') missingBrackets--;
 		}
-		pronouns+=")".repeat(Math.max(0, missingClosingParens));
+		if(missingParens > 0) pronouns+=")".repeat(missingParens);
+		else if(missingParens < 0) pronouns="(".repeat(missingParens*-1)+pronouns;
+		if(missingBrackets > 0) pronouns+="]".repeat(missingBrackets);
+		else if(missingBrackets < 0) pronouns="[".repeat(missingBrackets*-1)+pronouns;
+
 		// if ends with an un-closed custom emoji
 		if(pronouns.matches("^.*\\s+:[a-zA-Z_]+$")) pronouns+=':';
 		return pronouns;

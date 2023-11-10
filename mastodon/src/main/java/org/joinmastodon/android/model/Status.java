@@ -4,6 +4,7 @@ import static org.joinmastodon.android.api.MastodonAPIController.gson;
 import static org.joinmastodon.android.api.MastodonAPIController.gsonWithoutDeserializer;
 
 import android.text.TextUtils;
+import android.util.Pair;
 
 import org.joinmastodon.android.api.ObjectValidationException;
 import org.joinmastodon.android.api.RequiredField;
@@ -223,10 +224,10 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 				instanceInfo.v2.configuration.translation.enabled;
 
 		try {
-			String bottomText = BOTTOM_TEXT_PATTERN.matcher(getStrippedText()).find()
+			Pair<String, List<String>> decoded=BOTTOM_TEXT_PATTERN.matcher(getStrippedText()).find()
 					? new StatusTextEncoder(Bottom::decode).decode(getStrippedText(), BOTTOM_TEXT_PATTERN)
 					: null;
-			if(bottomText==null || bottomText.length()==0 || bottomText.equals("\u0005")) bottomText=null;
+			String bottomText=decoded==null || decoded.second.stream().allMatch(s->s.trim().isEmpty()) ? null : decoded.first;
 			if(bottomText!=null){
 				translation=new Translation();
 				translation.content=bottomText;

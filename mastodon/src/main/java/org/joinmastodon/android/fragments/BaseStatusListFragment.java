@@ -362,8 +362,9 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 			private Rect tmpRect=new Rect();
 			@Override
 			public void getSelectorBounds(View view, Rect outRect){
-				boolean hasDescendant = false, hasAncestor = false, isWarning = false;
-				int lastIndex = -1, firstIndex = -1;
+				if(list!=view.getParent()) return;
+				boolean hasDescendant=false, hasAncestor=false, isWarning=false;
+				int lastIndex=-1, firstIndex=-1;
 				if(((UsableRecyclerView) list).isIncludeMarginsInItemHitbox()){
 					list.getDecoratedBoundsWithMargins(view, outRect);
 				}else{
