@@ -264,7 +264,7 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 		s.visibility=StatusPrivacy.PUBLIC;
 		s.reactions=List.of();
 		s.mentions=List.of();
-		s.tags =List.of();
+		s.tags=List.of();
 		s.emojis=List.of();
 		s.filtered=List.of();
 		return s;
