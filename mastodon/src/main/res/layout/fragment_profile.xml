@@ -219,7 +219,7 @@
 					android:layout_below="@id/username"
 					android:id="@+id/note_edit_wrap"
 					android:layout_marginTop="4dp"
-					android:layout_marginBottom="16dp"
+					android:layout_marginBottom="12dp"
 					android:layout_marginHorizontal="16dp"
 					android:visibility="gone">
 
@@ -234,7 +234,7 @@
 						android:drawableTint="?android:textColorSecondary"
 						android:background="@drawable/bg_note_edit"
 						android:paddingEnd="48dp"
-						android:paddingHorizontal="16dp"
+						android:paddingHorizontal="20dp"
 						android:elevation="0dp"
 						android:visibility="gone"
 						android:hint="@string/sk_personal_note"/>
@@ -251,8 +251,7 @@
 						android:background="@drawable/bg_button_m3_text_circle"
 						android:tooltipText="@string/sk_personal_note_confirm"
 						android:contentDescription="@string/sk_personal_note_confirm"
-						android:src="@drawable/ic_fluent_checkmark_24_regular"
-						/>
+						android:src="@drawable/ic_fluent_checkmark_24_regular"/>
 				</FrameLayout>
 
 				<org.joinmastodon.android.ui.views.LinkedTextView
