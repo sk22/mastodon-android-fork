@@ -26,6 +26,8 @@ public class GetStatusEditHistory extends MastodonAPIRequest<List<Status>>{
 			s.visibility=StatusPrivacy.PUBLIC;
 			s.mentions=Collections.emptyList();
 			s.tags=Collections.emptyList();
+			if (s.poll != null)
+				s.poll.id="fakeID"+i;
 			i++;
 		}
 		super.validateAndPostprocessResponse(respObj, httpResponse);

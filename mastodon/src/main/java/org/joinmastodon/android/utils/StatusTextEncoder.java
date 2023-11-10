@@ -1,9 +1,9 @@
 package org.joinmastodon.android.utils;
 
-import android.text.TextUtils;
+import android.util.Pair;
 
-import org.joinmastodon.android.fragments.ComposeFragment;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -40,19 +40,22 @@ public class StatusTextEncoder {
 	}
 
 	// prettiest almost-exact replica of a pretty function
-	public String decode(String content, Pattern regex) {
-		Matcher m = regex.matcher(content);
-		StringBuilder decodedString = new StringBuilder();
-		int previousEnd = 0;
+	public Pair<String, List<String>> decode(String content, Pattern regex) {
+		Matcher m=regex.matcher(content);
+		StringBuilder decodedString=new StringBuilder();
+		List<String> decodedParts=new ArrayList<>();
+		int previousEnd=0;
 		while (m.find()) {
-			MatchResult res = m.toMatchResult();
+			MatchResult res=m.toMatchResult();
 			// everything before the match - do not decode
 			decodedString.append(content.substring(previousEnd, res.start()));
-			previousEnd = res.end();
+			previousEnd=res.end();
 			// the match - do decode
-			decodedString.append(fn.apply(res.group()));
+			String decoded=fn.apply(res.group());
+			decodedParts.add(decoded);
+			decodedString.append(decoded);
 		}
 		decodedString.append(content.substring(previousEnd));
-		return decodedString.toString();
+		return Pair.create(decodedString.toString(), decodedParts);
 	}
 }

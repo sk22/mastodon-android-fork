@@ -260,11 +260,13 @@ public class AccountSession{
 	}
 
 	private boolean isFilteredType(Status s){
+		AccountLocalPreferences localPreferences = getLocalPreferences();
 		return (!localPreferences.showReplies && s.inReplyToId != null)
 				|| (!localPreferences.showBoosts && s.reblog != null);
 	}
 
 	public <T> void filterStatusContainingObjects(List<T> objects, Function<T, Status> extractor, FilterContext context, Account profile){
+		AccountLocalPreferences localPreferences = getLocalPreferences();
 		if(!localPreferences.serverSideFiltersSupported) for(T obj:objects){
 			Status s=extractor.apply(obj);
 			if(s!=null && s.filtered!=null){
@@ -307,7 +309,7 @@ public class AccountSession{
 		if(isFilteredType(s) && (context == FilterContext.HOME || context == FilterContext.PUBLIC))
 			return true;
 		// Even with server-side filters, clients are expected to remove statuses that match a filter that hides them
-		if(localPreferences.serverSideFiltersSupported){
+		if(getLocalPreferences().serverSideFiltersSupported){
 			for(FilterResult filter : s.filtered){
 				if(filter.filter.isActive() && filter.filter.filterAction==FilterAction.HIDE)
 					return true;

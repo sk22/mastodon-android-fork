@@ -27,6 +27,7 @@ public class SpoilerStatusDisplayItem extends StatusDisplayItem{
 	public final Status status;
 	public final ArrayList<StatusDisplayItem> contentItems=new ArrayList<>();
 	private final CharSequence parsedTitle;
+	private CharSequence translatedTitle;
 	private final CustomEmojiHelper emojiHelper;
 	private final Type type;
 	private final int attachmentCount;
@@ -90,7 +91,14 @@ public class SpoilerStatusDisplayItem extends StatusDisplayItem{
 
 		@Override
 		public void onBind(SpoilerStatusDisplayItem item){
-			title.setText(item.parsedTitle);
+			if(item.status.translationState==Status.TranslationState.SHOWN){
+				if(item.translatedTitle==null){
+					item.translatedTitle=item.status.translation.spoilerText;
+				}
+				title.setText(item.translatedTitle);
+			}else{
+				title.setText(item.parsedTitle);
+			}
 			action.setText(item.status.spoilerRevealed ? R.string.spoiler_hide : R.string.sk_spoiler_show);
 			itemView.setPadding(
 					itemView.getPaddingLeft(),

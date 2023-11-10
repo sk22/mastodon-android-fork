@@ -1,6 +1,7 @@
 package org.joinmastodon.android.ui.text;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -171,6 +172,9 @@ public class HtmlParser{
 						}
 						case "code", "pre" -> openSpans.add(new SpanInfo(new TypefaceSpan("monospace"), ssb.length(), el));
 						case "blockquote" -> openSpans.add(new SpanInfo(new LeadingMarginSpan.Standard(V.dp(10)), ssb.length(), el));
+						// fake elements for the edit history diff view
+						case "edit-diff-insert" -> openSpans.add(new SpanInfo(new ForegroundColorSpan(UiUtils.isDarkTheme() ? 0xFF89bb9c : 0xFF5b8e63), ssb.length(), el));
+						case "edit-diff-delete" -> openSpans.add(new SpanInfo(new DiffRemovedSpan(el.text()), ssb.length(), el));
 					}
 				}
 			}

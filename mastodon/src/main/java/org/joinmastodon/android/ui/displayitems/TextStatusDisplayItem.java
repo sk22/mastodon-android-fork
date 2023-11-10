@@ -211,8 +211,9 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 				String existingTransLang=existingTrans!=null ? existingTrans.detectedSourceLanguage : null;
 				String lang=existingTransLang!=null ? existingTransLang : item.status.getContentStatus().language;
 				Locale locale=lang!=null ? Locale.forLanguageTag(lang) : null;
-				translationButton.setText(locale!=null
-						? item.parentFragment.getString(R.string.translate_post, locale.getDisplayLanguage())
+				String displayLang=locale==null || locale.getDisplayLanguage().isBlank() ? lang : locale.getDisplayLanguage();
+				translationButton.setText(displayLang!=null
+						? item.parentFragment.getString(R.string.translate_post, displayLang)
 						: item.parentFragment.getString(R.string.sk_translate_post));
 				translationButton.setClickable(true);
 				translationButton.animate().alpha(1).setDuration(100).start();

@@ -257,5 +257,9 @@ public class UiUtilsTest {
 		assertEquals("* (asterisk)", UiUtils.extractPronouns(MastodonApp.context, fakeAccount(
 				makeField("pronouns", "-- * (asterisk) --")
 		)).orElseThrow());
+
+		assertEquals("they/(she?)", UiUtils.extractPronouns(MastodonApp.context, fakeAccount(
+				makeField("pronouns", "they/(she?)...")
+		)).orElseThrow());
 	}
 }
