@@ -87,7 +87,8 @@ public class StatusEditHistoryFragment extends StatusListFragment{
 				EnumSet<StatusEditChangeType> changes=EnumSet.noneOf(StatusEditChangeType.class);
 				Status prev=data.get(idx+1);
 
-				if(!Objects.equals(s.content, prev.content)){
+				// if only formatting was changed, don't even try to create a diff text
+				if(!Objects.equals(HtmlParser.text(s.content), HtmlParser.text(prev.content))){
 					changes.add(StatusEditChangeType.TEXT_CHANGED);
 					//update status content to display a diffs
 					s.content=createDiffText(prev.content, s.content);
