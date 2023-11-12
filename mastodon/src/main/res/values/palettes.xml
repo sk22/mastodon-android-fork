@@ -59,6 +59,7 @@
 		<item name="colorPoll">@color/bookmark_selected</item>
 		<item name="colorTabBarAlpha">#14000000</item>
 		<item name="colorFilledCardAlpha">#22000000</item>
+		<item name="colorM3Success">#FF5b8e63</item>
 
 		<item name="colorM3DisabledBackground">#1F1F1F1F</item>
 		<item name="colorM3Error">#B3261E</item>
@@ -143,6 +144,7 @@
 		<item name="colorM3OnErrorContainer">#F9DEDC</item>
 		<item name="colorWhite">#000</item>
 		<item name="colorSensitiveOverlay">#80000000</item>
+		<item name="colorM3Success">#FF89bb9c</item>
 	</style>
 
 	<style name="ColorPalette.Dark.TrueBlack">

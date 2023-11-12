@@ -37,6 +37,7 @@
 	<attr name="colorM3DarkOnSurface" format="color" />
 	<attr name="colorTabBarAlpha" format="color" />
 	<attr name="colorFilledCardAlpha" format="color" />
+	<attr name="colorM3Success" format="color" />
 	<attr name="toolbarActionButtonStyle" format="reference" />
 
 	<attr name="colorPrimary25" format="color" />

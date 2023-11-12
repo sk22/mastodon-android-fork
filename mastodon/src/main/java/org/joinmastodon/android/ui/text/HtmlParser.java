@@ -70,6 +70,10 @@ public class HtmlParser{
 
 	private HtmlParser(){}
 
+	public static SpannableStringBuilder parse(String source, List<Emoji> emojis, List<Mention> mentions, List<Hashtag> tags, String accountID){
+		return parse(source, emojis, mentions, tags, accountID, null);
+	}
+
 	/**
 	 * Parse HTML and custom emoji into a spanned string for display.
 	 * Supported tags: <ul>
@@ -82,7 +86,7 @@ public class HtmlParser{
 	 * @param emojis Custom emojis that are present in source as <code>:code:</code>
 	 * @return a spanned string
 	 */
-	public static SpannableStringBuilder parse(String source, List<Emoji> emojis, List<Mention> mentions, List<Hashtag> tags, String accountID){
+	public static SpannableStringBuilder parse(String source, List<Emoji> emojis, List<Mention> mentions, List<Hashtag> tags, String accountID, Context context){
 		class SpanInfo{
 			public Object span;
 			public int start;
@@ -107,6 +111,9 @@ public class HtmlParser{
 		Map<String, Hashtag> tagsByTag=tags.stream().distinct().collect(Collectors.toMap(t->t.name.toLowerCase(), Function.identity()));
 
 		final SpannableStringBuilder ssb=new SpannableStringBuilder();
+		int colorInsert=UiUtils.getThemeColor(context, R.attr.colorM3Success);
+		int colorDelete=UiUtils.getThemeColor(context, R.attr.colorM3Error);
+
 		Jsoup.parseBodyFragment(source).body().traverse(new NodeVisitor(){
 			private final ArrayList<SpanInfo> openSpans=new ArrayList<>();
 
@@ -173,8 +180,8 @@ public class HtmlParser{
 						case "code", "pre" -> openSpans.add(new SpanInfo(new TypefaceSpan("monospace"), ssb.length(), el));
 						case "blockquote" -> openSpans.add(new SpanInfo(new LeadingMarginSpan.Standard(V.dp(10)), ssb.length(), el));
 						// fake elements for the edit history diff view
-						case "edit-diff-insert" -> openSpans.add(new SpanInfo(new ForegroundColorSpan(UiUtils.isDarkTheme() ? 0xFF89bb9c : 0xFF5b8e63), ssb.length(), el));
-						case "edit-diff-delete" -> openSpans.add(new SpanInfo(new DiffRemovedSpan(el.text()), ssb.length(), el));
+						case "edit-diff-insert" -> openSpans.add(new SpanInfo(new ForegroundColorSpan(colorInsert), ssb.length(), el));
+						case "edit-diff-delete" -> openSpans.add(new SpanInfo(new DiffRemovedSpan(el.text(), colorDelete), ssb.length(), el));
 					}
 				}
 			}

@@ -50,7 +50,7 @@
 						android:text="@string/follows_you"
 						android:textAllCaps="true"
 						android:textColor="#fff"
-						android:textSize="14dp"
+						android:textSize="14sp"
 						android:visibility="gone"
 						tools:visibility="visible" />
 
@@ -80,11 +80,13 @@
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_below="@id/cover"
-						android:layout_alignParentEnd="true">
+						android:layout_alignParentEnd="true"
+						android:clipChildren="false">
 
 						<FrameLayout
 							android:layout_width="wrap_content"
 							android:layout_height="wrap_content"
+							android:minHeight="48dp"
 							android:layout_marginTop="16dp"
 							android:layout_marginEnd="4dp">
 
@@ -95,7 +97,8 @@
 								style="@style/Widget.Mastodon.M3.Button.Tonal"
 								android:background="@drawable/bg_button_m3_tonal_circle_selector"
 								android:paddingStart="12dp"
-								android:drawableStart="@drawable/ic_fluent_alert_24_selector" />
+								android:drawableStart="@drawable/ic_fluent_alert_24_selector"
+								tools:ignore="RtlSymmetry" />
 
 							<ProgressBar
 								android:id="@+id/notify_progress"
@@ -112,6 +115,7 @@
 						<FrameLayout
 							android:layout_width="wrap_content"
 							android:layout_height="wrap_content"
+							android:minHeight="48dp"
 							android:layout_marginTop="16dp"
 							android:layout_marginStart="4dp"
 							android:layout_marginEnd="16dp">
@@ -212,6 +216,60 @@
 						android:src="@drawable/ic_fluent_bot_20_filled" />
 
 				</LinearLayout>
+
+				<FrameLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_below="@id/username"
+					android:id="@+id/note_edit_wrap"
+					android:layout_marginTop="4dp"
+					android:layout_marginBottom="12dp"
+					android:layout_marginHorizontal="16dp"
+					android:visibility="gone">
+
+					<EditText
+						android:id="@+id/note_edit"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:minHeight="52dp"
+						android:paddingVertical="15dp"
+						android:textColor="?colorM3OnSurface"
+						android:inputType="text|textMultiLine|textCapSentences"
+						android:singleLine="false"
+						android:background="@drawable/bg_note_edit"
+						android:paddingEnd="52dp"
+						android:paddingStart="20dp"
+						android:elevation="0dp"
+						android:hint="@string/sk_private_note_hint"
+						tools:ignore="RtlSymmetry" />
+
+					<FrameLayout
+						android:layout_width="52dp"
+						android:layout_height="52dp"
+						android:layout_gravity="end">
+
+						<ImageButton
+							android:id="@+id/note_save_btn"
+							android:layout_width="52dp"
+							android:layout_height="52dp"
+							android:visibility="invisible"
+							android:background="@drawable/bg_button_m3_text_circle"
+							android:tooltipText="@string/sk_private_note_confirm"
+							android:contentDescription="@string/sk_private_note_confirm"
+							android:src="@drawable/ic_fluent_checkmark_24_regular"/>
+
+						<ProgressBar
+							android:id="@+id/note_save_progress"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_gravity="center"
+							style="?android:progressBarStyleSmall"
+							android:indeterminate="true"
+							android:visibility="gone" />
+
+					</FrameLayout>
+
+				</FrameLayout>
 
 				<org.joinmastodon.android.ui.views.LinkedTextView
 					android:id="@+id/bio"
