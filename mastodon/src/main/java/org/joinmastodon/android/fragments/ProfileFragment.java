@@ -21,8 +21,11 @@ import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputType;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.transition.ChangeBounds;
 import android.transition.Fade;
 import android.transition.TransitionManager;
@@ -38,7 +41,6 @@ import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
 import android.view.WindowInsets;
-import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -147,7 +149,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 	private SwipeRefreshLayout refreshLayout;
 	private View followersBtn, followingBtn;
 	private EditText nameEdit, bioEdit;
-	private ProgressBar actionProgress, notifyProgress;
+	private ProgressBar actionProgress, notifyProgress, noteSaveProgress;
 	private FrameLayout[] tabViews;
 	private TabLayoutMediator tabLayoutMediator;
 	private TextView followsYouView;
@@ -189,9 +191,9 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 	private ListImageLoaderWrapper imgLoader;
 
 	// profile note
-	public FrameLayout noteWrap;
-	public EditText noteEdit;
-	private String note;
+	private FrameLayout noteWrap;
+	private ImageButton noteSaveBtn;
+	private EditText noteEdit;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -264,6 +266,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		bioEditWrap=content.findViewById(R.id.bio_edit_wrap);
 		actionProgress=content.findViewById(R.id.action_progress);
 		notifyProgress=content.findViewById(R.id.notify_progress);
+		noteSaveProgress=content.findViewById(R.id.note_save_progress);
 		fab=content.findViewById(R.id.fab);
 		followsYouView=content.findViewById(R.id.follows_you);
 		countersLayout=content.findViewById(R.id.profile_counters);
@@ -280,23 +283,46 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 
 		noteEdit=content.findViewById(R.id.note_edit);
 		noteWrap=content.findViewById(R.id.note_edit_wrap);
-		ImageButton noteEditConfirm=content.findViewById(R.id.note_edit_confirm);
+		noteSaveBtn=content.findViewById(R.id.note_save_btn);
 
-		noteEditConfirm.setOnClickListener((v -> {
-			if(!noteEdit.getText().toString().equals(note)) savePrivateNote();
+		noteSaveBtn.setOnClickListener((v->{
+			savePrivateNote(noteEdit.getText().toString());
 			InputMethodManager imm=(InputMethodManager) getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(this.getView().getRootView().getWindowToken(), 0);
 			noteEdit.clearFocus();
+			noteSaveBtn.clearFocus();
 		}));
 
 
 		noteEdit.setOnFocusChangeListener((v, hasFocus)->{
 			if(hasFocus){
 				hideFab();
-				V.setVisibilityAnimated(noteEditConfirm, View.VISIBLE);
-			}else{
+				V.setVisibilityAnimated(noteSaveBtn, View.VISIBLE);
+				noteEdit.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+			}else if(!noteSaveBtn.hasFocus()){
 				showFab();
-				V.setVisibilityAnimated(noteEditConfirm, View.INVISIBLE);
+				hideNoteSaveBtnIfNotDirty();
+			}
+		});
+
+		noteEdit.addTextChangedListener(new TextWatcher(){
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count){
+				if(relationship!=null && noteSaveBtn.getVisibility()!=View.VISIBLE && !s.toString().equals(relationship.note))
+					V.setVisibilityAnimated(noteSaveBtn, View.VISIBLE);
+			}
+
+			@Override
+			public void afterTextChanged(Editable s){}
+		});
+
+		noteSaveBtn.setOnFocusChangeListener((v, hasFocus)->{
+			if(!hasFocus && !noteEdit.hasFocus()){
+				showFab();
+				hideNoteSaveBtnIfNotDirty();
 			}
 		});
 
@@ -464,21 +490,42 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		return sizeWrapper;
 	}
 
-	public void setNote(String note){
-		this.note=note;
-		noteWrap.setVisibility(View.VISIBLE);
-		noteEdit.setVisibility(View.VISIBLE);
-		noteEdit.setText(note);
+	private void hideNoteSaveBtnIfNotDirty(){
+		if(noteEdit.getText().toString().equals(relationship.note)){
+			V.setVisibilityAnimated(noteSaveBtn, View.INVISIBLE);
+		}
 	}
 
-	private void savePrivateNote(){
-		new SetPrivateNote(profileAccountID, noteEdit.getText().toString()).setCallback(new Callback<>() {
+	private void showPrivateNote(){
+		noteWrap.setVisibility(View.VISIBLE);
+		noteEdit.setText(relationship.note);
+	}
+
+	private void hidePrivateNote(){
+		noteWrap.setVisibility(View.GONE);
+		noteEdit.setText(null);
+	}
+
+	private void savePrivateNote(String note){
+		if(note!=null && note.equals(relationship.note)){
+			updateRelationship();
+			invalidateOptionsMenu();
+			return;
+		}
+		V.setVisibilityAnimated(noteSaveProgress, View.VISIBLE);
+		V.setVisibilityAnimated(noteSaveBtn, View.INVISIBLE);
+		new SetPrivateNote(profileAccountID, note).setCallback(new Callback<>() {
 			@Override
-			public void onSuccess(Relationship result) {}
+			public void onSuccess(Relationship result) {
+				updateRelationship(result);
+				invalidateOptionsMenu();
+			}
 
 			@Override
 			public void onError(ErrorResponse error) {
-				error.showToast(getActivity());
+				error.showToast(getContext());
+				V.setVisibilityAnimated(noteSaveProgress, View.GONE);
+				V.setVisibilityAnimated(noteSaveBtn, View.VISIBLE);
 			}
 		}).exec(accountID);
 	}
@@ -841,6 +888,8 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		}else{
 			blockDomain.setVisible(false);
 		}
+		menu.findItem(R.id.edit_note).setTitle(noteWrap.getVisibility()==View.GONE && (relationship.note==null || relationship.note.isEmpty())
+				? R.string.sk_add_note : R.string.sk_delete_note);
 	}
 
 	@Override
@@ -922,6 +971,26 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		}else if(id==R.id.save){
 			if(isInEditMode)
 				saveAndExitEditMode();
+		}else if(id==R.id.edit_note){
+			if(noteWrap.getVisibility()==View.GONE){
+				showPrivateNote();
+				UiUtils.beginLayoutTransition(scrollableContent);
+				noteEdit.requestFocus();
+				noteEdit.postDelayed(()->{
+					InputMethodManager imm=getActivity().getSystemService(InputMethodManager.class);
+					imm.showSoftInput(noteEdit, 0);
+				}, 100);
+			}else if(relationship.note.isEmpty()){
+				hidePrivateNote();
+				UiUtils.beginLayoutTransition(scrollableContent);
+			}else{
+				new M3AlertDialogBuilder(getActivity())
+						.setMessage(getContext().getString(R.string.sk_private_note_confirm_delete, account.getDisplayUsername()))
+						.setPositiveButton(R.string.delete, (dlg, btn)->savePrivateNote(null))
+						.setNegativeButton(R.string.cancel, null)
+						.show();
+			}
+			invalidateOptionsMenu();
 		}
 		return true;
 	}
@@ -947,17 +1016,22 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 
 	private void updateRelationship(){
 		if(getActivity()==null) return;
+		if(relationship.note!=null && !relationship.note.isEmpty()) showPrivateNote();
+		else hidePrivateNote();
 		invalidateOptionsMenu();
 		actionButton.setVisibility(View.VISIBLE);
 		notifyButton.setVisibility(relationship.following ? View.VISIBLE : View.GONE);
 		UiUtils.setRelationshipToActionButtonM3(relationship, actionButton);
 		actionProgress.setIndeterminateTintList(actionButton.getTextColors());
 		notifyProgress.setIndeterminateTintList(notifyButton.getTextColors());
+		noteSaveProgress.setIndeterminateTintList(noteEdit.getTextColors());
 		followsYouView.setVisibility(relationship.followedBy ? View.VISIBLE : View.GONE);
 		notifyButton.setSelected(relationship.notifying);
 		notifyButton.setContentDescription(getString(relationship.notifying ? R.string.sk_user_post_notifications_on : R.string.sk_user_post_notifications_off, '@'+account.username));
-		if (!isOwnProfile)
-			setNote(relationship.note);
+		noteEdit.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+		V.setVisibilityAnimated(noteSaveProgress, View.GONE);
+		V.setVisibilityAnimated(noteSaveBtn, View.INVISIBLE);
+		UiUtils.beginLayoutTransition(scrollableContent);
 	}
 
 	public ImageButton getFab() {
@@ -1268,9 +1342,6 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 
 	@Override
 	public boolean onBackPressed(){
-		if(noteEdit.hasFocus())
-			savePrivateNote();
-
 		if(isInEditMode){
 			if(savingEdits)
 				return true;
