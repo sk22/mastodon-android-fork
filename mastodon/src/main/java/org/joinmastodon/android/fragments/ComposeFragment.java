@@ -736,7 +736,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 					String prefix = (GlobalUserPreferences.prefixReplies == ALWAYS
 							|| (GlobalUserPreferences.prefixReplies == TO_OTHERS && !ownID.equals(status.account.id)))
 							&& !status.spoilerText.startsWith("re: ") ? "re: " : "";
-					spoilerEdit.setText(prefix + replyTo.spoilerText);
+					spoilerEdit.setText(prefix + status.spoilerText);
 					spoilerBtn.setSelected(true);
 				}
 				if (status.language != null && !status.language.isEmpty()) setPostLanguage(status.language);
