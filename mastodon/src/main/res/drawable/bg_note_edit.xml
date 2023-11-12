@@ -3,5 +3,5 @@
 	android:tint="@color/m3_primary_alpha11"
 	android:tintMode="src_over">
 	<solid android:color="?colorM3Surface" />
-	<corners android:radius="28dp" />
+	<corners android:radius="26dp" />
 </shape>
