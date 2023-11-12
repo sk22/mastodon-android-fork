@@ -334,13 +334,15 @@ public class SettingsNotificationsFragment extends BaseSettingsFragment<Void>{
 			return;
 		}
 
-		UnifiedPush.unregisterApp(
-				getContext(),
-				accountID
-		);
+		for (AccountSession accountSession : AccountSessionManager.getInstance().getLoggedInAccounts()) {
+			UnifiedPush.unregisterApp(
+					getContext(),
+					accountSession.getID()
+			);
 
-		//re-register to fcm
-		AccountSessionManager.getInstance().getAccount(accountID).getPushSubscriptionManager().registerAccountForPush(getPushSubscription());
+			//re-register to fcm
+			accountSession.getPushSubscriptionManager().registerAccountForPush(getPushSubscription());
+		}
 		unifiedPushItem.toggle();
 		rebindItem(unifiedPushItem);
 	}
@@ -350,12 +352,14 @@ public class SettingsNotificationsFragment extends BaseSettingsFragment<Void>{
 				(dialog, which)->{
 					String userDistrib = distributors.get(which);
 					UnifiedPush.saveDistributor(getContext(), userDistrib);
-					UnifiedPush.registerApp(
-							getContext(),
-							accountID,
-							new ArrayList<>(),
-							getContext().getPackageName()
-					);
+					for (AccountSession accountSession : AccountSessionManager.getInstance().getLoggedInAccounts()){
+						UnifiedPush.registerApp(
+								getContext(),
+								accountSession.getID(),
+								new ArrayList<>(),
+								getContext().getPackageName()
+						);
+					}
 					unifiedPushItem.toggle();
 					rebindItem(unifiedPushItem);
 				}).setOnCancelListener(d->rebindItem(unifiedPushItem)).show();

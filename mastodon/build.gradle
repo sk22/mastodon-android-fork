@@ -33,7 +33,6 @@ android {
 			applicationIdSuffix '.debug'
 		}
 		githubRelease { initWith release }
-		playRelease { initWith release }
 		fdroidRelease { initWith release }
 	}
 	compileOptions {
