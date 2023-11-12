@@ -75,6 +75,7 @@ public abstract class StatusDisplayItem{
 	public static final int FLAG_NO_HEADER=1 << 4;
 	public static final int FLAG_NO_TRANSLATE=1 << 5;
 	public static final int FLAG_NO_EMOJI_REACTIONS=1 << 6;
+	public static final int FLAG_IS_FOR_QUOTE=1 << 7;
 
 	public void setAncestryInfo(
 			boolean hasDescendantNeighbor,
@@ -234,6 +235,11 @@ public abstract class StatusDisplayItem{
 		if(statusForContent.hasSpoiler()){
 			if (AccountSessionManager.get(accountID).getLocalPreferences().revealCWs) statusForContent.spoilerRevealed = true;
 			SpoilerStatusDisplayItem spoilerItem=new SpoilerStatusDisplayItem(parentID, fragment, null, statusForContent, Type.SPOILER);
+			if((flags & FLAG_IS_FOR_QUOTE)!=0){
+				for(StatusDisplayItem item:spoilerItem.contentItems){
+					item.isForQuote=true;
+				}
+			}
 			items.add(spoilerItem);
 			contentItems=spoilerItem.contentItems;
 		}else{
@@ -289,18 +295,9 @@ public abstract class StatusDisplayItem{
 			contentItems.add(new LinkCardStatusDisplayItem(parentID, fragment, statusForContent));
 		}
 		if(statusForContent.quote!=null && !(parentObject instanceof Notification)){
-			contentItems.addAll(
-				buildItems(fragment, statusForContent.quote, accountID, parentObject, knownAccounts, filterContext, FLAG_NO_FOOTER | FLAG_INSET | FLAG_NO_EMOJI_REACTIONS)
-						.stream().peek(item->{
-							item.status=statusForContent.quote;
-							item.isForQuote=true;
-							if(item instanceof SpoilerStatusDisplayItem spoiler){
-								for(StatusDisplayItem spoilerItem:spoiler.contentItems){
-									spoilerItem.isForQuote=true;
-								}
-							}
-						}).collect(Collectors.toList())
-			);
+			if(!statusForContent.mediaAttachments.isEmpty() && statusForContent.poll==null) // add spacing if immediately preceded by attachment
+				contentItems.add(new DummyStatusDisplayItem(parentID, fragment));
+			contentItems.addAll(buildItems(fragment, statusForContent.quote, accountID, parentObject, knownAccounts, filterContext, FLAG_NO_FOOTER | FLAG_INSET | FLAG_NO_EMOJI_REACTIONS | FLAG_IS_FOR_QUOTE));
 		}
 		if(contentItems!=items && statusForContent.spoilerRevealed){
 			items.addAll(contentItems);
@@ -320,8 +317,9 @@ public abstract class StatusDisplayItem{
 			items.add(footer);
 		}
 		boolean inset=(flags & FLAG_INSET)!=0;
+		boolean isForQuote=(flags & FLAG_IS_FOR_QUOTE)!=0;
 		// add inset dummy so last content item doesn't clip out of inset bounds
-		if((inset || footer==null) && (flags & FLAG_CHECKABLE)==0){
+		if((inset || footer==null) && (flags & FLAG_CHECKABLE)==0 && !isForQuote){
 			items.add(new DummyStatusDisplayItem(parentID, fragment));
 			// in case we ever need the dummy to display a margin for the media grid again:
 			// (i forgot why we apparently don't need this anymore)
@@ -335,12 +333,20 @@ public abstract class StatusDisplayItem{
 		for(StatusDisplayItem item:items){
 			if(inset)
 				item.inset=true;
+			if(isForQuote){
+				item.status=statusForContent;
+				item.isForQuote=true;
+			}
 			item.index=i++;
 		}
 		if(items!=contentItems && !statusForContent.spoilerRevealed){
 			for(StatusDisplayItem item:contentItems){
 				if(inset)
 					item.inset=true;
+				if(isForQuote){
+					item.status=statusForContent;
+					item.isForQuote=true;
+				}
 				item.index=i++;
 			}
 		}
