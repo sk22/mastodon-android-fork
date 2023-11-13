@@ -124,6 +124,8 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 		if(filtered!=null)
 			for(FilterResult fr:filtered)
 				fr.postprocess();
+		if(quote!=null)
+			quote.postprocess();
 
 		spoilerRevealed=!hasSpoiler();
 		if(!spoilerRevealed) sensitive=true;
