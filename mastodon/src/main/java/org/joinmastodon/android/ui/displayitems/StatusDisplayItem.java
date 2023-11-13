@@ -454,7 +454,7 @@ public abstract class StatusDisplayItem{
 
 		public boolean isLastDisplayItemForStatus(){
 			return getNextVisibleDisplayItem()
-					.map(n->!n.parentID.equals(item.parentID))
+					.map(next->!next.parentID.equals(item.parentID) || item.inset && !next.inset)
 					.orElse(true);
 		}
 
