@@ -223,7 +223,8 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 		Instance instanceInfo = AccountSessionManager.getInstance().getInstanceInfo(session.domain);
 		boolean translateEnabled = instanceInfo != null &&
 				instanceInfo.v2 != null && instanceInfo.v2.configuration.translation != null &&
-				instanceInfo.v2.configuration.translation.enabled;
+				instanceInfo.v2.configuration.translation.enabled ||
+				(instanceInfo != null && instanceInfo.isAkkoma() && instanceInfo.hasFeature(Instance.Feature.MACHINE_TRANSLATION));
 
 		try {
 			Pair<String, List<String>> decoded=BOTTOM_TEXT_PATTERN.matcher(getStrippedText()).find()
