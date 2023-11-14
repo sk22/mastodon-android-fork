@@ -37,13 +37,15 @@ import me.grishka.appkit.Nav;
 
 public class ExtendedFooterStatusDisplayItem extends StatusDisplayItem{
 	public final String accountID;
+	public final boolean preview;
 
 	private static final DateTimeFormatter TIME_FORMATTER=DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG, FormatStyle.SHORT);
 
-	public ExtendedFooterStatusDisplayItem(String parentID, BaseStatusListFragment parentFragment, String accountID, Status status){
+	public ExtendedFooterStatusDisplayItem(String parentID, BaseStatusListFragment parentFragment, String accountID, Status status, boolean preview){
 		super(parentID, parentFragment);
 		this.status=status;
 		this.accountID=accountID;
+		this.preview=preview;
 	}
 
 	@Override
@@ -129,6 +131,8 @@ public class ExtendedFooterStatusDisplayItem extends StatusDisplayItem{
 		}
 
 		private void startAccountListFragment(Class<? extends StatusRelatedAccountListFragment> cls){
+			if(item.preview)
+				return;
 			Bundle args=new Bundle();
 			args.putString("account", item.parentFragment.getAccountID());
 			args.putParcelable("status", Parcels.wrap(item.status));
@@ -136,6 +140,8 @@ public class ExtendedFooterStatusDisplayItem extends StatusDisplayItem{
 		}
 
 		private void startEditHistoryFragment(){
+			if(item.preview)
+				return;
 			Bundle args=new Bundle();
 			args.putString("account", item.parentFragment.getAccountID());
 			args.putString("id", item.status.id);

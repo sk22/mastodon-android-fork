@@ -48,6 +48,8 @@ public class CreateStatus extends MastodonAPIRequest<Status>{
 		public String quoteId;
 		public ContentType contentType;
 
+		public boolean preview;
+
 		public static class Poll{
 			public ArrayList<String> options=new ArrayList<>();
 			public int expiresIn;

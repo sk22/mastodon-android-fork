@@ -76,6 +76,7 @@ public abstract class StatusDisplayItem{
 	public static final int FLAG_NO_TRANSLATE=1 << 5;
 	public static final int FLAG_NO_EMOJI_REACTIONS=1 << 6;
 	public static final int FLAG_IS_FOR_QUOTE=1 << 7;
+	public static final int FLAG_PREVIEW=1 << 8;
 
 	public void setAncestryInfo(
 			boolean hasDescendantNeighbor,
@@ -166,6 +167,7 @@ public abstract class StatusDisplayItem{
 
 		HeaderStatusDisplayItem header=null;
 		boolean hideCounts=!AccountSessionManager.get(accountID).getLocalPreferences().showInteractionCounts;
+		boolean preview=(flags & FLAG_PREVIEW)!=0;
 
 		if((flags & FLAG_NO_HEADER)==0){
 			ReblogOrReplyLineStatusDisplayItem replyLine = null;
@@ -217,7 +219,7 @@ public abstract class StatusDisplayItem{
 			if((flags & FLAG_CHECKABLE)!=0)
 				items.add(header=new CheckableHeaderStatusDisplayItem(parentID, statusForContent.account, statusForContent.createdAt, fragment, accountID, statusForContent, null));
 			else
-				items.add(header=new HeaderStatusDisplayItem(parentID, statusForContent.account, statusForContent.createdAt, fragment, accountID, statusForContent, null, parentObject instanceof Notification n ? n : null, scheduledStatus));
+				items.add(header=new HeaderStatusDisplayItem(parentID, statusForContent.account, statusForContent.createdAt, fragment, accountID, statusForContent, null, parentObject instanceof Notification n ? n : null, scheduledStatus, preview));
 		}
 
 		LegacyFilter applyingFilter=null;
@@ -309,12 +311,12 @@ public abstract class StatusDisplayItem{
 				(lp.showEmojiReactions!=ONLY_OPENED || fragment instanceof ThreadFragment) &&
 				statusForContent.reactions!=null){
 			boolean isMainStatus=fragment instanceof ThreadFragment t && t.getMainStatus().id.equals(statusForContent.id);
-			boolean showAddButton=lp.showEmojiReactions==ALWAYS || isMainStatus;
+			boolean showAddButton=(lp.showEmojiReactions==ALWAYS || isMainStatus) && !preview;
 			items.add(new EmojiReactionsStatusDisplayItem(parentID, fragment, statusForContent, accountID, !showAddButton, false));
 		}
 		FooterStatusDisplayItem footer=null;
 		if((flags & FLAG_NO_FOOTER)==0){
-			footer=new FooterStatusDisplayItem(parentID, fragment, statusForContent, accountID);
+			footer=new FooterStatusDisplayItem(parentID, fragment, statusForContent, accountID, preview);
 			footer.hideCounts=hideCounts;
 			items.add(footer);
 		}

@@ -2,7 +2,10 @@ package org.joinmastodon.android.fragments;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -50,15 +53,16 @@ import me.grishka.appkit.api.SimpleCallback;
 import me.grishka.appkit.utils.V;
 
 public class ThreadFragment extends StatusListFragment implements ProvidesAssistContent {
-	protected Status mainStatus, updatedStatus;
+	protected Status mainStatus, updatedStatus, replyTo;
 	private final HashMap<String, NeighborAncestryInfo> ancestryMap = new HashMap<>();
 	private StatusContext result;
-	protected boolean contextInitiallyRendered, transitionFinished;
+	protected boolean contextInitiallyRendered, transitionFinished, preview;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		mainStatus=Parcels.unwrap(getArguments().getParcelable("status"));
+		replyTo=Parcels.unwrap(getArguments().getParcelable("inReplyTo"));
 		Account inReplyToAccount=Parcels.unwrap(getArguments().getParcelable("inReplyToAccount"));
 		refreshing=contextInitiallyRendered=getArguments().getBoolean("refresh", false);
 		if(inReplyToAccount!=null)
@@ -67,6 +71,8 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 		onAppendItems(Collections.singletonList(mainStatus));
 		setTitle(HtmlParser.parseCustomEmoji(getString(R.string.post_from_user, mainStatus.account.getDisplayName()), mainStatus.account.emojis));
 		transitionFinished = getArguments().getBoolean("noTransition", false);
+		preview=getArguments().getBoolean("preview", false);
+		setRefreshEnabled(!preview);
 	}
 
 	@Override
@@ -117,7 +123,7 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
     
 		for (int deleteThisItem : deleteTheseItems) itemsToModify.remove(deleteThisItem);
 		if(s.id.equals(mainStatus.id)) {
-			items.add(new ExtendedFooterStatusDisplayItem(s.id, this, accountID, s.getContentStatus()));
+			items.add(new ExtendedFooterStatusDisplayItem(s.id, this, accountID, s.getContentStatus(), getArguments().getBoolean("preview", false)));
 		}
 		return items;
 	}
@@ -130,11 +136,21 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 
 	@Override
 	protected void doLoadData(int offset, int count){
-		if (refreshing) loadMainStatus();
-		currentRequest=new GetStatusContext(mainStatus.id)
+		if (preview && replyTo==null){
+			result=new StatusContext();
+			result.descendants=Collections.emptyList();
+			result.ancestors=Collections.emptyList();
+			return;
+		}
+		if (refreshing && !preview) loadMainStatus();
+		currentRequest=new GetStatusContext(preview ? replyTo.id : mainStatus.id)
 				.setCallback(new SimpleCallback<>(this){
 					@Override
 					public void onSuccess(StatusContext result){
+						if(preview){
+							result.descendants=Collections.emptyList();
+							result.ancestors.add(replyTo);
+						}
 						ThreadFragment.this.result = result;
 						maybeApplyContext();
 					}
