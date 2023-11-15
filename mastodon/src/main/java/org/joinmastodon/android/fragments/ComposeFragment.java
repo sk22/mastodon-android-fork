@@ -808,25 +808,28 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		actionItem.setActionView(wrap);
 		actionItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
-		draftsBtn = wrap.findViewById(R.id.drafts_btn);
-		draftOptionsPopup = new PopupMenu(getContext(), draftsBtn);
+		draftsBtn=wrap.findViewById(R.id.drafts_btn);
+		draftOptionsPopup=new PopupMenu(getContext(), draftsBtn);
 		draftOptionsPopup.inflate(R.menu.compose_more);
-		draftMenuItem = draftOptionsPopup.getMenu().findItem(R.id.draft);
-		undraftMenuItem = draftOptionsPopup.getMenu().findItem(R.id.undraft);
-		scheduleMenuItem = draftOptionsPopup.getMenu().findItem(R.id.schedule);
-		unscheduleMenuItem = draftOptionsPopup.getMenu().findItem(R.id.unschedule);
+		Menu draftOptionsMenu=draftOptionsPopup.getMenu();
+		draftMenuItem=draftOptionsMenu.findItem(R.id.draft);
+		undraftMenuItem=draftOptionsMenu.findItem(R.id.undraft);
+		scheduleMenuItem=draftOptionsMenu.findItem(R.id.schedule);
+		unscheduleMenuItem=draftOptionsMenu.findItem(R.id.unschedule);
+		draftOptionsMenu.findItem(R.id.preview).setVisible(isInstanceAkkoma());
 		draftOptionsPopup.setOnMenuItemClickListener(i->{
-			int id = i.getItemId();
-			if (id == R.id.draft) updateScheduledAt(getDraftInstant());
-			else if (id == R.id.schedule) pickScheduledDateTime();
-			else if (id == R.id.unschedule || id == R.id.undraft) updateScheduledAt(null);
-			else navigateToUnsentPosts();
+			int id=i.getItemId();
+			if(id==R.id.draft) updateScheduledAt(getDraftInstant());
+			else if(id==R.id.schedule) pickScheduledDateTime();
+			else if(id==R.id.unschedule || id==R.id.undraft) updateScheduledAt(null);
+			else if(id==R.id.drafts) navigateToUnsentPosts();
+			else if(id==R.id.preview) publish(true);
 			return true;
 		});
 		UiUtils.enablePopupMenuIcons(getContext(), draftOptionsPopup);
 
-		publishButton = wrap.findViewById(R.id.publish_btn);
-		languageButton = wrap.findViewById(R.id.language_btn);
+		publishButton=wrap.findViewById(R.id.publish_btn);
+		languageButton=wrap.findViewById(R.id.language_btn);
 		languageButton.setOnClickListener(v->showLanguageAlert());
 		languageButton.setOnLongClickListener(v->{
 			if(!getLocalPrefs().bottomEncoding){
@@ -857,13 +860,6 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			}else{
 				draftCheckComplete.accept(isAlreadyDraft);
 			}
-		});
-		publishButton.setOnLongClickListener(v -> {
-			if(isInstanceAkkoma()) {
-				publish(true);
-				return true;
-			}
-			return false;
 		});
 		draftsBtn.setOnClickListener(v-> draftOptionsPopup.show());
 		draftsBtn.setOnTouchListener(draftOptionsPopup.getDragToOpenListener());
@@ -1076,7 +1072,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		V.setVisibilityAnimated(sendProgress, View.VISIBLE);
 
 		mediaViewController.saveAltTextsBeforePublishing(
-				() -> actuallyPublish(preview),
+				()->actuallyPublish(preview),
 				this::handlePublishError);
 	}
 

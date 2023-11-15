@@ -5,4 +5,5 @@
     <item android:id="@+id/draft" android:title="@string/sk_mark_as_draft" android:icon="@drawable/ic_fluent_drafts_24_regular" />
     <item android:id="@+id/undraft" android:title="@string/sk_mark_as_draft" android:icon="@drawable/ic_fluent_drafts_24_filled" android:contentDescription="@string/sk_compose_no_draft" />
     <item android:id="@+id/drafts" android:title="@string/sk_unsent_posts" android:icon="@drawable/ic_fluent_folder_open_24_regular" />
+	<item android:id="@+id/preview" android:title="@string/sk_preview_post" android:icon="@drawable/ic_fluent_receipt_sparkles_24_regular" android:visible="false" />
 </menu>
