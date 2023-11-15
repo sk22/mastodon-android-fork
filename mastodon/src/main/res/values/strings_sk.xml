@@ -430,4 +430,7 @@
 	<string name="sk_private_note_confirm_delete">Delete personal note about %s?</string>
 	<string name="sk_delete_note">Delete personal note</string>
 	<string name="sk_add_note">Add personal note</string>
+	<string name="sk_settings_copy_crash_log">Copy latest crash log</string>
+	<string name="sk_settings_crash_log_unavailable">None available… yet</string>
+	<string name="sk_crash_log_copied">Crash log copied</string>
 </resources>

@@ -31,17 +31,43 @@ import org.joinmastodon.android.utils.ProvidesAssistContent;
 import org.parceler.Parcels;
 
 import androidx.annotation.Nullable;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.Instant;
+
 import me.grishka.appkit.FragmentStackActivity;
 import me.grishka.appkit.Nav;
 import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
 
 public class MainActivity extends FragmentStackActivity implements ProvidesAssistContent {
+	private static final String TAG="MainActivity";
+
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState){
 		AccountSession session=getCurrentSession();
 		UiUtils.setUserPreferredTheme(this, session);
 		super.onCreate(savedInstanceState);
+
+		Thread.UncaughtExceptionHandler defaultHandler=Thread.getDefaultUncaughtExceptionHandler();
+		Thread.setDefaultUncaughtExceptionHandler((t, e)->{
+			File file=new File(MastodonApp.context.getFilesDir(), "crash.log");
+			try(FileOutputStream out=new FileOutputStream(file)){
+				PrintWriter writer=new PrintWriter(out);
+				writer.println(BuildConfig.VERSION_NAME+" ("+BuildConfig.VERSION_CODE+")");
+				writer.println(Instant.now().toString());
+				writer.println();
+				e.printStackTrace(writer);
+				writer.flush();
+			}catch(IOException x){
+				Log.e(TAG, "Error writing crash.log", x);
+			}finally{
+				defaultHandler.uncaughtException(t, e);
+			}
+		});
 
 		if(savedInstanceState==null){
 			restartHomeFragment();
