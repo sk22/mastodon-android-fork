@@ -220,10 +220,11 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 
 	public static final Pattern BOTTOM_TEXT_PATTERN = Pattern.compile("(?:[\uD83E\uDEC2\uD83D\uDC96✨\uD83E\uDD7A,]+|❤️)(?:\uD83D\uDC49\uD83D\uDC48(?:[\uD83E\uDEC2\uD83D\uDC96✨\uD83E\uDD7A,]+|❤️))*\uD83D\uDC49\uD83D\uDC48");
 	public boolean isEligibleForTranslation(AccountSession session){
-		Instance instanceInfo = AccountSessionManager.getInstance().getInstanceInfo(session.domain);
-		boolean translateEnabled = instanceInfo != null &&
-				instanceInfo.v2 != null && instanceInfo.v2.configuration.translation != null &&
-				instanceInfo.v2.configuration.translation.enabled;
+		Instance instanceInfo=AccountSessionManager.getInstance().getInstanceInfo(session.domain);
+		boolean translateEnabled=instanceInfo!=null && (
+				(instanceInfo.v2!=null && instanceInfo.v2.configuration.translation!=null && instanceInfo.v2.configuration.translation.enabled) ||
+				(instanceInfo.isAkkoma() && instanceInfo.hasFeature(Instance.Feature.MACHINE_TRANSLATION))
+		);
 
 		try {
 			Pair<String, List<String>> decoded=BOTTOM_TEXT_PATTERN.matcher(getStrippedText()).find()

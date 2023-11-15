@@ -161,11 +161,15 @@ public class Instance extends BaseModel{
 			case BUBBLE_TIMELINE -> pleromaFeatures
 					.map(f -> f.contains("bubble_timeline"))
 					.orElse(false);
+			case MACHINE_TRANSLATION -> pleromaFeatures
+					.map(f -> f.contains("akkoma:machine_translation"))
+					.orElse(false);
 		};
 	}
 
 	public enum Feature {
-		BUBBLE_TIMELINE
+		BUBBLE_TIMELINE,
+		MACHINE_TRANSLATION
 	}
 
 	@Parcel

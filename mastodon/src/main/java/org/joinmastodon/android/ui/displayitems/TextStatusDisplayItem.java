@@ -191,7 +191,7 @@ public class TextStatusDisplayItem extends StatusDisplayItem{
 		public void updateTranslation(boolean updateText){
 			if(item.status==null)
 				return;
-			boolean translateEnabled=!item.disableTranslate && item.status.isEligibleForTranslation(item.parentFragment.getSession());
+			boolean translateEnabled=!item.disableTranslate && item.status.isEligibleForTranslation(item.parentFragment.getSession()) && !item.isForQuote;
 			if(translationFooter==null && translateEnabled){
 				translationFooter=translationFooterStub.inflate();
 				translationInfo=findViewById(R.id.translation_info_text);

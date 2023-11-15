@@ -19,12 +19,15 @@ import android.widget.Toolbar;
 import org.joinmastodon.android.E;
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
+import org.joinmastodon.android.api.MastodonAPIRequest;
 import org.joinmastodon.android.api.requests.accounts.GetAccountRelationships;
 import org.joinmastodon.android.api.requests.polls.SubmitPollVote;
+import org.joinmastodon.android.api.requests.statuses.AkkomaTranslateStatus;
 import org.joinmastodon.android.api.requests.statuses.TranslateStatus;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.PollUpdatedEvent;
 import org.joinmastodon.android.model.Account;
+import org.joinmastodon.android.model.AkkomaTranslation;
 import org.joinmastodon.android.model.DisplayItemsParent;
 import org.joinmastodon.android.model.Poll;
 import org.joinmastodon.android.model.Relationship;
@@ -60,6 +63,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import androidx.annotation.NonNull;
@@ -855,36 +859,50 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 					status.translationState=Status.TranslationState.SHOWN;
 				}else{
 					status.translationState=Status.TranslationState.LOADING;
-					new TranslateStatus(status.getContentStatus().id, Locale.getDefault().getLanguage())
-							.setCallback(new Callback<>(){
+					Consumer<Translation> successCallback=(result)->{
+						status.translation=result;
+						status.translationState=Status.TranslationState.SHOWN;
+						updateTranslation(itemID);
+					};
+					MastodonAPIRequest<?> req=isInstanceAkkoma()
+							? new AkkomaTranslateStatus(status.getContentStatus().id, Locale.getDefault().getLanguage()).setCallback(new Callback<>(){
+								@Override
+								public void onSuccess(AkkomaTranslation result){
+									if(getActivity()!=null) successCallback.accept(result.toTranslation());
+								}
+								@Override
+								public void onError(ErrorResponse error){
+									if(getActivity()!=null) translationCallbackError(status, itemID);
+								}
+							})
+							: new TranslateStatus(status.getContentStatus().id, Locale.getDefault().getLanguage()).setCallback(new Callback<>(){
 								@Override
 								public void onSuccess(Translation result){
-									if(getActivity()==null)
-										return;
-									status.translation=result;
-									status.translationState=Status.TranslationState.SHOWN;
-									updateTranslation(itemID);
+									if(getActivity()!=null) successCallback.accept(result);
 								}
 
 								@Override
 								public void onError(ErrorResponse error){
-									if(getActivity()==null)
-										return;
-									status.translationState=Status.TranslationState.HIDDEN;
-									updateTranslation(itemID);
-									new M3AlertDialogBuilder(getActivity())
-											.setTitle(R.string.error)
-											.setMessage(R.string.translation_failed)
-											.setPositiveButton(R.string.ok, null)
-											.show();
+									if(getActivity()!=null) translationCallbackError(status, itemID);
 								}
-							})
-							.setTimeout(60000) // 1 minute
-							.exec(accountID);
+							});
+
+					// 1 minute
+					req.setTimeout(60000).exec(accountID);
 				}
 			}
 		}
 		updateTranslation(itemID);
+	}
+
+	private void translationCallbackError(Status status, String itemID) {
+		status.translationState=Status.TranslationState.HIDDEN;
+		updateTranslation(itemID);
+		new M3AlertDialogBuilder(getActivity())
+				.setTitle(R.string.error)
+				.setMessage(R.string.translation_failed)
+				.setPositiveButton(R.string.ok, null)
+				.show();
 	}
 
 	private void updateTranslation(String itemID) {
@@ -895,6 +913,9 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 		}else{
 			notifyItemChanged(itemID, TextStatusDisplayItem.class);
 		}
+
+		if(isInstanceAkkoma())
+			return;
 
 		SpoilerStatusDisplayItem.Holder spoiler=findHolderOfType(itemID, SpoilerStatusDisplayItem.Holder.class);
 		if(spoiler!=null){
