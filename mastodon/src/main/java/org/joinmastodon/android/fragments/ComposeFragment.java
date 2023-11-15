@@ -214,8 +214,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 
 	private BackgroundColorSpan overLimitBG;
 	private ForegroundColorSpan overLimitFG;
-	private InputMethodManager imm;
-
+	
 	public ComposeFragment(){
 		super(R.layout.toolbar_fragment_with_progressbar);
 	}
@@ -522,7 +521,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 	public void onViewCreated(View view, Bundle savedInstanceState){
 		super.onViewCreated(view, savedInstanceState);
 		contentView.setSizeListener(emojiKeyboard::onContentViewSizeChanged);
-		imm=getActivity().getSystemService(InputMethodManager.class);
+		InputMethodManager imm=getActivity().getSystemService(InputMethodManager.class);
 		mainEditText.requestFocus();
 		 view.postDelayed(()->{
 		 	imm.showSoftInput(mainEditText, 0);
@@ -884,6 +883,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		Bundle args=new Bundle();
 		args.putString("account", accountID);
 		args.putBoolean("hide_fab", true);
+		InputMethodManager imm=getActivity().getSystemService(InputMethodManager.class);
 		imm.hideSoftInputFromWindow(draftsBtn.getWindowToken(), 0);
 		if (hasDraft()) {
 			Nav.go(getActivity(), ScheduledStatusListFragment.class, args);
@@ -1231,6 +1231,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		sendingOverlay=null;
 		publishButton.setEnabled(true);
 		V.setVisibilityAnimated(sendProgress, View.GONE);
+		InputMethodManager imm=getActivity().getSystemService(InputMethodManager.class);
 		imm.hideSoftInputFromWindow(contentView.getWindowToken(), 0);
 
 		Bundle args=new Bundle();
