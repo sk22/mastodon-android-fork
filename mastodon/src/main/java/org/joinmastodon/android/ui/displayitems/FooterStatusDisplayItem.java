@@ -39,13 +39,12 @@ import me.grishka.appkit.utils.V;
 
 public class FooterStatusDisplayItem extends StatusDisplayItem{
 	private final String accountID;
-	public boolean hideCounts, preview;
+	public boolean hideCounts;
 
-	public FooterStatusDisplayItem(String parentID, BaseStatusListFragment parentFragment, Status status, String accountID, boolean preview){
+	public FooterStatusDisplayItem(String parentID, BaseStatusListFragment parentFragment, Status status, String accountID){
 		super(parentID, parentFragment);
 		this.status=status;
 		this.accountID=accountID;
-		this.preview=preview;
 	}
 
 	@Override
@@ -159,8 +158,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 		}
 
 		private boolean onButtonTouch(View v, MotionEvent event){
-			if(item.preview)
-				return false;
+			if(item.status.preview) return false;
 			boolean disabled = !v.isEnabled() || (v instanceof FrameLayout parentFrame &&
 					parentFrame.getChildCount() > 0 && !parentFrame.getChildAt(0).isEnabled());
 			int action = event.getAction();
@@ -183,8 +181,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 		}
 
 		private void onReplyClick(View v){
-			if(item.preview)
-				return;
+			if(item.status.preview) return;
 			UiUtils.opacityIn(v);
 			Bundle args=new Bundle();
 			args.putString("account", item.accountID);
@@ -193,8 +190,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 		}
 
 		private boolean onReplyLongClick(View v) {
-			if(item.preview)
-				return false;
+			if(item.status.preview) return false;
 			if (AccountSessionManager.getInstance().getLoggedInAccounts().size() < 2) return false;
 			UiUtils.pickAccount(v.getContext(), item.accountID, R.string.sk_reply_as, R.drawable.ic_fluent_arrow_reply_28_regular, session -> {
 				Bundle args=new Bundle();
@@ -210,8 +206,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 		}
 
 		private void onBoostClick(View v){
-			if(item.preview)
-				return;
+			if(item.status.preview) return;
 			if (GlobalUserPreferences.confirmBoost) {
 				UiUtils.opacityIn(v);
 				onBoostLongClick(v);
@@ -227,8 +222,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 		}
 
 		private boolean onBoostLongClick(View v){
-			if(item.preview)
-				return false;
+			if(item.status.preview) return false;
 			Context ctx = itemView.getContext();
 			View menu = LayoutInflater.from(ctx).inflate(R.layout.item_boost_menu, null);
 			Dialog dialog = new M3AlertDialogBuilder(ctx).setView(menu).create();
@@ -311,8 +305,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 		}
 
 		private void onFavoriteClick(View v){
-			if(item.preview)
-				return;
+			if(item.status.preview) return;
 			favorite.setSelected(!item.status.favourited);
 			AccountSessionManager.getInstance().getAccount(item.accountID).getStatusInteractionController().setFavorited(item.status, !item.status.favourited, r->{
 				UiUtils.opacityIn(v);
@@ -321,8 +314,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 		}
 
 		private boolean onFavoriteLongClick(View v) {
-			if(item.preview)
-				return false;
+			if(item.status.preview) return false;
 			if (AccountSessionManager.getInstance().getLoggedInAccounts().size() < 2) return false;
 			UiUtils.pickInteractAs(v.getContext(),
 					item.accountID, item.status,
@@ -337,8 +329,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 		}
 
 		private void onBookmarkClick(View v){
-			if(item.preview)
-				return;
+			if(item.status.preview) return;
 			bookmark.setSelected(!item.status.bookmarked);
 			AccountSessionManager.getInstance().getAccount(item.accountID).getStatusInteractionController().setBookmarked(item.status, !item.status.bookmarked, r->{
 				UiUtils.opacityIn(v);
@@ -346,8 +337,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 		}
 
 		private boolean onBookmarkLongClick(View v) {
-			if(item.preview)
-				return false;
+			if(item.status.preview) return false;
 			if (AccountSessionManager.getInstance().getLoggedInAccounts().size() < 2) return false;
 			UiUtils.pickInteractAs(v.getContext(),
 					item.accountID, item.status,
@@ -362,8 +352,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 		}
 
 		private void onShareClick(View v){
-			if(item.preview)
-				return;
+			if(item.status.preview) return;
 			UiUtils.opacityIn(v);
 			Intent intent=new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain");
@@ -372,8 +361,7 @@ public class FooterStatusDisplayItem extends StatusDisplayItem{
 		}
 
 		private boolean onShareLongClick(View v){
-			if(item.preview)
-				return false;
+			if(item.status.preview) return false;
 			UiUtils.copyText(v, item.status.url);
 			return true;
 		}

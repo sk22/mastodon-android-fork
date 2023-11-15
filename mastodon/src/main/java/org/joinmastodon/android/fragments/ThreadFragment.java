@@ -2,10 +2,7 @@ package org.joinmastodon.android.fragments;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -69,10 +66,10 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 			knownAccounts.put(inReplyToAccount.id, inReplyToAccount);
 		data.add(mainStatus);
 		onAppendItems(Collections.singletonList(mainStatus));
-		setTitle(HtmlParser.parseCustomEmoji(getString(R.string.post_from_user, mainStatus.account.getDisplayName()), mainStatus.account.emojis));
+		preview=mainStatus.preview;
+		if(preview) setRefreshEnabled(false);
+		setTitle(preview ? getString(R.string.sk_post_preview) : HtmlParser.parseCustomEmoji(getString(R.string.post_from_user, mainStatus.account.getDisplayName()), mainStatus.account.emojis));
 		transitionFinished = getArguments().getBoolean("noTransition", false);
-		preview=getArguments().getBoolean("preview", false);
-		setRefreshEnabled(!preview);
 	}
 
 	@Override
@@ -123,7 +120,7 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
     
 		for (int deleteThisItem : deleteTheseItems) itemsToModify.remove(deleteThisItem);
 		if(s.id.equals(mainStatus.id)) {
-			items.add(new ExtendedFooterStatusDisplayItem(s.id, this, accountID, s.getContentStatus(), getArguments().getBoolean("preview", false)));
+			items.add(new ExtendedFooterStatusDisplayItem(s.id, this, accountID, s.getContentStatus()));
 		}
 		return items;
 	}
@@ -136,13 +133,13 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 
 	@Override
 	protected void doLoadData(int offset, int count){
-		if (preview && replyTo==null){
+		if(preview && replyTo==null){
 			result=new StatusContext();
 			result.descendants=Collections.emptyList();
 			result.ancestors=Collections.emptyList();
 			return;
 		}
-		if (refreshing && !preview) loadMainStatus();
+		if(refreshing && !preview) loadMainStatus();
 		currentRequest=new GetStatusContext(preview ? replyTo.id : mainStatus.id)
 				.setCallback(new SimpleCallback<>(this){
 					@Override

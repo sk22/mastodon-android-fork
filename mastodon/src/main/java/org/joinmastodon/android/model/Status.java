@@ -97,6 +97,7 @@ public class Status extends BaseModel implements DisplayItemsParent, Searchable{
 	public transient TranslationState translationState=TranslationState.HIDDEN;
 	public transient Translation translation;
 	public transient boolean fromStatusCreated;
+	public transient boolean preview;
 
 	public Status(){}
 

@@ -81,11 +81,10 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 	private CharSequence extraText;
 	private Notification notification;
 	private ScheduledStatus scheduledStatus;
-	private final boolean preview;
 	private Announcement announcement;
 	private Consumer<String> consumeReadAnnouncement;
 
-	public HeaderStatusDisplayItem(String parentID, Account user, Instant createdAt, BaseStatusListFragment parentFragment, String accountID, Status status, CharSequence extraText, Notification notification, ScheduledStatus scheduledStatus, boolean preview){
+	public HeaderStatusDisplayItem(String parentID, Account user, Instant createdAt, BaseStatusListFragment parentFragment, String accountID, Status status, CharSequence extraText, Notification notification, ScheduledStatus scheduledStatus){
 		super(parentID, parentFragment);
 		AccountSession session = AccountSessionManager.get(accountID);
 		user=scheduledStatus != null ? session.self : user;
@@ -100,7 +99,6 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 		this.status=status;
 		this.notification=notification;
 		this.scheduledStatus=scheduledStatus;
-		this.preview=preview;
 		if(AccountSessionManager.get(accountID).getLocalPreferences().customEmojiInNames)
 			HtmlParser.parseCustomEmoji(parsedName, user.emojis);
 		emojiHelper.setText(parsedName);
@@ -113,7 +111,7 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 	}
 
 	public static HeaderStatusDisplayItem fromAnnouncement(Announcement a, Status fakeStatus, Account instanceUser, BaseStatusListFragment parentFragment, String accountID, Consumer<String> consumeReadID) {
-		HeaderStatusDisplayItem item = new HeaderStatusDisplayItem(a.id, instanceUser, a.startsAt, parentFragment, accountID, fakeStatus, null, null, null, false);
+		HeaderStatusDisplayItem item = new HeaderStatusDisplayItem(a.id, instanceUser, a.startsAt, parentFragment, accountID, fakeStatus, null, null, null);
 		item.announcement = a;
 		item.consumeReadAnnouncement = consumeReadID;
 		return item;
@@ -447,8 +445,7 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 		}
 
 		private void onMoreClick(View v){
-			if(item.preview)
-				return;
+			if(item.status.preview) return;
 			updateOptionsMenu();
 			optionsMenu.show();
 			if(relationship==null && currentRelationshipRequest==null){

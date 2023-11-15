@@ -50,17 +50,13 @@ public abstract class StatusListFragment extends BaseStatusListFragment<Status> 
 		boolean isMainThreadStatus = this instanceof ThreadFragment t && s.id.equals(t.mainStatus.id);
 		int flags = 0;
 		AccountLocalPreferences lp=getLocalPrefs();
-		if(!isMainThreadStatus){
-			if(GlobalUserPreferences.spectatorMode)
-				flags|=StatusDisplayItem.FLAG_NO_FOOTER;
-			if(!lp.emojiReactionsEnabled || lp.showEmojiReactions==ONLY_OPENED)
-				flags|=StatusDisplayItem.FLAG_NO_EMOJI_REACTIONS;
-			if(GlobalUserPreferences.translateButtonOpenedOnly)
-				flags|=StatusDisplayItem.FLAG_NO_TRANSLATE;
-		} else if(getArguments().getBoolean("preview", false)){
-			flags|=StatusDisplayItem.FLAG_PREVIEW;
-		}
-		return StatusDisplayItem.buildItems(this, s, accountID, s, knownAccounts, getFilterContext(), flags);
+		if(GlobalUserPreferences.spectatorMode)
+			flags |= StatusDisplayItem.FLAG_NO_FOOTER;
+		if(!lp.emojiReactionsEnabled || lp.showEmojiReactions==ONLY_OPENED)
+			flags |= StatusDisplayItem.FLAG_NO_EMOJI_REACTIONS;
+		if(GlobalUserPreferences.translateButtonOpenedOnly)
+			flags |= StatusDisplayItem.FLAG_NO_TRANSLATE;
+		return StatusDisplayItem.buildItems(this, s, accountID, s, knownAccounts, getFilterContext(), isMainThreadStatus ? 0 : flags);
 	}
 
 	protected abstract FilterContext getFilterContext();
@@ -88,8 +84,7 @@ public abstract class StatusListFragment extends BaseStatusListFragment<Status> 
 	@Override
 	public void onItemClick(String id){
 		Status status=getContentStatusByID(id);
-		if(status==null)
-			return;
+		if(status==null || status.preview) return;
 		status.filterRevealed=true;
 		Bundle args=new Bundle();
 		args.putString("account", accountID);

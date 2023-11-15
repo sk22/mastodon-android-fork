@@ -1123,6 +1123,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			@Override
 			public void onSuccess(Status result){
 				if(preview){
+					result.preview=true;
 					wm.removeView(sendingOverlay);
 					sendingOverlay=null;
 					publishButton.setEnabled(true);
@@ -1136,7 +1137,6 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 						args.putParcelable("inReplyTo", Parcels.wrap(replyTo));
 						args.putParcelable("inReplyToAccount", Parcels.wrap(replyTo.account));
 					}
-					args.putBoolean("preview", true);
 					Nav.go(getActivity(), ThreadFragment.class, args);
 					return;
 				}

@@ -76,8 +76,7 @@ public abstract class StatusDisplayItem{
 	public static final int FLAG_NO_TRANSLATE=1 << 5;
 	public static final int FLAG_NO_EMOJI_REACTIONS=1 << 6;
 	public static final int FLAG_IS_FOR_QUOTE=1 << 7;
-	public static final int FLAG_PREVIEW=1 << 8;
-
+	
 	public void setAncestryInfo(
 			boolean hasDescendantNeighbor,
 			boolean hasAncestoringNeighbor,
@@ -167,8 +166,7 @@ public abstract class StatusDisplayItem{
 
 		HeaderStatusDisplayItem header=null;
 		boolean hideCounts=!AccountSessionManager.get(accountID).getLocalPreferences().showInteractionCounts;
-		boolean preview=(flags & FLAG_PREVIEW)!=0;
-
+		
 		if((flags & FLAG_NO_HEADER)==0){
 			ReblogOrReplyLineStatusDisplayItem replyLine = null;
 			boolean threadReply = statusForContent.inReplyToAccountId != null &&
@@ -219,7 +217,7 @@ public abstract class StatusDisplayItem{
 			if((flags & FLAG_CHECKABLE)!=0)
 				items.add(header=new CheckableHeaderStatusDisplayItem(parentID, statusForContent.account, statusForContent.createdAt, fragment, accountID, statusForContent, null));
 			else
-				items.add(header=new HeaderStatusDisplayItem(parentID, statusForContent.account, statusForContent.createdAt, fragment, accountID, statusForContent, null, parentObject instanceof Notification n ? n : null, scheduledStatus, preview));
+				items.add(header=new HeaderStatusDisplayItem(parentID, statusForContent.account, statusForContent.createdAt, fragment, accountID, statusForContent, null, parentObject instanceof Notification n ? n : null, scheduledStatus));
 		}
 
 		LegacyFilter applyingFilter=null;
@@ -307,16 +305,16 @@ public abstract class StatusDisplayItem{
 			items.addAll(contentItems);
 		}
 		AccountLocalPreferences lp=fragment.getLocalPrefs();
-		if((flags & FLAG_NO_EMOJI_REACTIONS)==0 && lp.emojiReactionsEnabled &&
+		if((flags & FLAG_NO_EMOJI_REACTIONS)==0 && !status.preview && lp.emojiReactionsEnabled &&
 				(lp.showEmojiReactions!=ONLY_OPENED || fragment instanceof ThreadFragment) &&
 				statusForContent.reactions!=null){
 			boolean isMainStatus=fragment instanceof ThreadFragment t && t.getMainStatus().id.equals(statusForContent.id);
-			boolean showAddButton=(lp.showEmojiReactions==ALWAYS || isMainStatus) && !preview;
+			boolean showAddButton=lp.showEmojiReactions==ALWAYS || isMainStatus;
 			items.add(new EmojiReactionsStatusDisplayItem(parentID, fragment, statusForContent, accountID, !showAddButton, false));
 		}
 		FooterStatusDisplayItem footer=null;
 		if((flags & FLAG_NO_FOOTER)==0){
-			footer=new FooterStatusDisplayItem(parentID, fragment, statusForContent, accountID, preview);
+			footer=new FooterStatusDisplayItem(parentID, fragment, statusForContent, accountID);
 			footer.hideCounts=hideCounts;
 			items.add(footer);
 		}

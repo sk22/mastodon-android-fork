@@ -18,7 +18,7 @@ import java.util.function.Predicate;
 
 public class CheckableHeaderStatusDisplayItem extends HeaderStatusDisplayItem{
 	public CheckableHeaderStatusDisplayItem(String parentID, Account user, Instant createdAt, BaseStatusListFragment<?> parentFragment, String accountID, Status status, CharSequence extraText){
-		super(parentID, user, createdAt, parentFragment, accountID, status, extraText, null, null, false);
+		super(parentID, user, createdAt, parentFragment, accountID, status, extraText, null, null);
 	}
 
 	@Override

@@ -433,5 +433,6 @@
 	<string name="sk_settings_copy_crash_log">Copy latest crash log</string>
 	<string name="sk_settings_crash_log_unavailable">None available… yet</string>
 	<string name="sk_crash_log_copied">Crash log copied</string>
-	<string name="sk_preview_post">Preview post</string>
+	<string name="sk_open_post_preview">Preview post</string>
+	<string name="sk_post_preview">Preview</string>
 </resources>
