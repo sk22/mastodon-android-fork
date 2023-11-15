@@ -1123,25 +1123,11 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 			@Override
 			public void onSuccess(Status result){
 				if(preview){
-					result.preview=true;
-					wm.removeView(sendingOverlay);
-					sendingOverlay=null;
-					publishButton.setEnabled(true);
-					V.setVisibilityAnimated(sendProgress, View.GONE);
-					imm.hideSoftInputFromWindow(contentView.getWindowToken(), 0);
-
-					Bundle args=new Bundle();
-					args.putString("account", accountID);
-					args.putParcelable("status", Parcels.wrap(result));
-					if(replyTo!=null){
-						args.putParcelable("inReplyTo", Parcels.wrap(replyTo));
-						args.putParcelable("inReplyToAccount", Parcels.wrap(replyTo.account));
-					}
-					Nav.go(getActivity(), ThreadFragment.class, args);
+					openPreview(result);
 					return;
 				}
 
-				maybeDeleteScheduledPost(() -> {
+				maybeDeleteScheduledPost(()->{
 					wm.removeView(sendingOverlay);
 					sendingOverlay=null;
 					if(editingStatus==null || redraftStatus){
@@ -1163,10 +1149,10 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 						}
 						E.post(new StatusUpdatedEvent(editedStatus));
 					}
-					if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O || !isStateSaved()) {
+					if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O || !isStateSaved()){
 						Nav.finish(ComposeFragment.this);
 					}
-					if (getArguments().getBoolean("navigateToStatus", false)) {
+					if(getArguments().getBoolean("navigateToStatus", false)){
 						Bundle args=new Bundle();
 						args.putString("account", accountID);
 						args.putParcelable("status", Parcels.wrap(result));
@@ -1237,6 +1223,24 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 		}else if(error!=null){
 			error.showToast(getActivity());
 		}
+	}
+
+	private void openPreview(Status result){
+		result.preview=true;
+		wm.removeView(sendingOverlay);
+		sendingOverlay=null;
+		publishButton.setEnabled(true);
+		V.setVisibilityAnimated(sendProgress, View.GONE);
+		imm.hideSoftInputFromWindow(contentView.getWindowToken(), 0);
+
+		Bundle args=new Bundle();
+		args.putString("account", accountID);
+		args.putParcelable("status", Parcels.wrap(result));
+		if(replyTo!=null){
+			args.putParcelable("inReplyTo", Parcels.wrap(replyTo));
+			args.putParcelable("inReplyToAccount", Parcels.wrap(replyTo.account));
+		}
+		Nav.go(getActivity(), ThreadFragment.class, args);
 	}
 
 	private void updateRecentLanguages() {
