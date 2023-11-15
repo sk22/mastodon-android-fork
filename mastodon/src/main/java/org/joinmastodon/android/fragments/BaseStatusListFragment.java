@@ -19,6 +19,7 @@ import android.widget.Toolbar;
 import org.joinmastodon.android.E;
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
+import org.joinmastodon.android.api.MastodonAPIRequest;
 import org.joinmastodon.android.api.requests.accounts.GetAccountRelationships;
 import org.joinmastodon.android.api.requests.polls.SubmitPollVote;
 import org.joinmastodon.android.api.requests.statuses.AkkomaTranslateStatus;
@@ -62,6 +63,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import androidx.annotation.NonNull;
@@ -857,53 +859,36 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 					status.translationState=Status.TranslationState.SHOWN;
 				}else{
 					status.translationState=Status.TranslationState.LOADING;
-					if(!isInstanceAkkoma()){
-						new TranslateStatus(status.getContentStatus().id, Locale.getDefault().getLanguage())
-								.setCallback(new Callback<>(){
-									@Override
-									public void onSuccess(Translation result){
-										if(getActivity()==null)
-											return;
-										status.translation=result;
-										status.translationState=Status.TranslationState.SHOWN;
-										updateTranslation(itemID);
-									}
+					Consumer<Translation> successCallback=(result)->{
+						status.translation=result;
+						status.translationState=Status.TranslationState.SHOWN;
+						updateTranslation(itemID);
+					};
+					MastodonAPIRequest<?> req=isInstanceAkkoma()
+							? new AkkomaTranslateStatus(status.getContentStatus().id, Locale.getDefault().getLanguage()).setCallback(new Callback<>(){
+								@Override
+								public void onSuccess(AkkomaTranslation result){
+									if(getActivity()!=null) successCallback.accept(result.toTranslation());
+								}
+								@Override
+								public void onError(ErrorResponse error){
+									if(getActivity()!=null) translationCallbackError(status, itemID);
+								}
+							})
+							: new TranslateStatus(status.getContentStatus().id, Locale.getDefault().getLanguage()).setCallback(new Callback<>(){
+								@Override
+								public void onSuccess(Translation result){
+									if(getActivity()!=null) successCallback.accept(result);
+								}
 
-									@Override
-									public void onError(ErrorResponse error){
-										if(getActivity()==null)
-											return;
-										translationCallbackError(status, itemID);
-									}
-								})
-								.setTimeout(60000) // 1 minute
-								.exec(accountID);
-					}else{
-						new AkkomaTranslateStatus(status.getContentStatus().id, Locale.getDefault().getLanguage())
-								.setCallback(new Callback<>(){
-									@Override
-									public void onSuccess(AkkomaTranslation result){
-										if(getActivity()==null)
-											return;
-										status.translation=new Translation();
-										status.translation.content=result.text;
-										status.translation.detectedSourceLanguage=result.detectedLanguage;
-										status.translation.provider="";
-										status.translationState=Status.TranslationState.SHOWN;
-										updateTranslation(itemID);
-									}
+								@Override
+								public void onError(ErrorResponse error){
+									if(getActivity()!=null) translationCallbackError(status, itemID);
+								}
+							});
 
-									@Override
-									public void onError(ErrorResponse error){
-										if(getActivity()==null)
-											return;
-										translationCallbackError(status, itemID);
-									}
-								})
-								.setTimeout(60000) // 1 minute
-								.exec(accountID);
-					}
-
+					// 1 minute
+					req.setTimeout(60000).exec(accountID);
 				}
 			}
 		}
