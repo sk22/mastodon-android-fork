@@ -2,6 +2,7 @@ package org.joinmastodon.android.model;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -45,6 +46,15 @@ public class Card extends BaseModel{
 			if(placeholder!=null)
 				blurhashPlaceholder=new BlurHashDrawable(placeholder, width, height);
 		}
+	}
+
+	public boolean isAkkomaHashtag(String statusUrl) {
+		Uri parsedUrl=Uri.parse(url);
+		Uri parsedStatusUrl=Uri.parse(statusUrl);
+		if(parsedUrl.getHost()==null || parsedUrl.getPath()==null || parsedStatusUrl.getHost()==null)
+			return false;
+
+		return title.equals("Akkoma") && parsedUrl.getHost().equals(parsedStatusUrl.getHost()) && parsedUrl.getPath().startsWith("/tag/");
 	}
 
 	@Override
