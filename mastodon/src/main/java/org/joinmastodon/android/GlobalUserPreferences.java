@@ -39,7 +39,6 @@ public class GlobalUserPreferences{
 	public static boolean showNewPostsButton;
 	public static boolean toolbarMarquee;
 	public static boolean disableSwipe;
-	public static boolean voteButtonForSingleChoice;
 	public static boolean enableDeleteNotifications;
 	public static boolean translateButtonOpenedOnly;
 	public static boolean uniformNotificationIcon;
@@ -99,7 +98,6 @@ public class GlobalUserPreferences{
 		showNewPostsButton=prefs.getBoolean("showNewPostsButton", true);
 		toolbarMarquee=prefs.getBoolean("toolbarMarquee", true);
 		disableSwipe=prefs.getBoolean("disableSwipe", false);
-		voteButtonForSingleChoice=prefs.getBoolean("voteButtonForSingleChoice", true);
 		enableDeleteNotifications=prefs.getBoolean("enableDeleteNotifications", false);
 		translateButtonOpenedOnly=prefs.getBoolean("translateButtonOpenedOnly", false);
 		uniformNotificationIcon=prefs.getBoolean("uniformNotificationIcon", false);

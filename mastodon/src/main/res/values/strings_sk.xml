@@ -435,4 +435,6 @@
 	<string name="sk_open_post_preview">Preview post</string>
 	<string name="sk_post_preview">Preview</string>
 	<string name="sk_poll_multiple_choice">Multiple choices</string>
+	<string name="sk_poll_show_results">Show results</string>
+	<string name="sk_poll_hide_results">Hide results</string>
 </resources>

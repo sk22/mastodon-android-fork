@@ -656,6 +656,4 @@
 	<string name="manage_list_members">Manage list members</string>
 	<string name="list_no_members">No members yet</string>
 	<string name="list_find_users">Find users to add</string>
-	<string name="sk_poll_results">View results</string>
-	<string name="sk_poll_view">Hide results</string>
 </resources>
