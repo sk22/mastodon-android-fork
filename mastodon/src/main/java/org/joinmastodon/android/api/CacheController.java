@@ -9,21 +9,31 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.google.gson.reflect.TypeToken;
+
 import org.joinmastodon.android.BuildConfig;
 import org.joinmastodon.android.MastodonApp;
+import org.joinmastodon.android.api.requests.lists.GetLists;
 import org.joinmastodon.android.api.requests.notifications.GetNotifications;
 import org.joinmastodon.android.api.requests.timelines.GetHomeTimeline;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.model.CacheablePaginatedResponse;
 import org.joinmastodon.android.model.FilterContext;
+import org.joinmastodon.android.model.FollowList;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.Notification;
 import org.joinmastodon.android.model.PaginatedResponse;
 import org.joinmastodon.android.model.SearchResult;
 import org.joinmastodon.android.model.Status;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
@@ -44,6 +54,7 @@ public class CacheController{
 	private final Runnable databaseCloseRunnable=this::closeDatabase;
 	private boolean loadingNotifications;
 	private final ArrayList<Callback<PaginatedResponse<List<Notification>>>> pendingNotificationsCallbacks=new ArrayList<>();
+	private List<FollowList> lists;
 
 	private static final int POST_FLAG_GAP_AFTER=1;
 
@@ -346,6 +357,99 @@ public class CacheController{
 				closeDelayed();
 			}
 		}, 0);
+	}
+
+	public void reloadLists(Callback<List<FollowList>> callback){
+		new GetLists()
+				.setCallback(new Callback<>(){
+					@Override
+					public void onSuccess(List<FollowList> result){
+						result.sort(Comparator.comparing(l->l.title));
+						lists=result;
+						if(callback!=null)
+							callback.onSuccess(result);
+						writeListsToFile();
+					}
+
+					@Override
+					public void onError(ErrorResponse error){
+						if(callback!=null)
+							callback.onError(error);
+					}
+				})
+				.exec(accountID);
+	}
+
+	private List<FollowList> loadListsFromFile(){
+		File file=getListsFile();
+		if(!file.exists())
+			return null;
+		try(InputStreamReader in=new InputStreamReader(new FileInputStream(file))){
+			return MastodonAPIController.gson.fromJson(in, new TypeToken<List<FollowList>>(){}.getType());
+		}catch(Exception x){
+			Log.w(TAG, "failed to read lists from cache file", x);
+			return null;
+		}
+	}
+
+	private void writeListsToFile(){
+		databaseThread.postRunnable(()->{
+			try(OutputStreamWriter out=new OutputStreamWriter(new FileOutputStream(getListsFile()))){
+				MastodonAPIController.gson.toJson(lists, out);
+			}catch(IOException x){
+				Log.w(TAG, "failed to write lists to cache file", x);
+			}
+		}, 0);
+	}
+
+	public void getLists(Callback<List<FollowList>> callback){
+		if(lists!=null){
+			if(callback!=null)
+				callback.onSuccess(lists);
+			return;
+		}
+		databaseThread.postRunnable(()->{
+			List<FollowList> lists=loadListsFromFile();
+			if(lists!=null){
+				this.lists=lists;
+				if(callback!=null)
+					uiHandler.post(()->callback.onSuccess(lists));
+				return;
+			}
+			reloadLists(callback);
+		}, 0);
+	}
+
+	public File getListsFile(){
+		return new File(MastodonApp.context.getFilesDir(), "lists_"+accountID+".json");
+	}
+
+	public void addList(FollowList list){
+		if(lists==null)
+			return;
+		lists.add(list);
+		lists.sort(Comparator.comparing(l->l.title));
+		writeListsToFile();
+	}
+
+	public void deleteList(String id){
+		if(lists==null)
+			return;
+		lists.removeIf(l->l.id.equals(id));
+		writeListsToFile();
+	}
+
+	public void updateList(FollowList list){
+		if(lists==null)
+			return;
+		for(int i=0;i<lists.size();i++){
+			if(lists.get(i).id.equals(list.id)){
+				lists.set(i, list);
+				lists.sort(Comparator.comparing(l->l.title));
+				writeListsToFile();
+				break;
+			}
+		}
 	}
 
 	private class DatabaseHelper extends SQLiteOpenHelper{

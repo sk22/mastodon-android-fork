@@ -3,19 +3,21 @@ package org.joinmastodon.android.api.requests.lists;
 import org.joinmastodon.android.api.MastodonAPIRequest;
 import org.joinmastodon.android.model.FollowList;
 
-public class CreateList extends MastodonAPIRequest<FollowList> {
-	public CreateList(String title, boolean exclusive, FollowList.RepliesPolicy repliesPolicy) {
+public class CreateList extends MastodonAPIRequest<FollowList>{
+	public CreateList(String title, FollowList.RepliesPolicy repliesPolicy, boolean exclusive){
 		super(HttpMethod.POST, "/lists", FollowList.class);
-		Request req = new Request();
-		req.title = title;
-		req.exclusive = exclusive;
-		req.repliesPolicy = repliesPolicy;
-		setRequestBody(req);
+		setRequestBody(new Request(title, repliesPolicy, exclusive));
 	}
 
-	public static class Request {
+	private static class Request{
 		public String title;
-		public boolean exclusive;
 		public FollowList.RepliesPolicy repliesPolicy;
+		public boolean exclusive;
+
+		public Request(String title, FollowList.RepliesPolicy repliesPolicy, boolean exclusive){
+			this.title=title;
+			this.repliesPolicy=repliesPolicy;
+			this.exclusive=exclusive;
+		}
 	}
 }

@@ -735,7 +735,7 @@ public class UiUtils {
 				R.drawable.ic_fluent_delete_28_regular,
 				() -> new DeleteList(listID).setCallback(new Callback<>() {
 							@Override
-							public void onSuccess(Object o) {
+							public void onSuccess(Void o) {
 								callback.run();
 							}
 

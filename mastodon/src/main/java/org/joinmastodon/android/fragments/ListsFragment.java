@@ -18,6 +18,7 @@ import com.squareup.otto.Subscribe;
 import org.joinmastodon.android.E;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.MastodonAPIRequest;
+import org.joinmastodon.android.api.ResultlessMastodonAPIRequest;
 import org.joinmastodon.android.api.requests.lists.AddAccountsToList;
 import org.joinmastodon.android.api.requests.lists.CreateList;
 import org.joinmastodon.android.api.requests.lists.GetLists;
@@ -97,7 +98,7 @@ public class ListsFragment extends MastodonRecyclerFragment<FollowList> implemen
 					.setIcon(R.drawable.ic_fluent_people_add_28_regular)
 					.setView(editor)
 					.setPositiveButton(R.string.sk_create, (d, which) ->
-							new CreateList(editor.getTitle(), editor.isExclusive(), editor.getRepliesPolicy()).setCallback(new Callback<>() {
+							new CreateList(editor.getTitle(), editor.getRepliesPolicy(), editor.isExclusive()).setCallback(new Callback<>() {
 								@Override
 								public void onSuccess(FollowList list) {
 									data.add(0, list);
@@ -120,10 +121,10 @@ public class ListsFragment extends MastodonRecyclerFragment<FollowList> implemen
 	private void saveListMembership(String listId, boolean isMember) {
 		userInList.put(listId, isMember);
 		List<String> accountIdList = Collections.singletonList(profileAccountId);
-		MastodonAPIRequest<Object> req = isMember ? new AddAccountsToList(listId, accountIdList) : new RemoveAccountsFromList(listId, accountIdList);
+		ResultlessMastodonAPIRequest req = isMember ? new AddAccountsToList(listId, accountIdList) : new RemoveAccountsFromList(listId, accountIdList);
 		req.setCallback(new Callback<>() {
 			@Override
-			public void onSuccess(Object o) {}
+			public void onSuccess(Void o) {}
 
 			@Override
 			public void onError(ErrorResponse error) {

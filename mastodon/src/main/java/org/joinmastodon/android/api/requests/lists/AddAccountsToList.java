@@ -1,17 +1,19 @@
 package org.joinmastodon.android.api.requests.lists;
 
-import org.joinmastodon.android.api.MastodonAPIRequest;
-import java.util.List;
+import org.joinmastodon.android.api.ResultlessMastodonAPIRequest;
 
-public class AddAccountsToList extends MastodonAPIRequest<Object> {
-    public AddAccountsToList(String listId, List<String> accountIds){
-        super(HttpMethod.POST, "/lists/"+listId+"/accounts", Object.class);
-        Request req = new Request();
-        req.accountIds = accountIds;
-        setRequestBody(req);
-    }
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 
-    public static class Request{
-        public List<String> accountIds;
-    }
+import okhttp3.FormBody;
+
+public class AddAccountsToList extends ResultlessMastodonAPIRequest{
+	public AddAccountsToList(String listID, Collection<String> accountIDs){
+		super(HttpMethod.POST, "/lists/"+listID+"/accounts");
+		FormBody.Builder builder=new FormBody.Builder(StandardCharsets.UTF_8);
+		for(String id:accountIDs){
+			builder.add("account_ids[]", id);
+		}
+		setRequestBody(builder.build());
+	}
 }
