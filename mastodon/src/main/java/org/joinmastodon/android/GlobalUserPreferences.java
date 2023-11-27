@@ -14,6 +14,7 @@ import org.joinmastodon.android.api.session.AccountLocalPreferences;
 import org.joinmastodon.android.api.session.AccountLocalPreferences.ColorPreference;
 import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.api.session.AccountSessionManager;
+import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.ContentType;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.TimelineDefinition;
@@ -64,6 +65,10 @@ public class GlobalUserPreferences{
 
 	private static SharedPreferences getPrefs(){
 		return MastodonApp.context.getSharedPreferences("global", Context.MODE_PRIVATE);
+	}
+
+	private static SharedPreferences getPreReplyPrefs(){
+		return MastodonApp.context.getSharedPreferences("pre_reply_sheets", Context.MODE_PRIVATE);
 	}
 
 	public static <T> T fromJson(String json, Type type, T orElse){
@@ -182,10 +187,43 @@ public class GlobalUserPreferences{
 				.apply();
 	}
 
+	public static boolean isOptedOutOfPreReplySheet(PreReplySheetType type, Account account, String accountID){
+		if(getPreReplyPrefs().getBoolean("opt_out_"+type, false))
+			return true;
+		if(account==null)
+			return false;
+		String accountKey=account.acct;
+		if(!accountKey.contains("@"))
+			accountKey+="@"+AccountSessionManager.get(accountID).domain;
+		return getPreReplyPrefs().getBoolean("opt_out_"+type+"_"+accountKey.toLowerCase(), false);
+	}
+
+	public static void optOutOfPreReplySheet(PreReplySheetType type, Account account, String accountID){
+		String key;
+		if(account==null){
+			key="opt_out_"+type;
+		}else{
+			String accountKey=account.acct;
+			if(!accountKey.contains("@"))
+				accountKey+="@"+AccountSessionManager.get(accountID).domain;
+			key="opt_out_"+type+"_"+accountKey.toLowerCase();
+		}
+		getPreReplyPrefs().edit().putBoolean(key, true).apply();
+	}
+
+	public static void resetPreReplySheets(){
+		getPreReplyPrefs().edit().clear().apply();
+	}
+
 	public enum ThemePreference{
 		AUTO,
 		LIGHT,
 		DARK
+	}
+
+	public enum PreReplySheetType{
+		OLD_POST,
+		NON_MUTUAL
 	}
 
 	public enum AutoRevealMode {
