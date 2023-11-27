@@ -20,7 +20,7 @@ import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.ListDeletedEvent;
 import org.joinmastodon.android.events.ListUpdatedCreatedEvent;
 import org.joinmastodon.android.model.FilterContext;
-import org.joinmastodon.android.model.ListTimeline;
+import org.joinmastodon.android.model.FollowList;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.model.TimelineDefinition;
 import org.joinmastodon.android.ui.M3AlertDialogBuilder;
@@ -39,7 +39,7 @@ public class ListTimelineFragment extends PinnableStatusListFragment {
     private String listID;
     private String listTitle;
     @Nullable
-    private ListTimeline.RepliesPolicy repliesPolicy;
+    private FollowList.RepliesPolicy repliesPolicy;
     private boolean exclusive;
 
     @Override
@@ -54,19 +54,19 @@ public class ListTimelineFragment extends PinnableStatusListFragment {
         listID = args.getString("listID");
         listTitle = args.getString("listTitle");
         exclusive = args.getBoolean("listIsExclusive");
-        repliesPolicy = ListTimeline.RepliesPolicy.values()[args.getInt("repliesPolicy", 0)];
+        repliesPolicy = FollowList.RepliesPolicy.values()[args.getInt("repliesPolicy", 0)];
 
         setTitle(listTitle);
         setHasOptionsMenu(true);
 
         new GetList(listID).setCallback(new Callback<>() {
             @Override
-            public void onSuccess(ListTimeline listTimeline) {
+            public void onSuccess(FollowList followList) {
                 if(getActivity()==null) return;
                 // TODO: save updated info
-                if (!listTimeline.title.equals(listTitle)) setTitle(listTimeline.title);
-                if (listTimeline.repliesPolicy != null && !listTimeline.repliesPolicy.equals(repliesPolicy)) {
-                    repliesPolicy = listTimeline.repliesPolicy;
+                if (!followList.title.equals(listTitle)) setTitle(followList.title);
+                if (followList.repliesPolicy != null && !followList.repliesPolicy.equals(repliesPolicy)) {
+                    repliesPolicy = followList.repliesPolicy;
                 }
             }
 
@@ -99,7 +99,7 @@ public class ListTimelineFragment extends PinnableStatusListFragment {
                         setTitle(newTitle);
                         new UpdateList(listID, newTitle, editor.isExclusive(), editor.getRepliesPolicy()).setCallback(new Callback<>() {
                             @Override
-                            public void onSuccess(ListTimeline list) {
+                            public void onSuccess(FollowList list) {
                                 if(getActivity()==null) return;
                                 setTitle(list.title);
                                 listTitle = list.title;

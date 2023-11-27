@@ -24,7 +24,7 @@ import org.joinmastodon.android.api.requests.lists.GetLists;
 import org.joinmastodon.android.api.requests.lists.RemoveAccountsFromList;
 import org.joinmastodon.android.events.ListDeletedEvent;
 import org.joinmastodon.android.events.ListUpdatedCreatedEvent;
-import org.joinmastodon.android.model.ListTimeline;
+import org.joinmastodon.android.model.FollowList;
 import org.joinmastodon.android.ui.DividerItemDecoration;
 import org.joinmastodon.android.ui.M3AlertDialogBuilder;
 import org.joinmastodon.android.ui.views.ListEditor;
@@ -42,7 +42,7 @@ import me.grishka.appkit.api.SimpleCallback;
 import me.grishka.appkit.utils.BindableViewHolder;
 import me.grishka.appkit.views.UsableRecyclerView;
 
-public class ListsFragment extends MastodonRecyclerFragment<ListTimeline> implements ScrollableToTop, ProvidesAssistContent.ProvidesWebUri {
+public class ListsFragment extends MastodonRecyclerFragment<FollowList> implements ScrollableToTop, ProvidesAssistContent.ProvidesWebUri {
 	private String accountID;
 	private String profileAccountId;
 	private final HashMap<String, Boolean> userInListBefore = new HashMap<>();
@@ -99,7 +99,7 @@ public class ListsFragment extends MastodonRecyclerFragment<ListTimeline> implem
 					.setPositiveButton(R.string.sk_create, (d, which) ->
 							new CreateList(editor.getTitle(), editor.isExclusive(), editor.getRepliesPolicy()).setCallback(new Callback<>() {
 								@Override
-								public void onSuccess(ListTimeline list) {
+								public void onSuccess(FollowList list) {
 									data.add(0, list);
 									adapter.notifyItemRangeInserted(0, 1);
 									E.post(new ListUpdatedCreatedEvent(list.id, list.title, list.exclusive, list.repliesPolicy));
@@ -139,19 +139,19 @@ public class ListsFragment extends MastodonRecyclerFragment<ListTimeline> implem
 		currentRequest=(profileAccountId != null ? new GetLists(profileAccountId) : new GetLists())
 				.setCallback(new SimpleCallback<>(this) {
 					@Override
-					public void onSuccess(List<ListTimeline> lists) {
+					public void onSuccess(List<FollowList> lists) {
 						if(getActivity()==null) return;
-						for (ListTimeline l : lists) userInListBefore.put(l.id, true);
+						for (FollowList l : lists) userInListBefore.put(l.id, true);
 						userInList.putAll(userInListBefore);
 						if (profileAccountId == null || !lists.isEmpty()) onDataLoaded(lists, false);
 						if (profileAccountId == null) return;
 
 						currentRequest=new GetLists().setCallback(new SimpleCallback<>(ListsFragment.this) {
 							@Override
-							public void onSuccess(List<ListTimeline> allLists) {
+							public void onSuccess(List<FollowList> allLists) {
 								if(getActivity()==null) return;
-								List<ListTimeline> newLists = new ArrayList<>();
-								for (ListTimeline l : allLists) {
+								List<FollowList> newLists = new ArrayList<>();
+								for (FollowList l : allLists) {
 									if (lists.stream().noneMatch(e -> e.id.equals(l.id))) newLists.add(l);
 									if (!userInListBefore.containsKey(l.id)) {
 										userInListBefore.put(l.id, false);
@@ -169,7 +169,7 @@ public class ListsFragment extends MastodonRecyclerFragment<ListTimeline> implem
 	@Subscribe
 	public void onListDeletedEvent(ListDeletedEvent event) {
 		for (int i = 0; i < data.size(); i++) {
-			ListTimeline item = data.get(i);
+			FollowList item = data.get(i);
 			if (item.id.equals(event.id)) {
 				data.remove(i);
 				adapter.notifyItemRemoved(i);
@@ -181,7 +181,7 @@ public class ListsFragment extends MastodonRecyclerFragment<ListTimeline> implem
 	@Subscribe
 	public void onListUpdatedCreatedEvent(ListUpdatedCreatedEvent event) {
 		for (int i = 0; i < data.size(); i++) {
-			ListTimeline item = data.get(i);
+			FollowList item = data.get(i);
 			if (item.id.equals(event.id)) {
 				item.title = event.title;
 				item.repliesPolicy = event.repliesPolicy;
@@ -230,7 +230,7 @@ public class ListsFragment extends MastodonRecyclerFragment<ListTimeline> implem
 		}
 	}
 
-	private class ListViewHolder extends BindableViewHolder<ListTimeline> implements UsableRecyclerView.Clickable{
+	private class ListViewHolder extends BindableViewHolder<FollowList> implements UsableRecyclerView.Clickable{
 		private final TextView title;
 		private final CheckBox listToggle;
 
@@ -241,7 +241,7 @@ public class ListsFragment extends MastodonRecyclerFragment<ListTimeline> implem
 		}
 
 		@Override
-		public void onBind(ListTimeline item) {
+		public void onBind(FollowList item) {
 			title.setText(item.title);
 			title.setCompoundDrawablesRelativeWithIntrinsicBounds(itemView.getContext().getDrawable(
 					item.exclusive ? R.drawable.ic_fluent_rss_24_regular : R.drawable.ic_fluent_people_24_regular

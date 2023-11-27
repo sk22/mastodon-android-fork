@@ -50,7 +50,7 @@ public class TimelineDefinition {
         return def;
     }
 
-    public static TimelineDefinition ofList(ListTimeline list) {
+    public static TimelineDefinition ofList(FollowList list) {
         return ofList(list.id, list.title, list.exclusive);
     }
 

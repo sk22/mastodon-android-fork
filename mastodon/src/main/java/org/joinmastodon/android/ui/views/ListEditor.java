@@ -15,10 +15,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.joinmastodon.android.R;
-import org.joinmastodon.android.model.ListTimeline;
+import org.joinmastodon.android.model.FollowList;
 
 public class ListEditor extends LinearLayout {
-    private ListTimeline.RepliesPolicy policy = null;
+    private FollowList.RepliesPolicy policy = null;
     private final TextInputFrameLayout input;
     private final Button button;
     private final Switch exclusiveSwitch;
@@ -42,10 +42,10 @@ public class ListEditor extends LinearLayout {
         findViewById(R.id.exclusive)
                 .setOnClickListener(v -> exclusiveSwitch.setChecked(!exclusiveSwitch.isChecked()));
 
-        setRepliesPolicy(ListTimeline.RepliesPolicy.LIST);
+        setRepliesPolicy(FollowList.RepliesPolicy.LIST);
     }
 
-    public void applyList(String title, boolean exclusive, @Nullable ListTimeline.RepliesPolicy policy) {
+    public void applyList(String title, boolean exclusive, @Nullable FollowList.RepliesPolicy policy) {
         input.getEditText().setText(title);
         exclusiveSwitch.setChecked(exclusive);
         if (policy != null) setRepliesPolicy(policy);
@@ -55,7 +55,7 @@ public class ListEditor extends LinearLayout {
         return input.getEditText().getText().toString();
     }
 
-    public ListTimeline.RepliesPolicy getRepliesPolicy() {
+    public FollowList.RepliesPolicy getRepliesPolicy() {
         return policy;
     }
 
@@ -63,7 +63,7 @@ public class ListEditor extends LinearLayout {
         return exclusiveSwitch.isChecked();
     }
 
-    public void setRepliesPolicy(@NonNull ListTimeline.RepliesPolicy policy) {
+    public void setRepliesPolicy(@NonNull FollowList.RepliesPolicy policy) {
         this.policy = policy;
         switch (policy) {
             case FOLLOWED -> button.setText(R.string.sk_list_replies_policy_followed);
@@ -74,11 +74,11 @@ public class ListEditor extends LinearLayout {
 
     private boolean onMenuItemClick(MenuItem i) {
         if (i.getItemId() == R.id.reply_policy_none) {
-            setRepliesPolicy(ListTimeline.RepliesPolicy.NONE);
+            setRepliesPolicy(FollowList.RepliesPolicy.NONE);
         } else if (i.getItemId() == R.id.reply_policy_followed) {
-            setRepliesPolicy(ListTimeline.RepliesPolicy.FOLLOWED);
+            setRepliesPolicy(FollowList.RepliesPolicy.FOLLOWED);
         } else if (i.getItemId() == R.id.reply_policy_list) {
-            setRepliesPolicy(ListTimeline.RepliesPolicy.LIST);
+            setRepliesPolicy(FollowList.RepliesPolicy.LIST);
         }
         return true;
     }
