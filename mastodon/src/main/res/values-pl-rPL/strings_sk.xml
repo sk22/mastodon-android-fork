@@ -47,7 +47,6 @@
     <string name="sk_color_palette_blue">Niebieski</string>
     <string name="sk_color_palette_brown">Brązowy</string>
     <string name="sk_color_palette_yellow">Żółty</string>
-    <string name="sk_poll_allow_multiple">Pozwalaj na wybieranie wielu opcji</string>
     <string name="sk_translate_post">Przetłumacz</string>
     <string name="sk_translate_show_original">Pokaż oryginał</string>
     <string name="sk_translated_using">Przetłumaczono przy użyciu %s</string>

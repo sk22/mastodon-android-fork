@@ -7,7 +7,6 @@
     <string name="sk_color_palette_blue">Синя</string>
     <string name="sk_color_palette_brown">Коричнева</string>
     <string name="sk_color_palette_yellow">Жовта</string>
-    <string name="sk_poll_allow_multiple">Дозволити кілька виборів</string>
     <string name="sk_translate_post">Перекласти</string>
     <string name="sk_translate_show_original">Показати оригінал</string>
     <string name="sk_translated_using">Перекладено за допомогою %s</string>

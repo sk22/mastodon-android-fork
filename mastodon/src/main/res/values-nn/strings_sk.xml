@@ -60,7 +60,6 @@
     <string name="sk_color_palette_brown">Brun</string>
     <string name="sk_color_palette_red">Raud</string>
     <string name="sk_color_palette_yellow">Gul</string>
-    <string name="sk_poll_allow_multiple">Tillat fleire val</string>
     <string name="sk_confirm_delete_and_redraft">Er du sikker på at du vil slette og skrive dette innlegget på nytt\?</string>
     <string name="sk_confirm_unpin_post_title">Løys innlegg frå profil</string>
     <string name="sk_image_description">Bildeforklaring</string>

@@ -34,7 +34,6 @@
     <string name="sk_timeline_home">ホーム</string>
     <string name="sk_translate_post">翻訳</string>
     <string name="sk_translate_show_original">オリジナルを表示</string>
-    <string name="sk_poll_allow_multiple">複数回答を許可</string>
     <string name="sk_clear_recent_languages">最近使用した言語を消去</string>
     <string name="sk_settings_show_boosts">ブーストを表示</string>
     <string name="sk_app_name">Megalodon</string>

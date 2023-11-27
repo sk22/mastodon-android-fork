@@ -155,7 +155,6 @@
     <string name="sk_color_palette_brown">Ruskea</string>
     <string name="sk_color_palette_red">Punainen</string>
     <string name="sk_color_palette_yellow">Keltainen</string>
-    <string name="sk_poll_allow_multiple">Salli useita valintoja</string>
     <string name="sk_translate_post">Käännä</string>
     <string name="sk_welcome_text">Hai tervehtii sinua! Päästäksesi alkuun kirjoita koti-instanssisi osoite alla olevaan ruutuun.</string>
     <string name="sk_example_domain">example.social</string>

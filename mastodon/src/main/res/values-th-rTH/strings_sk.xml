@@ -13,7 +13,6 @@
     <string name="sk_pinned_posts">ปักหมุด</string>
     <string name="sk_confirm_delete_and_redraft">คุณแน่ใจหรือไม่ว่าต้องการลบและร่างโพสต์นี้ใหม่\?</string>
     <string name="sk_confirm_pin_post">คุณต้องการปักหมุดโพสต์นี้ไปยังโปรไฟล์ของคุณหรือไม่\?</string>
-    <string name="sk_poll_allow_multiple">อนุญาตหลายตัวเลือก</string>
     <string name="sk_clear_recent_languages">ล้างภาษาที่ใช้ล่าสุด</string>
     <string name="sk_welcome_title">ยินดีต้อนรับ!</string>
     <string name="sk_app_name">Megalodon</string>

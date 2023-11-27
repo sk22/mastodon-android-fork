@@ -6,7 +6,6 @@
     <string name="sk_timeline_home">Home</string>
     <string name="sk_timeline_local">Lokalno</string>
     <string name="sk_timeline_federated">Federacija</string>
-    <string name="sk_poll_allow_multiple">Omogući više izbora</string>
     <string name="sk_clear_recent_languages">Očisti listu nedavno korištenih jezika</string>
     <string name="sk_app_name">Megalodon</string>
     <string name="sk_pinned_posts">Prikvačeno</string>

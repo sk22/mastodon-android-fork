@@ -2,7 +2,6 @@
 <resources>
     <string name="sk_filtered">Criathraichte: %s</string>
     <string name="sk_collapse">Co-theannaich</string>
-    <string name="sk_poll_allow_multiple">Ceadaich iomadh roghainn</string>
     <string name="sk_pinned_posts">Prìnichte</string>
     <string name="sk_clear_recent_languages">Falamhaich na cànain o chionn goirid</string>
     <string name="sk_app_name">Megalodon</string>

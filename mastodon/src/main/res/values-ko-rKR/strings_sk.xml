@@ -47,7 +47,6 @@
     <string name="sk_color_palette_brown">갈색</string>
     <string name="sk_color_palette_yellow">노란색</string>
     <string name="sk_settings_contribute">Megalodon에 기여</string>
-    <string name="sk_poll_allow_multiple">다중 선택 허용</string>
     <string name="sk_translate_post">번역하기</string>
     <string name="sk_translate_show_original">원본 보기</string>
     <string name="sk_post_language">언어: %s</string>

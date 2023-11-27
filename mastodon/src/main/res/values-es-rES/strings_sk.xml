@@ -47,7 +47,6 @@
     <string name="sk_color_palette_blue">Azul</string>
     <string name="sk_color_palette_brown">Marrón</string>
     <string name="sk_color_palette_yellow">Amarillo</string>
-    <string name="sk_poll_allow_multiple">Permitir varias respuestas</string>
     <string name="sk_translate_post">Traducir</string>
     <string name="sk_translate_show_original">Mostrar original</string>
     <string name="sk_translated_using">Traducido mediante %s</string>

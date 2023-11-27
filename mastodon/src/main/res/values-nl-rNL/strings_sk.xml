@@ -45,7 +45,6 @@
     <string name="sk_timeline_home">Home</string>
     <string name="sk_timeline_federated">Federatie</string>
     <string name="sk_translate_post">Vertaal</string>
-    <string name="sk_poll_allow_multiple">Meerdere keuzes toestaan</string>
     <string name="sk_clear_recent_languages">Wis recent gebruikte talen</string>
     <string name="sk_welcome_text">De haai groet je! Graag je instance naam (Mastodon server) hieronder invullen om te beginnen.</string>
     <string name="sk_welcome_title">Welkom!</string>

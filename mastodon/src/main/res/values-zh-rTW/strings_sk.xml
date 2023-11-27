@@ -2,7 +2,6 @@
 <resources>
     <string name="sk_notification_type_status">鋪文</string>
     <string name="sk_notification_type_posts">嘟文通知</string>
-    <string name="sk_poll_allow_multiple">允許複選</string>
     <string name="sk_translate_post">翻譯</string>
     <string name="sk_translated_using">通過 %s 翻譯</string>
     <string name="sk_post_language">語言: %s</string>

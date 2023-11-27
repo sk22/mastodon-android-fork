@@ -47,7 +47,6 @@
     <string name="sk_color_palette_brown">Marron</string>
     <string name="sk_color_palette_yellow">Jaune</string>
     <string name="sk_settings_color_palette">Couleur d\'accentuation</string>
-    <string name="sk_poll_allow_multiple">Autoriser plusieurs choix</string>
     <string name="sk_translate_post">Traduire</string>
     <string name="sk_translate_show_original">Afficher l\'original</string>
     <string name="sk_translated_using">Traduit en utilisant %s</string>

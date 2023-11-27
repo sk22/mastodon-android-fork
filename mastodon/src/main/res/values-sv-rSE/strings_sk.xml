@@ -48,7 +48,6 @@
     <string name="sk_duration_days_7">7 dagar</string>
     <string name="sk_timeline_local">Lokal</string>
     <string name="sk_timeline_federated">Federation</string>
-    <string name="sk_poll_allow_multiple">Tillåt flera val</string>
     <string name="sk_translate_post">Översätt</string>
     <string name="sk_available_languages">Tillgängliga språk</string>
     <string name="sk_confirm_clear_recent_languages">Är du säker på att du vill rensa dina nyligen använda språk\?</string>

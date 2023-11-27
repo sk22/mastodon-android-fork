@@ -86,7 +86,6 @@
     <string name="sk_color_palette_brown">قهوي</string>
     <string name="sk_color_palette_red">أحمر</string>
     <string name="sk_color_palette_yellow">أصفر</string>
-    <string name="sk_poll_allow_multiple">السماح بخيارات متعددة</string>
     <string name="sk_translate_post">ترجمة</string>
     <string name="sk_translate_show_original">إظهار الأصلي</string>
     <string name="sk_translated_using">تُرجِم بواسطة %s</string>

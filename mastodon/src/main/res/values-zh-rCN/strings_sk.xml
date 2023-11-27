@@ -49,7 +49,6 @@
     <string name="sk_notification_type_posts">嘟文通知</string>
     <string name="sk_translate_post">翻译</string>
     <string name="sk_translate_show_original">显示原文</string>
-    <string name="sk_poll_allow_multiple">允许多选</string>
     <string name="sk_welcome_text">鲨鱼向你致敬！首先，请在下方输入你所在主实例的域名。</string>
     <string name="sk_welcome_title">欢迎！</string>
     <string name="sk_clear_recent_languages">清除最近使用的语言</string>

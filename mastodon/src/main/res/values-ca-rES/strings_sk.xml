@@ -49,7 +49,6 @@
     <string name="sk_color_palette_yellow">Groc</string>
     <string name="sk_timeline_local">Local</string>
     <string name="sk_timeline_federated">Federació</string>
-    <string name="sk_poll_allow_multiple">Permet resposta múltiple</string>
     <string name="sk_translate_post">Tradueix</string>
     <string name="sk_example_domain">exemple.social</string>
     <string name="sk_welcome_title">Et donem la benvinguda!</string>

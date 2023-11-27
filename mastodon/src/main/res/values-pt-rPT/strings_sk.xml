@@ -138,7 +138,6 @@
     <string name="sk_reject_follow_request">Rejeitar pedido para seguir</string>
     <string name="sk_lists_with_user">Listas com %s</string>
     <string name="sk_settings_always_reveal_content_warnings">Mostrar sempre avisos de conteúdo</string>
-    <string name="sk_poll_allow_multiple">Permitir escolhas múltiplas</string>
     <string name="sk_translated_using">Traduzido por %s</string>
     <string name="sk_clear_recent_languages">Apagar idiomas usados recentemente</string>
     <string name="sk_confirm_clear_recent_languages">De certeza que quer apagar os seus idiomas usados recentemente\?</string>

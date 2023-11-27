@@ -47,7 +47,6 @@
     <string name="sk_color_palette_blue">Biru</string>
     <string name="sk_color_palette_brown">Cokelat</string>
     <string name="sk_color_palette_yellow">Kuning</string>
-    <string name="sk_poll_allow_multiple">Perbolehkan beberapa pilihan</string>
     <string name="sk_clear_recent_languages">Hapus bahasa terkini yang digunakan</string>
     <string name="sk_welcome_title">Selamat datang!</string>
     <string name="sk_confirm_clear_recent_languages">Apakah Anda yakin ingin menghapus bahasa terkini yang Anda gunakan\?</string>

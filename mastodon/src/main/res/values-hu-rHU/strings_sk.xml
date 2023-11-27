@@ -121,7 +121,6 @@
     <string name="sk_settings_show_boosts">Show boostok</string>
     <string name="sk_settings_show_interaction_counts">Interakciószámok megjelenítése</string>
     <string name="sk_reject_follow_request">Követési kérelem elutasítása</string>
-    <string name="sk_poll_allow_multiple">Több választási lehetőség engedélyezése</string>
     <string name="sk_settings_tabs_disable_swipe">Lapok közötti lapozás letiltása</string>
     <string name="sk_settings_about">Az alkalmazásról</string>
     <string name="sk_quoting_user">%s említése</string>

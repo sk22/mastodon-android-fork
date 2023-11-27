@@ -47,7 +47,6 @@
     <string name="sk_color_palette_yellow">Gelb</string>
     <string name="sk_notification_type_status">Beiträge</string>
     <string name="sk_color_palette_blue">Blau</string>
-    <string name="sk_poll_allow_multiple">Mehrfachantworten erlauben</string>
     <string name="sk_translated_using">Übersetzt mit %s</string>
     <string name="sk_post_language">Sprache: %s</string>
     <string name="sk_language_name">%1$s (%2$s)</string>
@@ -434,4 +433,5 @@
     <string name="sk_open_post_preview">Vorschau öffnen</string>
     <string name="sk_post_preview">Vorschau</string>
     <string name="sk_private_note_confirm_delete">Private Notiz über %s löschen\?</string>
+	<string name="sk_poll_multiple_choice">Mehrfachauswahl</string>
 </resources>

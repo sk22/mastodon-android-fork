@@ -2,7 +2,6 @@
 <resources>
     <string name="sk_filtered">Lọc: %s</string>
     <string name="sk_expand">Mở rộng</string>
-    <string name="sk_poll_allow_multiple">Cho phép chọn nhiều đáp án</string>
     <string name="sk_pinned_posts">Bài đăng đã ghim</string>
     <string name="sk_confirm_delete_and_redraft">Bạn có chắc muốn xóa và soạn lại bài đăng\?</string>
     <string name="sk_pin_post">Ghim vào hồ sơ</string>

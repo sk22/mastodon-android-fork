@@ -53,7 +53,6 @@
     <string name="sk_clear_recent_languages">Очистить недавно использованные языки</string>
     <string name="sk_confirm_clear_recent_languages">Вы точно хотите очистить недавно использованные языки\?</string>
     <string name="sk_welcome_text">Акула приветствует вас! Чтобы начать, пожалуйста, введите домен своего домашнего сервера (инстанса) ниже.</string>
-    <string name="sk_poll_allow_multiple">Разрешить несколько вариантов ответа</string>
     <string name="sk_user_post_notifications_on">Включены уведомления о постах для %s</string>
     <string name="sk_user_post_notifications_off">Выключены уведомления о постах для %s</string>
     <string name="sk_color_palette_material3">Система</string>

@@ -55,7 +55,6 @@
     <string name="sk_confirm_clear_recent_languages">Você tem certeza que deseja limpar os idiomas usados recentemente\?</string>
     <string name="sk_clear_recent_languages">Limpar idiomas usados recentemente</string>
     <string name="sk_notification_type_posts">Notificações de publicações</string>
-    <string name="sk_poll_allow_multiple">Permitir múltiplas escolhas</string>
     <string name="sk_welcome_text">O tubarão te cumprimenta! Para começar, por favor, digite abaixo o nome de domínio de sua instância de origem.</string>
     <string name="sk_example_domain">exemplo.social</string>
     <string name="sk_welcome_title">Bem vindo!</string>

@@ -65,7 +65,6 @@
     <string name="sk_settings_show_boosts">نمایش تقویت‌ها</string>
     <string name="sk_notification_type_update">فرسته‌های ویرایش شده</string>
     <string name="sk_update_ready">مگالودون %s بارگیری شده و آماده نصب است.</string>
-    <string name="sk_poll_allow_multiple">اجازه انتخاب های متعدد</string>
     <string name="sk_open_with_account">باز کردن با حساب دیگر</string>
     <string name="sk_confirm_delete_draft_title">حذف پیش نویس</string>
     <string name="sk_draft">پیش‌نویس</string>

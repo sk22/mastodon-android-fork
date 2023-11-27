@@ -60,7 +60,6 @@
     <string name="sk_color_palette_brown">Brown</string>
     <string name="sk_color_palette_red">Red</string>
     <string name="sk_color_palette_yellow">Yellow</string>
-    <string name="sk_poll_allow_multiple">Allow multiple choices</string>
     <string name="sk_translate_post">Translate</string>
     <string name="sk_translate_show_original">Show original</string>
     <string name="sk_translated_using">Translated using %s</string>
@@ -435,4 +434,5 @@
 	<string name="sk_crash_log_copied">Crash log copied</string>
 	<string name="sk_open_post_preview">Preview post</string>
 	<string name="sk_post_preview">Preview</string>
+	<string name="sk_poll_multiple_choice">Multiple choices</string>
 </resources>

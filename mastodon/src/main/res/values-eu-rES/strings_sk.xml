@@ -25,7 +25,6 @@
     <string name="sk_no_update_available">Ez dago eguneraketarik eskuragarri</string>
     <string name="sk_list_timelines">Zerrendak</string>
     <string name="sk_follow_requests">Jarraitzeko eskaerak</string>
-    <string name="sk_poll_allow_multiple">Onartu aukera anitzak</string>
     <string name="sk_clear_recent_languages">Ezabatu berriki erabili diren hizkuntzak</string>
     <string name="sk_welcome_title">Ongi etorri!</string>
     <string name="sk_example_domain">adibidea.eus</string>
