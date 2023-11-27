@@ -97,7 +97,7 @@ public class ListTimelineFragment extends PinnableStatusListFragment {
                     .setPositiveButton(R.string.save, (d, which) -> {
                         String newTitle = editor.getTitle().trim();
                         setTitle(newTitle);
-                        new UpdateList(listID, newTitle, editor.isExclusive(), editor.getRepliesPolicy()).setCallback(new Callback<>() {
+                        new UpdateList(listID, newTitle, editor.getRepliesPolicy(), editor.isExclusive()).setCallback(new Callback<>() {
                             @Override
                             public void onSuccess(FollowList list) {
                                 if(getActivity()==null) return;
