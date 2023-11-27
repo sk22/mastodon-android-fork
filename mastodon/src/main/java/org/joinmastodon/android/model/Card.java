@@ -48,12 +48,10 @@ public class Card extends BaseModel{
 		}
 	}
 
-	public boolean isAkkomaHashtag(String statusUrl) {
+	public boolean isHashtagUrl(String statusUrl){
 		Uri parsedUrl=Uri.parse(url);
 		Uri parsedStatusUrl=Uri.parse(statusUrl);
-		if(parsedUrl.getHost()==null || parsedUrl.getPath()==null || parsedStatusUrl.getHost()==null)
-			return false;
-
+		if(parsedUrl.getHost()==null || parsedUrl.getPath()==null || parsedStatusUrl.getHost()==null) return false;
 		return title.equals("Akkoma") && parsedUrl.getHost().equals(parsedStatusUrl.getHost()) && parsedUrl.getPath().startsWith("/tag/");
 	}
 
