@@ -43,11 +43,12 @@ import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.announcements.GetAnnouncements;
 import org.joinmastodon.android.api.requests.lists.GetLists;
-import org.joinmastodon.android.api.requests.tags.GetFollowedHashtags;
+import org.joinmastodon.android.api.requests.tags.GetFollowedTags;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.events.HashtagUpdatedEvent;
 import org.joinmastodon.android.events.ListDeletedEvent;
 import org.joinmastodon.android.events.ListUpdatedCreatedEvent;
+import org.joinmastodon.android.events.ListUpdatedEvent;
 import org.joinmastodon.android.events.SelfUpdateStateChangedEvent;
 import org.joinmastodon.android.fragments.settings.SettingsMainFragment;
 import org.joinmastodon.android.model.Announcement;
@@ -276,7 +277,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 			}
 		}).exec(accountID);
 
-		new GetFollowedHashtags().setCallback(new Callback<>() {
+		new GetFollowedTags().setCallback(new Callback<>() {
 			@Override
 			public void onSuccess(HeaderPaginationList<Hashtag> hashtags) {
 				updateList(hashtags, hashtagsItems);
@@ -691,7 +692,7 @@ public class HomeTabFragment extends MastodonToolbarFragment implements Scrollab
 
 	@Subscribe
 	public void onListDeletedEvent(ListDeletedEvent event) {
-		handleListEvent(listItems, l -> l.id.equals(event.id), false, null);
+		handleListEvent(listItems, l -> l.id.equals(event.listID), false, null);
 	}
 
 	@Subscribe

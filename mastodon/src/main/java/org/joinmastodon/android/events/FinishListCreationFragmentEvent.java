@@ -1,10 +1,10 @@
 package org.joinmastodon.android.events;
 
-public class ListDeletedEvent{
+public class FinishListCreationFragmentEvent{
 	public final String accountID;
 	public final String listID;
 
-	public ListDeletedEvent(String accountID, String listID){
+	public FinishListCreationFragmentEvent(String accountID, String listID){
 		this.accountID=accountID;
 		this.listID=listID;
 	}

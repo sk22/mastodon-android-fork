@@ -2,6 +2,7 @@ package org.joinmastodon.android.events;
 
 import org.joinmastodon.android.model.FollowList;
 
+// TODO: replace with ListCreatedEvent/ListUpdatedEvent
 public class ListUpdatedCreatedEvent {
 	public final String id;
 	public final String title;

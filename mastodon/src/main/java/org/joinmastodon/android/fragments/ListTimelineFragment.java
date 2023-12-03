@@ -119,7 +119,7 @@ public class ListTimelineFragment extends PinnableStatusListFragment {
                     .show();
         } else if (item.getItemId() == R.id.delete) {
             UiUtils.confirmDeleteList(getActivity(), accountID, listID, listTitle, () -> {
-                E.post(new ListDeletedEvent(listID));
+                E.post(new ListDeletedEvent(accountID, listID));
                 Nav.finish(this);
             });
         }

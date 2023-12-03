@@ -36,7 +36,7 @@ import com.hootsuite.nachos.NachoTextView;
 
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.requests.lists.GetLists;
-import org.joinmastodon.android.api.requests.tags.GetFollowedHashtags;
+import org.joinmastodon.android.api.requests.tags.GetFollowedTags;
 import org.joinmastodon.android.api.session.AccountLocalPreferences;
 import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.model.FollowList;
@@ -97,7 +97,7 @@ public class EditTimelinesFragment extends MastodonRecyclerFragment<TimelineDefi
 			}
 		}).exec(accountID);
 
-		new GetFollowedHashtags().setCallback(new Callback<>(){
+		new GetFollowedTags().setCallback(new Callback<>(){
 			@Override
 			public void onSuccess(HeaderPaginationList<Hashtag> result){
 				hashtags.addAll(result);

@@ -18,7 +18,7 @@ public class GetListTimeline extends MastodonAPIRequest<List<Status>> {
             addQueryParameter("limit", ""+limit);
         if(sinceID!=null)
             addQueryParameter("since_id", sinceID);
-        if(replyVisibility != null)
+        if(replyVisibility!=null)
             addQueryParameter("reply_visibility", replyVisibility);
     }
 }

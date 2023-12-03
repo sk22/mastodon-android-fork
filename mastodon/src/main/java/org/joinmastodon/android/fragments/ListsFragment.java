@@ -171,7 +171,7 @@ public class ListsFragment extends MastodonRecyclerFragment<FollowList> implemen
 	public void onListDeletedEvent(ListDeletedEvent event) {
 		for (int i = 0; i < data.size(); i++) {
 			FollowList item = data.get(i);
-			if (item.id.equals(event.id)) {
+			if (item.id.equals(event.listID)) {
 				data.remove(i);
 				adapter.notifyItemRemoved(i);
 				break;

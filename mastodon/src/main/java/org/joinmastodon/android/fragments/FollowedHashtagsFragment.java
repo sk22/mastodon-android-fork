@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.joinmastodon.android.R;
-import org.joinmastodon.android.api.requests.tags.GetFollowedHashtags;
+import org.joinmastodon.android.api.requests.tags.GetFollowedTags;
 import org.joinmastodon.android.model.Hashtag;
 import org.joinmastodon.android.model.HeaderPaginationList;
 import org.joinmastodon.android.ui.DividerItemDecoration;
@@ -52,7 +52,7 @@ public class FollowedHashtagsFragment extends MastodonRecyclerFragment<Hashtag> 
 
     @Override
     protected void doLoadData(int offset, int count){
-        currentRequest=new GetFollowedHashtags(offset==0 ? null : nextMaxID, null, count, null)
+        currentRequest=new GetFollowedTags(offset==0 ? null : nextMaxID, null, count, null)
                 .setCallback(new SimpleCallback<>(this){
                     @Override
                     public void onSuccess(HeaderPaginationList<Hashtag> result){

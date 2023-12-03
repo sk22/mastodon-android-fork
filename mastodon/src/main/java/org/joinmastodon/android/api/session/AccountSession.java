@@ -25,6 +25,7 @@ import org.joinmastodon.android.model.Application;
 import org.joinmastodon.android.model.FilterAction;
 import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.FilterResult;
+import org.joinmastodon.android.model.FollowList;
 import org.joinmastodon.android.model.Instance;
 import org.joinmastodon.android.model.LegacyFilter;
 import org.joinmastodon.android.model.Preferences;
@@ -70,6 +71,8 @@ public class AccountSession{
 	private transient SharedPreferences prefs;
 	private transient boolean preferencesNeedSaving;
 	private transient AccountLocalPreferences localPreferences;
+
+	private transient List<FollowList> lists;
 
 	AccountSession(Token token, Account self, Application app, String domain, boolean activated, AccountActivationInfo activationInfo){
 		this.token=token;
@@ -325,6 +328,14 @@ public class AccountSession{
 
 	public void updateAccountInfo(){
 		AccountSessionManager.getInstance().updateSessionLocalInfo(this);
+	}
+
+	public boolean isNotificationsMentionsOnly(){
+		return getRawLocalPreferences().getBoolean("notificationsMentionsOnly", false);
+	}
+
+	public void setNotificationsMentionsOnly(boolean mentionsOnly){
+		getRawLocalPreferences().edit().putBoolean("notificationsMentionsOnly", mentionsOnly).apply();
 	}
 
 	public Optional<Instance> getInstance() {
