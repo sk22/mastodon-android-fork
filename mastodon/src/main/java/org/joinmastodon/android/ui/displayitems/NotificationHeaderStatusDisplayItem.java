@@ -122,7 +122,7 @@ public class NotificationHeaderStatusDisplayItem extends StatusDisplayItem{
 			icon=findViewById(R.id.icon);
 			avatar=findViewById(R.id.avatar);
 			text=findViewById(R.id.text);
-			timestamp=findViewById(R.id.timestamp);
+			timestamp=findViewById(R.id.date);
 			deleteNotification=findViewById(R.id.delete_notification);
 
 			avatar.setOutlineProvider(OutlineProviders.roundedRect(8));

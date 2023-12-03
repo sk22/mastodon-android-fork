@@ -363,7 +363,7 @@ public class FollowRequestsListFragment extends MastodonRecyclerFragment<FollowR
 					V.dp(50), V.dp(50));
 			if(!TextUtils.isEmpty(account.header))
 				coverRequest=new UrlImageLoaderRequest(account.header, 1000, 1000);
-			parsedBio=HtmlParser.parse(account.note, account.emojis, Collections.emptyList(), Collections.emptyList(), accountID);
+			parsedBio=HtmlParser.parse(account.note, account.emojis, Collections.emptyList(), Collections.emptyList(), accountID, account);
 			if(account.emojis.isEmpty()){
 				parsedName= account.getDisplayName();
 			}else{

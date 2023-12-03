@@ -69,7 +69,7 @@ public class AnnouncementsFragment extends BaseStatusListFragment<Announcement> 
 		instanceUser.avatar = instanceUser.avatarStatic = instance.thumbnail;
 		instanceUser.emojis = List.of();
 		Status fakeStatus = a.toStatus();
-		TextStatusDisplayItem textItem = new TextStatusDisplayItem(a.id, HtmlParser.parse(a.content, a.emojis, a.mentions, a.tags, accountID), this, fakeStatus, true);
+		TextStatusDisplayItem textItem = new TextStatusDisplayItem(a.id, HtmlParser.parse(a.content, a.emojis, a.mentions, a.tags, accountID, a), this, fakeStatus, true);
 		textItem.textSelectable = true;
 
 		List<StatusDisplayItem> items=new ArrayList<>();

@@ -3,105 +3,66 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
+	android:paddingHorizontal="12dp"
+	android:paddingVertical="8dp"
 	android:clipToPadding="false">
 
 	<ImageView
 		android:id="@+id/avatar"
-		android:layout_width="42sp"
-		android:layout_height="42sp"
-		android:layout_marginStart="16dp"
-		android:layout_marginEnd="12dp"
-		android:layout_marginVertical="8dp"
+		android:layout_width="38dp"
+		android:layout_height="38dp"
+		android:layout_marginEnd="8dp"
 		android:importantForAccessibility="no"
+		android:padding="1dp"
 		tools:src="#0f0"/>
+<!--			android:foreground="@drawable/fg_onboarding_ava"-->
 
-	<LinearLayout
-		android:id="@+id/line1"
+	<TextView
+		android:id="@+id/name"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_alignTop="@id/avatar"
-		android:minHeight="20dp"
-		android:paddingTop="2sp"
-		android:orientation="horizontal"
-		android:layout_toStartOf="@id/accessory"
-		android:layout_toEndOf="@id/avatar">
-
-		<TextView
-			android:id="@+id/name"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:singleLine="true"
-			android:ellipsize="end"
-			android:gravity="center_vertical"
-			android:textAppearance="@style/m3_title_small"
-			android:textColor="?colorM3OnSurface"
-			tools:text="User"/>
-
-		<TextView
-			android:id="@+id/username"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="4dp"
-			android:singleLine="true"
-			android:ellipsize="end"
-			android:gravity="center_vertical"
-			android:textAppearance="@style/m3_body_medium"
-			android:textColor="?colorM3Secondary"
-			tools:text="\@user@server"/>
-
-	</LinearLayout>
-
-	<LinearLayout
-		android:id="@+id/line2"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"
+		android:layout_height="20dp"
 		android:layout_toEndOf="@id/avatar"
 		android:layout_toStartOf="@id/accessory"
-		android:layout_below="@id/line1">
+		android:singleLine="true"
+		android:ellipsize="end"
+		android:gravity="center_vertical"
+		android:textAppearance="@style/m3_title_small"
+		android:textColor="?colorM3OnSurface"
+		tools:text="User"/>
 
-		<TextView
-			android:id="@+id/pronouns"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginEnd="4dp"
-			android:singleLine="true"
-			android:ellipsize="end"
-			android:textAppearance="@style/m3_body_medium"
-			android:includeFontPadding="false"
-			android:gravity="center_vertical"
-			android:drawablePadding="2dp"
-			android:visibility="visible"
-			tools:text="they/them"/>
-
-		<TextView
-			android:id="@+id/followers_count"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:singleLine="true"
-			android:gravity="center_vertical"
-			android:textAppearance="@style/m3_body_medium"
-			android:textColor="?colorM3Secondary"
-			tools:text="123 followers"/>
-	</LinearLayout>
+	<TextView
+		android:id="@+id/username"
+		android:layout_width="match_parent"
+		android:layout_height="20dp"
+		android:layout_below="@id/name"
+		android:layout_toEndOf="@id/avatar"
+		android:layout_toStartOf="@id/accessory"
+		android:layout_marginTop="-2dp"
+		android:singleLine="true"
+		android:ellipsize="end"
+		android:gravity="center_vertical|start"
+		android:textAppearance="@style/m3_body_medium"
+		android:textColor="?colorM3Secondary"
+		android:textAlignment="viewStart"
+		tools:text="\@user@server"/>
 
 	<FrameLayout
 		android:id="@+id/accessory"
 		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+		android:layout_height="38dp"
 		android:layout_alignParentEnd="true"
-		android:layout_centerVertical="true"
-		android:layout_marginStart="12dp"
-		android:layout_marginEnd="16dp">
+		android:layout_alignParentTop="true"
+		android:layout_marginStart="8dp"
+		android:duplicateParentState="true">
 
 		<org.joinmastodon.android.ui.views.ProgressBarButton
 			android:id="@+id/button"
 			android:layout_width="wrap_content"
-			android:layout_height="48dp"
+			android:layout_height="32dp"
 			android:layout_gravity="center_vertical"
-			android:paddingHorizontal="12dp"
-			android:minWidth="110dp"
-			android:maxWidth="170dp"
+			android:paddingHorizontal="10dp"
+			android:minWidth="96dp"
+			android:maxWidth="150dp"
 			style="@style/Widget.Mastodon.M3.Button.Filled"
 			tools:text="Follow back"/>
 		<ProgressBar
@@ -133,8 +94,8 @@
 			android:background="?android:actionBarItemBackground"
 			android:tint="?colorM3OnSurfaceVariant"
 			android:contentDescription="@string/more_options"
-			android:src="@drawable/ic_fluent_more_vertical_20_filled"
 			android:visibility="gone"/>
+	<!--	android:src="@drawable/ic_more_vert_24px" -->
 
 	</FrameLayout>
 
@@ -143,8 +104,8 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_toEndOf="@id/avatar"
-		android:layout_below="@id/line2"
-		android:layout_toStartOf="@id/accessory"
+		android:layout_below="@id/username"
+		android:layout_marginTop="2dp"
 		android:textAppearance="@style/m3_body_medium"
 		android:textColor="?colorM3OnSurface"
 		android:maxLines="2"

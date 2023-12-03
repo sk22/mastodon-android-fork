@@ -278,7 +278,7 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 					UiUtils.confirmToggleBlockDomain(activity, item.parentFragment.getAccountID(), account.getDomain(), relationship!=null && relationship.domainBlocking, ()->{});
 				}else if(id==R.id.bookmark){
 					AccountSessionManager.getInstance().getAccount(item.accountID).getStatusInteractionController().setBookmarked(item.status, !item.status.bookmarked);
-				}else if(id==R.id.manage_user_lists){
+				}else if(id==R.id.add_to_list){
 					final Bundle args=new Bundle();
 					args.putString("account", item.parentFragment.getAccountID());
 					args.putString("profileAccount", account.id);
@@ -505,7 +505,7 @@ public class HeaderStatusDisplayItem extends StatusDisplayItem{
 			MenuItem block=menu.findItem(R.id.block);
 			MenuItem report=menu.findItem(R.id.report);
 			MenuItem follow=menu.findItem(R.id.follow);
-			MenuItem manageUserLists = menu.findItem(R.id.manage_user_lists);
+			MenuItem manageUserLists = menu.findItem(R.id.add_to_list);
 			/* disabled in megalodon: add/remove bookmark is already available through status footer
 			MenuItem bookmark=menu.findItem(R.id.bookmark);
 			bookmark.setVisible(false);

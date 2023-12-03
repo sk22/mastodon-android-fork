@@ -31,11 +31,6 @@ public abstract class StatusRelatedAccountListFragment extends PaginatedAccountL
 	}
 
 	@Override
-	protected boolean hasSubtitle(){
-		return remoteRequestFailed;
-	}
-
-	@Override
 	public Uri getWebUri(Uri.Builder base) {
 		return base
 				.encodedPath(isInstanceAkkoma()

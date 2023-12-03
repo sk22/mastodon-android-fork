@@ -1238,6 +1238,10 @@ public class UiUtils {
 		openURL(context, accountID, url, true);
 	}
 
+	public static void openURL(Context context, String accountID, String url, Object parentObject) {
+		// TODO: refactor opening/looking up urls
+		openURL(context, accountID, url, true);
+	}
 	public static void openURL(Context context, String accountID, String url, boolean launchBrowser) {
 		lookupURL(context, accountID, url, (clazz, args) -> {
 			if (clazz == null) {
@@ -1379,9 +1383,7 @@ public class UiUtils {
 	public static void copyText(View v, String text) {
 		Context context = v.getContext();
 		context.getSystemService(ClipboardManager.class).setPrimaryClip(ClipData.newPlainText(null, text));
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || UiUtils.isMIUI()) { // Android 13+ SystemUI shows its own thing when you put things into the clipboard
-			Toast.makeText(context, R.string.text_copied, Toast.LENGTH_SHORT).show();
-		}
+		maybeShowTextCopiedToast(v.getContext());
 		v.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK);
 	}
 
@@ -1628,6 +1630,28 @@ public class UiUtils {
 		intent.setType("text/plain");
 		intent.putExtra(Intent.EXTRA_TEXT, url);
 		context.startActivity(Intent.createChooser(intent, context.getString(R.string.share_toot_title)));
+	}
+
+	public static void maybeShowTextCopiedToast(Context context){
+		//show toast, android from S_V2 on has built-in popup, as documented in
+		//https://developer.android.com/develop/ui/views/touch-and-input/copy-paste#duplicate-notifications
+		if(Build.VERSION.SDK_INT<=Build.VERSION_CODES.S_V2){
+			Toast.makeText(context, R.string.text_copied, Toast.LENGTH_SHORT).show();
+		}
+	}
+
+	public static void setAllPaddings(View view, int paddingDp){
+		int pad=V.dp(paddingDp);
+		view.setPadding(pad, pad, pad, pad);
+	}
+
+	public static ViewGroup.MarginLayoutParams makeLayoutParams(int width, int height, int marginStart, int marginTop, int marginEnd, int marginBottom){
+		ViewGroup.MarginLayoutParams lp=new ViewGroup.MarginLayoutParams(width>0 ? V.dp(width) : width, height>0 ? V.dp(height) : height);
+		lp.topMargin=V.dp(marginTop);
+		lp.bottomMargin=V.dp(marginBottom);
+		lp.setMarginStart(V.dp(marginStart));
+		lp.setMarginEnd(V.dp(marginEnd));
+		return lp;
 	}
 
 	private static final Pattern formatStringSubstitutionPattern = Pattern.compile("%(?:(\\d)\\$)?s");

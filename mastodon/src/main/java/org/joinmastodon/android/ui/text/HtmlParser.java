@@ -1,7 +1,6 @@
 package org.joinmastodon.android.ui.text;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -46,7 +45,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import androidx.annotation.NonNull;
-
 import me.grishka.appkit.utils.V;
 
 public class HtmlParser{
@@ -70,8 +68,8 @@ public class HtmlParser{
 
 	private HtmlParser(){}
 
-	public static SpannableStringBuilder parse(String source, List<Emoji> emojis, List<Mention> mentions, List<Hashtag> tags, String accountID){
-		return parse(source, emojis, mentions, tags, accountID, null);
+	public static SpannableStringBuilder parse(String source, List<Emoji> emojis, List<Mention> mentions, List<Hashtag> tags, String accountID, Object parentObject){
+		return parse(source, emojis, mentions, tags, accountID, parentObject, null);
 	}
 
 	/**
@@ -86,7 +84,7 @@ public class HtmlParser{
 	 * @param emojis Custom emojis that are present in source as <code>:code:</code>
 	 * @return a spanned string
 	 */
-	public static SpannableStringBuilder parse(String source, List<Emoji> emojis, List<Mention> mentions, List<Hashtag> tags, String accountID, Context context){
+	public static SpannableStringBuilder parse(String source, List<Emoji> emojis, List<Mention> mentions, List<Hashtag> tags, String accountID, Object parentObject, Context context){
 		class SpanInfo{
 			public Object span;
 			public int start;
@@ -147,7 +145,7 @@ public class HtmlParser{
 							}else{
 								linkType=LinkSpan.Type.URL;
 							}
-							openSpans.add(new SpanInfo(new LinkSpan(href, null, linkType, accountID, linkObject, text), ssb.length(), el));
+							openSpans.add(new SpanInfo(new LinkSpan(href, null, linkType, accountID, linkObject, parentObject, text), ssb.length(), el));
 						}
 						case "br" -> ssb.append('\n');
 						case "span" -> {
@@ -286,7 +284,7 @@ public class HtmlParser{
 			String url=matcher.group(3);
 			if(TextUtils.isEmpty(matcher.group(4)))
 				url="http://"+url;
-			ssb.setSpan(new LinkSpan(url, null, LinkSpan.Type.URL, null, null, null), matcher.start(3), matcher.end(3), 0);
+			ssb.setSpan(new LinkSpan(url, null, LinkSpan.Type.URL, null, null, null, null), matcher.start(3), matcher.end(3), 0);
 		}while(matcher.find()); // Find more URLs
 		return ssb;
 	}

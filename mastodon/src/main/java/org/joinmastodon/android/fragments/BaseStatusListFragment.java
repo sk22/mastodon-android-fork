@@ -35,6 +35,8 @@ import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.model.Translation;
 import org.joinmastodon.android.ui.BetterItemAnimator;
 import org.joinmastodon.android.ui.M3AlertDialogBuilder;
+import org.joinmastodon.android.ui.NonMutualPreReplySheet;
+import org.joinmastodon.android.ui.OldPostPreReplySheet;
 import org.joinmastodon.android.ui.displayitems.AccountStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.ExtendedFooterStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.FooterStatusDisplayItem;
@@ -56,6 +58,8 @@ import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.utils.ProvidesAssistContent;
 import org.joinmastodon.android.utils.TypedObjectPool;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -135,6 +139,7 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 		for(T s:items){
 			displayItems.addAll(buildDisplayItems(s));
 		}
+		loadRelationships(items.stream().map(DisplayItemsParent::getAccountID).filter(Objects::nonNull).collect(Collectors.toSet()));
 	}
 
 	@Override
@@ -156,6 +161,7 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 		}
 		if(notify)
 			adapter.notifyItemRangeInserted(0, offset);
+		loadRelationships(items.stream().map(DisplayItemsParent::getAccountID).filter(Objects::nonNull).collect(Collectors.toSet()));
 		return offset;
 	}
 
@@ -278,6 +284,7 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 			@Override
 			public void photoViewerDismissed(){
 				currentPhotoViewer=null;
+				gridHolder.itemView.setHasTransientState(false);
 			}
 
 			@Override
@@ -289,6 +296,7 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 				return gridHolder.getViewController(index);
 			}
 		});
+		gridHolder.itemView.setHasTransientState(true);
 	}
 
 	@Override
@@ -675,6 +683,7 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 	protected void loadRelationships(Set<String> ids){
 		if(ids.isEmpty())
 			return;
+		ids=ids.stream().filter(id->!relationships.containsKey(id)).collect(Collectors.toSet());
 		// TODO somehow manage these and cancel outstanding requests on refresh
 		new GetAccountRelationships(ids)
 				.setCallback(new Callback<>(){
@@ -949,6 +958,26 @@ public abstract class BaseStatusListFragment<T extends DisplayItemsParent> exten
 			displayItems.addAll(buildDisplayItems(item));
 		}
 		adapter.notifyDataSetChanged();
+	}
+
+	public void maybeShowPreReplySheet(Status status, Runnable proceed){
+		Relationship rel=getRelationship(status.account.id);
+		if(!GlobalUserPreferences.isOptedOutOfPreReplySheet(GlobalUserPreferences.PreReplySheetType.NON_MUTUAL, status.account, accountID) &&
+				!status.account.id.equals(AccountSessionManager.get(accountID).self.id) && rel!=null && !rel.followedBy && status.account.followingCount>=1){
+			new NonMutualPreReplySheet(getActivity(), notAgain->{
+				GlobalUserPreferences.optOutOfPreReplySheet(GlobalUserPreferences.PreReplySheetType.NON_MUTUAL, notAgain ? null : status.account, accountID);
+				proceed.run();
+			}, status.account, accountID).show();
+		}else if(!GlobalUserPreferences.isOptedOutOfPreReplySheet(GlobalUserPreferences.PreReplySheetType.OLD_POST, null, null) &&
+				status.createdAt.isBefore(Instant.now().minus(90, ChronoUnit.DAYS))){
+			new OldPostPreReplySheet(getActivity(), notAgain->{
+				if(notAgain)
+					GlobalUserPreferences.optOutOfPreReplySheet(GlobalUserPreferences.PreReplySheetType.OLD_POST, null, null);
+				proceed.run();
+			}, status).show();
+		}else{
+			proceed.run();
+		}
 	}
 
 	protected void onModifyItemViewHolder(BindableViewHolder<StatusDisplayItem> holder){}

@@ -15,8 +15,6 @@ import android.widget.TextView;
 
 import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
-import org.joinmastodon.android.api.session.AccountSession;
-import org.joinmastodon.android.api.session.AccountSessionManager;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.fragments.StatusEditHistoryFragment;
 import org.joinmastodon.android.fragments.account_list.StatusFavoritesListFragment;
@@ -28,6 +26,7 @@ import org.joinmastodon.android.ui.utils.UiUtils;
 import org.parceler.Parcels;
 
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
@@ -38,7 +37,9 @@ import me.grishka.appkit.Nav;
 public class ExtendedFooterStatusDisplayItem extends StatusDisplayItem{
 	public final String accountID;
 
-	private static final DateTimeFormatter TIME_FORMATTER=DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG, FormatStyle.SHORT);
+	private static final DateTimeFormatter TIME_FORMATTER=DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT);
+	private static final DateTimeFormatter TIME_FORMATTER_LONG=DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM);
+	private static final DateTimeFormatter DATE_FORMATTER=DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
 
 	public ExtendedFooterStatusDisplayItem(String parentID, BaseStatusListFragment parentFragment, String accountID, Status status){
 		super(parentID, parentFragment);
@@ -52,8 +53,8 @@ public class ExtendedFooterStatusDisplayItem extends StatusDisplayItem{
 	}
 
 	public static class Holder extends StatusDisplayItem.Holder<ExtendedFooterStatusDisplayItem>{
-		private final TextView time;
-		private final Button favorites, reblogs, editHistory, applicationName;
+		private final TextView date, time, dateAppSeparator;
+		private final Button favorites, reblogs, editHistory, app;
 		private final ImageView visibility;
 		private final Context context;
 
@@ -63,13 +64,16 @@ public class ExtendedFooterStatusDisplayItem extends StatusDisplayItem{
 			reblogs=findViewById(R.id.reblogs);
 			favorites=findViewById(R.id.favorites);
 			editHistory=findViewById(R.id.edit_history);
-			applicationName=findViewById(R.id.application_name);
+			app=findViewById(R.id.app_name);
 			visibility=findViewById(R.id.visibility);
-			time=findViewById(R.id.timestamp);
+			date=findViewById(R.id.date);
+			time=findViewById(R.id.time);
+			dateAppSeparator=findViewById(R.id.date_app_separator);
 
 			reblogs.setOnClickListener(v->startAccountListFragment(StatusReblogsListFragment.class));
 			favorites.setOnClickListener(v->startAccountListFragment(StatusFavoritesListFragment.class));
 			editHistory.setOnClickListener(v->startEditHistoryFragment());
+			app.setOnClickListener(v->UiUtils.launchWebBrowser(context, item.status.application.website));
 		}
 
 		@SuppressLint("DefaultLocale")
@@ -87,19 +91,18 @@ public class ExtendedFooterStatusDisplayItem extends StatusDisplayItem{
 			}else{
 				editHistory.setVisibility(View.GONE);
 			}
-			String timeStr=item.status.createdAt != null ? TIME_FORMATTER.format(item.status.createdAt.atZone(ZoneId.systemDefault())) : null;
-			
-			if (item.status.application!=null && !TextUtils.isEmpty(item.status.application.name)) {
-				time.setText(timeStr != null ? item.parentFragment.getString(R.string.timestamp_via_app, timeStr, "") : "");
-				applicationName.setText(item.status.application.name);
-				if (item.status.application.website != null && item.status.application.website.toLowerCase().startsWith("https://")) {
-					applicationName.setOnClickListener(e -> UiUtils.openURL(context, null, item.status.application.website));
-				} else {
-					applicationName.setEnabled(false);
-				}
+
+			ZonedDateTime dt=item.status.createdAt.atZone(ZoneId.systemDefault());
+			time.setText(TIME_FORMATTER.format(dt));
+			date.setText(DATE_FORMATTER.format(dt));
+			if(item.status.application!=null && !TextUtils.isEmpty(item.status.application.name)){
+				app.setVisibility(View.VISIBLE);
+				dateAppSeparator.setVisibility(View.VISIBLE);
+				app.setText(item.status.application.name);
+				app.setEnabled(!TextUtils.isEmpty(item.status.application.website));
 			} else {
-				time.setText(timeStr);
-				applicationName.setVisibility(View.GONE);
+				app.setVisibility(View.GONE);
+				dateAppSeparator.setVisibility(View.GONE);
 			}
 
 			visibility.setImageResource(switch (s.visibility) {

@@ -759,7 +759,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		botIcon.setVisibility(account.bot ? View.VISIBLE : View.GONE);
 		botIcon.setImageTintList(ColorStateList.valueOf(username.getCurrentTextColor()));
 
-		CharSequence parsedBio=HtmlParser.parse(account.note, account.emojis, Collections.emptyList(), Collections.emptyList(), accountID);
+		CharSequence parsedBio=HtmlParser.parse(account.note, account.emojis, Collections.emptyList(), Collections.emptyList(), accountID, account);
 		if(TextUtils.isEmpty(parsedBio)){
 			bio.setVisibility(View.GONE);
 		}else{
@@ -802,7 +802,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 		}
 
 		for(AccountField field:account.fields){
-			field.parsedValue=ssb=HtmlParser.parse(field.value, account.emojis, Collections.emptyList(), Collections.emptyList(), accountID);
+			field.parsedValue=ssb=HtmlParser.parse(field.value, account.emojis, Collections.emptyList(), Collections.emptyList(), accountID, account);
 			field.valueEmojis=ssb.getSpans(0, ssb.length(), CustomEmojiSpan.class);
 			ssb=new SpannableStringBuilder(field.name);
 			HtmlParser.parseCustomEmoji(ssb, account.emojis);
@@ -863,14 +863,14 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			return;
 		}
 
-		menu.findItem(R.id.manage_user_lists).setTitle(getString(R.string.sk_lists_with_user, account.getShortUsername()));
+		menu.findItem(R.id.add_to_list).setTitle(getString(R.string.sk_lists_with_user, account.getShortUsername()));
 		MenuItem mute=menu.findItem(R.id.mute);
 		mute.setTitle(getString(relationship.muting ? R.string.unmute_user : R.string.mute_user, account.getShortUsername()));
 		mute.setIcon(relationship.muting ? R.drawable.ic_fluent_speaker_0_24_regular : R.drawable.ic_fluent_speaker_off_24_regular);
 		UiUtils.insetPopupMenuIcon(getContext(), mute);
 		menu.findItem(R.id.block).setTitle(getString(relationship.blocking ? R.string.unblock_user : R.string.block_user, account.getShortUsername()));
 		menu.findItem(R.id.report).setTitle(getString(R.string.report_user, account.getShortUsername()));
-		menu.findItem(R.id.manage_user_lists).setVisible(relationship.following);
+		menu.findItem(R.id.add_to_list).setVisible(relationship.following);
 		menu.findItem(R.id.soft_block).setVisible(relationship.followedBy && !relationship.following);
 		MenuItem hideBoosts=menu.findItem(R.id.hide_boosts);
 		if (relationship.following) {
@@ -942,7 +942,7 @@ public class ProfileFragment extends LoaderFragment implements OnBackPressedList
 			Bundle args=new Bundle();
 			args.putString("account", accountID);
 			Nav.go(getActivity(), FavoritedStatusListFragment.class, args);
-		}else if(id==R.id.manage_user_lists){
+		}else if(id==R.id.add_to_list){
 			final Bundle args=new Bundle();
 			args.putString("account", accountID);
 			if (!isOwnProfile) {

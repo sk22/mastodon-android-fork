@@ -39,6 +39,7 @@ public abstract class BaseAccountListFragment extends MastodonRecyclerFragment<A
 	protected HashMap<String, Relationship> relationships=new HashMap<>();
 	protected String accountID;
 	protected ArrayList<APIRequest<?>> relationshipsRequests=new ArrayList<>();
+	protected int itemLayoutRes=R.layout.item_account_list;
 
 	public BaseAccountListFragment(){
 		super(40);
@@ -74,6 +75,8 @@ public abstract class BaseAccountListFragment extends MastodonRecyclerFragment<A
 
 	protected void loadRelationships(List<AccountViewModel> accounts){
 		Set<String> ids=accounts.stream().map(ai->ai.account.id).collect(Collectors.toSet());
+		if(ids.isEmpty())
+			return;
 		GetAccountRelationships req=new GetAccountRelationships(ids);
 		relationshipsRequests.add(req);
 		req.setCallback(new Callback<>(){
@@ -124,18 +127,7 @@ public abstract class BaseAccountListFragment extends MastodonRecyclerFragment<A
 		Toolbar toolbar=getToolbar();
 		if(toolbar!=null && toolbar.getNavigationIcon()!=null){
 			toolbar.setNavigationContentDescription(R.string.back);
-			if(hasSubtitle()){
-				toolbar.setTitleTextAppearance(getActivity(), R.style.m3_title_medium);
-				toolbar.setSubtitleTextAppearance(getActivity(), R.style.m3_body_medium);
-				int color=UiUtils.getThemeColor(getActivity(), android.R.attr.textColorPrimary);
-				toolbar.setTitleTextColor(color);
-				toolbar.setSubtitleTextColor(color);
-			}
 		}
-	}
-
-	protected boolean hasSubtitle(){
-		return true;
 	}
 
 	@Override
@@ -162,6 +154,7 @@ public abstract class BaseAccountListFragment extends MastodonRecyclerFragment<A
 	}
 
 	protected void onConfigureViewHolder(AccountViewHolder holder){}
+	protected void onBindViewHolder(AccountViewHolder holder){}
 
 	protected class AccountsAdapter extends UsableRecyclerView.Adapter<AccountViewHolder> implements ImageLoaderRecyclerAdapter{
 		public AccountsAdapter(){
@@ -171,7 +164,7 @@ public abstract class BaseAccountListFragment extends MastodonRecyclerFragment<A
 		@NonNull
 		@Override
 		public AccountViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType){
-			AccountViewHolder holder=new AccountViewHolder(BaseAccountListFragment.this, parent, relationships);
+			AccountViewHolder holder=new AccountViewHolder(BaseAccountListFragment.this, parent, relationships, itemLayoutRes);
 			onConfigureViewHolder(holder);
 			return holder;
 		}
@@ -179,6 +172,7 @@ public abstract class BaseAccountListFragment extends MastodonRecyclerFragment<A
 		@Override
 		public void onBindViewHolder(AccountViewHolder holder, int position){
 			holder.bind(data.get(position));
+			BaseAccountListFragment.this.onBindViewHolder(holder);
 			super.onBindViewHolder(holder, position);
 		}
 

@@ -84,18 +84,47 @@
 			android:tint="?colorM3OnSurfaceVariant" />
 
 		<TextView
-			android:id="@+id/timestamp"
+			android:id="@+id/time"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginLeft="8dp"
+			android:layout_marginStart="8dp"
 			android:minHeight="20dp"
 			android:gravity="center_vertical"
-			android:textSize="14sp"
-			android:textColor="?android:textColorSecondary"
-			tools:text="Dec 12, 2021, 12:42 PM via "/>
+			android:textAppearance="@style/m3_body_medium"
+			android:textColor="?colorM3OnSurfaceVariant"
+			tools:text="12:42 PM"/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginHorizontal="4sp"
+			android:textAppearance="@style/m3_body_medium"
+			android:textColor="?colorM3OnSurfaceVariant"
+			android:importantForAccessibility="no"
+			android:text="@string/sk_separator"/>
+
+		<TextView
+			android:id="@+id/date"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:minHeight="20dp"
+			android:gravity="center_vertical"
+			android:textAppearance="@style/m3_body_medium"
+			android:textColor="?colorM3OnSurfaceVariant"
+			tools:text="Dec 12, 2021"/>
+
+		<TextView
+			android:id="@+id/date_app_separator"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginHorizontal="4sp"
+			android:textAppearance="@style/m3_body_medium"
+			android:textColor="?colorM3OnSurfaceVariant"
+			android:importantForAccessibility="no"
+			android:text="@string/sk_separator"/>
 
 		<Button
-			android:id="@+id/application_name"
+			android:id="@+id/app_name"
 			style="@style/Widget.Mastodon.M3.Button.Text"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -106,6 +135,7 @@
 			android:padding="0dp"
 			android:minWidth="0dp"
 			android:minHeight="48dp"
+			android:textAppearance="@style/m3_body_medium"
 			android:textColor="?colorM3OnSurfaceVariant"
 			android:fontFamily="sans-serif"
 			android:singleLine="true"

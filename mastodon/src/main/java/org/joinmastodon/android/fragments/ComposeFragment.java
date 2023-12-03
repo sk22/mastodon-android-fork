@@ -693,7 +693,7 @@ public class ComposeFragment extends MastodonToolbarFragment implements OnBackPr
 				replyToSpoiler.setOutlineProvider(OutlineProviders.roundedRect(8));
 			}
 
-			SpannableStringBuilder content = HtmlParser.parse(status.content, status.emojis, status.mentions, status.tags, accountID);
+			SpannableStringBuilder content = HtmlParser.parse(status.content, status.emojis, status.mentions, status.tags, accountID, status);
 			LinkedTextView text = view.findViewById(R.id.text);
 			if (content.length() > 0) {
 				text.setText(content);

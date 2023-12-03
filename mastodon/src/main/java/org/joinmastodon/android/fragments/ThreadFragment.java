@@ -2,7 +2,13 @@ package org.joinmastodon.android.fragments;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
+import android.view.WindowInsets;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,6 +27,7 @@ import org.joinmastodon.android.model.FilterContext;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.model.StatusContext;
 import org.joinmastodon.android.ui.BetterItemAnimator;
+import org.joinmastodon.android.ui.OutlineProviders;
 import org.joinmastodon.android.ui.displayitems.ExtendedFooterStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.FooterStatusDisplayItem;
 import org.joinmastodon.android.ui.displayitems.ReblogOrReplyLineStatusDisplayItem;
@@ -44,9 +51,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import me.grishka.appkit.Nav;
 import me.grishka.appkit.api.Callback;
 import me.grishka.appkit.api.ErrorResponse;
 import me.grishka.appkit.api.SimpleCallback;
+import me.grishka.appkit.imageloader.ViewImageLoader;
+import me.grishka.appkit.imageloader.requests.UrlImageLoaderRequest;
 import me.grishka.appkit.utils.V;
 
 public class ThreadFragment extends StatusListFragment implements ProvidesAssistContent {
@@ -54,10 +64,16 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 	private final HashMap<String, NeighborAncestryInfo> ancestryMap = new HashMap<>();
 	private StatusContext result;
 	protected boolean contextInitiallyRendered, transitionFinished, preview;
+	private FrameLayout replyContainer;
+	private LinearLayout replyButton;
+	private ImageView replyButtonAva;
+	private TextView replyButtonText;
+	private int lastBottomInset;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
+		setLayout(R.layout.fragment_thread);
 		mainStatus=Parcels.unwrap(getArguments().getParcelable("status"));
 		replyTo=Parcels.unwrap(getArguments().getParcelable("inReplyTo"));
 		Account inReplyToAccount=Parcels.unwrap(getArguments().getParcelable("inReplyToAccount"));
@@ -361,6 +377,20 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState){
 		super.onViewCreated(view, savedInstanceState);
+		replyContainer=view.findViewById(R.id.reply_button_wrapper);
+		replyButton=replyContainer.findViewById(R.id.reply_button);
+		replyButtonText=replyButton.findViewById(R.id.reply_btn_text);
+		replyButtonAva=replyButton.findViewById(R.id.avatar);
+		replyButton.setOutlineProvider(OutlineProviders.roundedRect(20));
+		replyButton.setClipToOutline(true);
+		replyButtonText.setText(getString(R.string.reply_to_user, mainStatus.account.displayName));
+		replyButtonAva.setOutlineProvider(OutlineProviders.OVAL);
+		replyButtonAva.setClipToOutline(true);
+		replyButton.setOnClickListener(v->openReply());
+		Account self=AccountSessionManager.get(accountID).self;
+		if(!TextUtils.isEmpty(self.avatar)){
+			ViewImageLoader.loadWithoutAnimation(replyButtonAva, getResources().getDrawable(R.drawable.image_placeholder), new UrlImageLoaderRequest(self.avatar, V.dp(24), V.dp(24)));
+		}
 		UiUtils.loadCustomEmojiInTextView(toolbarTitleView);
 		showContent();
 		if(!loaded)
@@ -499,5 +529,25 @@ public class ThreadFragment extends StatusListFragment implements ProvidesAssist
 			return;
 		}
 		super.onErrorRetryClick();
+	}
+
+	@Override
+	public void onApplyWindowInsets(WindowInsets insets){
+		lastBottomInset=insets.getSystemWindowInsetBottom();
+		super.onApplyWindowInsets(UiUtils.applyBottomInsetToFixedView(replyContainer, insets));
+	}
+
+	private void openReply(){
+		maybeShowPreReplySheet(mainStatus, ()->{
+			Bundle args=new Bundle();
+			args.putString("account", accountID);
+			args.putParcelable("replyTo", Parcels.wrap(mainStatus));
+			args.putBoolean("fromThreadFragment", true);
+			Nav.go(getActivity(), ComposeFragment.class, args);
+		});
+	}
+
+	public int getSnackbarOffset(){
+		return replyContainer.getHeight()-lastBottomInset;
 	}
 }
