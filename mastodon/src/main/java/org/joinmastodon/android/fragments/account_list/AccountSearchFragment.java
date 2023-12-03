@@ -6,7 +6,9 @@ import android.text.TextUtils;
 import android.view.View;
 
 import org.joinmastodon.android.R;
+import org.joinmastodon.android.api.MastodonAPIRequest;
 import org.joinmastodon.android.api.requests.search.GetSearchResults;
+import org.joinmastodon.android.model.Account;
 import org.joinmastodon.android.model.SearchResults;
 import org.joinmastodon.android.model.viewmodel.AccountViewModel;
 import org.joinmastodon.android.ui.SearchViewHelper;
@@ -14,13 +16,14 @@ import org.joinmastodon.android.ui.utils.UiUtils;
 import org.joinmastodon.android.ui.viewholders.AccountViewHolder;
 import org.parceler.Parcels;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import me.grishka.appkit.Nav;
 import me.grishka.appkit.api.SimpleCallback;
 
-public class ComposeAccountSearchFragment extends BaseAccountListFragment{
-	private String currentQuery;
+public class AccountSearchFragment extends BaseAccountListFragment{
+	protected String currentQuery;
 	private boolean resultDelivered;
 	private SearchViewHelper searchViewHelper;
 
@@ -29,12 +32,11 @@ public class ComposeAccountSearchFragment extends BaseAccountListFragment{
 		super.onCreate(savedInstanceState);
 		setRefreshEnabled(false);
 		setEmptyText("");
-		dataLoaded();
 	}
 
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState){
-		searchViewHelper=new SearchViewHelper(getActivity(), getToolbarContext(), getString(R.string.search_hint));
+		searchViewHelper=new SearchViewHelper(getActivity(), getToolbarContext(), getSearchViewPlaceholder());
 		searchViewHelper.setListeners(this::onQueryChanged, null);
 		searchViewHelper.addDivider(contentView);
 		super.onViewCreated(view, savedInstanceState);
@@ -52,11 +54,19 @@ public class ComposeAccountSearchFragment extends BaseAccountListFragment{
 				.setCallback(new SimpleCallback<>(this){
 					@Override
 					public void onSuccess(SearchResults result){
-						setEmptyText(R.string.no_search_results);
-						onDataLoaded(result.accounts.stream().map(a->new AccountViewModel(a, accountID)).collect(Collectors.toList()), false);
+						AccountSearchFragment.this.onSuccess(result.accounts);
 					}
 				})
 				.exec(accountID);
+	}
+
+	protected void onSuccess(List<Account> result){
+		setEmptyText(R.string.no_search_results);
+		onDataLoaded(result.stream().map(a->new AccountViewModel(a, accountID)).collect(Collectors.toList()), false);
+	}
+
+	protected String getSearchViewPlaceholder(){
+		return getString(R.string.search_hint);
 	}
 
 	@Override
@@ -99,7 +109,7 @@ public class ComposeAccountSearchFragment extends BaseAccountListFragment{
 	}
 
 	@Override
-	public Uri getWebUri(Uri.Builder base) {
+	public Uri getWebUri(Uri.Builder base){
 		return null;
 	}
 }
