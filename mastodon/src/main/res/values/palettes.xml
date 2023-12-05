@@ -52,6 +52,8 @@
 		<item name="colorM3PressedOverlay">@color/white</item>
 		<item name="colorM3DarkOnSurface">?colorGray100</item>
 		<item name="colorM3PrimaryInverse">?colorPrimary200</item>
+		<item name="colorM3SurfaceInverse">?colorGray900</item>
+		<item name="colorM3OnSurfaceInverse">?colorGray100</item>
 
 		<item name="colorFavorite">@color/favorite_selected</item>
 		<item name="colorLike">@color/like_selected</item>
@@ -136,6 +138,9 @@
 		<item name="colorM3Outline">?colorNeutral500</item>
 		<item name="colorM3OutlineVariant">?colorNeutral700</item>
 		<item name="colorM3PressedOverlay">?colorPrimary200</item>
+		<item name="colorM3PrimaryInverse">?colorPrimary200</item>
+		<item name="colorM3SurfaceInverse">?colorGray25</item>
+		<item name="colorM3OnSurfaceInverse">?colorGray900</item>
 
 		<item name="colorM3DisabledBackground">#1FE3E3E3</item>
 		<item name="colorM3Error">#F2B8B5</item>
@@ -184,6 +189,8 @@
 		<item name="colorM3OutlineVariant">@color/m3_sys_light_outline_variant</item>
 		<item name="colorM3PressedOverlay">@color/m3_sys_light_on_primary</item>
 		<item name="colorM3PrimaryInverse">@color/m3_sys_dark_primary</item>
+		<item name="colorM3SurfaceInverse">@color/m3_sys_dark_surface</item>
+		<item name="colorM3OnSurfaceInverse">@color/m3_sys_dark_on_surface</item>
 		<item name="colorM3DarkOnSurface">@color/m3_sys_dark_on_surface</item>
 
 		<item name="colorPrimary25">@color/m3_accent1_25</item>
@@ -272,6 +279,8 @@
 		<item name="colorM3OutlineVariant">@color/m3_sys_dark_outline_variant</item>
 		<item name="colorM3PressedOverlay">@color/m3_sys_dark_primary</item>
 		<item name="colorM3PrimaryInverse">@color/m3_sys_light_primary</item>
+		<item name="colorM3SurfaceInverse">@color/m3_sys_light_surface</item>
+		<item name="colorM3OnSurfaceInverse">@color/m3_sys_light_on_surface</item>
 	</style>
 
 	<style name="ColorPalette.Pink">
