@@ -83,7 +83,26 @@
 			android:src="@drawable/ic_fluent_earth_20_regular"
 			android:tint="?colorM3OnSurfaceVariant" />
 
-		<TextView
+		<Button
+			android:id="@+id/time"
+			style="@style/Widget.Mastodon.M3.Button.Text"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="-4dp"
+			android:gravity="center"
+			android:paddingStart="12dp"
+			android:paddingEnd="12dp"
+			android:padding="0dp"
+			android:minWidth="0dp"
+			android:minHeight="48dp"
+			android:textAppearance="@style/m3_body_medium"
+			android:textColor="?colorM3OnSurfaceVariant"
+			android:fontFamily="sans-serif"
+			android:singleLine="true"
+			android:ellipsize="end"
+			tools:text="Megalodon"/>
+
+		<!-- TextView
 			android:id="@+id/time"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -92,32 +111,14 @@
 			android:gravity="center_vertical"
 			android:textAppearance="@style/m3_body_medium"
 			android:textColor="?colorM3OnSurfaceVariant"
-			tools:text="12:42 PM"/>
-
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginHorizontal="4sp"
-			android:textAppearance="@style/m3_body_medium"
-			android:textColor="?colorM3OnSurfaceVariant"
-			android:importantForAccessibility="no"
-			android:text="@string/sk_separator"/>
-
-		<TextView
-			android:id="@+id/date"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:minHeight="20dp"
-			android:gravity="center_vertical"
-			android:textAppearance="@style/m3_body_medium"
-			android:textColor="?colorM3OnSurfaceVariant"
-			tools:text="Dec 12, 2021"/>
+			tools:text="12:42 PM"/ -->
 
 		<TextView
 			android:id="@+id/date_app_separator"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginHorizontal="4sp"
+			android:layout_marginStart="-12dp"
+			android:paddingHorizontal="6sp"
 			android:textAppearance="@style/m3_body_medium"
 			android:textColor="?colorM3OnSurfaceVariant"
 			android:importantForAccessibility="no"
@@ -128,8 +129,8 @@
 			style="@style/Widget.Mastodon.M3.Button.Text"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:gravity="center"
 			android:layout_marginStart="-12dp"
+			android:gravity="center"
 			android:paddingStart="12dp"
 			android:paddingEnd="12dp"
 			android:padding="0dp"

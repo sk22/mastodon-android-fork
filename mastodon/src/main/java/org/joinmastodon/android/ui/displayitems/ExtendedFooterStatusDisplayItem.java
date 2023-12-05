@@ -17,11 +17,13 @@ import org.joinmastodon.android.GlobalUserPreferences;
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.fragments.BaseStatusListFragment;
 import org.joinmastodon.android.fragments.StatusEditHistoryFragment;
+import org.joinmastodon.android.fragments.ThreadFragment;
 import org.joinmastodon.android.fragments.account_list.StatusFavoritesListFragment;
 import org.joinmastodon.android.fragments.account_list.StatusReblogsListFragment;
 import org.joinmastodon.android.fragments.account_list.StatusRelatedAccountListFragment;
 import org.joinmastodon.android.model.Status;
 import org.joinmastodon.android.model.StatusPrivacy;
+import org.joinmastodon.android.ui.Snackbar;
 import org.joinmastodon.android.ui.utils.UiUtils;
 import org.parceler.Parcels;
 
@@ -37,9 +39,8 @@ import me.grishka.appkit.Nav;
 public class ExtendedFooterStatusDisplayItem extends StatusDisplayItem{
 	public final String accountID;
 
-	private static final DateTimeFormatter TIME_FORMATTER=DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT);
-	private static final DateTimeFormatter TIME_FORMATTER_LONG=DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM);
-	private static final DateTimeFormatter DATE_FORMATTER=DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
+	private static final DateTimeFormatter TIME_FORMATTER=DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG, FormatStyle.SHORT);
+	private static final DateTimeFormatter TIME_FORMATTER_LONG=DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL, FormatStyle.MEDIUM);
 
 	public ExtendedFooterStatusDisplayItem(String parentID, BaseStatusListFragment parentFragment, String accountID, Status status){
 		super(parentID, parentFragment);
@@ -53,8 +54,8 @@ public class ExtendedFooterStatusDisplayItem extends StatusDisplayItem{
 	}
 
 	public static class Holder extends StatusDisplayItem.Holder<ExtendedFooterStatusDisplayItem>{
-		private final TextView date, time, dateAppSeparator;
-		private final Button favorites, reblogs, editHistory, app;
+		private final TextView dateAppSeparator;
+		private final Button favorites, reblogs, editHistory, app, time;
 		private final ImageView visibility;
 		private final Context context;
 
@@ -66,13 +67,13 @@ public class ExtendedFooterStatusDisplayItem extends StatusDisplayItem{
 			editHistory=findViewById(R.id.edit_history);
 			app=findViewById(R.id.app_name);
 			visibility=findViewById(R.id.visibility);
-			date=findViewById(R.id.date);
 			time=findViewById(R.id.time);
 			dateAppSeparator=findViewById(R.id.date_app_separator);
 
 			reblogs.setOnClickListener(v->startAccountListFragment(StatusReblogsListFragment.class));
 			favorites.setOnClickListener(v->startAccountListFragment(StatusFavoritesListFragment.class));
 			editHistory.setOnClickListener(v->startEditHistoryFragment());
+			time.setOnClickListener(v->showTimeSnackbar());
 			app.setOnClickListener(v->UiUtils.launchWebBrowser(context, item.status.application.website));
 		}
 
@@ -94,7 +95,6 @@ public class ExtendedFooterStatusDisplayItem extends StatusDisplayItem{
 
 			ZonedDateTime dt=item.status.createdAt.atZone(ZoneId.systemDefault());
 			time.setText(TIME_FORMATTER.format(dt));
-			date.setText(DATE_FORMATTER.format(dt));
 			if(item.status.application!=null && !TextUtils.isEmpty(item.status.application.name)){
 				app.setVisibility(View.VISIBLE);
 				dateAppSeparator.setVisibility(View.VISIBLE);
@@ -146,6 +146,17 @@ public class ExtendedFooterStatusDisplayItem extends StatusDisplayItem{
 			args.putString("id", item.status.id);
 			args.putString("url", item.status.url);
 			Nav.go(item.parentFragment.getActivity(), StatusEditHistoryFragment.class, args);
+		}
+
+		private void showTimeSnackbar(){
+			int bottomOffset=0;
+			if(item.parentFragment instanceof ThreadFragment tf){
+				bottomOffset=tf.getSnackbarOffset();
+			}
+			new Snackbar.Builder(itemView.getContext())
+					.setText(TIME_FORMATTER_LONG.format(item.status.createdAt.atZone(ZoneId.systemDefault())))
+					.setBottomOffset(bottomOffset)
+					.show();
 		}
 	}
 }
