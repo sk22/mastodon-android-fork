@@ -213,6 +213,7 @@ public class Instance extends BaseModel{
 
 	@Parcel
 	public static class PollsConfiguration{
+		public int minOptions;
 		public int maxOptions;
 		public int maxCharactersPerOption;
 		public int minExpiration;
@@ -226,6 +227,7 @@ public class Instance extends BaseModel{
 		@Parcel
 		public static class Configuration {
 			public TranslationConfiguration translation;
+			public PollsConfiguration polls;
 		}
 
 		@Parcel
