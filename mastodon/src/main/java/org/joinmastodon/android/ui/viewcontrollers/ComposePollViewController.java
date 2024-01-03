@@ -65,6 +65,7 @@ public class ComposePollViewController{
 	private boolean pollChanged;
 
 	private int maxPollOptions=4;
+	private int minPollOptions=2;
 	private int maxPollOptionLength=50;
 
 	public ComposePollViewController(ComposeFragment fragment){
@@ -75,16 +76,22 @@ public class ComposePollViewController{
 		pollWrap=view.findViewById(R.id.poll_wrap);
 
 		Instance instance=fragment.instance;
-		if (!instance.isAkkoma()) {
-			if(instance!=null && instance.configuration!=null && instance.configuration.polls!=null && instance.configuration.polls.maxOptions>0)
-				maxPollOptions=instance.configuration.polls.maxOptions;
-			if(instance!=null && instance.configuration!=null && instance.configuration.polls!=null && instance.configuration.polls.maxCharactersPerOption>0)
-				maxPollOptionLength=instance.configuration.polls.maxCharactersPerOption;
-		} else {
-			if(instance!=null && instance.pollLimits!=null && instance.pollLimits.maxOptions>0)
-				maxPollOptions=instance.pollLimits.maxOptions;
-			if(instance!=null && instance.pollLimits!=null && instance.pollLimits.maxOptionChars>0)
-				maxPollOptionLength=instance.pollLimits.maxOptionChars;
+		if(instance!=null){
+			if(!instance.isAkkoma()){
+				if(instance.v2!=null && instance.v2.configuration!=null && instance.v2.configuration.polls!=null){
+					if(instance.v2.configuration.polls.maxOptions>0) maxPollOptions=instance.v2.configuration.polls.maxOptions;
+					if(instance.v2.configuration.polls.maxOptions>0) minPollOptions=instance.v2.configuration.polls.minOptions;
+					if(instance.v2.configuration.polls.maxCharactersPerOption>0) maxPollOptionLength=instance.v2.configuration.polls.maxCharactersPerOption;
+				}
+				if(instance.configuration!=null && instance.configuration.polls!=null){
+					if(instance.configuration.polls.maxOptions>0) maxPollOptions=instance.configuration.polls.maxOptions;
+					if(instance.configuration.polls.minOptions>0) minPollOptions=instance.configuration.polls.minOptions;
+					if(instance.configuration.polls.maxCharactersPerOption>0) maxPollOptionLength=instance.configuration.polls.maxCharactersPerOption;
+				}
+			}else{
+				if(instance.pollLimits!=null && instance.pollLimits.maxOptions>0) maxPollOptions=instance.pollLimits.maxOptions;
+				if(instance.pollLimits!=null && instance.pollLimits.maxOptionChars>0) maxPollOptionLength=instance.pollLimits.maxOptionChars;
+			}
 		}
 
 		pollOptionsView=pollWrap.findViewById(R.id.poll_options);
@@ -256,6 +263,10 @@ public class ComposePollViewController{
 		return pollOptions.isEmpty();
 	}
 
+	public boolean hasEnoughNonEmptyOptions(){
+		return getNonEmptyOptionsCount()>=minPollOptions;
+	}
+
 	public int getNonEmptyOptionsCount(){
 		int nonEmptyPollOptionsCount=0;
 		for(DraftPollOption opt:pollOptions){
@@ -268,7 +279,7 @@ public class ComposePollViewController{
 	public void toggle(){
 		if(pollOptions.isEmpty()){
 			pollWrap.setVisibility(View.VISIBLE);
-			for(int i=0;i<2;i++)
+			for(int i=0; i<minPollOptions; i++)
 				createDraftPollOption(false);
 			updatePollOptionHints();
 		}else{
@@ -329,7 +340,7 @@ public class ComposePollViewController{
 			anim.setInterpolator(CubicBezierInterpolator.DEFAULT);
 			anim.start();
 			fragment.mainLayout.setClipChildren(false);
-			if(pollOptions.size()>2){
+			if(pollOptions.size()>minPollOptions){
 //					UiUtils.beginLayoutTransition(pollSettingsView);
 				deletePollOptionBtn.setVisibility(View.VISIBLE);
 				addPollOptionBtn.setVisibility(View.GONE);
@@ -338,7 +349,7 @@ public class ComposePollViewController{
 
 		@Override
 		public void onDragEnd(View view){
-			if(pollOptions.size()>2){
+			if(pollOptions.size()>minPollOptions){
 //					UiUtils.beginLayoutTransition(pollSettingsView);
 				deletePollOptionBtn.setVisibility(View.GONE);
 				addPollOptionBtn.setVisibility(View.VISIBLE);
