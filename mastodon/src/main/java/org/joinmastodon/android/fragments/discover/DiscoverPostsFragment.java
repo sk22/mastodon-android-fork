@@ -18,7 +18,7 @@ import me.grishka.appkit.utils.MergeRecyclerAdapter;
 
 public class DiscoverPostsFragment extends StatusListFragment{
 	private DiscoverInfoBannerHelper bannerHelper;
-	private int offset;
+	private int realOffset=0;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -27,17 +27,14 @@ public class DiscoverPostsFragment extends StatusListFragment{
 	}
 
 	@Override
-	protected void doLoadData(int o, int count){
-		if(refreshing) offset=0;
-		currentRequest=new GetTrendingStatuses(offset, count)
+	protected void doLoadData(int offset, int count){
+		currentRequest=new GetTrendingStatuses(offset==0 ? 0 : realOffset, count)
 				.setCallback(new SimpleCallback<>(this){
 					@Override
 					public void onSuccess(List<Status> result){
-						if(getActivity()==null) return;
-						boolean empty=result.isEmpty();
-						offset+=result.size();
-						AccountSessionManager.get(accountID).filterStatuses(result, getFilterContext());
-						onDataLoaded(result, !empty);
+						realOffset+=result.size();
+						AccountSessionManager.get(accountID).filterStatuses(result, FilterContext.PUBLIC);
+						onDataLoaded(result, !result.isEmpty());
 						bannerHelper.onBannerBecameVisible();
 					}
 				}).exec(accountID);
