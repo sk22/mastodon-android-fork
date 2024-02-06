@@ -72,7 +72,7 @@ public class UnifiedPushNotificationReceiver extends MessagingReceiver{
 				result.items
 						.stream()
 						.findFirst()
-						.ifPresent(value->MastodonAPIController.runInBackground(()->new PushNotificationReceiver().notifyUnifiedPush(context, instance, value)));
+						.ifPresent(value->MastodonAPIController.runInBackground(()->new PushNotificationReceiver().notifyUnifiedPush(context, account, value)));
 			}
 
 			@Override

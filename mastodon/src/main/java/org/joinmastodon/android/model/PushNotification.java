@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName;
 
 import org.joinmastodon.android.R;
 import org.joinmastodon.android.api.RequiredField;
+import org.joinmastodon.android.api.session.AccountSession;
 import org.joinmastodon.android.ui.utils.UiUtils;
 
 import androidx.annotation.StringRes;
@@ -23,7 +24,7 @@ public class PushNotification extends BaseModel{
 	@RequiredField
 	public String body;
 
-	public static PushNotification fromNotification(Context context, Notification notification){
+	public static PushNotification fromNotification(Context context, AccountSession account, Notification notification){
 		PushNotification pushNotification = new PushNotification();
 		pushNotification.notificationType = switch(notification.type) {
 			case FOLLOW -> PushNotification.Type.FOLLOW;
@@ -52,8 +53,12 @@ public class PushNotification extends BaseModel{
 		});
 
 		pushNotification.title = UiUtils.generateFormattedString(notificationTitle, notification.account.displayName).toString();
-		pushNotification.icon = notification.status.account.avatarStatic;
-		pushNotification.body = notification.status.getStrippedText();
+		if (notification.status != null) {
+			pushNotification.icon = notification.status.account.avatarStatic;
+			pushNotification.body = notification.status.getStrippedText();
+		} else {
+			pushNotification.icon = account.getDefaultAvatarUrl();
+		}
 		return pushNotification;
 	}
 

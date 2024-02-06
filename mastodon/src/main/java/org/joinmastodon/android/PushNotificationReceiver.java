@@ -148,9 +148,9 @@ public class PushNotificationReceiver extends BroadcastReceiver{
 		}
 	}
 
-	public void notifyUnifiedPush(Context context, String accountID, org.joinmastodon.android.model.Notification notification) {
+	public void notifyUnifiedPush(Context context, AccountSession account, org.joinmastodon.android.model.Notification notification) {
 		// push notifications are only created from the official push notification, so we create a fake from by transforming the notification
-		PushNotificationReceiver.this.notify(context, PushNotification.fromNotification(context, notification), accountID, notification);
+		PushNotificationReceiver.this.notify(context, PushNotification.fromNotification(context, account, notification), account.getID(), notification);
 	}
 
 	private void notify(Context context, PushNotification pn, String accountID, org.joinmastodon.android.model.Notification notification){
