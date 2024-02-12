@@ -58,6 +58,6 @@ public class CustomEmojiSpan extends ReplacementSpan{
 	}
 
 	public UrlImageLoaderRequest createImageLoaderRequest(){
-		return new UrlImageLoaderRequest(GlobalUserPreferences.playGifs ? emoji.url : emoji.staticUrl);
+		return new UrlImageLoaderRequest(GlobalUserPreferences.playGifs ? emoji.url : emoji.staticUrl, 0, V.dp(20));
 	}
 }

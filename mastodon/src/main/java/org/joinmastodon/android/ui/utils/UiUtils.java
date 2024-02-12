@@ -418,7 +418,7 @@ public class UiUtils {
 				public View getView() {
 					return view;
 				}
-			}, null, new UrlImageLoaderRequest(emoji.getKey().url), null, false, true);
+			}, null, new UrlImageLoaderRequest(emoji.getKey().url, 0, V.dp(20)), null, false, true);
 		}
 	}
 
