@@ -144,8 +144,12 @@ public class Instance extends BaseModel{
 		return ci;
 	}
 
+	// This method has almost exclusively been used to improve support for
+	// Akkoma with no regard for Pleroma, hence its name. However, it is
+	// more likely than not that most uses should also apply to Pleroma,
+	// so checking for that too probably causes more good than harm.
 	public boolean isAkkoma() {
-		return pleroma != null;
+		return version.contains("compatible; Akkoma") || version.contains("compatible; Pleroma");
 	}
 
 	public boolean isPixelfed() {
